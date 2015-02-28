@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:gravity="center_horizontal" >
+
+    <TextView
+        android:id="@+id/activity_my_channel_emptyview_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="#000" />
+
+    <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+        android:id="@+id/swype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/activity_my_channel_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:dividerHeight="1dp"
+            android:drawSelectorOnTop="true"
+            android:listSelector="@drawable/list_selector"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp" >
+        </ListView>
+    </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

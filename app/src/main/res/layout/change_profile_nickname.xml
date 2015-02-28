@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    android:background="@color/main_background"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_nickname_msg_layout"
+        style="@style/chat_text_date_style"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/change_profile_nickname_msg_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/input_your_nickname_msg" />
+    </RelativeLayout>
+
+    <com.ruptech.chinatalk.widget.EditTextWithDel
+        android:id="@+id/activity_change_profile_nickname_text"
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_profile_nickname_msg_layout"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_input_your_nickname"
+        android:maxLength="50"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/activity_change_profile_nickname_error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_profile_nickname_text"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/prompt_input_your_nickname_error"
+        android:textColor="#ff0000" />
+
+</RelativeLayout>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/header_height"
+    android:background="@color/main_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_friend_profile_user_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/min_header_height"
+        android:onClick="changeUserBackground"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/activity_friend_profile_user_background_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/min_header_height"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_default_bg" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp" >
+
+            <RelativeLayout
+                android:id="@+id/activity_friend_profile_user_thumb_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/activity_friend_profile_user_thumb_imageview"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/background_round_button_profile"
+                    android:onClick="displayUserOriginal"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_portrait" />
+
+                <ImageView
+                    android:id="@+id/activity_friend_profile_user_sms_imageview"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignBottom="@+id/activity_friend_profile_user_thumb_imageview"
+                    android:layout_alignRight="@+id/activity_friend_profile_user_thumb_imageview"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/sms"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/activity_friend_profile_user_detail_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/activity_friend_profile_user_thumb_layout" >
+
+                <TextView
+                    android:id="@+id/activity_friend_profile_user_nickname_textview"
+                    style="@style/text_shadow_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+                <RelativeLayout
+                    android:id="@+id/activity_friend_profile_user_other_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/activity_friend_profile_user_nickname_textview"
+                    android:layout_marginTop="5dp" >
+
+                    <ImageView
+                        android:id="@+id/activity_friend_profile_user_gender_imageview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true" />
+
+                    <ImageView
+                        android:id="@+id/activity_friend_profile_user_lang_imageview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/activity_friend_profile_user_gender_imageview"
+                        android:paddingLeft="10dp" />
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_level_imageview"
+                        android:textColor="@color/opacify_white"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_toRightOf="@+id/activity_friend_profile_user_lang_imageview"
+                        android:background="@drawable/level"
+                        android:gravity="center_vertical|center"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/activity_friend_profile_user_memo_textview"
+                    style="@style/text_shadow_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/activity_friend_profile_user_other_layout"
+                    android:layout_marginTop="5dp"
+                    android:singleLine="true"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/activity_friend_profile_user_other_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/activity_friend_profile_user_detail_layout" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:layout_toLeftOf="@+id/activity_friend_profile_user_gray_imageview" >
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_follow_title_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@string/friend_follow" />
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_follow_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/activity_friend_profile_user_gray_imageview"
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/activity_friend_profile_user_fans_title_layout"
+                    android:src="@drawable/ic_action_overflow_dark" />
+
+                <LinearLayout
+                    android:id="@+id/activity_friend_profile_user_fans_title_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp" >
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_fans_title_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@string/friend_fans" />
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_fans_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:ellipsize="end"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/activity_friend_profile_user_gray_imageview1"
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/activity_friend_profile_user_fans_title_layout"
+                    android:src="@drawable/ic_action_overflow_dark" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/activity_friend_profile_user_gray_imageview1" >
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_charm_title_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:text="@string/friend_charm" />
+
+                    <TextView
+                        android:id="@+id/activity_friend_profile_user_charm_textview"
+                        style="@style/text_shadow_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:ellipsize="end"
+                        android:singleLine="true" />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.ruptech.chinatalk.ui.fragment.SlidingTabLayout
+        android:id="@+id/sliding_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
+
+</LinearLayout>

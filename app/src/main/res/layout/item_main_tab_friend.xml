@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:gravity="center_vertical"
+    android:background="#FFffffff" >
+    
+	<FrameLayout
+       android:id="@+id/item_main_tab_friend_thumb_imageview_layout"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:layout_centerVertical="true"
+       android:layout_marginLeft="5dp" >
+	    <RelativeLayout
+	            android:id="@+id/item_main_tab_friend_thumb_view"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+	            
+			    <ImageView
+			        android:id="@+id/item_main_tab_friend_thumb_imageview"
+			        android:layout_width="50dp"
+			        android:layout_height="50dp"
+			        android:scaleType="centerCrop"
+			        android:src="@drawable/default_portrait" />
+			
+			    <ImageView
+			        android:id="@+id/item_main_tab_friend_sms_imageview"
+			        android:layout_width="11dp"
+			        android:layout_height="11dp"
+			        android:layout_alignBottom="@+id/item_main_tab_friend_thumb_imageview"
+			        android:layout_alignRight="@+id/item_main_tab_friend_thumb_imageview"
+			        android:scaleType="centerCrop"
+			        android:src="@drawable/sms"
+			        android:visibility="gone" />
+			
+			    <ImageView
+			        android:id="@+id/item_main_tab_friend_lang_imageview"
+			        android:layout_width="16dp"
+			        android:layout_height="11dp"
+			        android:layout_alignBottom="@+id/item_main_tab_friend_thumb_imageview"
+			        android:layout_alignLeft="@+id/item_main_tab_friend_thumb_imageview"
+			        android:scaleType="centerCrop"
+			        android:src="@drawable/cn" />
+		 </RelativeLayout>
+		 <ImageView
+            android:id="@+id/item_main_tab_friend_mask"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/background_mask_img" />
+    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/item_main_tab_friend_user_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:gravity="right"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_fullname_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            style="@style/unimportance_contents_text_style"
+            android:text="@string/full_name" />
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_tel_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/tel" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_main_tab_friend_like_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:gravity="right"
+        android:visibility="gone"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_like_date_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_main_tab_friend_user_one_row_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:gravity="right"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_tel_one_row_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/tel" />
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_fullname_one_row_textview"
+            style="@style/unimportance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/empty"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/importance_contents_text_style"
+        android:id="@+id/item_main_tab_friend_nickname_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/item_main_tab_friend_user_layout"
+        android:layout_toRightOf="@id/item_main_tab_friend_thumb_imageview_layout"
+        android:ellipsize="end"
+        android:gravity="left"
+        android:padding="7dp"
+        android:singleLine="true"
+        android:text="@string/nick_name" />
+
+    <TextView
+        style="@style/importance_contents_text_style"
+        android:id="@+id/item_main_tab_friend_one_row_nickname_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/item_main_tab_friend_user_one_row_layout"
+        android:layout_toRightOf="@id/item_main_tab_friend_thumb_imageview_layout"
+        android:ellipsize="end"
+        android:gravity="left"
+        android:padding="7dp"
+        android:singleLine="true"
+        android:text="@string/nick_name"
+        android:visibility="gone" />
+
+</RelativeLayout>

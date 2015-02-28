@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="drawable" name="transparent">#00000000</item>
+    <item type="drawable" name="d_transparent">#99000000</item>
+    <item type="drawable" name="btn_transparent">#00000000</item>
+    <item type="drawable" name="btn_d_transparent">#3C000000</item>
+</resources>

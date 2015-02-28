@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:gravity="center_vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_story_comment_user_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp" >
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:scrollbars="none" >
+
+            <com.ruptech.chinatalk.widget.Gallery
+                android:id="@+id/activity_story_comment_user_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="right"
+                android:spacing="1dp" />
+        </HorizontalScrollView>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/item_story_comment_like_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/activity_story_comment_user_layout"
+        android:background="@drawable/chat_content_bg"
+        android:clickable="true"
+        android:gravity="left|center_vertical" />
+
+</RelativeLayout>

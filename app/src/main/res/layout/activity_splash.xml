@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_splash_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange_highlight"
+    android:keepScreenOn="true" >
+
+    <TextView
+        android:id="@+id/activity_splash_header_title"
+        style="@style/text_shadow_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/app_imageview"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="24dp"
+        android:text="@string/app_name"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/app_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/w01" />
+
+    <TextView
+        android:id="@+id/activity_splash_footer_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/gate_footer_text"
+        android:textColor="@color/white_text" />
+
+</RelativeLayout>

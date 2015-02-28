@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_leaderboard_header_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/item_leaderboard_header_pic_view1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:id="@+id/item_leaderboard_header_pic_imageview_rl1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_pic_imageview1"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar1"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_rank_imageview1"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rank_badge" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_rank_textview1"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="1"
+                android:textColor="@color/opacify_white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_leaderboard_header_pic_view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/item_leaderboard_header_pic_view1"
+        android:background="@color/item_story_image_crop_mask_bg"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/item_leaderboard_header_user_nickname_textview1"
+            style="@style/text_shadow_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_gender_imageview1"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/female" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_lang_imageview1"
+                android:layout_width="16dp"
+                android:layout_height="11dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview1"
+                android:src="@drawable/cn" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_level_textview1"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_leaderboard_header_user_lang_imageview1"
+                android:background="@drawable/level"
+                android:gravity="center_vertical|center"
+                android:textColor="@color/opacify_white"
+                android:textSize="10sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/item_leaderboard_header_pic_view3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_leaderboard_header_pic_view2"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/item_leaderboard_header_pic_imageview_rl2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_pic_imageview2"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar2"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_rank_imageview2"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rank_badge" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_rank_textview2"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="2"
+                android:textColor="@color/opacify_white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_pic_imageview3"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar3"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_rank_imageview3"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rank_badge" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_rank_textview3"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="3"
+                android:textColor="@color/opacify_white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_leaderboard_header_pic_view3"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/item_story_image_crop_mask_bg"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_nickname_textview2"
+                style="@style/text_shadow_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/item_leaderboard_header_bottom_left_user_other_layout1"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:id="@+id/item_leaderboard_header_bottom_left_user_other_layout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" >
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_gender_imageview2"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/female" />
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_lang_imageview2"
+                    android:layout_width="16dp"
+                    android:layout_height="11dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview2"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/item_leaderboard_header_user_level_textview2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_lang_imageview2"
+                    android:background="@drawable/level"
+                    android:gravity="center_vertical|center"
+                    android:textColor="@color/opacify_white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/item_story_image_crop_mask_bg"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_nickname_textview3"
+                style="@style/text_shadow_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/item_leaderboard_header_bottom_right_user_other_layout1"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:id="@+id/item_leaderboard_header_bottom_right_user_other_layout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" >
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_gender_imageview3"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/female" />
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_lang_imageview3"
+                    android:layout_width="16dp"
+                    android:layout_height="11dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview3"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/item_leaderboard_header_user_level_textview3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_lang_imageview3"
+                    android:background="@drawable/level"
+                    android:gravity="center_vertical|center"
+                    android:textColor="@color/opacify_white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_leaderboard_header_bottom_view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_leaderboard_header_pic_view3"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/item_leaderboard_header_pic_imageview_rl4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_pic_imageview4"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar4"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_rank_imageview4"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rank_badge" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_rank_textview4"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="4"
+                android:textColor="@color/opacify_white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/item_leaderboard_header_pic_imageview_rl5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_pic_imageview5"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar5"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/item_leaderboard_header_user_rank_imageview5"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rank_badge" />
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_rank_textview5"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="5"
+                android:textColor="@color/opacify_white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_leaderboard_header_bottom_view2"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/item_story_image_crop_mask_bg"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_nickname_textview4"
+                style="@style/text_shadow_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/item_leaderboard_header_bottom_left_user_other_layout2"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:id="@+id/item_leaderboard_header_bottom_left_user_other_layout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" >
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_gender_imageview4"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/female" />
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_lang_imageview4"
+                    android:layout_width="16dp"
+                    android:layout_height="11dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview4"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/item_leaderboard_header_user_level_textview4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_lang_imageview4"
+                    android:background="@drawable/level"
+                    android:gravity="center_vertical|center"
+                    android:textColor="@color/opacify_white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/item_story_image_crop_mask_bg"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:id="@+id/item_leaderboard_header_user_nickname_textview5"
+                style="@style/text_shadow_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/item_leaderboard_header_bottom_right_user_other_layout2"
+                android:singleLine="true"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:id="@+id/item_leaderboard_header_bottom_right_user_other_layout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true" >
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_gender_imageview5"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/female" />
+
+                <ImageView
+                    android:id="@+id/item_leaderboard_header_user_lang_imageview5"
+                    android:layout_width="16dp"
+                    android:layout_height="11dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview5"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/item_leaderboard_header_user_level_textview5"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/item_leaderboard_header_user_lang_imageview5"
+                    android:background="@drawable/level"
+                    android:gravity="center_vertical|center"
+                    android:textColor="@color/opacify_white"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

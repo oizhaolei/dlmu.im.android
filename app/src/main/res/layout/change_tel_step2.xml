@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    android:background="@color/main_background"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_change_tel_step2_tel_msg_layout"
+        style="@style/chat_text_date_style"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/activity_change_tel_step2_tel_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/input_your_new_tel_msg" />
+    </RelativeLayout>
+
+    <com.ruptech.chinatalk.widget.EditTextWithDel
+        android:id="@+id/activity_change_tel_step2_tel"
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_tel_step2_tel_msg_layout"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/hint_input_your_new_tel"
+        android:maxLength="50"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/activity_change_tel_step2_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_tel_step2_tel"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/prompt_change_tel_step2_error"
+        android:textColor="#ff0000" />
+
+    <Button
+        android:id="@+id/activity_change_tel_step2_next_button"
+        style="@style/text_appearance_medium"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_tel_step2_error"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_button_orange"
+        android:text="@string/action_send_verify_code"
+        android:textColor="#ffffffff" />
+
+</RelativeLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:gravity="center_horizontal" >
+
+    <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+        android:id="@+id/swype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/activity_gift_list_recharge_view" >
+
+        <GridView
+            android:id="@+id/activity_gift_list_grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/grid_gap"
+            android:horizontalSpacing="@dimen/grid_gap"
+            android:numColumns="4"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="@dimen/grid_gap" />
+    </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_gift_list_recharge_view"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/main_background"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/activity_gift_list_balance_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:padding="1dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/background_button_white"
+            android:clickable="true"
+            android:onClick="myWalletButton" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="@string/balance" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_story_comment_image_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/user_story_comment_channel_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:visibility="gone"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/user_story_comment_channel_photo"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_portrait" />
+
+        <ImageView
+            android:id="@+id/item_channel_mask"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/background_mask_img"
+            android:padding="2dp" />
+
+        <TextView
+            android:id="@+id/user_story_comment_channel_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/user_story_comment_channel_photo"
+            android:lines="1"
+            android:padding="2dp"
+            android:singleLine="true"
+            android:textColor="#ff6600" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_story_comment_pic_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_story_comment_channel_view">
+
+        <RelativeLayout
+            android:id="@+id/user_story_comment_pic_imageview_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/user_story_comment_pic_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <com.ruptech.chinatalk.widget.ImageProgressBar
+                android:id="@+id/image_progress_bar"
+                style="@style/ProgressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:max="100" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/user_story_comment_fullname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_story_comment_pic_imageview_rl"
+            android:layout_marginLeft="5dp"
+            android:layout_toLeftOf="@+id/item_story_comment_location_textview"
+            android:layout_toRightOf="@+id/user_story_comment_user"
+            android:singleLine="true"
+            android:text="@string/story" />
+
+        <TextView
+            android:id="@+id/item_story_comment_location_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/user_story_comment_fullname"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="@string/city" />
+
+        <RelativeLayout
+            android:id="@+id/user_story_comment_user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@+id/user_story_comment_fullname"
+            android:layout_marginLeft="10dp"
+            android:padding="1dp" >
+
+            <ImageView
+                android:id="@+id/user_story_comment_user_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_portrait" />
+
+            <ImageView
+                android:id="@+id/item_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/background_mask_img" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/user_story_comment_bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_story_comment_pic_view"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/user_story_comment_from_content_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:id="@+id/user_story_comment_lang_imageview"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_margin="4dp"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/user_story_comment_content_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chat_content_bg"
+                    android:clickable="true"
+                    android:padding="2dp"
+                    android:text="@string/story" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/user_story_comment_my_content_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:src="#cccccc" />
+
+            <ImageView
+                android:id="@+id/user_story_comment_my_lang_imageview"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/kr" />
+
+            <TextView
+                android:id="@+id/user_story_comment_my_content_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:padding="2dp"
+                android:text="@string/story" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_story_comment_bottom_view" >
+
+        <LinearLayout
+            android:id="@+id/item_story_comment_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical|right"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/item_story_comment_good_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/background_button_white"
+                android:clickable="true"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/item_story_comment_good_imageview"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:padding="1dp"
+                    android:src="@drawable/ic_action_social_like_unselected" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_story_comment_share_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/background_button_white"
+                android:clickable="true"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/item_story_comment_share_textview"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:padding="1dp"
+                    android:src="@drawable/ic_action_social_share" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_story_comment_gift_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/background_button_white"
+                android:clickable="true"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/item_story_comment_gift_textview"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:padding="1dp"
+                    android:src="@drawable/ic_action_present" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

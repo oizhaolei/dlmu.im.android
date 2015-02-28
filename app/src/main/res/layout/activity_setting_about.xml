@@ -1,0 +1,279 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    tools:context=".ui.setting.AboutTTTalkActivity" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_help_tel_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    android:id="@+id/main_tab_setting_help_title_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/service_contact_tel" />
+
+                <TextView
+                    android:id="@+id/main_tab_setting_help_tel_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="20dp"
+                    android:text="@string/korean_call" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_help_online_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/help" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_introduce_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/introduce" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_rate_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/rate_app" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_announcement_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/announcement" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_agreement_terms_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/terms_of_service" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_privacy_policy_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/prompt_agreement_privacy_policy" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_tab_setting_check_version_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    android:id="@+id/main_tab_setting_version_title_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/version_check" />
+
+                <TextView
+                    android:id="@+id/main_tab_setting_version_new_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/main_tab_setting_version_version"
+                    android:background="@drawable/item_remind_orange_bg"
+                    android:gravity="center"
+                    android:minWidth="20.0dip"
+                    android:paddingLeft="7.0dip"
+                    android:paddingRight="7.0dip"
+                    android:textColor="#fff"
+                    android:textSize="10.0dip"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/main_tab_setting_version_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/version_imageView1" />
+
+                <ImageView
+                    android:id="@+id/version_imageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/empty"
+                    android:paddingRight="20dp"
+                    android:scaleType="matrix"
+                    android:src="@drawable/submenu" />
+            </RelativeLayout>
+
+            <TextView
+                style="@style/unimportance_contents_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/please_refer_our_official_site" />
+
+            <TextView
+                android:id="@+id/main_tab_setting_show_system_url_textview"
+                style="@style/unimportance_contents_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:text="@string/copyright"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:orientation="vertical"
+    android:padding="20dp" >
+
+    <TextView
+        android:id="@+id/interrupt_result_textview"
+        style="@style/unimportance_contents_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:text="@string/not_interrupt_time_result" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/interrupt_start_textview"
+        style="@style/unimportance_contents_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/not_interrupt_start" />
+
+    <SeekBar
+        android:id="@+id/start_time_seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="23"
+        android:progress="5" />
+
+    <TextView
+        android:id="@+id/interrupt_duration_textview"
+        style="@style/unimportance_contents_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/not_interrupt_duration" />
+
+    <SeekBar
+        android:id="@+id/duration_seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="24"
+        android:progress="7" />
+
+</LinearLayout>

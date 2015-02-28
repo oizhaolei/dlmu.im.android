@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menu_item_action_profile_more"
+        android:icon="@drawable/ic_action_overflow_dark"
+        android:title="@string/setting"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/change_profile"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_changeProfile"
+                android:title="@string/change_profile"/>
+            <item
+                android:id="@+id/change_nickname"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_nickNameFriend"
+                android:title="@string/change_nickname"/>
+            <item
+                android:id="@+id/change_friend_memo"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_memoFriend"
+                android:title="@string/change_memo"/>
+            <item
+                android:id="@+id/friend_menu_block"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_blockFriend"
+                android:title="@string/friend_menu_block"/>
+            <item
+                android:id="@+id/friend_menu_report"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_reportFriend"
+                android:title="@string/friend_menu_report"/>
+            <item
+                android:id="@+id/friend_menu_more_chat_history"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_get_historyFriend"
+                android:title="@string/friend_menu_more_chat_history"/>
+            <item
+                android:id="@+id/friend_menu_clean_chat_history"
+                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
+                android:onClick="setting_clean_message"
+                android:title="@string/friend_menu_clean_chat_history"/>
+        </menu>
+    </item>
+
+</menu>

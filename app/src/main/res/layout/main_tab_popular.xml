@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/hot_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+            android:id="@+id/hot_swype"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <GridView
+                android:id="@+id/hot_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:horizontalSpacing="@dimen/grid_gap"
+                android:numColumns="3"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="@dimen/grid_gap" />
+        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/hot_emptyview_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_data_found"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/channel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+            android:id="@+id/channel_swype"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ListView
+                android:id="@+id/channel_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1dp"
+                android:drawSelectorOnTop="true"
+                android:listSelector="@drawable/list_selector" >
+            </ListView>
+        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/channel_emptyview_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_data_found"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/follow_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+            android:id="@+id/follow_swype"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ListView
+                android:id="@+id/follow_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1dp"
+                android:drawSelectorOnTop="true"
+                android:listSelector="@drawable/list_selector" >
+            </ListView>
+        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/follow_emptyview_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_data_found"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</RelativeLayout>

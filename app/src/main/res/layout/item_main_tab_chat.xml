@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/preference_item"
+    android:gravity="center_vertical" >
+
+    <FrameLayout
+        android:id="@+id/item_main_tab_chat_friend_imageview_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp" >
+
+        <RelativeLayout
+            android:id="@+id/item_main_tab_chat_friend_thumb_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/item_main_tab_chat_friend_thumb_imageview"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/item_main_tab_chat_friend_sms_imageview"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_alignBottom="@+id/item_main_tab_chat_friend_thumb_imageview"
+                android:layout_alignRight="@+id/item_main_tab_chat_friend_thumb_imageview"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sms"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/item_main_tab_chat_friend_lang_imageview"
+                android:layout_width="16dp"
+                android:layout_height="11dp"
+                android:layout_alignBottom="@+id/item_main_tab_chat_friend_thumb_imageview"
+                android:layout_alignLeft="@+id/item_main_tab_chat_friend_thumb_imageview"
+                android:scaleType="centerCrop"
+                android:src="@drawable/cn" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/item_main_tab_chat_friend_mask"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/background_mask_img" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_main_tab_chat_friend_towrow_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/item_main_tab_chat_friend_imageview_layout"
+        android:paddingBottom="7dp" >
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_friend_blank_textview"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/empty" />
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_friend_nickname_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/item_main_tab_chat_message_createddate_textview"
+            android:layout_toRightOf="@+id/item_main_tab_chat_friend_blank_textview"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:padding="7dp"
+            android:singleLine="true"
+            android:text="@string/nick_name" />
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_message_createddate_textview"
+            style="@style/unimportance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="7dp"
+            android:text="@string/last_night" />
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_message_content_textview"
+            style="@style/unimportance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/item_main_tab_chat_message_count_textview"
+            android:layout_toRightOf="@+id/item_main_tab_chat_friend_blank_textview"
+            android:ellipsize="end"
+            android:paddingLeft="7dp"
+            android:paddingTop="7dp"
+            android:paddingRight="7dp"
+            android:singleLine="true"
+            android:text="@string/empty" />
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_message_count_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="7dp"
+            android:background="@drawable/item_remind_orange_bg"
+            android:gravity="center"
+            android:minWidth="10.0dip"
+            android:textColor="#fff"
+            android:textSize="10.0dip"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_main_tab_chat_friend_onerow_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/item_main_tab_chat_friend_imageview_layout"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/item_main_tab_chat_friend_nickname_onerow_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:layout_centerVertical="true"
+            android:padding="7dp"
+            android:singleLine="true"
+            android:text="@string/nick_name" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

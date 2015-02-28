@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFffffff"
+    android:gravity="center_vertical"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
+
+    <RelativeLayout
+        android:id="@+id/item_main_tab_friend_thumb_img_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" >
+
+        <ImageView
+            android:id="@+id/item_main_tab_friend_request_thumb_imageview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_portrait" />
+
+        <ImageView
+            android:id="@+id/item_main_tab_friend_request_sms_imageview"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_alignBottom="@+id/item_main_tab_friend_request_thumb_imageview"
+            android:layout_alignRight="@+id/item_main_tab_friend_request_thumb_imageview"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sms"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/item_main_tab_friend_request_lang_imageview"
+            android:layout_width="16dp"
+            android:layout_height="11dp"
+            android:layout_alignBottom="@+id/item_main_tab_friend_request_thumb_imageview"
+            android:layout_alignLeft="@+id/item_main_tab_friend_request_thumb_imageview"
+            android:scaleType="centerCrop"
+            android:src="@drawable/cn" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_main_tab_friend_content_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/item_main_tab_friend_add_layout"
+        android:layout_toRightOf="@+id/item_main_tab_friend_thumb_img_layout"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/item_main_tab_friend_content_one_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/item_main_tab_friend_content_one_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="@color/text_black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/item_main_tab_friend_content_one_gender_imageview"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_main_tab_friend_content_one_title_textview"
+                android:src="@drawable/female" />
+
+            <TextView
+                android:id="@+id/item_main_tab_friend_content_one_level_textview"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/item_main_tab_friend_content_one_gender_imageview"
+                android:background="@drawable/level"
+                android:gravity="center_vertical|center"
+                android:textColor="@color/opacify_white"
+                android:textSize="8sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_content_two_title_textview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_main_tab_friend_content_one_layout"
+            android:singleLine="true"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/item_main_tab_friend_content_three_title_textview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_main_tab_friend_content_two_title_textview"
+            android:singleLine="true"
+            android:textColor="@color/third_row_text_black_color"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_main_tab_friend_add_layout"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+
+        <com.ruptech.chinatalk.widget.processbutton.ActionProcessButton
+            android:id="@+id/item_main_tab_add_new_friend_btn"
+            style="@android:attr/tabWidgetStyle"
+            android:layout_width="85dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/background_button_orange"
+            android:focusable="false"
+            android:gravity="center"
+            android:text="@string/add_as_friend"
+            android:textColor="@color/white_text"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/chat_background" >
+
+    <LinearLayout
+        android:id="@+id/rl_select_lang_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFffffff"
+        android:orientation="horizontal" >
+
+        <Spinner
+            android:id="@+id/spinner_lang1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="#FFffffff"
+            android:gravity="center_vertical" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_lp_divider" />
+
+        <ImageView
+            android:id="@+id/btn_swap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/preference_item"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_swap" />
+
+        <View
+            android:layout_width="2dip"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_lp_divider" />
+
+        <Spinner
+            android:id="@+id/spinner_lang2"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="#FFffffff"
+            android:gravity="center_vertical" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/preference_item" >
+
+        <include
+            android:id="@+id/remind_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            layout="@layout/item_remind_footer" />
+
+        <RelativeLayout
+            android:id="@+id/input_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/remind_panel"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp" >
+
+            <ImageView
+                android:id="@+id/activity_ttt_chat_message_type_voice_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:src="@drawable/chat_voice_btn" />
+
+            <ImageView
+                android:id="@+id/activity_ttt_chat_message_type_keyboard_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:src="@drawable/chat_switch_keyboard_btn"
+                android:visibility="gone" />
+
+            <com.ruptech.chinatalk.widget.EditTextWithFace
+                android:id="@+id/activity_ttt_chat_message_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/activity_ttt_chat_message_type_button"
+                android:layout_toRightOf="@+id/activity_ttt_chat_message_type_voice_button"
+                android:adjustViewBounds="true"
+                android:gravity="left|center_vertical"
+                android:inputType="textMultiLine"
+                android:maxHeight="150dp"
+                android:minHeight="43dp"
+                android:textAppearance="?android:attr/textAppearanceSmall" >
+
+                <requestFocus />
+            </com.ruptech.chinatalk.widget.EditTextWithFace>
+
+            <Button
+                android:id="@+id/activity_ttt_chat_btn_send"
+                style="@style/white_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/content_background"
+                android:gravity="center"
+                android:text="@string/send"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/activity_ttt_chat_message_type_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/chat_show_type_btn" />
+
+            <com.ruptech.chinatalk.widget.RecordButton
+                android:id="@+id/activity_ttt_chat_voice_button"
+                android:layout_width="match_parent"
+                android:layout_height="33dp"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@+id/activity_ttt_chat_message_type_button"
+                android:layout_toRightOf="@+id/activity_ttt_chat_message_type_voice_button"
+                android:background="@drawable/chat_voice_forward"
+                android:clickable="true"
+                android:text="@string/press_to_record"
+                android:textSize="15sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_ttt_chat_select_message_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/input_panel"
+            android:background="#333"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <ImageButton
+                        android:id="@+id/activity_ttt_chat_select_message_type_voice_recognize_button"
+                        style="@style/text_appearance_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/chat_content_bg"
+                        android:gravity="center"
+                        android:src="@drawable/chat_rec_button" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/activity_ttt_chat_message_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:layout_below="@+id/rl_select_lang_layout"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:listSelector="@android:color/transparent"
+        android:scrollbarStyle="outsideOverlay"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal" />
+
+</RelativeLayout>

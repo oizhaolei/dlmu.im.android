@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listitem_message_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:background="#FFffffff" >
+
+    <TextView
+        android:id="@+id/listitem_message_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/listitem_message_create_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:background="@drawable/background_button_gray"
+        android:padding="2dp"
+        android:textColor="#ffffff"
+        android:textSize="12sp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="15dp"
+        android:background="@drawable/right_chat_from_bg"
+        android:clickable="true"
+        android:gravity="right|center_vertical" >
+
+        <TextView
+            android:id="@+id/listitem_message_from_lang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:padding="8dp"
+            android:text="@string/lang_from"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#3a3a3a" />
+
+        <ImageView
+            android:id="@+id/listitem_message_from_content_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/listitem_message_from_lang"
+            android:contentDescription="@string/empty"
+            android:focusable="false"
+            android:padding="8dp"
+            android:src="@drawable/left_chatfrom_voice_playing" />
+
+        <TextView
+            android:id="@+id/listitem_message_from_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/listitem_message_from_lang"
+            android:lineSpacingExtra="2dp"
+            android:padding="8dp"
+            android:textColor="#3a3a3a"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/left_chat_to_bg"
+        android:clickable="true"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/listitem_message_to_lang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/lang_to"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#3a3a3a" />
+
+        <TextView
+            android:id="@+id/listitem_message_to_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/listitem_message_to_lang"
+            android:focusable="false"
+            android:lineSpacingExtra="2dp"
+            android:padding="8dp"
+            android:textColor="#3a3a3a"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/listitem_message_verify_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    android:background="@color/main_background"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_gender_male_msg_layout"
+        style="@style/chat_text_date_style"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/change_profile_language_msg_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/input_your_gender_msg" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_gender_male_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_profile_gender_male_msg_layout"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/gender_male_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:text="@string/gender_male"
+                android:textColor="#000"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <RadioButton
+            android:id="@+id/gender_male_radio_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_gender_divider_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/activity_change_profile_gender_male_layout"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#000" >
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_gender_female_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_profile_gender_divider_layout"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/gender_female_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:text="@string/gender_female"
+                android:textColor="#000"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <RadioButton
+            android:id="@+id/gender_female_radio_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_change_profile_gender_divider2_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:layout_below="@+id/activity_change_profile_gender_female_layout"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#000" >
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000"
+    android:clipChildren="false"
+    android:orientation="vertical" >
+
+    <it.sephiroth.android.library.imagezoom.ImageViewTouch
+        android:id="@+id/activity_crop_image"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:background="#000000" />
+
+    <RelativeLayout
+        android:id="@+id/activity_crop_image_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/activity_crop_image"
+        android:background="@color/item_story_image_crop_mask_bg" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#7FFFFFFF" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_crop_image_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activity_crop_image"
+        android:background="@color/item_story_image_crop_mask_bg" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentTop="true"
+            android:background="#7FFFFFFF" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

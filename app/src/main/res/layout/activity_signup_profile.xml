@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none"
+        tools:context=".ui.user.ProfileActivity" >
+
+        <LinearLayout
+            android:id="@+id/activity_thirdparty_signup_profile_user_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/activity_signup_profile_thumb_imgview"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_gravity="center"
+                android:background="@drawable/background_round_button_profile"
+                android:onClick="displayUserOriginal"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_portrait" />
+
+            <com.ruptech.chinatalk.widget.EditTextWithDel
+                android:id="@+id/activity_signup_profile_fullname_edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/hint_input_your_nickname"
+                android:maxLength="50"
+                android:singleLine="true" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:id="@+id/activity_signup_profile_select_spinner_gender_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/preference_item"
+                    android:gravity="center_vertical" >
+
+                    <Spinner
+                        android:id="@+id/activity_signup_profile_select_spinner_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="#FFffffff" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/activity_signup_profile_select_spinner_lang_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/preference_item"
+                    android:gravity="center_vertical" >
+
+                    <Spinner
+                        android:id="@+id/activity_signup_profile_select_spinner_lang"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="#FFffffff" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

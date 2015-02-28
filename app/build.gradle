@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 'Google Inc.:Google APIs:21'
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "com.ruptech.chinatalk"
+        minSdkVersion 14
+        targetSdkVersion 21
+
+        testApplicationId "com.ruptech.chinatalk.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':weiboSDK')
+    compile project(':facebookSDK')
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.github.kevinsawicki:http-request:5.6'
+    compile 'com.jakewharton:butterknife:6.0.0'
+    compile 'com.squareup:otto:1.3.6'
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+}

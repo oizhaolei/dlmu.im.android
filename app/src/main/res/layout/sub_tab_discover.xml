@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_tab_discover_friend_lbs_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:gravity="center_vertical" >
+
+    <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+        android:id="@+id/swype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:cacheColorHint="@android:color/transparent"
+            android:dividerHeight="1dp"
+            android:drawSelectorOnTop="true"
+            android:listSelector="@drawable/list_selector" >
+        </ListView>
+    </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_data_found" />
+
+</RelativeLayout>

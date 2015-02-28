@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="main_background">#FFededed</color>
+    <color name="chat_background">#FFfafffa</color>
+    <color name="translucent_pink">#ccf18e60</color>
+    <color name="translucent_tray">#cccccccc</color>
+    <color name="opacify_white">#ffffffff</color>
+    <color name="opacify_gray">#ff666666</color>
+    <color name="at_block">#55aaaaaa</color>
+    <color name="new_mark">#ff6600</color>
+    <color name="red">#ffff0000</color>
+    <color name="orange">#AAff6600</color>
+    <color name="blue">#0099CC</color>
+    <color name="yellow">#f9a64d</color>
+    <color name="reply_name">#FF08708F</color>
+    <color name="orange_softlight">#88fde4c9</color>
+    <color name="orange_highlight">#FFf9a64d</color>
+    <color name="action_bar_background">#f9a64d</color>
+    <color name="action_bar_background_comment">#FAFAFA</color>
+    <color name="chat_stranger_background">#FFCCCCCC</color>
+
+    <color name="text_gray">#aaaaaa</color>
+    <color name="text_black">#000000</color>
+    <color name="content_background">#FFffffff</color>
+    <color name="chat_friend_background">#88fef9f4</color>
+    <color name="chat_friend_message_background">#FFfbf9f9</color>
+    
+    <!-- login_gate\guide\splash text -->
+    <color name="white_text">#ffffff</color>
+    <color name="black_color">#242a30</color>
+    
+    <!-- 半透明 -->
+    <color name="item_story_image_bottom_bg">#33f0ece4</color>
+    <color name="item_story_image_crop_mask_bg">#8f000000</color>
+    
+    <!-- popular\lbs\online\follower\recommeded-->
+    <color name="third_row_text_black_color">#AAaaaaaa</color>
+    
+    <color name="add_friend_pressed">#AAf9a64d</color>
+    <color name="add_friend_ok">#FFcccccc</color>
+    
+    <color name="radio_button_selected_color">#FFFFFF</color>
+    <color name="radio_button_unselected_color">@android:color/transparent</color>
+    <color name="gray">#75aaaaaa</color>
+    
+</resources>

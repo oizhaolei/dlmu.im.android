@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    android:clickable="true" >
+
+    <TextView
+        android:id="@+id/sub_tab_textview"
+        style="@android:attr/tabWidgetStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:lines="1"
+        android:text="@string/popular"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sub_tab_number_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/new_mark"
+        android:gravity="center"
+        android:text="9"
+        android:textColor="#fff"
+        android:textSize="10.0dip"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/sub_tab_new_icon"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        android:background="@drawable/new_mark"
+        android:minWidth="10.0dip"
+        android:textSize="10.0dip"
+        android:visibility="invisible" />
+
+</RelativeLayout>

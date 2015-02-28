@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="#FFffffff" >
+
+    <RelativeLayout
+        android:id="@+id/item_translator_part1"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp" >
+ 		  <FrameLayout
+		       android:id="@+id/item_translator_thumb_view_layout"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:layout_alignParentLeft="true"
+				 android:layout_centerVertical="true" >
+             <RelativeLayout
+		            android:id="@+id/item_translator_thumb_view"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" >
+				        <ImageView
+				            android:id="@+id/item_translator_thumb_imageview"
+				            android:layout_width="55dp"
+				            android:layout_height="55dp"
+				            android:scaleType="centerCrop" />
+				
+				        <ImageView
+				            android:id="@+id/item_translator_lang1_flag_imageview"
+				            android:layout_width="16dp"
+				            android:layout_height="16dp"
+				            android:layout_alignBottom="@+id/item_translator_thumb_imageview"
+				            android:layout_alignParentLeft="true"
+				            android:src="@drawable/flag" />
+				
+				        <ImageView
+				            android:id="@+id/item_translator_lang2_flag_imageview"
+				            android:layout_width="16dp"
+				            android:layout_height="16dp"
+				            android:layout_alignBottom="@+id/item_translator_thumb_imageview"
+				            android:layout_alignRight="@+id/item_translator_thumb_imageview"
+				            android:src="@drawable/flag" />
+				</RelativeLayout>
+				<ImageView
+		            android:id="@+id/item_translator_thumb_mask"
+		            android:layout_width="55dp"
+		            android:layout_height="55dp"
+		            android:background="@drawable/background_mask_img" />
+		  </FrameLayout>
+        <TextView
+            android:id="@+id/item_translator_fullname_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/item_translator_thumb_view_layout"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:padding="7dp"
+            android:singleLine="true"
+            android:text="@string/nick_name" />
+
+        <TextView
+            android:id="@+id/item_translator_translate_number_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/item_translator_fullname_textview"
+            android:layout_alignParentRight="true"
+            android:text="@string/is_revise_number"
+            android:textColor="@color/translucent_pink" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/translator_lang1_introduce_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_translator_part1"
+        android:paddingLeft="5dp" >
+
+        <TextView
+            android:id="@+id/translator_lang1_introduce_textview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/translator_lang2_introduce_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/translator_lang1_introduce_layout"
+        android:paddingLeft="5dp" >
+
+        <TextView
+            android:id="@+id/translator_lang2_introduce_textview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty" />
+    </RelativeLayout>
+    
+</RelativeLayout>

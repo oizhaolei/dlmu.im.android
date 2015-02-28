@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp" >
+
+        <RelativeLayout
+            android:id="@+id/activity_myself_wallet_consume_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/preference_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/activity_myself_wallet_consume_textview"
+                style="@style/importance_contents_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="15dp"
+                android:paddingLeft="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/consumption_experience" />
+
+            <ImageView
+                android:id="@+id/activity_myself_wallet_consume_submenu_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/empty"
+                android:paddingRight="20dp"
+                android:scaleType="matrix"
+                android:src="@drawable/submenu" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/activity_myself_wallet_fee_introduce_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/preference_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/activity_myself_wallet_fee_introduce_textview"
+                style="@style/importance_contents_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="15dp"
+                android:paddingLeft="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/charges_introduction" />
+
+            <ImageView
+                android:id="@+id/activity_myself_wallet_fee_introduce_submenu_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/empty"
+                android:paddingRight="20dp"
+                android:scaleType="matrix"
+                android:src="@drawable/submenu" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/recharge_free_sns_share_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/recharge_other_demo" />
+
+            <GridView
+                android:id="@+id/activity_myself_wallet_sns_grid"
+                android:layout_width="match_parent"
+                android:layout_height="183dp"
+                android:background="#FFFFFF"
+                android:horizontalSpacing="1dp"
+                android:numColumns="4"
+                android:padding="1dp"
+                android:verticalSpacing="1dp" >
+
+            </GridView>
+
+            <TextView
+                android:id="@+id/recharge_share_memo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recharge_other_demo"
+                android:textColor="@color/orange" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/online_recharge" />
+
+            <GridView
+                android:id="@+id/activity_myself_wallet_recharge_grid"
+                android:layout_width="match_parent"
+                android:layout_height="183dp"
+                android:background="#FFFFFF"
+                android:horizontalSpacing="1dp"
+                android:numColumns="3"
+                android:padding="1dp"
+                android:verticalSpacing="1dp" >
+
+            </GridView>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

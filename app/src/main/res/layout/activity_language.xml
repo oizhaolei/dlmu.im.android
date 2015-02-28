@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <TextView
+        android:id="@+id/activity_language_main_language_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_language" />
+
+    <RelativeLayout
+        android:id="@+id/activity_language_user_main_language_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_language_main_language_label"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/activity_language_main_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/main_language" />
+
+        <ImageView
+            android:id="@+id/activity_language_main_thumb_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/activity_language_main_submenu_imageview"
+            android:src="@drawable/cn" />
+
+        <ImageView
+            android:id="@+id/activity_language_main_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/activity_language_additional_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_language_user_main_language_layout"
+        android:layout_marginTop="5dp"
+        android:text="@string/additional_language" />
+
+    <RelativeLayout
+        android:id="@+id/activity_language_additional2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_language_additional_textview"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/activity_language_additional2_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/additional_language2" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional2_thumb_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/activity_language_additional2_submenu_imageview"
+            android:src="@drawable/cn" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional2_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional2_delete_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="3dp"
+            android:src="@drawable/ic_clear_light" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_language_additional3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_language_additional2"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/activity_language_additional3_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/additional_language3" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional3_thumb_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/activity_language_additional3_submenu_imageview"
+            android:src="@drawable/cn" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional3_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional3_delete_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="3dp"
+            android:src="@drawable/ic_clear_light" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_language_additional4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_language_additional3"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/activity_language_additional4_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="@string/additional_language4" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional4_thumb_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/activity_language_additional4_submenu_imageview"
+            android:src="@drawable/cn" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional4_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
+
+        <ImageView
+            android:id="@+id/activity_language_additional4_delete_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="3dp"
+            android:src="@drawable/ic_clear_light" />
+    </RelativeLayout>
+
+</RelativeLayout>

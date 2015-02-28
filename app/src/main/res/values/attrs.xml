@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <declare-styleable name="PageIndicator">
+        <attr name="active_color" format="color" />
+        <attr name="inactive_color" format="color" />
+        <attr name="count" format="integer" />
+		<attr name="index" format="integer" />
+		<attr name="spacing" format="dimension" />
+		<attr name="radius" format="dimension" />
+    </declare-styleable>    
+    
+    <declare-styleable name="ProcessButton">
+        <attr name="pb_textProgress" format="string" />
+        <attr name="pb_textComplete" format="string" />
+        <attr name="pb_textError" format="string" />
+        <attr name="pb_colorProgress" format="color" />
+        <attr name="pb_colorComplete" format="color" />
+        <attr name="pb_colorError" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="FlatButton">
+        <attr name="pb_colorPressed" format="color" />
+        <attr name="pb_colorNormal" format="color" />
+        <attr name="pb_cornerRadius" format="dimension" />
+    </declare-styleable>    
+</resources>

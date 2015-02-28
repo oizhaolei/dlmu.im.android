@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    android:background="@color/main_background"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_change_friend_memo_msg_layout"
+        style="@style/chat_text_date_style"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/change_friend_memo_msg_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/input_your_memo_msg" />
+    </RelativeLayout>
+
+    <com.ruptech.chinatalk.widget.EditTextWithDel
+        android:id="@+id/activity_change_friend_memo_text"
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_change_friend_memo_msg_layout"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:gravity="left|top"
+        android:hint="@string/hint_input_your_memo"
+        android:inputType="textMultiLine"
+        android:maxHeight="100dp"
+        android:maxLength="50"
+        android:minHeight="80dp" />
+
+</RelativeLayout>

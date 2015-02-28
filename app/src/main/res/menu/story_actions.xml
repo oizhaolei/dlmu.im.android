@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <item
+        android:id="@+id/menu_item_story_change"
+        android:title="@string/empty"
+        android:actionViewClass="com.ruptech.chinatalk.ui.story.UserStoryNewListActivity"
+        android:icon="@drawable/ic_menu_as_grid"
+        android:onClick="doChangeType"
+        app:showAsAction="always"/>
+</menu>

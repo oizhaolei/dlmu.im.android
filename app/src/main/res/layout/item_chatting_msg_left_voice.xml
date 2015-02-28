@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="2dp" >
+
+    <TextView
+        android:id="@+id/item_chatting_createdtime_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_button_gray"
+        android:padding="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textColor="#ffffff"
+        android:textSize="12sp" />
+
+    <RelativeLayout
+        android:id="@+id/item_chatting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp" >
+
+        <FrameLayout
+            android:id="@+id/item_chatting_thumb_imageview_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" >
+
+            <RelativeLayout
+                android:id="@+id/item_chatting_user_thumb_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/item_chatting_user_thumb_imageview"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/item_chatting_user_sms_imageview"
+                    android:layout_width="16dp"
+                    android:layout_height="11dp"
+                    android:layout_alignBottom="@+id/item_chatting_user_thumb_imageview"
+                    android:layout_alignRight="@+id/item_chatting_user_thumb_imageview"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/sms"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/item_chatting_user_lang_imageview"
+                    android:layout_width="12dp"
+                    android:layout_height="8dp"
+                    android:layout_alignBottom="@+id/item_chatting_user_thumb_imageview"
+                    android:layout_alignLeft="@+id/item_chatting_user_thumb_imageview"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/cn" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/item_chatting_friend_mask"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/background_mask_img" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/item_chatting_time_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/item_chatting_thumb_imageview_layout"
+            android:layout_margin="5dp"
+            android:text="@string/empty"
+            android:textColor="#888888"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/item_chatting_from_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/item_chatting_thumb_imageview_layout"
+            android:background="@drawable/left_chat_to_bg"
+            android:gravity="left|center_vertical"
+            android:minWidth="75dp"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/item_chatting_voice_imageview"
+                    android:layout_width="17dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/left_chatfrom_voice_playing" />
+
+                <ProgressBar
+                    android:id="@+id/item_chatting_voice_play_process_bar"
+                    style="@style/left_player_voice_from_style"
+                    android:layout_width="17dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/item_chatting_divider"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/bg_shadow" />
+
+            <TextView
+                android:id="@+id/item_chatting_trans_content_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/chat_content_bg"
+                android:clickable="true"
+                android:textColor="#ff000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_chatting_length_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_alignTop="@+id/item_chatting_from_layout"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/item_chatting_from_layout"
+            android:textColor="#888888"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/item_chatting_auto_translation_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_chatting_from_layout"
+            android:layout_marginLeft="13dp"
+            android:layout_toRightOf="@+id/item_chatting_thumb_imageview_layout"
+            android:background="@drawable/background_auto_translation"
+            android:text="@string/auto_translation_msg"
+            android:textColor="#ff6600"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,199 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/main_background"
+    tools:context=".ui.story.UserStoryTranslateActivity" >
+
+    <LinearLayout
+        android:id="@+id/activity_story_translate_comment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_background_white"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="2dp" >
+
+            <ImageView
+                android:id="@+id/item_story_comment_user_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_portrait" />
+
+            <ImageView
+                android:id="@+id/item_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/background_mask_img" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:id="@+id/item_story_comment_fullname_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/item_story_comment_fullname_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/story" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:id="@+id/item_story_comment_lang_imageview"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/cn" />
+
+                    <TextView
+                        android:id="@+id/item_story_comment_content_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/chat_content_bg"
+                        android:padding="2dp"
+                        android:text="@string/story"
+                        android:textIsSelectable="true" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/activity_story_footer"
+        android:layout_below="@+id/activity_story_translate_comment_layout" >
+
+        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
+            android:id="@+id/swype"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ListView
+                android:id="@+id/activity_story_detail_translate_listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1dp"
+                android:drawSelectorOnTop="true"
+                android:listSelector="@drawable/list_selector" >
+            </ListView>
+        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/activity_story_detail_translate_listview_emptyview_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/no_found_new_friend"
+            android:textColor="#000"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_story_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <RelativeLayout
+            android:id="@+id/activity_story_add_translate_tips_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/preference_item"
+            android:paddingBottom="9dp"
+            android:paddingLeft="9dp"
+            android:paddingTop="9dp" >
+
+            <TextView
+                android:id="@+id/activity_story_add_translate_tips_textview"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/activity_story_add_translate_tips_imageview"
+                android:text="@string/participate_in_transaltion"
+                android:textColor="@color/yellow"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/activity_story_add_translate_tips_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/empty"
+                android:paddingRight="20dp"
+                android:scaleType="matrix"
+                android:src="@drawable/submenu" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/activity_story_add_translate_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/preference_item"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp" >
+
+            <com.ruptech.chinatalk.widget.EditTextWithLang
+                android:id="@+id/activity_story_translate_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/activity_story_translate_send_btn"
+                android:adjustViewBounds="true"
+                android:gravity="left|top"
+                android:hint="@string/empty"
+                android:inputType="textMultiLine"
+                android:maxHeight="150dp"
+                android:minHeight="32dp"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/activity_story_translate_send_btn"
+                style="@style/white_button"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/send"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

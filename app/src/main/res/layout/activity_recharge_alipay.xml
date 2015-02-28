@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alipay_recharge_rl1"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/activity_alipay_recharge_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="15dp"
+                android:contentDescription="@string/empty"
+                android:scaleType="matrix"
+                android:src="@drawable/alipay_logo" />
+
+            <ListView
+                android:id="@+id/activity_alipay_listview"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/activity_alipay_recharge_memo"
+                android:layout_below="@+id/activity_alipay_recharge_logo"
+                android:cacheColorHint="@android:color/transparent"
+                android:dividerHeight="1dp"
+                android:drawSelectorOnTop="true"
+                android:listSelector="@drawable/list_selector" >
+            </ListView>
+
+            <TextView
+                android:id="@+id/activity_alipay_recharge_memo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="3dp"
+                android:text="@string/alipay_recharge_memo" />
+        </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

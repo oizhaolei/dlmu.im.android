@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black_color" >
+
+    <TextView
+        android:id="@+id/tab_textview"
+        style="@android:attr/tabWidgetStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:lines="1"
+        android:text="@string/accept"
+        android:textColor="#ffffffff"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/tab_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tab_textview"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:padding="1dp"
+        android:src="@drawable/tab_icon_chat" />
+
+    <TextView
+        android:id="@+id/tab_number_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignTop="@+id/tab_icon"
+        android:layout_marginTop="-3dp"
+        android:layout_toRightOf="@id/tab_icon"
+        android:background="@drawable/new_mark"
+        android:gravity="center"
+        android:text="9"
+        android:textColor="#fff"
+        android:textSize="10.0dip"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/new_mark"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignTop="@+id/tab_icon"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@id/tab_icon"
+        android:background="@drawable/new_mark"
+        android:minWidth="10.0dip"
+        android:textSize="10.0dip"
+        android:visibility="invisible" />
+
+</RelativeLayout>

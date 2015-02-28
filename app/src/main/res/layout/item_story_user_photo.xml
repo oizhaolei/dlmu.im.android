@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFffffff"
+    android:focusableInTouchMode="true" >
+
+    <LinearLayout
+        android:id="@+id/item_user_story_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/item_user_story_timeline_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/item_user_story_timeline_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chat_content_bg"
+                android:ellipsize="end"
+                android:lines="1"
+                android:padding="2dp"
+                android:singleLine="true"
+                android:text="@string/story" />
+
+            <TextView
+                android:id="@+id/item_user_story_timeline_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/item_user_story_timeline_username"
+                android:lines="1"
+                android:padding="2dp"
+                android:singleLine="true"
+                android:text="@string/story"
+                android:textColor="#ff6600" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/item_user_story_pic_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
+
+            <RelativeLayout
+                android:id="@+id/item_user_story_pic_imageview_rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/item_user_story_pic_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/chat_content_bg"
+                    android:clickable="true"
+                    android:maxHeight="350dp"
+                    android:minHeight="200dp"
+                    android:scaleType="centerCrop" />
+
+                <com.ruptech.chinatalk.widget.ImageProgressBar
+                    android:id="@+id/image_progress_bar"
+                    style="@style/ProgressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:indeterminate="false"
+                    android:max="100" />
+
+                <RelativeLayout
+                    android:id="@+id/item_user_story_channel_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignTop="@+id/item_user_story_pic_imageview"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:id="@+id/item_user_story_channel_photo"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_portrait" />
+
+                    <ImageView
+                        android:id="@+id/item_channel_mask"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/background_mask_img"
+                        android:padding="2dp" />
+
+                    <TextView
+                        android:id="@+id/item_user_story_channel_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/item_user_story_channel_photo"
+                        android:background="@color/item_story_image_crop_mask_bg"
+                        android:lines="1"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/story"
+                        android:textColor="#ff6600" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/item_user_story_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/item_user_story_pic_imageview_rl"
+                android:layout_marginRight="12dp"
+                android:clickable="false"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/item_user_story_fullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/item_user_story_pic_imageview_rl"
+                android:layout_marginLeft="69dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/item_user_story_distance"
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="@string/username" />
+
+            <RelativeLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignBottom="@+id/item_user_story_fullname"
+                android:layout_alignLeft="@+id/item_user_story_pic_imageview_rl"
+                android:layout_marginLeft="12dp"
+                android:padding="1dp" >
+
+                <ImageView
+                    android:id="@+id/item_user_story_user_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_portrait" />
+
+                <ImageView
+                    android:id="@+id/item_mask"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/background_mask_img" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/story_content_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp" >
+
+            <LinearLayout
+                android:id="@+id/item_user_story_from_content_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:id="@+id/item_user_story_lang_imageview"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_margin="4dp"
+                    android:src="@drawable/cn" />
+
+                <TextView
+                    android:id="@+id/item_user_story_content_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chat_content_bg"
+                    android:padding="2dp"
+                    android:text="@string/story" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/item_user_story_my_content_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:src="#cccccc" />
+
+            <ImageView
+                android:id="@+id/item_user_story_my_lang_imageview"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_margin="4dp"
+                android:src="@drawable/kr" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/item_user_story_my_content_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:padding="2dp"
+                    android:text="@string/story" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp" >
+
+            <LinearLayout
+                android:id="@+id/item_user_story_bottom_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/activity_user_story_bottom_delete_view"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/item_user_story_reply_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:padding="1dp"
+                        android:src="@drawable/ic_indicator_reply" />
+
+                    <TextView
+                        android:id="@+id/item_user_story_image_reply_textview"
+                        style="@style/unimportance_contents_text_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/item_user_story_good_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:adjustViewBounds="true"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:id="@+id/item_user_story_good_imageview"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:padding="1dp"
+                        android:src="@drawable/ic_action_social_like_unselected" />
+
+                    <TextView
+                        android:id="@+id/item_user_story_image_good_textview"
+                        style="@style/unimportance_contents_text_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/item_user_story_gift_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:adjustViewBounds="true"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:id="@+id/item_user_story_gift_textview"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:padding="1dp"
+                        android:src="@drawable/ic_action_present" />
+
+                    <TextView
+                        android:id="@+id/item_user_story_image_gift_textview"
+                        style="@style/unimportance_contents_text_style"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_user_story_bottom_delete_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical|right"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:id="@+id/item_user_story_delete_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/background_button_white"
+                    android:clickable="true"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:id="@+id/item_user_story_delete_textview"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:padding="1dp"
+                        android:src="@drawable/ic_action_social_delete" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
