@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -41,6 +40,8 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.SearchAutoComplete;
 import android.util.Log;
@@ -1331,7 +1332,7 @@ public class Utils {
     }
 
     public static void showCustomActionbar(Activity activity, View customView) {
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = ((ActionBarActivity)activity).getSupportActionBar();
         if (actionBar!=null) {
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setCustomView(customView);
@@ -1351,7 +1352,7 @@ public class Utils {
     }
 
     public static void showNormalActionBar(Activity activity) {
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = ((ActionBarActivity)activity).getSupportActionBar();
         if (actionBar!=null) {
             actionBar.setDisplayShowCustomEnabled(false);
             actionBar.setDisplayShowTitleEnabled(true);
