@@ -1,13 +1,10 @@
 package com.ruptech.chinatalk.ui.user;
 
-import java.util.ArrayList;
-
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.ViewPager;
@@ -24,8 +21,6 @@ import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -53,6 +48,11 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.TapPagerAdapter;
 import com.ruptech.chinatalk.widget.UserPhotoListArrayAdapter;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FriendProfileActivity extends ActionBarActivity implements
 		ScrollTabHolder, ViewPager.OnPageChangeListener {
@@ -433,13 +433,7 @@ public class FriendProfileActivity extends ActionBarActivity implements
 			return mActionBarHeight;
 		}
 
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-			getTheme().resolveAttribute(android.R.attr.actionBarSize,
-					mTypedValue, true);
-		} else {
-			getTheme()
-					.resolveAttribute(R.attr.actionBarSize, mTypedValue, true);
-		}
+		getTheme().resolveAttribute(R.attr.actionBarSize, mTypedValue, true);
 
 		mActionBarHeight = TypedValue.complexToDimensionPixelSize(
 				mTypedValue.data, getResources().getDisplayMetrics());
@@ -542,13 +536,13 @@ public class FriendProfileActivity extends ActionBarActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
 		setContentView(R.layout.activity_friend_profile);
 		ButterKnife.inject(this);
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setSupportProgressBarIndeterminateVisibility(false);
 
 		instance = this;
 
