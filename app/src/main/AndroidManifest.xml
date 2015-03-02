@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ruptech.chinatalk"
-    android:versionCode="2015021116"
+    android:versionCode="2015030211"
     android:versionName="2.5.0" >
 
     <uses-sdk
