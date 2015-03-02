@@ -182,15 +182,15 @@
                 app:confirm_logout="false"
                 app:fetch_user_info="true" />
 
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_login_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:gravity="center" >
-            </com.google.android.gms.common.SignInButton>
+            <!--<com.google.android.gms.common.SignInButton-->
+                <!--android:id="@+id/google_login_btn"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:gravity="center" >-->
+            <!--</com.google.android.gms.common.SignInButton>-->
 
             <com.sina.weibo.sdk.widget.LoginButton
                 android:id="@+id/sina_login_btn"

@@ -1251,7 +1251,7 @@ public class Utils {
 
         SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
                 report);
-        sendClientMessageTask.execute();
+        //sendClientMessageTask.execute();
     }
 
     public static void setGiftPicImage(ImageView imageView, String url) {
@@ -1332,11 +1332,13 @@ public class Utils {
 
     public static void showCustomActionbar(Activity activity, View customView) {
         ActionBar actionBar = activity.getActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(customView);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        if (actionBar!=null) {
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(customView);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     public static ProgressDialog showDialog(Context context, String msg) {
@@ -1350,10 +1352,12 @@ public class Utils {
 
     public static void showNormalActionBar(Activity activity) {
         ActionBar actionBar = activity.getActionBar();
-        actionBar.setDisplayShowCustomEnabled(false);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        if (actionBar!=null) {
+            actionBar.setDisplayShowCustomEnabled(false);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     public static void showStoryTranslateAlertDialog(final Context context,
