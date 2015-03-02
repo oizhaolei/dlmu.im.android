@@ -4,6 +4,7 @@
     <style name="Theme.Yellow_light" parent="@style/Theme.AppCompat.Light">
         <item name="android:selectableItemBackground">@drawable/actionbar_transparent_yellow_light</item>
         <item name="android:actionBarStyle">@style/MyActionBarStyle</item>
+        <item name="actionBarStyle">@style/MyActionBarStyle</item>
         <item name="android:dropDownListViewStyle">@style/MyDropDownListView</item>
         <item name="android:textViewStyle">@style/MyTextViewStyle</item>
         <item name="android:editTextStyle">@style/MyEditTextStyle</item>
@@ -21,6 +22,8 @@
     <style name="MyActionBarStyle" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@color/action_bar_background</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleStyle</item>
+        <item name="background">@color/action_bar_background</item>
+        <item name="titleTextStyle">@style/MyActionBarTitleStyle</item>
     </style>
 
     <style name="MyActionBarTitleStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
