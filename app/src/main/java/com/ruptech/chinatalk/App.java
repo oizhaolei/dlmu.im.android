@@ -360,7 +360,7 @@ public class App extends Application implements
         if (previousException != null) {
             SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
                     previousException);
-            sendClientMessageTask.execute();
+            //sendClientMessageTask.execute();
             PrefUtils.removePrefException();
         }
     }
