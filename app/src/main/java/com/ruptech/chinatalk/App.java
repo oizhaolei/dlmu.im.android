@@ -31,6 +31,7 @@ import com.ruptech.chinatalk.http.HttpServer;
 import com.ruptech.chinatalk.http.HttpStoryServer;
 import com.ruptech.chinatalk.map.MyLocation;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.TTTalkSmack;
 import com.ruptech.chinatalk.sqlite.ChannelDAO;
 import com.ruptech.chinatalk.sqlite.CommentNewsDAO;
 import com.ruptech.chinatalk.sqlite.FriendDAO;
@@ -42,18 +43,26 @@ import com.ruptech.chinatalk.task.TaskManager;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
+import com.ruptech.chinatalk.utils.AssetsPropertyReader;
 import com.ruptech.chinatalk.utils.BadgeCount;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.squareup.otto.Bus;
+import com.squareup.otto.ThreadEnforcer;
 import com.tencent.tauth.Tencent;
 
 import java.io.File;
+import java.util.Properties;
 
 public class App extends Application implements
         Thread.UncaughtExceptionHandler {
+
+    public static Bus mBus;
+    public static TTTalkSmack mSmack;
+    static public Properties properties;
 
     public static void baiduRegiste(Context context) {
 //        PushManager.startWork(context, PushConstants.LOGIN_TYPE_API_KEY,
@@ -288,6 +297,12 @@ public class App extends Application implements
         if (BuildConfig.DEBUG)
             Log.e(TAG, "App.onCreate");
 
+        mBus = new Bus(ThreadEnforcer.ANY);
+        mBus.register(this);
+
+        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
+        properties = assetsPropertyReader.getProperties("env.properties");
+
         // setup handler for uncaught exception
         Thread.setDefaultUncaughtExceptionHandler(this);
         mContext = this.getApplicationContext();
@@ -341,7 +356,7 @@ public class App extends Application implements
 
     @Override
     public void onTerminate() {
-        super.onTerminate();
+
         if (BuildConfig.DEBUG)
             Log.e(TAG, "onTerminate");
 
@@ -353,6 +368,9 @@ public class App extends Application implements
             mPlayer.release();
             mPlayer = null;
         }
+
+        mBus.unregister(this);
+        super.onTerminate();
     }
 
     private void checkPreviousException() {

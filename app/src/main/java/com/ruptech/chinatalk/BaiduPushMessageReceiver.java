@@ -15,7 +15,6 @@ import com.ruptech.chinatalk.task.impl.RetrieveMessageTask;
 import com.ruptech.chinatalk.task.impl.RetrieveQaByIdTask;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.ServerUtilities;
 import com.ruptech.chinatalk.utils.Utils;
 
 import org.json.JSONObject;
@@ -153,7 +152,7 @@ public class BaiduPushMessageReceiver {
         if (errorCode == 0) {
             mUserlId = userId;
             registered = true;
-            ServerUtilities.registerBaiduPushOnServer(context);
+//            ServerUtilities.registerBaiduPushOnServer(context);
         }
     }
 

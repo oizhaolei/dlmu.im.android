@@ -550,4 +550,7 @@
     <string name="share_to_my_friend">アプリをお勧め</string>
     <string name="invite_message">「%1$s」様が貴方をTTTalkに招待しました。\n翻訳チャットで世界と出会いましょう。\n%2$s</string>
     <string name="channel_is_not_exist">チャットの存在しない。</string>
+
+    <string name="start_receiving_messages">新しい翻訳要請がある度に通知を受け取る事が可能です</string>
+    <string name="stop_receiving_messages">次回アプリを開くまで通知を受け取る事ができません</string>
 </resources>

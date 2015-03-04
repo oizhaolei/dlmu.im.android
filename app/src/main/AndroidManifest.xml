@@ -646,6 +646,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".XMPPService" />
+
         <!-- http://lbsyun.baidu.com/apiconsole/key -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

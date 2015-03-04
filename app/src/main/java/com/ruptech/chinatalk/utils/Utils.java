@@ -284,9 +284,6 @@ public class Utils {
         ProfileActivity.close();
         SettingSystemInfoActivity.close();
         // 结束
-
-        ServerUtilities.unregisterGCMOnServer(context);
-        ServerUtilities.unregisterBaiduPushOnServer(context);
         App.removeUser();
 
         App.friendDAO.deleteAll();
@@ -1541,4 +1538,7 @@ public class Utils {
         new Thread(runnable).start();
     }
 
+    public static String getOF_username(long ttalkid){
+        return String.format("chinatalk_%d", ttalkid);
+    }
 }

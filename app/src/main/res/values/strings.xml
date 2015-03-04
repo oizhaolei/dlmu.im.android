@@ -558,4 +558,8 @@
     <string name="share_to_my_friend">Share to Friend</string>
     <string name="invite_message">%1$sInvite you to use the TTTalk. Were looking for overseas friends, chat, and other exotic experiences together. \n Please click on the link below to download。\n%2$s</string>
     <string name="channel_is_not_exist">channel is not exist。</string>
+
+    <string name="start_receiving_messages">You are online, ready to receive the translate request.</string>
+    <string name="stop_receiving_messages">You are offline, no more message will interrupt you.</string>
+
 </resources>
