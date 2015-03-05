@@ -58,6 +58,7 @@ import com.ruptech.chinatalk.BaiduPushMessageReceiver;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.StoryTranslate;
@@ -309,6 +310,8 @@ public class Utils {
         App.facebookSession = null;
 //		App.googlePlusClient = null;
         App.wechatAccessToken = null;
+
+        App.mBus.post(new LogoutEvent());
     }
 
     /**
