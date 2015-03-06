@@ -1,16 +1,10 @@
 package com.ruptech.chinatalk.ui;
 
 import android.content.AsyncQueryHandler;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -74,29 +68,7 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
     private InputMethodManager mInputMethodManager;
     private String mWithJabberID = null;// 当前聊天用户的ID
     private ContentObserver mContactObserver = new ContactObserver();// 联系人数据监听，主要是监听对方在线状态
-    private XMPPService mService;// Main服务
-    ServiceConnection mServiceConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            XMPPService.XBinder binder = (XMPPService.XBinder) service;
-            mService = binder.getService();
-            if (!mService.isAuthenticated()) {
-                String account = Utils.getOF_username(App.readUser().getId());
-                String password = App.readUser().getPassword();
-
-                mService.login(account, password);
-                // setStatusImage(false);
-                // mTitleProgressBar.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-        }
-
-    };
     private TranslateClient client;
 
     // 【重要】 onCreate时候初始化翻译相关功能
@@ -107,28 +79,7 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
         client.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
     }
 
-    /**
-     * 解绑服务
-     */
-    private void unbindXMPPService() {
-        try {
-            unbindService(mServiceConnection);
-            Log.i(TAG, "unbindXMPPService");
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Service wasn't bound!");
-        }
-    }
 
-    /**
-     * 绑定服务
-     */
-    private void bindXMPPService() {
-        Log.i(TAG, "bindXMPPService");
-        Intent serviceIntent = new Intent(this, XMPPService.class);
-        Uri chatURI = Uri.parse(mWithJabberID);
-        serviceIntent.setData(chatURI);
-        bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,7 +140,7 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
     @Override
     protected void onDestroy() {
         if (hasWindowFocus())
-            unbindXMPPService();// 解绑服务
+            App.unbindXMPPService();// 解绑服务
         getContentResolver().unregisterContentObserver(mContactObserver);
 
         if (client != null) {
@@ -204,11 +155,10 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
         super.onWindowFocusChanged(hasFocus);
         // 窗口获取到焦点时绑定服务，失去焦点将解绑
         if (hasFocus)
-            bindXMPPService();
+            App.bindXMPPService();
         else
-            unbindXMPPService();
+            App.unbindXMPPService();
     }
-
     private void initData() {
         mWithJabberID = getIntent().getDataString().toLowerCase();// 获取聊天对象的id
         // 将表情map的key保存在数组中
@@ -292,10 +242,10 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
 
     private void sendMessageIfNotNull() {
         if (mChatEditText.getText().length() >= 1) {
-            if (mService != null) {
-                mService.sendMessage(mWithJabberID, mChatEditText.getText()
+            if (App.mService != null) {
+                App.mService.sendMessage(mWithJabberID, mChatEditText.getText()
                         .toString(), null);
-                if (!mService.isAuthenticated())
+                if (!App.mService.isAuthenticated())
                     Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
             }
             mChatEditText.setText(null);
@@ -351,10 +301,6 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
                 getSupportActionBar().setTitle(reason);
                 break;
         }
-    }
-
-    public XMPPService getService() {
-        return mService;
     }
 
     /**
