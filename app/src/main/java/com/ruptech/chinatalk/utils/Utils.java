@@ -1252,7 +1252,7 @@ public class Utils {
 
         SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
                 report);
-        //sendClientMessageTask.execute();
+        sendClientMessageTask.execute();
     }
 
     public static void setGiftPicImage(ImageView imageView, String url) {
