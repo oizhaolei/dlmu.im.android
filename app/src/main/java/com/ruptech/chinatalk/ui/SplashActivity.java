@@ -18,7 +18,7 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.VersionCheckTask;
+import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
@@ -72,9 +72,9 @@ public class SplashActivity extends Activity {
 	}
 
 	private void doCheckServerInfo() {
-		VersionCheckTask mVersionCheckTask = new VersionCheckTask();
-		mVersionCheckTask.setListener(serverInfoCheckTaskListener);
-		mVersionCheckTask.execute();
+		RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
+		mRetrieveServerVersionTask.setListener(serverInfoCheckTaskListener);
+		mRetrieveServerVersionTask.execute();
 	}
 
 	private void gotoDispatchActivity() {

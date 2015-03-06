@@ -49,9 +49,9 @@ import com.ruptech.chinatalk.ui.setting.AgreementActivity;
 import com.ruptech.chinatalk.ui.setting.IntroduceActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.user.SignupProfileActivity;
+import com.ruptech.chinatalk.utils.ApkUpgrade;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
-import com.ruptech.chinatalk.utils.DownloadApk;
 import com.ruptech.chinatalk.utils.InviteFriendUtils;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
@@ -95,7 +95,6 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    Timer checkTimer = null;
     Timer locationTimer = null;
 
     Timer periodTimer = null;
@@ -157,9 +156,9 @@ public class MainActivity extends ActionBarActivity implements
 //		}
     }
 
-    private void checkVersionSilently(final DownloadApk downloadApk) {
+    private void checkVersionSilently(final ApkUpgrade downloadApk) {
         // version check
-        downloadApk.doVersionCheck(new TaskAdapter() {
+        downloadApk.doRetrieveServerVersion(new TaskAdapter() {
 
             @Override
             public void onPostExecute(GenericTask task, TaskResult result) {
@@ -373,9 +372,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onDestroy() {
         try {
-            if (checkTimer != null) {
-                checkTimer.cancel();
-            }
             if (locationTimer != null) {
                 locationTimer.cancel();
             }
@@ -486,16 +482,6 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     private void periodTimerTask() {
-        // 检查版本
-        final DownloadApk downloadApk = new DownloadApk(MainActivity.this);
-        checkTimer = new Timer();
-        checkTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                checkVersionSilently(downloadApk);
-                checkPushService();
-            }
-        }, 6 * 1000, 15 * 60 * 1000);// 6s,15 minutes
 
         // 上传自己的地址
         locationTimer = new Timer();
@@ -657,11 +643,8 @@ public class MainActivity extends ActionBarActivity implements
     public void answerNewChatReceived(final NewChatEvent event) {
         mainHandler.post(new Runnable() {
             public void run() {
-                Toast.makeText(App.mContext,
-                        "answerNewChatReceived:" + event.chatMessage,
-                        Toast.LENGTH_SHORT).show();
                 MediaPlayer.create(MainActivity.this, R.raw.office).start();
-                App.mService.notifyClient(event.fromJID, Utils.getFriendNameFromOF_JID(event.fromJID), event.chatMessage,true);
+                App.mService.notifyClient(event.fromJID, Utils.getFriendNameFromOF_JID(event.fromJID), event.chatMessage, true);
             }
         });
     }

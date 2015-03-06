@@ -11,14 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BaiduPushMessageReceiver;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.utils.ApkUpgrade;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
-import com.ruptech.chinatalk.utils.DownloadApk;
 import com.ruptech.chinatalk.utils.Utils;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class AboutTTTalkActivity extends ActionBarActivity {
 
     private boolean isShowChinaQQ;
 
-    private DownloadApk downloadApk;
+    private ApkUpgrade downloadApk;
 
     private ProgressDialog progressDialog;
 
@@ -59,8 +58,8 @@ public class AboutTTTalkActivity extends ActionBarActivity {
     @OnClick(R.id.main_tab_setting_check_version_layout)
     public void checkVersion(View v) {
         // version check
-        downloadApk = new DownloadApk(AboutTTTalkActivity.this);
-        downloadApk.doVersionCheck(new TaskAdapter() {
+        downloadApk = new ApkUpgrade(AboutTTTalkActivity.this);
+        downloadApk.doRetrieveServerVersion(new TaskAdapter() {
 
             @Override
             public void onPostExecute(GenericTask task, TaskResult result) {

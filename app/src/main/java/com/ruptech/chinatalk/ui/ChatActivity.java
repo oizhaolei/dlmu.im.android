@@ -45,8 +45,8 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
-import com.ruptech.chinatalk.task.impl.VersionCheckTask;
 import com.ruptech.chinatalk.ui.setting.ChatSettingActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
@@ -622,8 +622,8 @@ public class ChatActivity extends AbstractChatActivity {
 		mRetrieveUserTask.setListener(mRetrieveUserListener);
 		mRetrieveUserTask.execute();
 
-		VersionCheckTask mVersionCheckTask = new VersionCheckTask();
-		mVersionCheckTask.execute();
+		RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
+		mRetrieveServerVersionTask.execute();
 	}
 
 	private void selectMessageFace() {
