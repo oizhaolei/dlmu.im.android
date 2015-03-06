@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -90,6 +91,9 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
                 .convertNormalStringToSpannableString(mContext, message, true));
         viewHolder.dataView.setText(date);
 
+        String thumb = Utils.getPicUrlFromOF_JID(jid);
+        Utils.setUserPicImage(viewHolder.icon, thumb);
+
         if (msgcursor.getInt(0) > 0) {
             viewHolder.msgView.setText(msgcursor.getString(msgcursor
                     .getColumnIndex(ChatTable.Columns.MESSAGE)));
@@ -107,6 +111,8 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 
 
     static class ViewHolder {
+        @InjectView(R.id.icon)
+        ImageView icon;
         @InjectView(R.id.recent_list_item_name)
         TextView jidView;
         @InjectView(R.id.recent_list_item_time)

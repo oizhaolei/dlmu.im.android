@@ -33,6 +33,7 @@ import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
 import com.ruptech.chinatalk.utils.TimeUtil;
+import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import org.jivesoftware.smack.packet.PacketExtension;
@@ -160,6 +161,9 @@ public class ChatAdapter extends SimpleCursorAdapter {
         if (!from_me && chat.getRead() == ChatProvider.DS_NEW) {
             markAsReadDelayed(chat.getId(), DELAY_NEWMSG);
         }
+
+        String thumb = Utils.getPicUrlFromOF_JID(chat.getJid());
+        Utils.setUserPicImage(viewHolder.avatar, thumb);
 
         viewHolder.avatar.setBackgroundResource(R.drawable.default_portrait);
 //        if (from_me
