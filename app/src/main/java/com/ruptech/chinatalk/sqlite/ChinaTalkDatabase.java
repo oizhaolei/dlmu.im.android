@@ -47,9 +47,9 @@ public class ChinaTalkDatabase {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if (BuildConfig.DEBUG)
 				Log.d(TAG, "Upgrade Database.");
-			if (oldVersion >= 59) {
+			if (oldVersion == 57) {
 				try {
-					udpateTable59to60(db);
+					udpateTable57to60(db);
 				} catch (Exception e) {
 					Utils.sendClientException(e);
 				}
@@ -145,8 +145,7 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable59to60(SQLiteDatabase db) {
-        db.execSQL(ChatTable.getDropSQL());
+	private static void udpateTable57to60(SQLiteDatabase db) {
         db.execSQL(ChatTable.getCreateSQL());
         db.execSQL(RosterTable.getCreateSQL());
 	}
