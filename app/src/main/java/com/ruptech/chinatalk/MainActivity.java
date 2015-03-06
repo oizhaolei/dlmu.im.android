@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.ruptech.chinatalk.MainTabLayout.OnTabClickListener;
 import com.ruptech.chinatalk.event.BalanceChangeEvetnt;
 import com.ruptech.chinatalk.event.LogoutEvent;
+import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
@@ -683,6 +684,17 @@ public class MainActivity extends ActionBarActivity implements
             public void run() {
                 Toast.makeText(App.mContext,
                         "answerNewVersionFound",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerNewChatReceived(final NewChatEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                Toast.makeText(App.mContext,
+                        "answerNewChatReceived:" + event.chatMessage,
                         Toast.LENGTH_SHORT).show();
             }
         });

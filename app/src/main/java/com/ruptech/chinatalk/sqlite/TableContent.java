@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.model.Channel;
+import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.CommentNews;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
@@ -14,6 +15,8 @@ import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.model.UserProp;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
 
 public abstract class TableContent {
 	public static class ChannelTable {
@@ -989,6 +992,120 @@ public abstract class TableContent {
 		}
 	}
 
+    public static class ChatTable {
+        public static class Columns {
+            public final String ID = "_id";
+            public final String DATE = "date";
+            public final String DIRECTION = "from_me";
+            public final String JID = "jid";
+            public final String MESSAGE = "message";
+            public final String TO_MESSAGE = "to_content";
+            public final String MESSAGE_ID = "message_id";
+            public final String DELIVERY_STATUS = "read";
+            public final String PACKET_ID = "pid";
+        }
+
+        public static final Columns Columns = new Columns();
+
+        public String getCreateIndexSQL() {
+            String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
+                    + " ( " + Columns.MESSAGE_ID + " );";
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql.toString());
+            return sql;
+        }
+
+        public String getCreateSQL() {
+            StringBuffer create = new StringBuffer(512);
+            create.append("CREATE TABLE ").append(getName()).append("( ");
+            create.append(Columns.ID + " LONG PRIMARY KEY, ");
+            create.append(Columns.DATE + " INTEGER, ");
+            create.append(Columns.DIRECTION + " INTEGER, ");
+            create.append(Columns.JID + " TEXT, ");
+            create.append(Columns.MESSAGE + " TEXT, ");
+            create.append(Columns.TO_MESSAGE + " TEXT, ");
+            create.append(Columns.DELIVERY_STATUS + " INTEGER, ");
+            create.append(Columns.MESSAGE_ID + " TEXT, ");
+            create.append(Columns.PACKET_ID + " TEXT ");
+            create.append(");");
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + create.toString());
+            return create.toString();
+        }
+
+        public String getDropSQL() {
+            String sql = "DROP TABLE IF EXISTS " + getName();
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql);
+            return sql;
+        }
+
+        public String[] getIndexColumns() {
+            return new String[] { Columns.ID, Columns.DATE, Columns.DIRECTION, Columns.JID,
+                    Columns.MESSAGE, Columns.TO_MESSAGE,
+                    Columns.DELIVERY_STATUS, Columns.MESSAGE_ID, Columns.PACKET_ID };
+        }
+
+        public static String getName() {
+            return "tbl_chat";
+        }
+
+        public static Chat parseCursor(Cursor cursor) {
+            if (null == cursor || 0 == cursor.getCount()) {
+                return null;
+            } else if (-1 == cursor.getPosition()) {
+                cursor.moveToFirst();
+            }
+
+            Chat chat = new Chat();
+            chat.setDate(cursor.getLong(cursor
+                    .getColumnIndex(Columns.DATE)));
+            chat.setMessageId(cursor.getLong(cursor
+                    .getColumnIndex(Columns.MESSAGE_ID)));
+            chat.setId(cursor.getInt(cursor
+                    .getColumnIndex(Columns.ID)));
+            chat.setMessage(cursor.getString(cursor
+                    .getColumnIndex(Columns.MESSAGE)));
+            chat.setTo_content(cursor.getString(cursor
+                    .getColumnIndex(Columns.TO_MESSAGE)));
+            chat.setFromMe(cursor.getInt(cursor
+                    .getColumnIndex(Columns.DIRECTION)));// 消息来自
+            chat.setJid(cursor.getString(cursor
+                    .getColumnIndex(Columns.JID)));
+            chat.setPid(cursor.getString(cursor
+                    .getColumnIndex(Columns.PACKET_ID)));
+            chat.setRead(cursor.getInt(cursor
+                    .getColumnIndex(Columns.DELIVERY_STATUS)));
+
+            return chat;
+
+        }
+
+        /** * Message -> ContentValues * * @param message * @param isUnread * @return */
+        public ContentValues toContentValues(Chat chat) {
+            final ContentValues v = new ContentValues();
+            v.put(Columns.ID, chat.getId());
+            v.put(Columns.DATE, chat.getDate());
+            v.put(Columns.DIRECTION, chat.getFromMe());
+            v.put(Columns.JID, chat.getJid());
+            v.put(Columns.MESSAGE, chat.getMessage());
+            v.put(Columns.TO_MESSAGE, chat.getTo_content());
+            v.put(Columns.DELIVERY_STATUS, chat.getRead());
+            v.put(Columns.MESSAGE_ID, chat.getMessageId());
+            v.put(Columns.PACKET_ID, chat.getPid());
+            return v;
+        }
+
+        public static ArrayList<String> getRequiredColumns() {
+            ArrayList<String> tmpList = new ArrayList<>();
+            tmpList.add(Columns.DATE);
+            tmpList.add(Columns.DIRECTION);
+            tmpList.add(Columns.JID);
+            tmpList.add(Columns.MESSAGE);
+            return tmpList;
+        }
+    }
+
 	private static final String TAG = Utils.CATEGORY
 			+ TableContent.class.getSimpleName();
 	public static ChannelTable ChannelTable = new ChannelTable();
@@ -999,4 +1116,5 @@ public abstract class TableContent {
 	public static UserPhotoTable UserPhotoTable = new UserPhotoTable();
 	public static UserPropTable UserPropTable = new UserPropTable();
 	public static CommentNewsTable CommentNewsTable = new CommentNewsTable();
+    public static ChatTable ChatTable = new ChatTable();
 }
