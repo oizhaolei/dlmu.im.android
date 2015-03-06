@@ -12,7 +12,15 @@ android {
         testApplicationId "com.ruptech.chinatalk.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
-
+    dexOptions {
+        jumboMode true
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -20,11 +28,12 @@ android {
         }
     }
 }
+repositories { mavenCentral() }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':weiboSDK')
-    compile project(':facebookSDK')
+    compile 'com.facebook.android:facebook-android-sdk:3.23.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'it.sephiroth.android.library.imagezoom:library:1.0.4'
     compile 'com.android.support:support-v4:21.0.3'

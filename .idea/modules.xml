@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/facebookSDK/facebookSDK.iml" filepath="$PROJECT_DIR$/facebookSDK/facebookSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/tttalk-android.iml" filepath="$PROJECT_DIR$/tttalk-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/weiboSDK/weiboSDK.iml" filepath="$PROJECT_DIR$/weiboSDK/weiboSDK.iml" />
     </modules>

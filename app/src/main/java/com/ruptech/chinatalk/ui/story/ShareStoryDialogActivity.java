@@ -662,13 +662,13 @@ public class ShareStoryDialogActivity extends Activity {
                                                 ShareStoryDialogActivity.this,
                                                 R.string.share_canceled,
                                                 Toast.LENGTH_SHORT).show();
-                                    } else if (FacebookDialog.COMPLETION_GESTURE_POST
-                                            .equals(result)) {
-                                        // Facebook分享成功
-                                        Toast.makeText(
-                                                ShareStoryDialogActivity.this,
-                                                R.string.share_success,
-                                                Toast.LENGTH_SHORT).show();
+// TODO                                   } else if (FacebookDialog.COMPLETION_GESTURE_POST
+//                                            .equals(result)) {
+//                                        // Facebook分享成功
+//                                        Toast.makeText(
+//                                                ShareStoryDialogActivity.this,
+//                                                R.string.share_success,
+//                                                Toast.LENGTH_SHORT).show();
                                     } else {
                                         // user cancel
                                         Toast.makeText(
