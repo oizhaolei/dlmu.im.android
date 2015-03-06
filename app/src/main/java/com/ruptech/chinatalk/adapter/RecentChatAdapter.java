@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.TimeUtil;
+import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import butterknife.ButterKnife;
@@ -83,10 +85,14 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.jidView.setText(XMPPUtils.splitJidAndServer(jid));
+        String name = Utils.getFriendNameFromOF_JID(jid);
+        viewHolder.jidView.setText(name);
         viewHolder.msgView.setText(XMPPUtils
                 .convertNormalStringToSpannableString(mContext, message, true));
         viewHolder.dataView.setText(date);
+
+        String thumb = Utils.getPicUrlFromOF_JID(jid);
+        Utils.setUserPicImage(viewHolder.icon, thumb);
 
         if (msgcursor.getInt(0) > 0) {
             viewHolder.msgView.setText(msgcursor.getString(msgcursor
@@ -105,6 +111,8 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 
 
     static class ViewHolder {
+        @InjectView(R.id.icon)
+        ImageView icon;
         @InjectView(R.id.recent_list_item_name)
         TextView jidView;
         @InjectView(R.id.recent_list_item_time)

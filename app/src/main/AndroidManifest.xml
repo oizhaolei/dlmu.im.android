@@ -466,11 +466,7 @@
             android:name="com.ruptech.chinatalk.ui.friend.FriendsLeaderboardListActivity"
             android:icon="@drawable/ic_tttalk_gray_light"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.XmppChatActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <service android:name="com.ruptech.chinatalk.ui.UpdateVersionService" />
 
         <!--<receiver-->

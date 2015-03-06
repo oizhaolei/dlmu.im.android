@@ -1546,14 +1546,13 @@ public class Utils {
     }
 
     public static String getFriendNameFromOF_JID(String jid){
-        String pattern = "chinatalk_";
+        long tttalkID = getTTTalkIDFromOF_JID(jid);
         String name = "TTTalk.org";
-        if (jid.contains(pattern)) {
-            long friend_id = Long.parseLong(jid.substring("chinatalk_".length(), jid.indexOf("@")));
-            Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(), friend_id);
+        if (tttalkID > 0) {
+            Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(), tttalkID);
             name = friend.getFriend_nickname();
             if (friend == null || Utils.isEmpty(name)) {
-                User user = App.userDAO.fetchUser(Long.valueOf(friend_id));
+                User user = App.userDAO.fetchUser(tttalkID);
                 if (user != null)
                     name = user.getFullname();
             }
@@ -1562,5 +1561,25 @@ public class Utils {
         if (Utils.isEmpty(name))
             name = "TTTalk.org";
         return name;
+    }
+
+    public static String getPicUrlFromOF_JID(String jid){
+        long tttalkID = getTTTalkIDFromOF_JID(jid);
+        String url = null;
+        if (tttalkID > 0) {
+            User user = App.userDAO.fetchUser(tttalkID);
+            if (user != null)
+                url = user.getPic_url();
+        }
+        return url;
+    }
+
+    public static long getTTTalkIDFromOF_JID(String jid){
+        long tttalkId = -1;
+        String pattern = "chinatalk_";
+        if (jid.contains(pattern)) {
+            tttalkId = Long.parseLong(jid.substring("chinatalk_".length(), jid.indexOf("@")));
+        }
+        return tttalkId;
     }
 }

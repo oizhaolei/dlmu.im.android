@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +35,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
 import com.ruptech.chinatalk.model.CommentNews;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
@@ -44,7 +44,7 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.DeleteCommentNewsTask;
-import com.ruptech.chinatalk.ui.XmppChatActivity;
+import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.fragment.SegmentTabLayout.OnSegmentClickListener;
 import com.ruptech.chinatalk.ui.setting.SettingQaActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
@@ -196,10 +196,9 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 
 
     private void startChatActivity(String userJid, String userName) {
-        Intent chatIntent = new Intent(getActivity(), XmppChatActivity.class);
-        Uri userNameUri = Uri.parse(userJid);
-        chatIntent.setData(userNameUri);
-        chatIntent.putExtra(XmppChatActivity.INTENT_EXTRA_USERNAME, userName);
+        User user = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(userJid));
+        Intent chatIntent = new Intent(getActivity(),ChatActivity.class);
+        chatIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
         startActivity(chatIntent);
     }
 
