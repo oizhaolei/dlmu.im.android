@@ -43,7 +43,7 @@ OnRefreshListener {
 		} else {
 			return "";
 		}
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("month", String.valueOf(searchMonth.toString()));
 		params.put("minute_offset",
 				String.valueOf(DateCommonUtils.getTimezoneMinuteOffset()));

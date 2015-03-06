@@ -128,7 +128,7 @@ public class Utils {
     }
 
     public static Map<String, String> additionalHeaders() {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         String lang = Utils.getUserLanguage();
         headers.put("Accept-Language", lang);
         return headers;
@@ -176,7 +176,7 @@ public class Utils {
 
     public static Map<String, String> convertJsonItem(JSONObject jo)
             throws JSONException {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         @SuppressWarnings("unchecked")
         Iterator<String> keys = jo.keys();
         while (keys.hasNext()) {

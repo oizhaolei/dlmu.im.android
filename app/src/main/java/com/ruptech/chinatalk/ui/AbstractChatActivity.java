@@ -546,11 +546,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 			Log.i(TAG, "onDestroy:" + (System.currentTimeMillis() - start));
 	}
 
-	protected void onExpandFooter(View v) {
-
-	}
-
-	@Override
+    @Override
 	public void onPause() {
 		long start = System.currentTimeMillis();
 		super.onPause();

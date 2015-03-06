@@ -126,7 +126,7 @@ public abstract class HttpConnection {
 
 		//
 		if (params == null) {
-			params = new HashMap<String, String>();
+			params = new HashMap<>();
 		}
 
 		String url = ifPage;
@@ -223,7 +223,7 @@ public abstract class HttpConnection {
 
 	public static Map<String, String> genParams(Map<String, String> params) {
 		if (params == null) {
-			params = new HashMap<String, String>();
+			params = new HashMap<>();
 		}
 		String loginid = ANONYMOS_USER_ID;
 		if (App.readUser() != null) {

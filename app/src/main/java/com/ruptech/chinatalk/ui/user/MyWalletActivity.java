@@ -776,15 +776,15 @@ public class MyWalletActivity extends ActionBarActivity implements
                                                 R.string.share_canceled,
                                                 Toast.LENGTH_SHORT).show();
                                         currentButton = NONE_BUTTON;
-                                    } else if (FacebookDialog.COMPLETION_GESTURE_POST
-                                            .equals(result)) {
-                                        // Facebook分享成功
-                                        Toast.makeText(MyWalletActivity.this,
-                                                R.string.share_success,
-                                                Toast.LENGTH_SHORT).show();
-                                        // 免费充值
-                                        freeRecharge(AppPreferences.SHARE_TO_FACEBOOK);
-                                        currentButton = NONE_BUTTON;
+//  TODO                                  } else if (FacebookDialog.COMPLETION_GESTURE_POST
+//                                            .equals(result)) {
+//                                        // Facebook分享成功
+//                                        Toast.makeText(MyWalletActivity.this,
+//                                                R.string.share_success,
+//                                                Toast.LENGTH_SHORT).show();
+//                                        // 免费充值
+//                                        freeRecharge(AppPreferences.SHARE_TO_FACEBOOK);
+//                                        currentButton = NONE_BUTTON;
                                     } else {
                                         // user cancel
                                         Toast.makeText(MyWalletActivity.this,

@@ -49,7 +49,7 @@ public class RetrieveAlbumTask extends GenericTask {
 				image_path = imageCursor.getString(dataColumn);
 				lastImageId = imageCursor.getString(idColumn);
 
-				final Map<String, String> photoData = new HashMap<String, String>();
+				final Map<String, String> photoData = new HashMap<>();
 				photoData.put("path", image_path);
 
 				mPhotoList.add(photoData);

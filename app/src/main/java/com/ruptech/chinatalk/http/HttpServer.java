@@ -91,7 +91,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public User acceptInvite(String invite_user_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("invite_from", invite_user_id);
 		params.put("invite_to", String.valueOf(App.readUser().getId()));
 
@@ -112,7 +112,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<Message> acceptTranslateMessage(long message_id)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("message_id", String.valueOf(message_id));
 
 		Response res = _get("message_accept_translate.php", params);
@@ -124,7 +124,7 @@ public class HttpServer extends HttpConnection {
 			String memo, String lastUpdatedate, String lang,
 			List<User> userList, List<Friend> friendList, String isContact)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", friendId);
 		params.put("tel", tel);
 		params.put("nickname", nickname);
@@ -139,7 +139,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public void addQa(String question) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("question", question);
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "addQa");
@@ -155,7 +155,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Friend blockFriend(long friend_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friend_id));
 
 		Response res = _get("friend_block.php", params);
@@ -170,7 +170,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Friend changeFriendMemo(long friendid, String memo) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friendid", String.valueOf(friendid));
 		params.put("memo", memo);
 		params.put("func", "change_friend_memo");
@@ -187,7 +187,7 @@ public class HttpServer extends HttpConnection {
 
 	public Friend changeFriendNickName(long friendid, String nickName)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friendid", String.valueOf(friendid));
 		params.put("nickname", nickName);
 		params.put("func", "change_friend_nickname");
@@ -204,7 +204,7 @@ public class HttpServer extends HttpConnection {
 
 	public User changePassword(String oldPassword, String password)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("oldpassword", oldPassword);
 		params.put("password", password);
 		params.put("func", "change_pwd");
@@ -216,7 +216,7 @@ public class HttpServer extends HttpConnection {
 
 	public User changeUserProfile(String mFunc, String mKey, String mValue)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("func", mFunc);
 		params.put("userid", String.valueOf(App.readUser().getId()));
 		if ("change_prop".equals(mFunc)) {
@@ -274,7 +274,7 @@ public class HttpServer extends HttpConnection {
 
 	private Map<String, String> convertJsonItem(JSONObject jo)
 			throws JSONException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		Iterator<String> keys = jo.keys();
 		while (keys.hasNext()) {
 			String key = keys.next();
@@ -311,7 +311,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public boolean deleteUser() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		Response res = _get("user_delete.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -323,7 +323,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public int freeRecharge(String type) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("type", type);
 		Response res = _get("recharge_free.php", params);
 		JSONObject result = res.asJSONObject();
@@ -344,7 +344,7 @@ public class HttpServer extends HttpConnection {
 
 	public String[] friendAddCheck(String tel, String friend_id, User existUser)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 		params.put("friend_id", friend_id);
 		Response res = _get("friend_add_check.php", params);
@@ -375,7 +375,7 @@ public class HttpServer extends HttpConnection {
 
 	public boolean friendReport(Long friendId, String report_content)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("report_content", report_content);
 		Response res = _get("friend_report.php", params);
@@ -392,7 +392,7 @@ public class HttpServer extends HttpConnection {
 
 	public Friend friendWalletPriority(Long friendId, int wallet_priority)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("wallet_priority", String.valueOf(wallet_priority));
 		Response res = _get("friend_wallet_priority.php", params);
@@ -409,7 +409,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Map<String, String> getAnnouncementById(long id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 
 		Response res = _get("announcement.php", params);
@@ -430,7 +430,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public JSONObject getGuide() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("language", Utils.getUserLanguage());
 		Response res = _get("guide.php", params);
 
@@ -448,7 +448,7 @@ public class HttpServer extends HttpConnection {
 			String announcement_last_update_date, List<User> userList,
 			List<Friend> friendList, List<Message> messageList,
 			List<Map<String, String>> announcementList) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("message_last_update_date", message_last_update_date);
 		params.put("friend_last_update_date", friend_last_update_date);
 		params.put("announcement_last_update_date",
@@ -478,7 +478,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Message getMessageById(long message_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(message_id));
 
 		Response res = _get("message.php", params);
@@ -493,7 +493,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<Message> getMessageByLocalIds(String localIds) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("localIds", String.valueOf(localIds));
 
 		Response res = _get("message.php", params);
@@ -511,7 +511,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Map<String, String> getQaById(long qa_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(qa_id));
 
 		Response res = _get("qa.php", params);
@@ -550,7 +550,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<User> getRecommendedFriendList(String contacts)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("contacts", contacts);
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "params:" + params);
@@ -579,7 +579,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public User getUser(long userid) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(userid));
 
 		return _getUser(null, params);
@@ -587,14 +587,14 @@ public class HttpServer extends HttpConnection {
 
 	// Test
 	public User getUserByTel(String tel, String[] prop) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
 		return _getUser(prop, params);
 	}
 
 	public User getUserSignupCheck(String tel, String[] prop) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
 		Response res = _get("user_signup_check.php", params);
@@ -617,7 +617,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public Friend removeFriend(long friend_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friend_id));
 
 		Response res = _get("friend_delete.php", params);
@@ -638,7 +638,7 @@ public class HttpServer extends HttpConnection {
 			String fromLang, String toLang, String text, int contentLength,
 			String filetype, String lastUpdatedate, String filePath)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("local_id", String.valueOf(localId));
 		params.put("to_userid", String.valueOf(toUserId));
 		params.put("from_lang", fromLang);
@@ -659,7 +659,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public void requestVerifyMessage(long message_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("message_id", String.valueOf(message_id));
 
 		Response res = _get("message_request_verify.php", params);
@@ -675,7 +675,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<Map<String, String>> retrieveAnnouncementList()
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 
 		Response res = _get("announcement_list.php", params);
 
@@ -695,7 +695,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public JSONObject retrieveBadgeCount() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		Response res = _get("badge_count.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -708,7 +708,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<User> retrieveBlockedFriends(long sinceId, long[] sinceIdArray)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("since_id", String.valueOf(sinceId));
 
 		Response res = _get("retrieve_blocked_friends.php", params);
@@ -734,7 +734,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<User> retrieveFollowerUsers(long sinceId, long[] sinceIdArray)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("since_id", String.valueOf(sinceId));
 
 		Response res = _get("follower_friend_timeline.php", params);
@@ -759,7 +759,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<User> retrieveLbsUsers(int late6, int lnge6) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("late6", String.valueOf(late6));
 		params.put("lnge6", String.valueOf(lnge6));
 
@@ -783,7 +783,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<Message> retrieveMessageHistory(long friendId, long minMessageId)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("min_message_id", String.valueOf(minMessageId));
 
@@ -794,7 +794,7 @@ public class HttpServer extends HttpConnection {
 
 	public void retrieveNewFriends(String lastUpdatedate, List<User> userList,
 			List<Friend> friendList, long userId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("userid", String.valueOf(userId));
 		params.put("update_date", lastUpdatedate);
 
@@ -805,7 +805,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<Message> retrieveNewMessage(long userId, String updateDate)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("userid", String.valueOf(userId));
 		params.put("update_date", updateDate);
 
@@ -815,7 +815,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<User> retrieveOnlineUsers() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		Response res = _get("online_user_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -835,7 +835,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<User> retrievePopularUsers() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		Response res = _get("popular_user_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -855,7 +855,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<Map<String, String>> retrieveQAList(int qa_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("qa_id", String.valueOf(qa_id));
 		Response res = _get("qa_list.php", params);
 
@@ -881,7 +881,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<Map<String, String>> retrieveTranslatorList(String lang,
 			String start_number) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("lang", lang);
 		params.put("start_number", start_number);
 		Response res = _get("translator_rank_list.php", params);
@@ -907,7 +907,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<Map<String, String>> retrieveVerifyMessage() throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 
 		Response res = _get("user_verify_message_list.php", params);
 
@@ -932,7 +932,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public boolean sendClientMessage(String msg) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("message", msg);
 		if (App.readUser() != null) {
 			params.put("tel", App.readUser().getTel());
@@ -946,7 +946,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public void sendUserPasswordSms(String tel) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
 		Response res = _get("send_sms_forget_password.php", params);
@@ -961,7 +961,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public boolean sendUserVerifyCode(String tel) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
 		Response res = _get("send_sms_verify_code.php", params);
@@ -976,7 +976,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public void uploadUserLocation(int late6, int lnge6) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("late6", String.valueOf(late6));
 		params.put("lnge6", String.valueOf(lnge6));
 
@@ -1000,7 +1000,7 @@ public class HttpServer extends HttpConnection {
 
 	public User userLogin(String username, String password, boolean encrypt)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("username", username);
 		params.put("password", password);
 		params.put("encrypt", String.valueOf(encrypt));
@@ -1026,7 +1026,7 @@ public class HttpServer extends HttpConnection {
 
 	public User userSignup(String tel, String password, String fullname,
 			String file_path, String gender, String lang) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 		params.put("password", password);
 		params.put("fullname", fullname);
@@ -1044,7 +1044,7 @@ public class HttpServer extends HttpConnection {
 
 	public boolean verifyCodeVerify(String tel, String verify_code)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 		params.put("verify_code", verify_code);
 

@@ -412,8 +412,7 @@ public class ChatActivity extends AbstractChatActivity {
 		return true;
 	}
 
-	@Override
-	protected void onExpandFooter(View v) {
+	private void onExpandFooter(View v) {
 		if (expandBtn.getTag().equals(
 				String.valueOf(R.drawable.ic_action_arrow_up))) {
 			for (int i = 0; i < remindItemFooterLayout.getChildCount(); i++) {
@@ -652,7 +651,6 @@ public class ChatActivity extends AbstractChatActivity {
 		if (mSelectMessageTypeView.getVisibility() == View.VISIBLE) {
 			initInputPanel();
 		}
-
 	}
 
 	@OnClick(R.id.activity_chat_btn_send)

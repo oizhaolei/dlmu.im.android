@@ -149,7 +149,7 @@ public class RechargeRmbBankTransferActivity extends ActionBarActivity
 			fullname = URLEncoder.encode(fullname, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 		}
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("userid", String.valueOf(App.readUser().getId()));
 		params.put("tel", App.readUser().getTel());
 		params.put("fullname", fullname);

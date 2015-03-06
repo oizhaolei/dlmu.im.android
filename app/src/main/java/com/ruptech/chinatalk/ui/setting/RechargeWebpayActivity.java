@@ -167,7 +167,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 
 	private int payType;
 
-	Map<String, String> m = new HashMap<String, String>();
+	Map<String, String> m = new HashMap<>();
 
 	@InjectView(R.id.swype)
 	SwipeRefreshLayout swypeLayout;
@@ -212,7 +212,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 						"extras:" + extras.toString(), Toast.LENGTH_LONG)
 						.show();
 
-				Map<String, String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<>();
 				params.put("P_OID", App.readUser().getTel());
 				params.put("serialno", String.valueOf(serialNo));
 				params = HttpConnection.genParams(params);
@@ -283,7 +283,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 		wv.addJavascriptInterface(new AndroidBridge(), "androidInterface");
 
 		String url = "";
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		switch (payType) {
 		case MyWalletActivity.ONLINE_PAY_TYPE_INIPAY:
 			getSupportActionBar().setTitle(R.string.recharge_inipay_demo);

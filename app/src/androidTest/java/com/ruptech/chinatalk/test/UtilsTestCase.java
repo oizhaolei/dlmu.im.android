@@ -53,7 +53,7 @@ public class UtilsTestCase extends AndroidTestCase {
 	//http://app.tttalk.org:4000/photos?lang=KR&lang1=CN&loginid=76614&parent_id=0&sign=2395fa498a094f29eb052d9fd41ef5274e41ab96&source=an-2014122318&type=me&userid=41815
 
 	public void testGenParams() throws Exception {
-		HashMap<String, String> params = new HashMap<String, String>();
+		HashMap<String, String> params = new HashMap<>();
 		params.put("lang", "KR");
 		params.put("lang1", "CN");
 		params.put("parent_id", "0");
