@@ -48,12 +48,13 @@ public class BootReceiver extends BroadcastReceiver {
         }
 	}
 
+
     private void startVersionCheck(Context context) {
         //version check
-//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
-//        versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-//        alarmManager.setRepeating(AlarmManager.RTC, 0, 60 * 60 * 1000, versionCheckPendingIntent);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
+        versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, 0, 60 * 60 * 1000, versionCheckPendingIntent);
     }
 
     private void cancelVersionCheck(Context context) {
@@ -62,4 +63,5 @@ public class BootReceiver extends BroadcastReceiver {
             alarmManager.cancel(versionCheckPendingIntent);
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package com.ruptech.chinatalk.utils;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,19 +11,19 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskListener;
-import com.ruptech.chinatalk.task.impl.VersionCheckTask;
+import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.ui.UpdateVersionService;
 import com.ruptech.chinatalk.widget.CustomDialog;
 
-public class DownloadApk {
+public class ApkUpgrade {
 
-	private final Activity context;
+	private final Context context;
 
 	private GenericTask mVersionCheckTask;
 
 	private static AlertDialog dialog;
 
-	public DownloadApk(Activity activity) {
+	public ApkUpgrade(Context activity) {
 		context = activity;
 	}
 
@@ -36,7 +36,7 @@ public class DownloadApk {
 	}
 
 	public void checkApkUpdate(boolean silent) {
-		if (dialog != null && dialog.isShowing() && !context.hasWindowFocus()) {
+		if (dialog != null && dialog.isShowing() ) {
 			return;
 		}
 		// new version confirm
@@ -119,14 +119,14 @@ public class DownloadApk {
 		}
 	}
 
-	public void doVersionCheck(TaskListener versionCheckListener) {
+	public void doRetrieveServerVersion(TaskListener versionCheckListener) {
 
 		if (mVersionCheckTask != null
 				&& mVersionCheckTask.getStatus() == GenericTask.Status.RUNNING) {
 			mVersionCheckTask.cancel(true);
 		}
 
-		mVersionCheckTask = new VersionCheckTask();
+		mVersionCheckTask = new RetrieveServerVersionTask();
 		mVersionCheckTask.setListener(versionCheckListener);
 
 		mVersionCheckTask.execute();
