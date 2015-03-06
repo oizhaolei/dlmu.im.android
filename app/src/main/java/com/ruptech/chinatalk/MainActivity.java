@@ -654,9 +654,6 @@ public class MainActivity extends ActionBarActivity implements
     public void answerNewChatReceived(final NewChatEvent event) {
         mainHandler.post(new Runnable() {
             public void run() {
-                Toast.makeText(App.mContext,
-                        "answerNewChatReceived:" + event.chatMessage,
-                        Toast.LENGTH_SHORT).show();
                 MediaPlayer.create(MainActivity.this, R.raw.office).start();
                 App.mService.notifyClient(event.fromJID, Utils.getFriendNameFromOF_JID(event.fromJID), event.chatMessage,true);
             }
