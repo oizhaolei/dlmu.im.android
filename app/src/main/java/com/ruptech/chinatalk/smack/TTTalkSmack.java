@@ -20,5 +20,5 @@ public interface TTTalkSmack {
 
     public boolean createAccount(String username, String password);
     public void sendMessage(String user, String message, Collection<PacketExtension> extensions);
-
+    public String getNameForJID(String jid);
 }

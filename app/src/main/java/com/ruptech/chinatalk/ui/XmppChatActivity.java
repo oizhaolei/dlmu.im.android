@@ -26,6 +26,7 @@ import com.ruptech.chinatalk.adapter.ChatAdapter;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
@@ -57,8 +58,8 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
             ChatTable.Columns.PACKET_ID};// 查询字段
     // 查询联系人数据库字段
     private static final String[] STATUS_QUERY = new String[]{
-            RosterProvider.RosterConstants.STATUS_MODE,
-            RosterProvider.RosterConstants.STATUS_MESSAGE,};
+            TableContent.RosterTable.Columns.STATUS_MODE,
+            TableContent.RosterTable.Columns.STATUS_MESSAGE,};
     @InjectView(R.id.msg_listView)
     ListView mMsgListView;// 对话ListView
     @InjectView(R.id.send)
@@ -111,12 +112,12 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
 
     private void updateContactStatus() {
         Cursor cursor = getContentResolver().query(RosterProvider.CONTENT_URI,
-                STATUS_QUERY, RosterProvider.RosterConstants.JID + " = ?",
+                STATUS_QUERY, TableContent.RosterTable.Columns.JID + " = ?",
                 new String[]{mWithJabberID}, null);
         int MODE_IDX = cursor
-                .getColumnIndex(RosterProvider.RosterConstants.STATUS_MODE);
+                .getColumnIndex(TableContent.RosterTable.Columns.STATUS_MODE);
         int MSG_IDX = cursor
-                .getColumnIndex(RosterProvider.RosterConstants.STATUS_MESSAGE);
+                .getColumnIndex(TableContent.RosterTable.Columns.STATUS_MESSAGE);
 
         if (cursor.getCount() == 1) {
             cursor.moveToFirst();

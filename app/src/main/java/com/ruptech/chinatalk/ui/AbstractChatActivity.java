@@ -1,19 +1,16 @@
 package com.ruptech.chinatalk.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -28,12 +25,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.baidutranslate.openapi.TranslateClient;
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
@@ -46,11 +47,17 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
+import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
-import com.ruptech.chinatalk.widget.AbstractMessageCursorAdapter;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.RecordButton.OnFinishedRecordListener;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * 
@@ -214,8 +221,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	InputMethodManager mInputMethodManager;
 	private Message mMessage;// upload 图片时使用
 
-	AbstractMessageCursorAdapter mMessageListCursorAdapter;
-
 	File mPhotoFile;
 
 	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
@@ -329,9 +334,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	abstract void doRefleshFooterBySelectLang();
 
 	private void doRefresh() {
-		if (mMessageListCursorAdapter != null) {
-			mMessageListCursorAdapter.getCursor().requery();
-		}
+        updateContactStatus();// 更新联系人状态
 
 		displayFriend();
 		remindFooter();
@@ -369,10 +372,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 
 		App.messageDAO.mergeMessage(message);
 
-		mMessageListCursorAdapter.getCursor().requery();
-		getMessageListView().setSelection(
-				mMessageListCursorAdapter.getCount() - 1);
-
 		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
 				.getFile_type())
 				|| AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(message
@@ -387,13 +386,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	@Override
 	public void finish() {
 		super.finish();
-	}
-
-	Cursor getChatsCursor() {
-		Cursor chatsCursor = App.messageDAO.fetchMessages(App.readUser()
-				.getId(), getFriendUserId(), onPage);
-
-		return chatsCursor;
 	}
 
 	abstract String getFriendLang();
@@ -437,18 +429,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	}
 
 	abstract TextView getVoiceRecordButton();
-
-	protected void gotoLoadMore() {
-		Cursor cursor = getPreviousChatsCursor();
-		if (cursor.getCount() <= mMessageListCursorAdapter.getCursor()
-				.getCount())
-			return;
-
-		mMessageListCursorAdapter.changeCursor(cursor);
-		getMessageListView().setSelection(
-				mMessageListCursorAdapter.getCount()
-						- AppPreferences.PAGE_COUNT_20 * (onPage - 1));
-	}
 
 	private void gotoSplashActivity() {
 		Intent intent = new Intent(this, SplashActivity.class);
@@ -521,6 +501,10 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 		// 打开界面页码设为第一页
 		onPage = 1;
+
+        getContentResolver().registerContentObserver(
+                RosterProvider.CONTENT_URI, true, mContactObserver);// 开始监听联系人数据库
+
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(
 				CommonUtilities.CONTENT_MESSAGE_ACTION));
 		registerReceiver(screenOffReceiver, new IntentFilter(
@@ -625,7 +609,8 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 		content = ParseEmojiMsgUtil.convertToMsg(
 				getMessageEditText().getText(), this);
-		sendText(content, noTranslate);
+//		sendText(content, noTranslate);
+        sendMessageIfNotNull(content);
 	}
 
 	private void sendPhoto() {
@@ -753,4 +738,86 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 					Toast.LENGTH_SHORT).show();
 		}
 	}
+
+
+    public static final String INTENT_EXTRA_USERNAME = ChatActivity.class
+            .getName() + ".username";// 昵称对应的key
+    protected String mWithJabberID = null;// 当前聊天用户的ID
+    protected TranslateClient client;
+
+    protected static final String[] PROJECTION_FROM = new String[]{
+            TableContent.ChatTable.Columns.ID, TableContent.ChatTable.Columns.DATE,
+            TableContent.ChatTable.Columns.DIRECTION,
+            TableContent.ChatTable.Columns.JID, TableContent.ChatTable.Columns.MESSAGE,
+            TableContent.ChatTable.Columns.TO_MESSAGE,
+            TableContent.ChatTable.Columns.MESSAGE_ID,
+            TableContent.ChatTable.Columns.DELIVERY_STATUS,
+            TableContent.ChatTable.Columns.PACKET_ID};// 查询字段
+    // 查询联系人数据库字段
+    private static final String[] STATUS_QUERY = new String[]{
+            RosterTable.Columns.STATUS_MODE,
+            RosterTable.Columns.STATUS_MESSAGE,};
+    private ContentObserver mContactObserver = new ContactObserver();// 联系人数据监听，主要是监听对方在线状态
+    /**
+     * 联系人数据库变化监听
+     */
+    private class ContactObserver extends ContentObserver {
+        public ContactObserver() {
+            super(new Handler());
+        }
+
+        public void onChange(boolean selfChange) {
+            Log.d(TAG, "ContactObserver.onChange: " + selfChange);
+            updateContactStatus();// 联系人状态变化时，刷新界面
+        }
+    }
+
+    protected void updateContactStatus() {
+        Cursor cursor = getContentResolver().query(RosterProvider.CONTENT_URI,
+                STATUS_QUERY, RosterTable.Columns.JID + " = ?",
+                new String[]{mWithJabberID}, null);
+        int MODE_IDX = cursor
+                .getColumnIndex(RosterTable.Columns.STATUS_MODE);
+        int MSG_IDX = cursor
+                .getColumnIndex(RosterTable.Columns.STATUS_MESSAGE);
+
+        if (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            int status_mode = cursor.getInt(MODE_IDX);
+            String status_message = cursor.getString(MSG_IDX);
+            Log.d(TAG, "contact status changed: " + status_mode + " " + status_message);
+            getSupportActionBar().setTitle(XMPPUtils.splitJidAndServer(getIntent()
+                    .getStringExtra(INTENT_EXTRA_USERNAME)));
+            int statusId = StatusMode.values()[status_mode].getDrawableId();
+            if (statusId != -1) {// 如果对应离线状态
+                // Drawable icon = getResources().getDrawable(statusId);
+                // mTitleNameView.setCompoundDrawablesWithIntrinsicBounds(icon,
+                // null,
+                // null, null);
+            } else {
+            }
+        }
+        cursor.close();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        // 窗口获取到焦点时绑定服务，失去焦点将解绑
+        if (hasFocus)
+            App.bindXMPPService();
+        else
+            App.unbindXMPPService();
+    }
+
+    protected void sendMessageIfNotNull(String content) {
+        if (content.length() >= 1) {
+            if (App.mService != null) {
+                App.mService.sendMessage(mWithJabberID, content, null);
+                if (!App.mService.isAuthenticated())
+                    Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
+            }
+            getMessageEditText().setText(null);
+        }
+    }
 }

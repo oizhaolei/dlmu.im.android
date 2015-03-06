@@ -3,7 +3,6 @@ package com.ruptech.chinatalk;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +35,7 @@ import java.util.Collection;
  * Helper class providing methods and constants common to other classes in the
  * app.
  */
-public class XMPPService extends Service {
+public class XMPPService extends BaseService {
 
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = -1;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -656,6 +657,8 @@ public class MainActivity extends ActionBarActivity implements
                 Toast.makeText(App.mContext,
                         "answerNewChatReceived:" + event.chatMessage,
                         Toast.LENGTH_SHORT).show();
+                MediaPlayer.create(MainActivity.this, R.raw.office).start();
+                App.mService.notifyClient(event.fromJID, Utils.getFriendNameFromOF_JID(event.fromJID), event.chatMessage,true);
             }
         });
     }

@@ -1106,6 +1106,73 @@ public abstract class TableContent {
         }
     }
 
+    public static class RosterTable {
+        public static class Columns {
+            public final String ID = "_id";
+            public final String COUNT = "_count";
+            public final String JID = "jid";
+            public final String ALIAS = "alias";
+            public final String STATUS_MODE = "status_mode";
+            public final String STATUS_MESSAGE = "status_message";
+            public final String GROUP = "roster_group";
+            public final String DELIVERY_STATUS = "read";
+        }
+
+        public static final Columns Columns = new Columns();
+
+        public String getCreateIndexSQL() {
+            String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
+                    + " ( " + Columns.GROUP + " );";
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql.toString());
+            return sql;
+        }
+
+        public String getCreateSQL() {
+            StringBuffer create = new StringBuffer(512);
+            create.append("CREATE TABLE ").append(getName()).append("( ");
+            create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
+            create.append(Columns.JID + " TEXT UNIQUE ON CONFLICT REPLACE, ");
+            create.append(Columns.ALIAS + " TEXT, ");
+            create.append(Columns.STATUS_MODE + " INTEGER, ");
+            create.append(Columns.STATUS_MESSAGE + " TEXT, ");
+            create.append(Columns.GROUP + " TEXT ");
+            create.append(");");
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + create.toString());
+            return create.toString();
+        }
+
+        public String getDropSQL() {
+            String sql = "DROP TABLE IF EXISTS " + getName();
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql);
+            return sql;
+        }
+
+        public String[] getIndexColumns() {
+            return new String[] { Columns.ID, Columns.JID,
+                    Columns.ALIAS, Columns.STATUS_MODE,
+                    Columns.STATUS_MESSAGE, Columns.GROUP };
+        }
+
+        public static String getName() {
+            return "tbl_roster";
+        }
+
+
+
+        public static ArrayList<String> getRequiredColumns() {
+            ArrayList<String> tmpList = new ArrayList<>();
+            tmpList.add(Columns.JID);
+            tmpList.add(Columns.ALIAS);
+            tmpList.add(Columns.JID);
+            tmpList.add(Columns.STATUS_MODE);
+            tmpList.add(Columns.GROUP);
+            return tmpList;
+        }
+    }
+
 	private static final String TAG = Utils.CATEGORY
 			+ TableContent.class.getSimpleName();
 	public static ChannelTable ChannelTable = new ChannelTable();
@@ -1117,4 +1184,5 @@ public abstract class TableContent {
 	public static UserPropTable UserPropTable = new UserPropTable();
 	public static CommentNewsTable CommentNewsTable = new CommentNewsTable();
     public static ChatTable ChatTable = new ChatTable();
+    public static RosterTable RosterTable = new RosterTable();
 }

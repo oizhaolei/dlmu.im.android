@@ -1,6 +1,7 @@
 package com.ruptech.chinatalk.ui;
 
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,8 +21,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -29,18 +28,19 @@ import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.adapter.ChatAdapter;
+import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
@@ -58,8 +58,11 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
-import com.ruptech.chinatalk.widget.MessageListCursorAdapter;
 import com.ruptech.chinatalk.widget.RecordButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * 
@@ -393,7 +396,7 @@ public class ChatActivity extends AbstractChatActivity {
 		getInitData();
 
 		ProfileActivity.close();
-
+        mWithJabberID = mFriendUser.getOF_JabberID();
 		setupComponents();
 		switchTextInputMode();
 		if (BuildConfig.DEBUG)
@@ -434,7 +437,7 @@ public class ChatActivity extends AbstractChatActivity {
 			isExpandedState = false;
 		}
 
-		mMessageListCursorAdapter.notifyDataSetChanged();
+        updateContactStatus();
 	}
 
 	@Override
@@ -675,35 +678,7 @@ public class ChatActivity extends AbstractChatActivity {
 
 		});
 
-		Cursor chatsCursor = getChatsCursor();
-		mMessageListCursorAdapter = new MessageListCursorAdapter(this,
-				chatsCursor, mFriendUser);
-		mMessageListView.setAdapter(mMessageListCursorAdapter);
-
-		mMessageListView.setSelection(mMessageListCursorAdapter.getCount() - 1);
-
-		mMessageListView.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScroll(AbsListView arg0, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-			}
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				try {
-					mInputMethodManager.hideSoftInputFromWindow(
-							mMessageEditText.getWindowToken(), 0);
-				} catch (Exception e) {
-				}
-				if (view.getFirstVisiblePosition() == 0
-						&& scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-					// 加载数据代码
-					gotoLoadMore();
-				}
-			}
-
-		});
+        setChatWindowAdapter();
 
 		mMessageListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -761,4 +736,27 @@ public class ChatActivity extends AbstractChatActivity {
 
 		displayFriend();
 	}
+
+    /**
+     * 设置聊天的Adapter
+     */
+    private void setChatWindowAdapter() {
+        String selection = TableContent.ChatTable.Columns.JID + "='" + mWithJabberID + "'";
+        // 异步查询数据库
+        new AsyncQueryHandler(getContentResolver()) {
+
+            @Override
+            protected void onQueryComplete(int token, Object cookie,
+                                           Cursor cursor) {
+                // ListAdapter adapter = new ChatWindowAdapter(cursor,
+                // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
+                ListAdapter adapter = new ChatAdapter(ChatActivity.this,
+                        cursor, PROJECTION_FROM, client);
+                getMessageListView().setAdapter(adapter);
+                getMessageListView().setSelection(adapter.getCount() - 1);
+            }
+
+        }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
+                selection, null, null);
+    }
 }

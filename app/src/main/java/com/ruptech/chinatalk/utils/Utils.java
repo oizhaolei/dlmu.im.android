@@ -54,7 +54,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BaiduPushMessageReceiver;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.R;
@@ -62,6 +61,7 @@ import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.StoryTranslate;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
 import com.ruptech.chinatalk.ui.AbstractChatActivity;
@@ -1543,5 +1543,24 @@ public class Utils {
 
     public static String getOF_username(long ttalkid){
         return String.format("chinatalk_%d", ttalkid);
+    }
+
+    public static String getFriendNameFromOF_JID(String jid){
+        String pattern = "chinatalk_";
+        String name = "TTTalk.org";
+        if (jid.contains(pattern)) {
+            long friend_id = Long.parseLong(jid.substring("chinatalk_".length(), jid.indexOf("@")));
+            Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(), friend_id);
+            name = friend.getFriend_nickname();
+            if (friend == null || Utils.isEmpty(name)) {
+                User user = App.userDAO.fetchUser(Long.valueOf(friend_id));
+                if (user != null)
+                    name = user.getFullname();
+            }
+        }
+
+        if (Utils.isEmpty(name))
+            name = "TTTalk.org";
+        return name;
     }
 }

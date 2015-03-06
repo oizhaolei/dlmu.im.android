@@ -15,6 +15,7 @@ import com.ruptech.chinatalk.utils.Utils;
 
 import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
@@ -46,9 +47,9 @@ public class ChinaTalkDatabase {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if (BuildConfig.DEBUG)
 				Log.d(TAG, "Upgrade Database.");
-			if (oldVersion >= 43) {
+			if (oldVersion >= 59) {
 				try {
-					udpateTable43to58(db);
+					udpateTable59to60(db);
 				} catch (Exception e) {
 					Utils.sendClientException(e);
 				}
@@ -72,7 +73,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 58;
+	public static final int DATABASE_VERSION = 60;
 
 	/**
 	 * self instance
@@ -93,6 +94,7 @@ public class ChinaTalkDatabase {
 		db.execSQL(HotUserPhotoTable.getCreateIndexSQL());
 		db.execSQL(CommentNewsTable.getCreateIndexSQL());
         db.execSQL(ChatTable.getCreateIndexSQL());
+        db.execSQL(RosterTable.getCreateIndexSQL());
 	}
 
 	// Create All tables
@@ -110,6 +112,7 @@ public class ChinaTalkDatabase {
 
 		db.execSQL(CommentNewsTable.getCreateSQL());
         db.execSQL(ChatTable.getCreateSQL());
+        db.execSQL(RosterTable.getCreateSQL());
 	}
 
 	private static void dropAllTables(SQLiteDatabase db) {
@@ -126,6 +129,7 @@ public class ChinaTalkDatabase {
 
 		db.execSQL(CommentNewsTable.getDropSQL());
         db.execSQL(ChatTable.getDropSQL());
+        db.execSQL(RosterTable.getDropSQL());
 	}
 
 	/**
@@ -141,16 +145,10 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable43to58(SQLiteDatabase db) {
-		db.execSQL(ChannelTable.getDropSQL());
-		db.execSQL(HotUserPhotoTable.getDropSQL());
-		db.execSQL(CommentNewsTable.getDropSQL());
-		db.execSQL(UserPhotoTable.getDropSQL());
-		db.execSQL(ChannelTable.getCreateSQL());
-		db.execSQL(HotUserPhotoTable.getCreateSQL());
-		db.execSQL(CommentNewsTable.getCreateSQL());
-		db.execSQL(UserPhotoTable.getCreateSQL());
+	private static void udpateTable59to60(SQLiteDatabase db) {
+        db.execSQL(ChatTable.getDropSQL());
         db.execSQL(ChatTable.getCreateSQL());
+        db.execSQL(RosterTable.getCreateSQL());
 	}
 
 	/**

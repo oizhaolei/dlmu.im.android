@@ -2,20 +2,25 @@ package com.ruptech.chinatalk.smack;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.net.Uri;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
+import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerUtilities;
+import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
@@ -23,8 +28,10 @@ import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -49,6 +56,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
+
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
     public static final String XMPP_IDENTITY_TYPE = "phone";
@@ -69,6 +77,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
     private XMPPConnection mXMPPConnection;
     private PacketListener mPacketListener;
     private PacketListener mSendFailureListener;
+    private Roster mRoster;
+    private RosterListener mRosterListener;
 
     static {
         registerSmackProviders();
@@ -146,7 +156,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
             SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
             SmackConfiguration.setKeepAliveInterval(-1);
             SmackConfiguration.setDefaultPingInterval(0);
-            //registerRosterListener();// 监听联系人动态变化
+            registerRosterListener();// 监听联系人动态变化
             mXMPPConnection.connect();
             if (!mXMPPConnection.isConnected()) {
                 throw new XMPPException("SMACK connect failed without exception!");
@@ -192,6 +202,114 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         ServerUtilities.registerOpenfirePushOnServer(getUser());
         App.mBus.post(new OnlineEvent());
         return mXMPPConnection.isAuthenticated();
+    }
+
+    /**
+     * **************************** start 联系人数据库事件处理 *********************************
+     */
+    private void registerRosterListener() {
+        mRoster = mXMPPConnection.getRoster();
+        mRosterListener = new RosterListener() {
+            private boolean isFristRoter;
+
+            @Override
+            public void presenceChanged(Presence presence) {
+                Log.i(TAG, "presenceChanged(" + presence.getFrom() + "): " + presence);
+                String jabberID = XMPPUtils.getJabberID(presence.getFrom());
+                RosterEntry rosterEntry = mRoster.getEntry(jabberID);
+                updateRosterEntryInDB(rosterEntry);
+                App.mBus.post(new RosterChangeEvent());
+            }
+
+            @Override
+            public void entriesUpdated(Collection<String> entries) {
+
+                Log.i(TAG, "entriesUpdated(" + entries + ")");
+                for (String entry : entries) {
+                    RosterEntry rosterEntry = mRoster.getEntry(entry);
+                    updateRosterEntryInDB(rosterEntry);
+                }
+                App.mBus.post(new RosterChangeEvent());
+            }
+
+            @Override
+            public void entriesDeleted(Collection<String> entries) {
+                Log.i(TAG, "entriesDeleted(" + entries + ")");
+                for (String entry : entries) {
+                    deleteRosterEntryFromDB(entry);
+                }
+                App.mBus.post(new RosterChangeEvent());
+            }
+
+            @Override
+            public void entriesAdded(Collection<String> entries) {
+                Log.i(TAG, "entriesAdded(" + entries + ")");
+                ContentValues[] cvs = new ContentValues[entries.size()];
+                int i = 0;
+                for (String entry : entries) {
+                    RosterEntry rosterEntry = mRoster.getEntry(entry);
+                    cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
+                }
+                mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
+                if (isFristRoter) {
+                    isFristRoter = false;
+                    App.mBus.post(new RosterChangeEvent());
+                }
+            }
+        };
+        mRoster.addRosterListener(mRosterListener);
+    }
+
+    /**
+     * ************** end 发送离线消息 **********************
+     */
+
+    private void updateRosterEntryInDB(final RosterEntry entry) {
+        final ContentValues values = getContentValuesForRosterEntry(entry);
+
+        if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
+                RosterTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
+            addRosterEntryToDB(entry);
+    }
+
+    private void addRosterEntryToDB(final RosterEntry entry) {
+        ContentValues values = getContentValuesForRosterEntry(entry);
+        Uri uri = mContentResolver.insert(RosterProvider.CONTENT_URI, values);
+        Log.i(TAG, "addRosterEntryToDB: Inserted " + uri);
+    }
+
+    private void deleteRosterEntryFromDB(final String jabberID) {
+        int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
+                RosterTable.Columns.JID + " = ?", new String[]{jabberID});
+        Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
+    }
+
+    private ContentValues getContentValuesForRosterEntry(final RosterEntry entry) {
+        final ContentValues values = new ContentValues();
+
+        values.put(RosterTable.Columns.JID, entry.getUser());
+        values.put(RosterTable.Columns.ALIAS, getName(entry));
+
+        Presence presence = mRoster.getPresence(entry.getUser());
+        values.put(RosterTable.Columns.STATUS_MODE, getStatusInt(presence));
+        values.put(RosterTable.Columns.STATUS_MESSAGE, presence.getStatus());
+        values.put(RosterTable.Columns.GROUP, getGroup(entry.getGroups()));
+
+        return values;
+    }
+
+    private int getStatusInt(final Presence presence) {
+        return getStatus(presence).ordinal();
+    }
+
+    private StatusMode getStatus(Presence presence) {
+        if (presence.getType() == Presence.Type.available) {
+            if (presence.getMode() != null) {
+                return StatusMode.valueOf(presence.getMode().name());
+            }
+            return StatusMode.available;
+        }
+        return StatusMode.offline;
     }
 
     private void registerAllListener() {
@@ -561,5 +679,16 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
 
         cr.insert(ChatProvider.CONTENT_URI, values);
+    }
+
+    @Override
+    public String getNameForJID(String jid) {
+        if (null != this.mRoster.getEntry(jid)
+                && null != this.mRoster.getEntry(jid).getName()
+                && this.mRoster.getEntry(jid).getName().length() > 0) {
+            return this.mRoster.getEntry(jid).getName();
+        } else {
+            return jid;
+        }
     }
 }

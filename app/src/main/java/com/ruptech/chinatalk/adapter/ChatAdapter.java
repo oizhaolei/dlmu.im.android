@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,6 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
-import com.ruptech.chinatalk.ui.XmppChatActivity;
 import com.ruptech.chinatalk.utils.TimeUtil;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
@@ -48,7 +48,7 @@ public class ChatAdapter extends SimpleCursorAdapter {
 
     private static final int DELAY_NEWMSG = 2000;
     private final TranslateClient mClient;
-    private XmppChatActivity mContext;
+    private ActionBarActivity mContext;
     private LayoutInflater mInflater;
     private ContentResolver mContentResolver;
 
@@ -88,7 +88,7 @@ public class ChatAdapter extends SimpleCursorAdapter {
                 + ChatProvider.INCOMING, new String[]{packetID});
     }
 
-    public ChatAdapter(XmppChatActivity context, Cursor cursor, String[] from, TranslateClient client) {
+    public ChatAdapter(ActionBarActivity context, Cursor cursor, String[] from, TranslateClient client) {
         // super(context, android.R.layout.simple_list_item_1, cursor, from,
         // to);
         super(context, 0, cursor, from, null);

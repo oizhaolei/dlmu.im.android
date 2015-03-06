@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk.ui;
 
+import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,16 +19,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.adapter.ChatAdapter;
+import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
 import com.ruptech.chinatalk.ui.user.MyWalletActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -35,8 +37,11 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.LangSpinnerAdapter;
-import com.ruptech.chinatalk.widget.MessageListTTTCursorAdapter;
 import com.ruptech.chinatalk.widget.RecordButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  *
@@ -50,8 +55,8 @@ public class ChatTTTActivity extends AbstractChatActivity {
 	/**
 	 * TTT根据新的lang列表，重新定位之前使用过的lang位置
 	 *
-	 * @param lang2
-	 * @param Lang2Array
+	 * @param lang
+	 * @param langArray
 	 * @return
 	 */
 	public static int getLangArrayPosition(String lang, String[] langArray) {
@@ -128,13 +133,6 @@ public class ChatTTTActivity extends AbstractChatActivity {
 	}
 
 	@Override
-	Cursor getChatsCursor() {
-		Cursor chatsCursor = App.messageDAO.fetchMessages(App.readUser()
-				.getId(), getFriendUserId(), getMyLang(), getFriendLang());
-		return chatsCursor;
-	}
-
-	@Override
 	String getFriendLang() {
 		return toLang;
 	}
@@ -205,6 +203,8 @@ public class ChatTTTActivity extends AbstractChatActivity {
 
 		getSupportActionBar().setTitle(R.string.translation_secretary);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mWithJabberID = AppPreferences.TTT_OF_USERNAME;
 		setupComponents();
 		switchTextInputMode();
 		handleSendText(getIntent());
@@ -363,12 +363,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
 				PrefUtils.savePrefTTTLastSelectedLang(1, fromLang);
 				PrefUtils.savePrefTTTLastSelectedLang(2, toLang);
 
-				chatsCursor = getChatsCursor();
-				mMessageListCursorAdapter = new MessageListTTTCursorAdapter(
-						ChatTTTActivity.this, chatsCursor);
-				mMessageListView.setAdapter(mMessageListCursorAdapter);
-				mMessageListView.setSelection(mMessageListCursorAdapter
-						.getCount() - 1);
+
 
 				googleTranslate = Utils.isGoogleTranslate(fromLang, toLang);
 
@@ -389,7 +384,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
 
 		});
 
-		mMessageListCursorAdapter = null;
+        setChatWindowAdapter();
 
 		mMessageListView.setOnScrollListener(new OnScrollListener() {
 			@Override
@@ -434,4 +429,27 @@ public class ChatTTTActivity extends AbstractChatActivity {
 			}
 		});
 	}
+
+    /**
+     * 设置聊天的Adapter
+     */
+    private void setChatWindowAdapter() {
+        String selection = TableContent.ChatTable.Columns.JID + "='" + mWithJabberID + "'";
+        // 异步查询数据库
+        new AsyncQueryHandler(getContentResolver()) {
+
+            @Override
+            protected void onQueryComplete(int token, Object cookie,
+                                           Cursor cursor) {
+                // ListAdapter adapter = new ChatWindowAdapter(cursor,
+                // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
+                ListAdapter adapter = new ChatAdapter(ChatTTTActivity.this,
+                        cursor, PROJECTION_FROM, client);
+                getMessageListView().setAdapter(adapter);
+                getMessageListView().setSelection(adapter.getCount() - 1);
+            }
+
+        }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
+                selection, null, null);
+    }
 }
