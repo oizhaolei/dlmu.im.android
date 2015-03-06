@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
 import android.content.res.AssetManager;
 import android.os.Environment;
 import android.test.InstrumentationTestCase;
@@ -11,6 +7,10 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.impl.FileUploadTask.FileUploadInfo;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class Http2ServerTestCase extends InstrumentationTestCase {
 

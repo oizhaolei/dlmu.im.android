@@ -560,6 +560,4 @@
     <string name="invite_message">[%1$s] 邀请您一起使用TT译聊. 一起体验真正的跨语言、跨文化的异国交友。\n请点击下面链接下载 。\n%2$s</string>
     <string name="channel_is_not_exist">频道不存在。</string>
 
-    <string name="start_receiving_messages">您上线了，可以开始接收推送的消息</string>
-    <string name="stop_receiving_messages">您下线了，停止接收推送的消息</string>
 </resources>

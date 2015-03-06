@@ -1,17 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
-
-import java.net.URLEncoder;
-import java.util.HashMap;
-
-import junit.framework.Assert;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.test.AndroidTestCase;
@@ -20,6 +8,19 @@ import android.util.Log;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Rsa;
 import com.ruptech.chinatalk.utils.Utils;
+
+import junit.framework.Assert;
+
+import java.net.URLEncoder;
+import java.util.HashMap;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class UtilsTestCase extends AndroidTestCase {
 	private static final String TAG = "UtilsTestCase";

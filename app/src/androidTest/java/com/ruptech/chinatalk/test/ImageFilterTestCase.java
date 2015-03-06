@@ -1,12 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import jp.co.cyberagent.android.gpuimage.GPUImage;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +10,14 @@ import android.util.Log;
 import com.ruptech.chinatalk.ui.story.UserStoryImageFilterActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryImageFilterActivity.FilterList;
 import com.ruptech.chinatalk.ui.story.UserStoryImageFilterActivity.FilterType;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import jp.co.cyberagent.android.gpuimage.GPUImage;
+import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
 public class ImageFilterTestCase extends InstrumentationTestCase {
 

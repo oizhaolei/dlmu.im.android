@@ -97,10 +97,11 @@ public class AboutTTTalkActivity extends ActionBarActivity {
     @OnClick(R.id.main_tab_setting_show_system_url_textview)
     public void doShowSystemUrl(View v) {
         StringBuffer msg = new StringBuffer(64);
+        msg.append(App.mSmack.getUser());
 //        msg.append(GCMRegistrar.isRegistered(this) ? '1' : '0');
 //        msg.append(GCMRegistrar.isRegisteredOnServer(this) ? '1' : '0');
-        msg.append(BaiduPushMessageReceiver.isRegistered() ? '1' : '0');
-        msg.append(BaiduPushMessageReceiver.isRegisteredOnServer() ? '1' : '0');
+//        msg.append(BaiduPushMessageReceiver.isRegistered() ? '1' : '0');
+//        msg.append(BaiduPushMessageReceiver.isRegisteredOnServer() ? '1' : '0');
         Toast.makeText(this, App.readServerAppInfo().getAppServerUrl() + msg,
                 Toast.LENGTH_SHORT).show();
     }

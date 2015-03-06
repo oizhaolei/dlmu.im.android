@@ -214,13 +214,13 @@ public class Utils {
         sb.append("\nAPP: ").append(App.mApkVersionOfClient);
         sb.append("\nServerAppInfo: ").append(App.readServerAppInfo());
         sb.append("\nUser: ").append(App.readUser());
-        sb.append("\nPush: ")
+//        sb.append("\nPush: ")
 //				.append(GCMRegistrar.isRegistered(App.mContext) ? '1' : '0')
 //				.append(GCMRegistrar.isRegisteredOnServer(App.mContext) ? '1'
 //						: '0')
-                .append(BaiduPushMessageReceiver.isRegistered() ? '1' : '0')
-                .append(BaiduPushMessageReceiver.isRegisteredOnServer() ? '1'
-                        : '0');
+//                .append(BaiduPushMessageReceiver.isRegistered() ? '1' : '0')
+//                .append(BaiduPushMessageReceiver.isRegisteredOnServer() ? '1'
+//                        : '0');
         sb.append(",\nHARDWARE: ").append(android.os.Build.HARDWARE)
                 .append(",\nMODEL: ").append(android.os.Build.MODEL)
                 .append(",\nPRODUCT: ").append(android.os.Build.PRODUCT)

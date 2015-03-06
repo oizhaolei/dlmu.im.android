@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
 import android.os.Environment;
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -18,6 +12,13 @@ import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.impl.FileUploadTask.FileUploadInfo;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
+
+import junit.framework.Assert;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class HttpServerTestCase extends AndroidTestCase {
 

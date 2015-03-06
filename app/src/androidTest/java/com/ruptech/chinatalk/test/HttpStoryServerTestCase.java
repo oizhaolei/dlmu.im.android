@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import java.util.List;
-
-import junit.framework.Assert;
 import android.test.AndroidTestCase;
 
 import com.ruptech.chinatalk.App;
@@ -10,6 +7,10 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.ui.story.AbstractUserStoryListActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
+
+import junit.framework.Assert;
+
+import java.util.List;
 
 public class HttpStoryServerTestCase extends AndroidTestCase {
 

@@ -1,16 +1,5 @@
 package com.ruptech.chinatalk.test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.os.Environment;
 import android.util.Log;
 
@@ -26,6 +15,17 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ApiTestCase extends TestCase {
 	private final String TAG = Utils.CATEGORY
