@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class RosterProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "com.ruptech.tttalk_android.provider.Roster";
+    public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Roster";
     public static final String TABLE_ROSTER = "roster";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
             + "/" + TABLE_ROSTER);

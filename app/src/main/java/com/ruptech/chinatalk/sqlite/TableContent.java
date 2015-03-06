@@ -1018,7 +1018,7 @@ public abstract class TableContent {
         public String getCreateSQL() {
             StringBuffer create = new StringBuffer(512);
             create.append("CREATE TABLE ").append(getName()).append("( ");
-            create.append(Columns.ID + " LONG PRIMARY KEY, ");
+            create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
             create.append(Columns.DATE + " INTEGER, ");
             create.append(Columns.DIRECTION + " INTEGER, ");
             create.append(Columns.JID + " TEXT, ");

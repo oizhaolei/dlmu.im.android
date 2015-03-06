@@ -44,7 +44,6 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.DeleteCommentNewsTask;
-import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.XmppChatActivity;
 import com.ruptech.chinatalk.ui.fragment.SegmentTabLayout.OnSegmentClickListener;
 import com.ruptech.chinatalk.ui.setting.SettingQaActivity;
@@ -197,7 +196,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 
 
     private void startChatActivity(String userJid, String userName) {
-        Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+        Intent chatIntent = new Intent(getActivity(), XmppChatActivity.class);
         Uri userNameUri = Uri.parse(userJid);
         chatIntent.setData(userNameUri);
         chatIntent.putExtra(XmppChatActivity.INTENT_EXTRA_USERNAME, userName);
