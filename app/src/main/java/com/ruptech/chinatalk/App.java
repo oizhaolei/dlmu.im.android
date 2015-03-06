@@ -3,13 +3,17 @@ package com.ruptech.chinatalk;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.telephony.TelephonyManager;
@@ -390,6 +394,50 @@ public class App extends Application implements
 
         Utils.saveClientException(throwable);
         exitApp();
+    }
+
+    public static XMPPService mService;
+    public static ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            XMPPService.XBinder binder = (XMPPService.XBinder) service;
+            mService = binder.getService();
+            if (!mService.isAuthenticated()) {
+                String account = Utils.getOF_username(App.readUser().getId());
+                String password = App.readUser().getPassword();
+
+                mService.login(account, password);
+                // setStatusImage(false);
+                // mTitleProgressBar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+
+    };
+
+    /**
+     * 解绑服务
+     */
+    public static void unbindXMPPService() {
+        try {
+            App.mContext.unbindService(mServiceConnection);
+            Log.i(TAG, "unbindXMPPService");
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Service wasn't bound!");
+        }
+    }
+
+    /**
+     * 绑定服务
+     */
+    public static void bindXMPPService() {
+        Log.i(TAG, "bindXMPPService");
+        Intent serviceIntent = new Intent( App.mContext, XMPPService.class);
+        App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
     }
 
 }

@@ -1,15 +1,15 @@
 package com.ruptech.chinatalk.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
+import com.ruptech.chinatalk.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ruptech.chinatalk.utils.DateCommonUtils;
-import com.ruptech.chinatalk.utils.Utils;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A data class representing Basic user information element
@@ -443,4 +443,7 @@ public class User extends Item implements Serializable {
 		return "User [id=" + id + ", tel=" + tel + "]";
 	}
 
+    public String getOF_JabberID(){
+        return String.format("chinatalk_%d@tttalk.org", id);
+    }
 }

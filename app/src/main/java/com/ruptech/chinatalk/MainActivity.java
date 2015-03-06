@@ -1,17 +1,14 @@
 package com.ruptech.chinatalk;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -100,8 +97,7 @@ public class MainActivity extends ActionBarActivity implements
     Timer locationTimer = null;
 
     Timer periodTimer = null;
-    XMPPService mService;
-    boolean mBound = false;
+
     private Handler mainHandler = new Handler();
 
     @InjectView(R.id.activity_main_tab)
@@ -113,31 +109,6 @@ public class MainActivity extends ActionBarActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             refreshNewMark();
-        }
-    };
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            XMPPService.XBinder binder = (XMPPService.XBinder) service;
-            mService = binder.getService();
-            if (!mService.isAuthenticated()) {
-                String account = Utils.getOF_username(App.readUser().getId());
-                String password = App.readUser().getPassword();
-
-                mService.login(account, password);
-                // setStatusImage(false);
-                // mTitleProgressBar.setVisibility(View.VISIBLE);
-            }
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
         }
     };
 
@@ -373,7 +344,7 @@ public class MainActivity extends ActionBarActivity implements
         // requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        startXMPPService();
+        App.bindXMPPService();
         App.mBadgeCount.loadBadgeCount();
         setupComponents(savedInstanceState);
         delayTask();
@@ -397,18 +368,6 @@ public class MainActivity extends ActionBarActivity implements
                 CommonUtilities.REFERSH_NEW_MARK_ACTION));
     }
 
-    private void startXMPPService() {
-        Intent intent = new Intent(this, XMPPService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void stopXMPPService() {
-        if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
-        }
-    }
-
     @Override
     protected void onDestroy() {
         try {
@@ -425,7 +384,7 @@ public class MainActivity extends ActionBarActivity implements
         } catch (Exception e) {
         }
 
-        stopXMPPService();
+        App.unbindXMPPService();
         super.onDestroy();
     }
 
@@ -673,7 +632,8 @@ public class MainActivity extends ActionBarActivity implements
 
     @Subscribe
     public void answerLogout(LogoutEvent event) {
-        mService.logout();
+        if (App.mService != null)
+            App.mService.logout();
         App.removeUser();
         finish();
     }
