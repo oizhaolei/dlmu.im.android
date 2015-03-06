@@ -62,6 +62,9 @@
         <receiver android:name="NotificationSettingReceiver" >
         </receiver>
 
+        <meta-data android:value="54f93f50fd98c519d0000b79" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="tttalk" android:name="UMENG_CHANNEL"/>
+
         <activity
             android:name="com.ruptech.chinatalk.ui.SplashActivity"
             android:screenOrientation="portrait"

@@ -58,6 +58,7 @@ import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.squareup.otto.Subscribe;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -392,11 +393,13 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
         long start = System.currentTimeMillis();
         if (!App.isVersionChecked() || App.readUser() == null
                 || App.readServerAppInfo() == null) {
