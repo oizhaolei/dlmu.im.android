@@ -1,24 +1,21 @@
 package com.ruptech.chinatalk.ui.friend;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -28,6 +25,11 @@ import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.FriendListCursorAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class FriendListActivity extends ActionBarActivity implements
 		OnQueryTextListener {
@@ -109,23 +111,23 @@ public class FriendListActivity extends ActionBarActivity implements
 		searchView.setIconified(true);
 		searchView.setQueryHint(getResources().getString(R.string.full_name));
 		searchView.setOnQueryTextListener(this);
-		menuItemSearchFriend
-				.setOnActionExpandListener(new OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(menuItemSearchFriend, new MenuItemCompat.OnActionExpandListener() {
 
-					@Override
-					public boolean onMenuItemActionCollapse(MenuItem item) {
-						keyword = "";
-						searchFriend();
-						return true;
-					}
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                keyword = "";
+                searchFriend();
+                return true;
+            }
 
-					@Override
-					public boolean onMenuItemActionExpand(MenuItem item) {
-						// TODO Auto-generated method stub
-						return true;
-					}
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // TODO Auto-generated method stub
+                return true;
+            }
 
-				});
+        });
+
 
 		return super.onCreateOptionsMenu(mMenu);
 
