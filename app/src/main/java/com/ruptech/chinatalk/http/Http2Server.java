@@ -25,7 +25,7 @@ public class Http2Server extends HttpConnection {
 			+ Http2Server.class.getSimpleName();
 
 	public UserPhoto autoTranslatePhoto(long id, String lang) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 		params.put("lang", lang);
 
@@ -40,7 +40,7 @@ public class Http2Server extends HttpConnection {
 
 		String address = null;
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("language", Locale.getDefault().getLanguage());
 		params.put("latlng", String.format("%f,%f", latitude, longitude));
 
@@ -66,7 +66,7 @@ public class Http2Server extends HttpConnection {
 	}
 
 	public FileUploadInfo uploadUrl(String url ) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 			params.put("url", url);
 		Response res = _post(getAppServerUrl() + "upload", params );
 

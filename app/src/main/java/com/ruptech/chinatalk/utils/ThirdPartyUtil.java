@@ -974,7 +974,7 @@ public class ThirdPartyUtil {
     @SuppressWarnings("unchecked")
     public static Map<String, String> toMap(JSONObject jsonObject)
     {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         Iterator<String> iterator = jsonObject.keys();
         String key = null;
         String value = null;

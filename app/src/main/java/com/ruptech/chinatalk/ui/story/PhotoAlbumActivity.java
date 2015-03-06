@@ -82,7 +82,7 @@ public class PhotoAlbumActivity extends ActionBarActivity {
 			lastImageId = retrieveAlbumTask.getLastImageId();
 			if (result == TaskResult.OK) {
 				if (mPhotoGridViewAdapter.getCount() == 0) {
-					Map<String, String> mPhoto = new HashMap<String, String>();
+					Map<String, String> mPhoto = new HashMap<>();
 					mPhoto.put("path", "");
 					mPhotoGridViewAdapter.add(mPhoto);
 				}

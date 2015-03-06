@@ -47,7 +47,7 @@ public class HttpStoryServer extends HttpConnection {
 	}
 
 	public UserPhoto changePhotoTag(long id, String category) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 		params.put("tag", category);
 		params.put("lang", App.readUser().getLang());
@@ -59,7 +59,7 @@ public class HttpStoryServer extends HttpConnection {
 	}
 
 	public boolean deleteCommentNews(long id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 
 		Response res = _get("delete_news", params);
@@ -69,7 +69,7 @@ public class HttpStoryServer extends HttpConnection {
 	}
 
 	public boolean deleteUserPhoto(long id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 
 		Response res = _get("photo_delete", params);
@@ -80,7 +80,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public JSONObject discover(String type, String name, long maxId,
 			long sinceId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("name", name);
 		params.put("lang", App.readUser().getLang());
 		if (type != null)
@@ -100,7 +100,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<String> findByKeyword(String type, String keyword)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("type", type);
 		params.put("keyword", keyword);
 
@@ -120,7 +120,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public Channel followChannel(long channel_id, String follower)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(channel_id));
 		params.put("follower", follower);
 
@@ -137,7 +137,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<Gift> getUserGiftList(long user_id, long user_photo_id,
 			long maxId, long sinceId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("user_id", String.valueOf(user_id));
 		if (user_photo_id > 0) {
 			params.put("user_photo_id", String.valueOf(user_photo_id));
@@ -166,7 +166,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<Gift> getUserGiftSumList(long user_id, long user_photo_id)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("user_id", String.valueOf(user_id));
 		if (user_photo_id > 0) {
 			params.put("user_photo_id", String.valueOf(user_photo_id));
@@ -188,7 +188,7 @@ public class HttpStoryServer extends HttpConnection {
 	}
 
 	public UserPhoto getUserPhoto(long id, String lang) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 		params.put("lang", lang);
 
@@ -201,7 +201,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public boolean giftDonate(long to_user_id, long present_id, long photo_id,
 			int quantity) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("to_user_id", String.valueOf(to_user_id));
 		params.put("present_id", String.valueOf(present_id));
 		params.put("photo_id", String.valueOf(photo_id));
@@ -214,7 +214,7 @@ public class HttpStoryServer extends HttpConnection {
 	}
 
 	public UserPhoto likePhoto(long id, boolean like) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 		params.put("like", String.valueOf(like));
 		params.put("lang", App.readUser().getLang());
@@ -228,7 +228,7 @@ public class HttpStoryServer extends HttpConnection {
 	public StoryTranslate likeTranslate(long user_photo_id,
 			long story_translate_id, String lang, boolean like)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("user_photo_id", String.valueOf(user_photo_id));
 		params.put("story_translate_id", String.valueOf(story_translate_id));
 		params.put("like", String.valueOf(like));
@@ -248,7 +248,7 @@ public class HttpStoryServer extends HttpConnection {
 			String content, int late6, int lnge6, String category,
 			String address, long reply_id, int width, int height, String lang)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("parent_id", String.valueOf(parent_id));
 		params.put("pic_url", pic_url);
 		params.put("content", content);
@@ -285,7 +285,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public StoryTranslate postTranslate(long user_photo_id, String content,
 			String lang) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("user_photo_id", String.valueOf(user_photo_id));
 		params.put("lang", lang);
 		params.put("to_content", content);
@@ -300,7 +300,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<Channel> retrieveChannelList(long maxId, long sinceId)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxId", String.valueOf(maxId));
 		}
@@ -325,7 +325,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<Channel> retrieveUserChannelList(long maxId, long sinceId)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -352,7 +352,7 @@ public class HttpStoryServer extends HttpConnection {
 			long maxGood, long sinceGood, long channel_id, String type,
 			List<Channel> channelList, List<UserPhoto> userPhotoList)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -393,7 +393,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<CommentNews> retrieveCommentNewsList(long maxId, long sinceId,
 			String type) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -417,7 +417,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<Gift> retrieveGiftList(long maxId, long sinceId)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -442,7 +442,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<UserPhoto> retrievePopularStoryList(long maxId, long sinceId)
 			throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -465,7 +465,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<StoryTranslate> retrieveStoryTranslateList(long maxId,
 			long sinceId, long user_photo_id, long user_id) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -502,7 +502,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<UserPhoto> retrieveUserCommentPhotoList(long maxId,
 			long sinceId, long userid) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -529,7 +529,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<User> retrieveUserPhotoLikeList(long photoId, long maxId,
 			long sinceId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(photoId));
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
@@ -556,7 +556,7 @@ public class HttpStoryServer extends HttpConnection {
 	public List<UserPhoto> retrieveUserPhotoList(long maxId, long sinceId,
 			long userid, long parent_id, String type, int late6, int lnge6,
 			String tag, String order) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -602,7 +602,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<UserPhoto> retrieveUserPopularPhotoList(long maxId,
 			long sinceId, String type, boolean isUp) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		if (maxId != AppPreferences.ID_IMPOSSIBLE) {
 			params.put("maxid", String.valueOf(maxId));
 		}
@@ -681,7 +681,7 @@ public class HttpStoryServer extends HttpConnection {
 
 	public List<User> retrieveLeaderboardUsers(String type) throws Exception {
 
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put("type", type);
 
 		Response res = _get("find_user_leaderboard", params);

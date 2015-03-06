@@ -721,7 +721,7 @@ public class UserStoryListCursorAdapter extends CursorAdapter implements
 			final UserPhoto userPhoto) {
 
 		// 点击share进入生成一个url
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		String id = Base64.encodeToString(String.valueOf(userPhoto.getId())
 				.getBytes(), Base64.DEFAULT);
 

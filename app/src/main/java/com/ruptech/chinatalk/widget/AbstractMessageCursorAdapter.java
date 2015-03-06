@@ -262,7 +262,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 		autoTranslationLayout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Map<String, String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<>();
 				params.put("message_id", String.valueOf(message.getMessageid()));
 				params = HttpConnection.genParams(params);
 				String mUrl = App.getHttpServer().genRequestURL(

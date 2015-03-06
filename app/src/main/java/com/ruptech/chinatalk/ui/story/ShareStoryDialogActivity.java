@@ -804,28 +804,28 @@ public class ShareStoryDialogActivity extends Activity {
         mShareStoreAdapter = new ShareStoreAdapter(this);
         // 放入item qq
         List<Map<String, String>> shareList = new ArrayList<Map<String, String>>();
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_qq));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_qq));
         mShare.put("title", getString(R.string.share_to_qq));
         shareList.add(mShare);
         // 放入item qzone
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_qzone));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_qq));
         mShare.put("title", getString(R.string.share_to_qzone));
         shareList.add(mShare);
         // 放入item qq weibo
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_tqq));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_qq));
         mShare.put("title", getString(R.string.share_to_tqq));
         shareList.add(mShare);
         // 放入item weibo
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_weibo));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_sina));
@@ -834,14 +834,14 @@ public class ShareStoryDialogActivity extends Activity {
         if (ThirdPartyUtil
                 .isAvailableClient(AppPreferences.THIRD_PARTY_TYPE_TENCENT_WECHAT)) {
             // 放入item wechat
-            mShare = new HashMap<String, String>();
+            mShare = new HashMap<>();
             mShare.put("thumb", String.valueOf(R.drawable.button_wechat));
             mShare.put("background",
                     String.valueOf(R.drawable.background_round_button_wechat));
             mShare.put("title", getString(R.string.share_to_wechat));
             shareList.add(mShare);
             // 放入item moments
-            mShare = new HashMap<String, String>();
+            mShare = new HashMap<>();
             mShare.put("thumb", String.valueOf(R.drawable.button_moments));
             mShare.put("background",
                     String.valueOf(R.drawable.background_round_button_moment));
@@ -851,7 +851,7 @@ public class ShareStoryDialogActivity extends Activity {
         if (ThirdPartyUtil
                 .isAvailableClient(AppPreferences.THIRD_PARTY_TYPE_GOOGLE_PLUS)) {
             // 放入item googleplus
-            mShare = new HashMap<String, String>();
+            mShare = new HashMap<>();
             mShare.put("thumb", String.valueOf(R.drawable.button_googleplus));
             mShare.put("background",
                     String.valueOf(R.drawable.background_round_button_google));
@@ -859,7 +859,7 @@ public class ShareStoryDialogActivity extends Activity {
             shareList.add(mShare);
         }
         // 放入item facebook
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_facebook));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_facebook));
@@ -867,7 +867,7 @@ public class ShareStoryDialogActivity extends Activity {
         shareList.add(mShare);
         mGridView.setAdapter(mShareStoreAdapter);
         // 放入item more
-        mShare = new HashMap<String, String>();
+        mShare = new HashMap<>();
         mShare.put("thumb", String.valueOf(R.drawable.button_more));
         mShare.put("background",
                 String.valueOf(R.drawable.background_round_button_moment));

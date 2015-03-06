@@ -143,7 +143,7 @@ public class SettingQaActivity extends ActionBarActivity implements
 	private void doViewSetAdapter(List<Map<String, String>> mQAList) {
 		List<Map<String, String>> mapList = new ArrayList<Map<String, String>>();
 		for (int i = 0; i < mQAList.size(); i++) {
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			Date date = DateCommonUtils.parseToDateFromString(mQAList.get(i)
 					.get("create_date"));
 			if (date != null) {
