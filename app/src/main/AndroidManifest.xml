@@ -657,6 +657,10 @@
 			android:name=".sqlite.ChatProvider"
 			android:authorities="com.ruptech.chinatalk.chatprovider" >
 		</provider>
+        <provider
+            android:name=".db.ChatProvider"
+            android:authorities="com.ruptech.chinatalk.provider.Chats" >
+        </provider>
     </application>
 
 </manifest>

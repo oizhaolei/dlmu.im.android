@@ -254,5 +254,9 @@
         <item>nature</item>
         <item>travel</item>
         <item>wedding</item>
-    </string-array>    
+    </string-array>
+    <string-array name="chat_action">
+        <item>@string/auto_translation_msg</item>
+        <item>@string/human_translation</item>
+    </string-array>
 </resources>

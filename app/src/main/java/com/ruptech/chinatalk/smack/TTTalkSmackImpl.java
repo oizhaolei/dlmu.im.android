@@ -1,14 +1,18 @@
 package com.ruptech.chinatalk.smack;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
+import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerUtilities;
@@ -34,6 +38,7 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.carbons.Carbon;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.forward.Forwarded;
+import org.jivesoftware.smackx.packet.DelayInfo;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
@@ -44,7 +49,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
-
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
     public static final String XMPP_IDENTITY_TYPE = "phone";
@@ -223,22 +227,77 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 try {
                     if (packet instanceof Message) {
                         Message msg = (Message) packet;
-                        String contentBody = msg.getBody();
+                        String chatMessage = msg.getBody();
 
                         String fromJID = XMPPUtils.getJabberID(msg.getFrom());
 
                         Log.e(TAG, msg.toXML());
                         if ("tttalk.org".equals(fromJID)) {
-                            App.mBus.post(new SystemMessageEvent(contentBody));
+                            App.mBus.post(new SystemMessageEvent(chatMessage));
+                        }
 
+                        // try to extract a carbon
+                        Carbon cc = CarbonManager.getCarbon(msg);
+                        if (cc != null
+                                && cc.getDirection() == Carbon.Direction.received) {
+                            Log.d(TAG, "carbon: " + cc.toXML());
+                            msg = (Message) cc.getForwarded()
+                                    .getForwardedPacket();
+                            chatMessage = msg.getBody();
+                            // fall through
+                        } else if (cc != null
+                                && cc.getDirection() == Carbon.Direction.sent) {
+                            Log.d(TAG, "carbon: " + cc.toXML());
+                            msg = (Message) cc.getForwarded()
+                                    .getForwardedPacket();
+                            chatMessage = msg.getBody();
+                            if (chatMessage == null)
+                                return;
+
+                            addChatMessageToDB(ChatProvider.OUTGOING, fromJID,
+                                    chatMessage, ChatProvider.DS_SENT_OR_READ,
+                                    System.currentTimeMillis(),
+                                    msg.getPacketID());
+                            // always return after adding
+                            return;
                         }
-                        if ("tttalk.volunteer@tttalk.org".equals(fromJID)) {
-                            PacketExtension extension =  msg.getExtension(TTTalkRequestExtension.NAMESPACE);
-                            if (TTTalkRequestExtension.ELEMENT_NAME.equals(extension.getElementName())) {
-                            } else if (TTTalkQaExtension.ELEMENT_NAME.equals(extension.getElementName())) {
-                            } else if (TTTalkAnnouncementExtension.ELEMENT_NAME.equals(extension.getElementName())) {
+
+                        if (chatMessage == null) {
+                            return;
+                        }
+
+                        if (msg.getType() == Message.Type.error) {
+                            chatMessage = "<Error> " + chatMessage;
+                        }
+
+                        long ts;
+                        DelayInfo timestamp = (DelayInfo) msg.getExtension(
+                                "delay", "urn:xmpp:delay");
+                        if (timestamp == null)
+                            timestamp = (DelayInfo) msg.getExtension("x",
+                                    "jabber:x:delay");
+                        if (timestamp != null)
+                            ts = timestamp.getStamp().getTime();
+                        else
+                            ts = System.currentTimeMillis();
+
+                        if (fromJID.startsWith(App.properties.getProperty("translator_jid"))){
+                            Collection<PacketExtension> extensions = msg.getExtensions();
+                            for(PacketExtension ext : extensions){
+                                if (ext instanceof TTTalkExtension){
+                                    TTTalkExtension tttalkExtension =(TTTalkExtension)ext;
+                                    String messageId = tttalkExtension.getValue("message_id");
+                                    setToContent(messageId, chatMessage);
+                                }
                             }
+
+                        }else{
+                            addChatMessageToDB(ChatProvider.INCOMING, fromJID,
+                                    chatMessage, ChatProvider.DS_NEW, ts,
+                                    msg.getPacketID());
                         }
+
+                        App.mBus.post(new NewChatEvent(fromJID, chatMessage));
 
                     }
                 } catch (Exception e) {
@@ -249,6 +308,28 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         };
 
         mXMPPConnection.addPacketListener(mPacketListener, filter);
+    }
+
+    private void setToContent(String messageID, String message) {
+        ContentValues cv = new ContentValues();
+        cv.put(ChatTable.Columns.TO_MESSAGE, message);
+
+        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.MESSAGE_ID
+                + " = ?  " , new String[]{messageID});
+    }
+
+    private void addChatMessageToDB(int direction, String JID, String message,
+                                    int delivery_status, long ts, String packetID) {
+        ContentValues values = new ContentValues();
+
+        values.put(ChatTable.Columns.DIRECTION, direction);
+        values.put(ChatTable.Columns.JID, JID);
+        values.put(ChatTable.Columns.MESSAGE, message);
+        values.put(ChatTable.Columns.DELIVERY_STATUS, delivery_status);
+        values.put(ChatTable.Columns.DATE, ts);
+        values.put(ChatTable.Columns.PACKET_ID, packetID);
+
+        mContentResolver.insert(ChatProvider.CONTENT_URI, values);
     }
 
     /**
@@ -442,5 +523,43 @@ public class TTTalkSmackImpl implements TTTalkSmack {
             Log.e(TAG, e.getMessage(), e);
         }
         return result;
+    }
+
+    @Override
+    public void sendMessage(String toJID, String message, Collection<PacketExtension> extensions) {
+
+        final Message newMessage = new Message(toJID, Message.Type.chat);
+        newMessage.setBody(message);
+        newMessage.addExtension(new DeliveryReceiptRequest());
+        if (extensions != null) {
+            //TODO: merge tttalk extensions
+            for (PacketExtension extension : extensions) {
+                newMessage.addExtension(extension);
+            }
+        }
+
+        if (isAuthenticated()) {
+            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message,
+                    ChatProvider.DS_SENT_OR_READ, System.currentTimeMillis(),
+                    newMessage.getPacketID());
+            mXMPPConnection.sendPacket(newMessage);
+        } else {
+            // send offline -> store to DB
+            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message,
+                    ChatProvider.DS_NEW, System.currentTimeMillis(),
+                    newMessage.getPacketID());
+        }
+    }
+
+    public static void sendOfflineMessage(ContentResolver cr, String toJID,
+                                          String message) {
+        ContentValues values = new ContentValues();
+        values.put(ChatTable.Columns.DIRECTION, ChatProvider.OUTGOING);
+        values.put(ChatTable.Columns.JID, toJID);
+        values.put(ChatTable.Columns.MESSAGE, message);
+        values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
+        values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
+
+        cr.insert(ChatProvider.CONTENT_URI, values);
     }
 }

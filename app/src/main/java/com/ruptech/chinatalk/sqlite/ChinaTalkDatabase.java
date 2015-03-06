@@ -1,13 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
@@ -20,6 +12,16 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.utils.Utils;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class ChinaTalkDatabase {
 	/**
@@ -46,7 +48,7 @@ public class ChinaTalkDatabase {
 				Log.d(TAG, "Upgrade Database.");
 			if (oldVersion >= 43) {
 				try {
-					udpateTable43to57(db);
+					udpateTable43to58(db);
 				} catch (Exception e) {
 					Utils.sendClientException(e);
 				}
@@ -70,7 +72,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 57;
+	public static final int DATABASE_VERSION = 58;
 
 	/**
 	 * self instance
@@ -90,6 +92,7 @@ public class ChinaTalkDatabase {
 
 		db.execSQL(HotUserPhotoTable.getCreateIndexSQL());
 		db.execSQL(CommentNewsTable.getCreateIndexSQL());
+        db.execSQL(ChatTable.getCreateIndexSQL());
 	}
 
 	// Create All tables
@@ -106,6 +109,7 @@ public class ChinaTalkDatabase {
 		db.execSQL(HotUserPhotoTable.getCreateSQL());
 
 		db.execSQL(CommentNewsTable.getCreateSQL());
+        db.execSQL(ChatTable.getCreateSQL());
 	}
 
 	private static void dropAllTables(SQLiteDatabase db) {
@@ -121,6 +125,7 @@ public class ChinaTalkDatabase {
 		db.execSQL(HotUserPhotoTable.getDropSQL());
 
 		db.execSQL(CommentNewsTable.getDropSQL());
+        db.execSQL(ChatTable.getDropSQL());
 	}
 
 	/**
@@ -136,7 +141,7 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable43to57(SQLiteDatabase db) {
+	private static void udpateTable43to58(SQLiteDatabase db) {
 		db.execSQL(ChannelTable.getDropSQL());
 		db.execSQL(HotUserPhotoTable.getDropSQL());
 		db.execSQL(CommentNewsTable.getDropSQL());
@@ -145,6 +150,7 @@ public class ChinaTalkDatabase {
 		db.execSQL(HotUserPhotoTable.getCreateSQL());
 		db.execSQL(CommentNewsTable.getCreateSQL());
 		db.execSQL(UserPhotoTable.getCreateSQL());
+        db.execSQL(ChatTable.getCreateSQL());
 	}
 
 	/**

@@ -561,5 +561,12 @@
 
     <string name="start_receiving_messages">You are online, ready to receive the translate request.</string>
     <string name="stop_receiving_messages">You are offline, no more message will interrupt you.</string>
-
+    <string name="status_available">在线</string>
+    <string name="status_away">离开</string>
+    <string name="status_chat">Available</string>
+    <string name="status_dnd">请勿打扰</string>
+    <string name="status_xa">隐身</string>
+    <string name="status_offline">离线</string>
+    <string name="status_busy">忙碌</string>
+    <string name="status_online">在线</string>
 </resources>

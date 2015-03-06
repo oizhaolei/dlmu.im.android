@@ -1,21 +1,19 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import static butterknife.ButterKnife.findById;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,24 +31,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.adapter.RecentChatAdapter;
 import com.ruptech.chinatalk.model.CommentNews;
-import com.ruptech.chinatalk.model.Friend;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.DeleteCommentNewsTask;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.FriendOperate;
-import com.ruptech.chinatalk.ui.FriendOperate.UserType;
+import com.ruptech.chinatalk.ui.XmppChatActivity;
 import com.ruptech.chinatalk.ui.fragment.SegmentTabLayout.OnSegmentClickListener;
 import com.ruptech.chinatalk.ui.setting.SettingQaActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
@@ -58,14 +53,33 @@ import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.chinatalk.widget.ChatListCursorAdapter;
 import com.ruptech.chinatalk.widget.CommentNewsListAdapter;
-import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
+
 public class ChatFragment extends Fragment implements OnRefreshListener,
 		TextWatcher, OnSegmentClickListener {
+
+    private class ChatObserver extends ContentObserver {
+        public ChatObserver() {
+            super(mainHandler);
+        }
+
+        public void onChange(boolean selfChange) {
+            mainHandler.postDelayed(new Runnable() {
+                public void run() {
+                    updateRoster();
+                }
+            }, 100);
+        }
+    }
 
 	public static Fragment newInstance() {
 		ChatFragment fragment = new ChatFragment();
@@ -122,6 +136,13 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 
 	private GenericTask mDeleteCommentTask;
 
+
+    private Handler mainHandler = new Handler();
+
+    private ContentObserver mChatObserver = new ChatObserver();
+    private ContentResolver mContentResolver;
+    private RecentChatAdapter mRecentChatAdapter;
+
 	private final BroadcastReceiver mHandleChatListReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -137,6 +158,10 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	};
 
 	static final String LOG_TAG = ChatFragment.class.getName();
+
+    public void updateRoster() {
+        mRecentChatAdapter.requery();
+    }
 
 	@Override
 	public void afterTextChanged(Editable s) {
@@ -169,6 +194,15 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 
 		return view;
 	}
+
+
+    private void startChatActivity(String userJid, String userName) {
+        Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+        Uri userNameUri = Uri.parse(userJid);
+        chatIntent.setData(userNameUri);
+        chatIntent.putExtra(XmppChatActivity.INTENT_EXTRA_USERNAME, userName);
+        startActivity(chatIntent);
+    }
 
 	private void doDeleteCommentList(long id) {
 		if (mDeleteCommentTask != null
@@ -266,11 +300,20 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 		}
 	}
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mContentResolver.unregisterContentObserver(mChatObserver);
+    }
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		if (currentCheckId == R.string.main_sub_tab_chat) {
-			refreshChatPage();
+//			refreshChatPage();
+            mRecentChatAdapter.requery();
+            mContentResolver.registerContentObserver(com.ruptech.chinatalk.db.ChatProvider.CONTENT_URI,
+                    true, mChatObserver);
 		}
 
 		refreshNewMark();
@@ -419,136 +462,154 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	private void setupChatLayout() {
 		setChatHeaderView();
 
-		chatListView.addHeaderView(chatHeaderView);
+        mContentResolver = getActivity().getContentResolver();
+        mRecentChatAdapter = new RecentChatAdapter(getActivity());
+        chatListView.setAdapter(mRecentChatAdapter);
 
-		chatListView.setAdapter(mChatListViewAdapter);
-		chatListView.setOnItemClickListener(new OnItemClickListener() {
+        chatListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int position, long id) {
-				if (position == 0)
-					return;
-				else
-					position--;
+                Cursor clickCursor = mRecentChatAdapter.getCursor();
+                clickCursor.moveToPosition(position);
+                String jid = clickCursor.getString(clickCursor
+                        .getColumnIndex(TableContent.ChatTable.Columns.JID));
 
-				Cursor item = (Cursor) mChatListViewAdapter.getItem(position);
-				User user = UserTable.parseCursor(item);
-
-				// 对话界面
-				Intent intent = new Intent(getActivity(), ChatActivity.class);
-				intent.putExtra(ChatActivity.EXTRA_FRIEND, user);
-				getActivity().startActivity(intent);
+                startChatActivity(jid, XMPPUtils.splitJidAndServer(jid));
 			}
 		});
 
-		chatListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				if (position == 0)
-					return true;
-				else
-					position--;
-
-				Cursor item = (Cursor) mChatListViewAdapter.getItem(position);
-				final User user = UserTable.parseCursor(item);
-				// 设定弹出菜单选项
-				final Friend friend = App.friendDAO.fetchFriend(App.readUser()
-						.getId(), user.getId());
-				UserType userType;
-				if (friend == null || friend.getDone() == 0) {
-					userType = UserType.STRANGER;
-				} else {
-					userType = UserType.FRIEND;
-				}
-				final FriendOperate friendOperate = new FriendOperate(
-						getActivity(), user, userType);
-				List<String> menuList = new ArrayList<String>();
-				menuList.add(getActivity()
-						.getString(R.string.friend_menu_block));
-				menuList.add(getActivity().getString(
-						R.string.friend_menu_report));
-				menuList.add(getActivity().getString(
-						R.string.friend_menu_clean_chat_history));
-				menuList.add(getActivity().getString(
-						R.string.friend_menu_more_chat_history));
-				final Friend tempFriend;
-				if (friend == null) {
-					tempFriend = App.friendDAO.fetchFriend(user.getId(), App
-							.readUser().getId());
-				} else {
-					tempFriend = friend;
-				}
-				if (tempFriend != null) {
-					if (tempFriend.getIs_top() == 1) {
-						menuList.add(getActivity().getString(
-								R.string.is_cancel_on_top));
-					} else {
-						menuList.add(getActivity()
-								.getString(R.string.is_on_top));
-					}
-				}
-				final String[] menus = new String[menuList.size()];
-				menuList.toArray(menus);
-				CustomDialog alertDialog = new CustomDialog(getActivity())
-						.setItems(menus, new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								String selectedItem = menus[which];
-								if (getActivity().getString(
-										R.string.friend_menu_block).equals(
-										selectedItem)) {
-									friendOperate.settingBlockFriend();
-								} else if (getActivity().getString(
-										R.string.friend_menu_report).equals(
-										selectedItem)) {
-									friendOperate.settingReportFriend();
-								} else if (getActivity()
-										.getString(
-												R.string.friend_menu_clean_chat_history)
-										.equals(selectedItem)) {
-									friendOperate.settingCleanMessage();
-								} else if (getActivity().getString(
-										R.string.friend_menu_more_chat_history)
-										.equals(selectedItem)) {
-									friendOperate.settingGetHistoryFriend();
-								} else if (getActivity().getString(
-										R.string.is_cancel_on_top).equals(
-										selectedItem)
-										|| getActivity().getString(
-												R.string.is_on_top).equals(
-												selectedItem)) {
-									int isTop = 0;
-									if (tempFriend.getIs_top() == 0) {
-										isTop = 1;
-									}
-									if (friend == null) {
-										friendOperate.doSaveChatTopSetting(
-												isTop, false, user);
-									} else {
-										friendOperate.doSaveChatTopSetting(
-												isTop, true, user);
-									}
-									refreshChatPage();
-								}
-							}
-
-						});
-				String title = null;
-				// 不是自己显示好友昵称，如果没有显示好友自己的名字
-				if (friend != null) {
-					title = Utils.isEmpty(friend.getFriend_nickname()) ? user
-							.getFullname() : friend.getFriend_nickname();
-				} else {
-					title = user.getFullname();
-				}
-				alertDialog.setTitle(title).show();
-				return true;
-			}
-		});
+//		chatListView.addHeaderView(chatHeaderView);
+//
+//		chatListView.setAdapter(mChatListViewAdapter);
+//		chatListView.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> arg0, View arg1,
+//					int position, long id) {
+//				if (position == 0)
+//					return;
+//				else
+//					position--;
+//
+//				Cursor item = (Cursor) mChatListViewAdapter.getItem(position);
+//				User user = UserTable.parseCursor(item);
+//
+//				// 对话界面
+//				Intent intent = new Intent(getActivity(), ChatActivity.class);
+//				intent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+//				getActivity().startActivity(intent);
+//			}
+//		});
+//
+//		chatListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View v,
+//					int position, long id) {
+//				if (position == 0)
+//					return true;
+//				else
+//					position--;
+//
+//				Cursor item = (Cursor) mChatListViewAdapter.getItem(position);
+//				final User user = UserTable.parseCursor(item);
+//				// 设定弹出菜单选项
+//				final Friend friend = App.friendDAO.fetchFriend(App.readUser()
+//						.getId(), user.getId());
+//				UserType userType;
+//				if (friend == null || friend.getDone() == 0) {
+//					userType = UserType.STRANGER;
+//				} else {
+//					userType = UserType.FRIEND;
+//				}
+//				final FriendOperate friendOperate = new FriendOperate(
+//						getActivity(), user, userType);
+//				List<String> menuList = new ArrayList<String>();
+//				menuList.add(getActivity()
+//						.getString(R.string.friend_menu_block));
+//				menuList.add(getActivity().getString(
+//						R.string.friend_menu_report));
+//				menuList.add(getActivity().getString(
+//						R.string.friend_menu_clean_chat_history));
+//				menuList.add(getActivity().getString(
+//						R.string.friend_menu_more_chat_history));
+//				final Friend tempFriend;
+//				if (friend == null) {
+//					tempFriend = App.friendDAO.fetchFriend(user.getId(), App
+//							.readUser().getId());
+//				} else {
+//					tempFriend = friend;
+//				}
+//				if (tempFriend != null) {
+//					if (tempFriend.getIs_top() == 1) {
+//						menuList.add(getActivity().getString(
+//								R.string.is_cancel_on_top));
+//					} else {
+//						menuList.add(getActivity()
+//								.getString(R.string.is_on_top));
+//					}
+//				}
+//				final String[] menus = new String[menuList.size()];
+//				menuList.toArray(menus);
+//				CustomDialog alertDialog = new CustomDialog(getActivity())
+//						.setItems(menus, new DialogInterface.OnClickListener() {
+//
+//							@Override
+//							public void onClick(DialogInterface dialog,
+//									int which) {
+//								String selectedItem = menus[which];
+//								if (getActivity().getString(
+//										R.string.friend_menu_block).equals(
+//										selectedItem)) {
+//									friendOperate.settingBlockFriend();
+//								} else if (getActivity().getString(
+//										R.string.friend_menu_report).equals(
+//										selectedItem)) {
+//									friendOperate.settingReportFriend();
+//								} else if (getActivity()
+//										.getString(
+//												R.string.friend_menu_clean_chat_history)
+//										.equals(selectedItem)) {
+//									friendOperate.settingCleanMessage();
+//								} else if (getActivity().getString(
+//										R.string.friend_menu_more_chat_history)
+//										.equals(selectedItem)) {
+//									friendOperate.settingGetHistoryFriend();
+//								} else if (getActivity().getString(
+//										R.string.is_cancel_on_top).equals(
+//										selectedItem)
+//										|| getActivity().getString(
+//												R.string.is_on_top).equals(
+//												selectedItem)) {
+//									int isTop = 0;
+//									if (tempFriend.getIs_top() == 0) {
+//										isTop = 1;
+//									}
+//									if (friend == null) {
+//										friendOperate.doSaveChatTopSetting(
+//												isTop, false, user);
+//									} else {
+//										friendOperate.doSaveChatTopSetting(
+//												isTop, true, user);
+//									}
+//									refreshChatPage();
+//								}
+//							}
+//
+//						});
+//				String title = null;
+//				// 不是自己显示好友昵称，如果没有显示好友自己的名字
+//				if (friend != null) {
+//					title = Utils.isEmpty(friend.getFriend_nickname()) ? user
+//							.getFullname() : friend.getFriend_nickname();
+//				} else {
+//					title = user.getFullname();
+//				}
+//				alertDialog.setTitle(title).show();
+//				return true;
+//			}
+//		});
 
 	}
 
