@@ -137,7 +137,7 @@ public class XmppChatActivity extends ActionBarActivity implements View.OnTouchL
         ButterKnife.inject(this);
         App.mBus.register(this);
 
-        initTransClient();// 初始化翻译相关功能
+//        initTransClient();// 初始化翻译相关功能
 
         initData();// 初始化数据
         initView();// 初始化view

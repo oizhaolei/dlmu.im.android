@@ -103,26 +103,29 @@ public class ChatAdapter extends SimpleCursorAdapter {
         if (TextUtils.isEmpty(content))
             return;
 
-        mClient.translate(content, fromLang, toLang, new ITransResultCallback() {
+        if (mClient != null){
+            mClient.translate(content, fromLang, toLang, new ITransResultCallback() {
 
-            @Override
-            public void onResult(TransResult result) {// 翻译结果回调
-                if (result == null) {
-                    Log.d(TAG, "Trans Result is null");
+                @Override
+                public void onResult(TransResult result) {// 翻译结果回调
+                    if (result == null) {
+                        Log.d(TAG, "Trans Result is null");
 
-                } else {
-                    Log.d(TAG, result.toJSONString());
-
-                    String msg;
-                    if (result.error_code == 0) {// 没错
-                        msg = result.trans_result;
                     } else {
-                        msg = result.error_msg;
+                        Log.d(TAG, result.toJSONString());
+
+                        String msg;
+                        if (result.error_code == 0) {// 没错
+                            msg = result.trans_result;
+                        } else {
+                            msg = result.error_msg;
+                        }
+                        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
+        }
+
     }
 
 
@@ -200,7 +203,7 @@ public class ChatAdapter extends SimpleCursorAdapter {
      */
     private void markAsRead(int id) {
         Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
-                + ChatProvider.TABLE_NAME + "/" + id);
+                + ChatProvider.QUERY_URI + "/" + id);
         Log.d(TAG, "markAsRead: " + rowuri);
         ContentValues values = new ContentValues();
         values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_SENT_OR_READ);

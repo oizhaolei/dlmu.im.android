@@ -27,6 +27,7 @@ public class ChatProvider extends ContentProvider {
     public static final String QUERY_URI = "chats";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
             + "/" + QUERY_URI);
+
     private static final UriMatcher URI_MATCHER = new UriMatcher(
             UriMatcher.NO_MATCH);
 

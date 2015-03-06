@@ -461,7 +461,11 @@
             android:name="com.ruptech.chinatalk.ui.friend.FriendsLeaderboardListActivity"
             android:icon="@drawable/ic_tttalk_gray_light"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name="com.ruptech.chinatalk.ui.XmppChatActivity"
+            android:icon="@drawable/ic_tttalk_gray_light"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <service android:name="com.ruptech.chinatalk.ui.UpdateVersionService" />
 
         <!--<receiver-->
@@ -660,6 +664,10 @@
         <provider
             android:name=".db.ChatProvider"
             android:authorities="com.ruptech.chinatalk.provider.Chats" >
+        </provider>
+        <provider
+            android:name=".db.RosterProvider"
+            android:authorities="com.ruptech.chinatalk.provider.Roster" >
         </provider>
     </application>
 
