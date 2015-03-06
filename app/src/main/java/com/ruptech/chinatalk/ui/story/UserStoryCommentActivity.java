@@ -562,7 +562,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 			if (result == TaskResult.OK) {
 				mLikeUserList = retrieveLikeUserListTask.getLikeUserList();
-				ArrayList<String> tempUrlList = new ArrayList<String>();
+				ArrayList<String> tempUrlList = new ArrayList<>();
 				int totalSize = mLikeUserList.size() > maxShowLikePeopleCnt ? maxShowLikePeopleCnt
 						: mLikeUserList.size();
 				for (int i = 0; i < totalSize; i++) {
@@ -588,7 +588,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 			if (result == TaskResult.OK) {
 				mGiftList = retrieveUserGiftListTask.getGiftList();
-				ArrayList<String> tempUrlList = new ArrayList<String>();
+				ArrayList<String> tempUrlList = new ArrayList<>();
 				int totalSize = mGiftList.size() > maxShowLikePeopleCnt ? maxShowLikePeopleCnt
 						: mGiftList.size();
 				int presentCount = 0;

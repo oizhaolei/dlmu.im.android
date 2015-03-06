@@ -253,7 +253,7 @@ public class ImageViewActivity extends ActionBarActivity {
 	ImageProgressBar imageProgressBar;
 	File saveTo;
 
-	ArrayList<String> imageUrlList = new ArrayList<String>();
+	ArrayList<String> imageUrlList = new ArrayList<>();
 
 	Handler mHandler = new Handler() {
 		@Override

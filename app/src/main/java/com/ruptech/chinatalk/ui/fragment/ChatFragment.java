@@ -523,7 +523,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 //				}
 //				final FriendOperate friendOperate = new FriendOperate(
 //						getActivity(), user, userType);
-//				List<String> menuList = new ArrayList<String>();
+//				List<String> menuList = new ArrayList<>();
 //				menuList.add(getActivity()
 //						.getString(R.string.friend_menu_block));
 //				menuList.add(getActivity().getString(

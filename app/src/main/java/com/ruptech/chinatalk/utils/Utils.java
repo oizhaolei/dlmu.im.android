@@ -441,7 +441,7 @@ public class Utils {
     public static String[] getAvailableLang2ByLang1(String lang) {
         String[] languages_from_code = App.mContext.getResources()
                 .getStringArray(R.array.lang_code);
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String langCode : languages_from_code) {
             if (!lang.equals(langCode)) {
                 list.add(langCode);
@@ -714,7 +714,7 @@ public class Utils {
     }
 
     public static List<String> getMobileContactList(String displayName) {
-        List<String> contacts = new ArrayList<String>();
+        List<String> contacts = new ArrayList<>();
         try {
             ContentResolver cr = App.mContext.getContentResolver();
             Cursor cur;

@@ -243,7 +243,7 @@ public abstract class HttpConnection {
 
 	public ServerAppInfo ver() throws Exception {
 		Response res = null;
-		List<String> excludeUrls = new ArrayList<String>();
+		List<String> excludeUrls = new ArrayList<>();
 		for (int i = 0; res == null
 				&& i < AppPreferences.SERVER_BASE_URL.length; i++) {
 			String url = AppPreferences.SERVER_BASE_URL[i]

@@ -128,7 +128,7 @@ public class UserStoryTagActivity extends ActionBarActivity {
 	}
 
 	private List<String> getLocalList() {
-		localChannelList = new ArrayList<String>();
+		localChannelList = new ArrayList<>();
 		String localChannelStr = PrefUtils.getUserChannelList();
 		if (localChannelStr.length() != 0) {
 			String[] temp = localChannelStr.split(",");
@@ -251,13 +251,11 @@ public class UserStoryTagActivity extends ActionBarActivity {
 	private void setupComponents() {
 		mStoyrTagListView.setEmptyView(localListView);
 
-		serverTagListArrayAdapter = new StoryTagListArrayAdapter(this,
-				new ArrayList<String>());
+		serverTagListArrayAdapter = new StoryTagListArrayAdapter(this);
 		mStoyrTagListView.setAdapter(serverTagListArrayAdapter);
 		mStoyrTagListView.setOnItemClickListener(itemClickListener);
 
-		localTagListArrayAdapter = new StoryTagListArrayAdapter(this,
-				getLocalList());
+		localTagListArrayAdapter = new StoryTagListArrayAdapter(this);
 		localTagListArrayAdapter.setLocal();
 		localListView.setAdapter(localTagListArrayAdapter);
 		localListView.setOnItemClickListener(itemClickListener);

@@ -425,7 +425,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 			OnLongClickListener photoLongListener = new OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
-					List<String> menuList = new ArrayList<String>();
+					List<String> menuList = new ArrayList<>();
 					if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_SEND_FAILED) {
 						menuList.add(getContext()
 								.getString(
@@ -621,7 +621,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 	// 原文文本菜单
 	void createFromContentPopMenus(final Message message, View v,
 			final String content) {
-		List<String> menuList = new ArrayList<String>();
+		List<String> menuList = new ArrayList<>();
 		if (!AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
 				.getFile_type())
 				&& !AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(message
@@ -679,7 +679,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 	// 译文文本菜单
 	void createToContentPopMenus(final Message message, View v,
 			final String content) {
-		List<String> menuList = new ArrayList<String>();
+		List<String> menuList = new ArrayList<>();
 		menuList.add(getContext().getString(R.string.message_action_copy));
 		menuList.add(getContext().getString(R.string.message_action_share));
 		menuList.add(getContext().getString(R.string.message_action_fullscreen));
@@ -1003,7 +1003,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 	}
 
 	private void setChatPhotoList(Cursor chatsCursor) {
-		chatPhotoList = new ArrayList<String>();
+		chatPhotoList = new ArrayList<>();
 		for (chatsCursor.moveToFirst(); !chatsCursor.isAfterLast(); chatsCursor
 				.moveToNext()) {
 			Message message = MessageTable.parseCursor(chatsCursor);

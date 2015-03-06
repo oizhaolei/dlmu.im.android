@@ -389,7 +389,7 @@ public class ShareStoryDialogActivity extends Activity {
         params.putInt(QzoneShare.SHARE_TO_QQ_EXT_INT,
                 QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
         // 支持传多个imageUrl
-        ArrayList<String> imageUrls = new ArrayList<String>();
+        ArrayList<String> imageUrls = new ArrayList<>();
         imageUrls.add(sharedImgUrl);
         params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, imageUrls);
         tencentQZoneSendMessage(params);

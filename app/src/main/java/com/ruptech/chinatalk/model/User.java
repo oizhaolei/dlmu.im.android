@@ -196,7 +196,7 @@ public class User extends Item implements Serializable {
 	}
 
 	public List<String> getAllLangs() {
-		List<String> allLangList = new ArrayList<String>();
+		List<String> allLangList = new ArrayList<>();
 		allLangList.add(lang);
 		if (additionalLangs != null) {
 			for (String l : additionalLangs) {

@@ -407,7 +407,7 @@ public class FriendProfileActivity extends ActionBarActivity implements
 		if (!Utils.isEmpty(mUser.getPic_url())) {
 			UserPhoto userPhoto = new UserPhoto();
 			userPhoto.setPic_url(mUser.getPic_url());
-			ArrayList<String> extraPhotos = new ArrayList<String>();
+			ArrayList<String> extraPhotos = new ArrayList<>();
 			extraPhotos.add(App.readServerAppInfo().getServerOriginal(
 					mUser.getPic_url()));
 			Intent intent = new Intent(this, ImageViewActivity.class);

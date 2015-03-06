@@ -151,7 +151,7 @@ public class EmojiParser {
 					}
 					case XmlPullParser.START_TAG: {
 						if (xmlpull.getName().equals("key")) {
-							emos = new ArrayList<String>();
+							emos = new ArrayList<>();
 							key = xmlpull.nextText();
 						}
 						if (xmlpull.getName().equals("e")) {

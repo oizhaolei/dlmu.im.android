@@ -74,7 +74,7 @@ public class DiscoverTask extends GenericTask {
 			}
 		}
 
-		mKeywordList = new ArrayList<String>();
+		mKeywordList = new ArrayList<>();
 
 		list = result.optJSONArray("keyword");
 		if (list != null) {

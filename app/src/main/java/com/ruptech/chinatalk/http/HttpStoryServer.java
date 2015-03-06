@@ -108,7 +108,7 @@ public class HttpStoryServer extends HttpConnection {
 
 		JSONArray result = res.asJSONArray();
 		int size = result.length();
-		List<String> channelList = new ArrayList<String>(size);
+		List<String> channelList = new ArrayList<>(size);
 
 		for (int i = 0; i < size; i++) {
 			JSONObject jo = result.getJSONObject(i);

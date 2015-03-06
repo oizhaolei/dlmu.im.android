@@ -3,6 +3,7 @@
  */
 package com.ruptech.chinatalk.widget;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -32,13 +33,13 @@ public class StoryTagListArrayAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;
 	private boolean isLocal = false;
 
-	public StoryTagListArrayAdapter(Context context, List<String> storyTagArray) {
-		this.storyTagArray = storyTagArray;
-		if (context != null) {
-			mInflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
+	public StoryTagListArrayAdapter(Context context) {
+        this.storyTagArray = new ArrayList<>();
+        if (context != null) {
+            mInflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+    }
 
 	@Override
 	public int getCount() {

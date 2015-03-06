@@ -211,12 +211,12 @@ public class AboutTTTalkActivity extends ActionBarActivity {
     }
 
     private void setupComponents() {
-        text_version.setText(App.mApkVersionOfClient.verName);
+        text_version.setText(String.format("%s(%s)", App.mApkVersionOfClient.verCode, App.mApkVersionOfClient.verName));
 
         showNewVersionMark();
 
         // 系统为韩文(或中文），并且用户语言与系统为同种语言时候，显示资讯电话菜单
-        List<String> conditionLanguageList = new ArrayList<String>();
+        List<String> conditionLanguageList = new ArrayList<>();
         conditionLanguageList.add(AppPreferences.LANGUAGE_KR);
         conditionLanguageList.add(AppPreferences.LANGUAGE_CN);
 

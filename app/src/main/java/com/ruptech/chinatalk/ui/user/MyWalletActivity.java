@@ -395,7 +395,7 @@ public class MyWalletActivity extends ActionBarActivity implements
             params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL,
                     share.getThirdparty_share_targeturl());
             // 支持传多个imageUrl
-            ArrayList<String> imageUrls = new ArrayList<String>();
+            ArrayList<String> imageUrls = new ArrayList<>();
             imageUrls.add(share.getThirdparty_share_imgurl());
             params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL,
                     imageUrls);
