@@ -48,8 +48,9 @@ public class BootReceiver extends BroadcastReceiver {
         }
 	}
 
-
+    //TODO: other checks
     private void startVersionCheck(Context context) {
+
         //version check
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
@@ -63,5 +64,4 @@ public class BootReceiver extends BroadcastReceiver {
             alarmManager.cancel(versionCheckPendingIntent);
         }
     }
-
 }
