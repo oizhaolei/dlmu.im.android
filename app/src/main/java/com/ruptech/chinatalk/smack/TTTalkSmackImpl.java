@@ -97,6 +97,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         ProviderManager.getInstance().addExtensionProvider(TTTalkRequestExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkRequestExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
 
         this.mXMPPConfig = new ConnectionConfiguration(server, port);
 
@@ -137,6 +138,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         // add delivery receipts
         pm.addExtensionProvider(DeliveryReceipt.ELEMENT,
                 DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+
+        pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME,
+                TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
         pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT,
                 DeliveryReceipt.NAMESPACE,
                 new DeliveryReceiptRequest.Provider());
