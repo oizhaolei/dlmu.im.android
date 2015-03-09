@@ -6,7 +6,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -55,8 +57,11 @@ import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.chinatalk.InfoPeriodReceiver;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.UserLocationReceiver;
+import com.ruptech.chinatalk.VersionCheckReceiver;
 import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.model.Friend;
@@ -1582,5 +1587,45 @@ public class Utils {
             tttalkId = Long.parseLong(jid.substring("chinatalk_".length(), jid.indexOf("@")));
         }
         return tttalkId;
+    }
+
+    //Receiver 定期取得数据处理
+    public static PendingIntent startInfoPeriodReceiver(Context context) {
+//        long client_period_time = ServerAppInfo.DEFAULT_CLIENT_PERIOD_SECONDS;
+//        if (App.readServerAppInfo().client_period_timer > 0)
+//            client_period_time = App.readServerAppInfo().client_period_timer;
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent retrieveInfoPeriodIntent = new Intent(context, InfoPeriodReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, retrieveInfoPeriodIntent, 0);
+//        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, client_period_time * 1000, retrieveInfoPeriodPendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 30 * 1000, pendingIntent);
+        return pendingIntent;
+    }
+
+    //Receiver 用户地址
+    public static PendingIntent startUserLocationReceiver(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent uploadUserLocationIntent = new Intent(context, UserLocationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, uploadUserLocationIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 20 * 1000, pendingIntent);
+        return pendingIntent;
+    }
+
+    //Receiver 版本检查
+    public static PendingIntent  startVersionCheckReceiver(Context context) {
+        //version check
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, 0, 60 * 60 * 1000, pendingIntent);
+        return pendingIntent;
+    }
+
+    public static void cancelReceiverPendingIntent(Context context, PendingIntent pendingIntent) {
+        if (pendingIntent != null) {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 }

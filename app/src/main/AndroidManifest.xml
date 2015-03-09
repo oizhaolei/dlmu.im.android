@@ -60,6 +60,12 @@
         <receiver
             android:name=".VersionCheckReceiver"
             android:enabled="true" />
+        <receiver
+            android:name=".InfoPeriodReceiver"
+            android:enabled="true" />
+        <receiver
+            android:name=".UserLocationReceiver"
+            android:enabled="true" />
 
         <meta-data android:value="54f93f50fd98c519d0000b79" android:name="UMENG_APPKEY"/>
         <meta-data android:value="tttalk" android:name="UMENG_CHANNEL"/>

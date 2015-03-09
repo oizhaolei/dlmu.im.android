@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -25,15 +24,13 @@ import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
-import com.ruptech.chinatalk.map.MyLocation;
+import com.ruptech.chinatalk.event.RefreshNewMarkEvent;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.BadgeCountTask;
 import com.ruptech.chinatalk.task.impl.GuideTask;
-import com.ruptech.chinatalk.task.impl.RetrieveInfoPeriodTask;
-import com.ruptech.chinatalk.task.impl.UploadUserLocationTask;
 import com.ruptech.chinatalk.ui.FindPasswordActivity;
 import com.ruptech.chinatalk.ui.LoginGateActivity;
 import com.ruptech.chinatalk.ui.LoginLoadingActivity;
@@ -54,17 +51,14 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.InviteFriendUtils;
 import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.squareup.otto.Subscribe;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -94,8 +88,6 @@ public class MainActivity extends ActionBarActivity implements
             instance = null;
         }
     }
-
-    Timer locationTimer = null;
 
     Timer periodTimer = null;
 
@@ -154,31 +146,6 @@ public class MainActivity extends ActionBarActivity implements
 //				ServerUtilities.registerGCMOnServer(this);
 //			}
 //		}
-    }
-
-    private void checkVersionSilently(final ApkUpgrade downloadApk) {
-        // version check
-        downloadApk.doRetrieveServerVersion(new TaskAdapter() {
-
-            @Override
-            public void onPostExecute(GenericTask task, TaskResult result) {
-                if (result == TaskResult.OK) {
-                    try {
-                        downloadApk.checkApkUpdate(true);
-                        if (App.readServerAppInfo() != null
-                                && App.readServerAppInfo().verCode > App.mApkVersionOfClient.verCode) {
-                            App.mBadgeCount.versionCount = 1;
-                        } else {
-                            App.mBadgeCount.versionCount = 0;
-                        }
-                        refreshNewMark();
-
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-        });
     }
 
     private void closeOthers() {
@@ -349,7 +316,6 @@ public class MainActivity extends ActionBarActivity implements
         App.mBadgeCount.loadBadgeCount();
         setupComponents(savedInstanceState);
         delayTask();
-        periodTimerTask();
         // 关闭之前所有进入Main的activity
         closeOthers();
 
@@ -372,9 +338,6 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onDestroy() {
         try {
-            if (locationTimer != null) {
-                locationTimer.cancel();
-            }
             if (periodTimer != null) {
                 periodTimer.cancel();
             }
@@ -481,31 +444,6 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    private void periodTimerTask() {
-
-        // 上传自己的地址
-        locationTimer = new Timer();
-        locationTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                uploadUserLocationTask();
-            }
-        }, 6 * 1000, 15 * 60 * 1000);// 6s,15 minutes
-
-        // 定期获取数据
-        long client_period_time = ServerAppInfo.DEFAULT_CLIENT_PERIOD_SECONDS;
-        if (App.readServerAppInfo().client_period_timer > 0)
-            client_period_time = App.readServerAppInfo().client_period_timer;
-
-        periodTimer = new Timer();
-        periodTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                retrieveInfoPeriodTask();
-            }
-        }, 6 * 1000, client_period_time * 1000);
-    }
-
     private void refreshBadgeCount() {
         GenericTask badgeTask = new BadgeCountTask();
         badgeTask.setListener(new TaskAdapter() {
@@ -530,59 +468,9 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
-    private void retrieveInfoPeriodTask() {
-        RetrieveInfoPeriodTask retrieveInfoPeriodTask = new RetrieveInfoPeriodTask();
-        retrieveInfoPeriodTask.setListener(new TaskAdapter() {
-            @Override
-            public void onPostExecute(GenericTask task, TaskResult result) {
-                RetrieveInfoPeriodTask retrieveInfoPeriodTask = (RetrieveInfoPeriodTask) task;
-                if (result == TaskResult.OK) {
-                    List<Map<String, String>> announcementList = retrieveInfoPeriodTask
-                            .getAnnouncementList();
-                    if (announcementList.size() > 0) {
-                        Map<String, String> announcement = announcementList
-                                .get(announcementList.size() - 1);
-                        if (announcement != null) {
-                            PrefUtils
-                                    .savePrefShowAccouncementDialogLastUpdatedate(announcement
-                                            .get("update_date"));
-                            showAnnouncementDialog(announcement);
-                        }
-                    }
-
-                }
-            }
-        });
-        retrieveInfoPeriodTask.execute();
-
-    }
-
     private void setupComponents(Bundle savedInstanceState) {
         mainTab.setOnTabClickListener(this);
         mainTab.clickTab(0);
-    }
-
-    private void showAnnouncementDialog(Map<String, String> announcement) {
-        if (instance == null || (dialog != null && dialog.isShowing())) {
-            return;
-        }
-        try {
-            dialog = new CustomDialog(instance)
-                    .setTitle(announcement.get("title"))
-                    .setMessage(
-                            Html.fromHtml(announcement.get("content"))
-                                    .toString())
-                    .setPositiveButton(R.string.alert_dialog_ok,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                }
-                            });// 创建;
-            dialog.show();
-        } catch (Exception e) {
-
-        }
     }
 
     private void showFreeRechargeBalanceInformDialog() {
@@ -603,23 +491,6 @@ public class MainActivity extends ActionBarActivity implements
                 .getTel());
     }
 
-    private void uploadUserLocationTask() {
-        int late6 = 0;
-        int lnge6 = 0;
-        if (MyLocation.recentLocation != null) {
-            late6 = (Double
-                    .valueOf(MyLocation.recentLocation.getLatitude() * 1E6))
-                    .intValue();
-            lnge6 = (Double
-                    .valueOf(MyLocation.recentLocation.getLongitude() * 1E6))
-                    .intValue();
-        }
-        UploadUserLocationTask uploadUserLocationTask = new UploadUserLocationTask(
-                late6, lnge6);
-        uploadUserLocationTask.execute();
-
-    }
-
     @Subscribe
     public void answerLogout(LogoutEvent event) {
         if (App.mService != null)
@@ -632,12 +503,24 @@ public class MainActivity extends ActionBarActivity implements
     public void answerNewVersionFound(NewVersionFoundEvent event) {
         mainHandler.post(new Runnable() {
             public void run() {
+                //TODO 需要做checkApkUpdate
+                //downloadApk.checkApkUpdate(true);
                 Toast.makeText(App.mContext,
                         "answerNewVersionFound",
                         Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    @Subscribe
+    public void refreshNewMark(RefreshNewMarkEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                refreshNewMark();
+            }
+        });
+    }
+
 
     @Subscribe
     public void answerNewChatReceived(final NewChatEvent event) {

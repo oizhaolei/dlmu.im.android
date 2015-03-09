@@ -3,6 +3,7 @@ package com.ruptech.chinatalk;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -240,6 +241,10 @@ public class App extends Application implements
 
     public static int displayWidth;
 
+    private PendingIntent versionCheckPendingIntent;
+    private PendingIntent uploadUserLocationPendingIntent;
+    private PendingIntent retrieveInfoPeriodPendingIntent;
+
     public void exitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
@@ -347,6 +352,10 @@ public class App extends Application implements
         getDisplaySize();
 
         checkPreviousException();
+
+        // receiver 定期执行
+        cancelReceiverPendingIntent();
+        startPeriodReceiver();
     }
 
     @Override
@@ -374,6 +383,7 @@ public class App extends Application implements
         }
 
         mBus.unregister(this);
+        cancelReceiverPendingIntent();
         super.onTerminate();
     }
 
@@ -439,5 +449,18 @@ public class App extends Application implements
         Intent serviceIntent = new Intent( App.mContext, XMPPService.class);
         App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
     }
+
+    private void cancelReceiverPendingIntent(){
+        Utils.cancelReceiverPendingIntent(App.mContext, versionCheckPendingIntent);
+        Utils.cancelReceiverPendingIntent(App.mContext, retrieveInfoPeriodPendingIntent);
+        Utils.cancelReceiverPendingIntent(App.mContext, uploadUserLocationPendingIntent);
+    }
+
+    private void startPeriodReceiver(){
+        versionCheckPendingIntent =  Utils.startVersionCheckReceiver(App.mContext);
+        retrieveInfoPeriodPendingIntent = Utils.startInfoPeriodReceiver(App.mContext);
+        uploadUserLocationPendingIntent = Utils.startUserLocationReceiver(App.mContext);
+    }
+
 
 }
