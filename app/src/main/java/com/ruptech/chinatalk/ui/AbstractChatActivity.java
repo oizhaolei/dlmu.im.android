@@ -31,6 +31,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.RosterProvider;
+import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.sqlite.TableContent;
@@ -45,7 +46,6 @@ import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
-import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
@@ -57,7 +57,6 @@ import com.ruptech.chinatalk.widget.RecordButton.OnFinishedRecordListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * 
@@ -125,17 +124,17 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 	}
 
-	public static void doRequestTranslate(Message message,
-			TaskListener requestTranslateListener) {
-		if (BuildConfig.DEBUG)
-			Log.v(TAG, "doRequestTranslate");
+//	public static void doRequestTranslate(Chat chat,
+//			TaskListener requestTranslateListener) {
+//		if (BuildConfig.DEBUG)
+//			Log.v(TAG, "doRequestTranslate");
+//
+//		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
+//		mRequestTranslateTask.setListener(requestTranslateListener);
+//		mRequestTranslateTask.execute();
+//	}
 
-		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
-		mRequestTranslateTask.setListener(requestTranslateListener);
-		mRequestTranslateTask.execute();
-	}
-
-	public static void doUploadFile(Message message,
+	public static void doUploadFile(Chat chat,
 			TaskListener mUploadTaskListener) {
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "doUploadFile");
@@ -145,16 +144,16 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 
 		File fFile = null;
-		if (!Utils.isEmpty(message.getFile_path())) {
-			if (message.file_type
+		if (!Utils.isEmpty(chat.getFilePath())) {
+			if (chat.getType()
 					.equals(AppPreferences.MESSAGE_TYPE_NAME_VOICE)) {
 				fFile = new File(Utils.getVoiceFolder(App.mContext),
-						message.getFile_path());
+						chat.getFilePath());
 			} else {
-				fFile = new File(message.getFile_path());
+				fFile = new File(chat.getFilePath());
 			}
 		}
-		mUploadTask = new FileUploadTask(fFile, message.getFile_type(),
+		mUploadTask = new FileUploadTask(fFile, chat.getType(),
 				new UploadProgress() {
 					@Override
 					public void onUpload(long uploaded, long total) {
@@ -219,44 +218,48 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	};
 
 	InputMethodManager mInputMethodManager;
-	private Message mMessage;// upload 图片时使用
+	protected Chat mChat;// upload 图片时使用
 
 	File mPhotoFile;
 
-	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+//	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+//
+//		@Override
+//		public void onPostExecute(GenericTask task, TaskResult result) {
+//			RequestTranslateTask fsTask = (RequestTranslateTask) task;
+//			if (result == TaskResult.OK) {
+//				onRequestTranslateSuccess(fsTask);
+//			} else {
+//				String msg = fsTask.getMsg();
+//				Message message = fsTask.getMessage();
+//				onRequestTranslateFailure(message, msg);
+//			}
+//		}
+//
+//		@Override
+//		public void onPreExecute(GenericTask task) {
+//			onRequestTranslateBegin();
+//		}
+//
+//	};
 
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			RequestTranslateTask fsTask = (RequestTranslateTask) task;
-			if (result == TaskResult.OK) {
-				onRequestTranslateSuccess(fsTask);
-			} else {
-				String msg = fsTask.getMsg();
-				Message message = fsTask.getMessage();
-				onRequestTranslateFailure(message, msg);
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-			onRequestTranslateBegin();
-		}
-
-	};
-
-	private final TaskListener mUploadTaskListener = new TaskAdapter() {
+	protected final TaskListener mUploadTaskListener = new TaskAdapter() {
 
 		@Override
 		public void onPostExecute(GenericTask task, TaskResult result) {
 			FileUploadTask photoTask = (FileUploadTask) task;
 			if (result == TaskResult.OK) {
-				Message message = mMessage;
-				message.setFile_path(photoTask.getFileInfo().fileName);
-				doRequestTranslate(message, mRequestTranslateListener);
+				if (mChat != null) {
+                    mChat.setFilePath(photoTask.getFileInfo().fileName);
+                    mChat.setMessage(photoTask.getFileInfo().fileName);
+                    sendMessageIfNotNull(mChat);
+                }
 			} else if (result == TaskResult.FAILED) {
 				String msg = photoTask.getMsg();
-				Message message = mMessage;
-				onRequestTranslateFailure(message, msg);
+//				onRequestTranslateFailure(mChat, msg);
+                if (!Utils.isEmpty(msg)) {
+                    Toast.makeText(AbstractChatActivity.this, msg, Toast.LENGTH_SHORT).show();
+                }
 			}
 		}
 
@@ -346,41 +349,21 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		mRetrieveUserTask.execute();
 	}
 
-	void doSaveLocalAndRequestTranslate(String content, String fromLang,
+	protected void doUpload(String content, String fromLang,
 			String toLang, Long toUserId, String file_path, int contentLength,
 			String filetype) {
-		getMessageListView().setTranscriptMode(
-				ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-		Message message = new Message();
-		long localId = System.currentTimeMillis();
-		message.setId(localId);
-		message.setMessageid(localId);
-		message.setUserid(App.readUser().getId());
-		message.setTo_userid(toUserId);
-		message.setFrom_lang(fromLang);
-		message.setTo_lang(toLang);
-		message.setFrom_content(content);
-		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
-		message.setStatus_text(getString(R.string.data_sending));
-		message.setFile_path(file_path);
-		message.setFrom_content_length(contentLength);
-		message.setFile_type(filetype);
-		String createDateStr = DateCommonUtils.getUtcDate(new Date(),
-				DateCommonUtils.DF_yyyyMMddHHmmssSSS);
-		message.create_date = createDateStr;
-		message.update_date = createDateStr;
+        Chat chat = new Chat();
+        chat.setFromLang(fromLang);
+        chat.setToLang(toLang);
+        chat.setType(filetype);
+        chat.setFromContentLength(contentLength);
+        chat.setFilePath(file_path);
 
-		App.messageDAO.mergeMessage(message);
-
-		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
-				.getFile_type())
-				|| AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(message
-						.getFile_type())) {// 先上传图片或者voice,然后发送请求
-			mMessage = message;
-			doUploadFile(message, mUploadTaskListener);
-		} else {
-			doRequestTranslate(message, mRequestTranslateListener);
-		}
+        mChat = chat;
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())
+                || AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {// 先上传图片或者voice,然后发送请求
+            doUploadFile(chat, mUploadTaskListener);
+        }
 	}
 
 	@Override
@@ -548,16 +531,16 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		switchTextInputMode();
 	}
 
-	void onRequestTranslateFailure(Message message, String msg) {
-		// save message
-		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
-		message.setStatus_text(getString(R.string.message_action_click_resend));
-		App.messageDAO.mergeMessage(message);
-		doRefresh();
-		if (!Utils.isEmpty(msg)) {
-			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-		}
-	}
+//	void onRequestTranslateFailure(Message message, String msg) {
+//		// save message
+//		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
+//		message.setStatus_text(getString(R.string.message_action_click_resend));
+//		App.messageDAO.mergeMessage(message);
+//		doRefresh();
+//		if (!Utils.isEmpty(msg)) {
+//			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+//		}
+//	}
 
 	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
 		doRefresh();
@@ -609,8 +592,8 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 		content = ParseEmojiMsgUtil.convertToMsg(
 				getMessageEditText().getText(), this);
-//		sendText(content, noTranslate);
-        sendMessageIfNotNull(content);
+		sendText(content, noTranslate);
+
 	}
 
 	private void sendPhoto() {
@@ -633,7 +616,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 			int contentLength = 0;
 			String filetype = AppPreferences.MESSAGE_TYPE_NAME_PHOTO;
 
-			doSaveLocalAndRequestTranslate(content, fromLang, toLang, toUserId,
+            doUpload(content, fromLang, toLang, toUserId,
 					file_path, contentLength, filetype);
 
 		}
@@ -651,8 +634,15 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		int contentLength = Utils.textLength(content);
 		String filetype = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
 
-		doSaveLocalAndRequestTranslate(content, fromLang, toLang, toUserId,
-				file_path, contentLength, filetype);
+        Chat chat = new Chat();
+        chat.setMessage(content);
+        chat.setFromLang(fromLang);
+        chat.setToLang(toLang);
+        chat.setType(filetype);
+        chat.setFromContentLength(contentLength);
+        chat.setFilePath(file_path);
+
+		sendMessageIfNotNull(chat);
 
 	}
 
@@ -666,7 +656,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		int contentLength = getVoiceLength(this, mVoiceFile);
 		String filetype = AppPreferences.MESSAGE_TYPE_NAME_VOICE;
 
-		doSaveLocalAndRequestTranslate(content, fromLang, toLang, toUserId,
+        doUpload(content, fromLang, toLang, toUserId,
 				file_path, contentLength, filetype);
 	}
 
@@ -752,6 +742,8 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             TableContent.ChatTable.Columns.JID,
             TableContent.ChatTable.Columns.MESSAGE,
             TableContent.ChatTable.Columns.TYPE,
+            TableContent.ChatTable.Columns.FILE_PATH,
+            TableContent.ChatTable.Columns.CONTENT_LENGTH,
             TableContent.ChatTable.Columns.TO_MESSAGE,
             TableContent.ChatTable.Columns.DATE,
             TableContent.ChatTable.Columns.MESSAGE_ID,
@@ -814,10 +806,11 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             App.unbindXMPPService();
     }
 
-    protected void sendMessageIfNotNull(String content) {
+    protected void sendMessageIfNotNull(Chat chat) {
+        String content = chat.getMessage();
         if (content.length() >= 1) {
             if (App.mService != null) {
-                App.mService.sendMessage(mWithJabberID, content, AppPreferences.MESSAGE_TYPE_NAME_TEXT);
+                App.mService.sendMessage(mWithJabberID, chat);
                 if (!App.mService.isAuthenticated())
                     Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
             }

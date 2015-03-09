@@ -1,13 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,12 +33,10 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.FileUploadTask;
 import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
 import com.ruptech.chinatalk.task.impl.RequestVerifyTask;
 import com.ruptech.chinatalk.task.impl.RetrieveMessageTask;
 import com.ruptech.chinatalk.task.impl.TranslateAcceptTask;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.FullScreenActivity;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.setting.WebViewActivity;
@@ -59,6 +49,14 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.EmojiParser;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 	static class MyHandler extends Handler {
@@ -232,17 +230,17 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 
 		@Override
 		public void onPostExecute(GenericTask task, TaskResult result) {
-			FileUploadTask photoTask = (FileUploadTask) task;
-			if (result == TaskResult.OK) {
-				Message message = mMessage;
-				message.setFile_path(photoTask.getFileInfo().fileName);
-				AbstractChatActivity.doRequestTranslate(message,
-						mRequestTranslateListener);
-			} else if (result == TaskResult.FAILED) {
-				String msg = photoTask.getMsg();
-				Message message = mMessage;
-				onRequestTranslateFailure(message, msg);
-			}
+//			FileUploadTask photoTask = (FileUploadTask) task;
+//			if (result == TaskResult.OK) {
+//				Message message = mMessage;
+//				message.setFile_path(photoTask.getFileInfo().fileName);
+//				AbstractChatActivity.doRequestTranslate(message,
+//						mRequestTranslateListener);
+//			} else if (result == TaskResult.FAILED) {
+//				String msg = photoTask.getMsg();
+//				Message message = mMessage;
+//				onRequestTranslateFailure(message, msg);
+//			}
 		}
 
 		@Override
@@ -452,8 +450,8 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 													.getString(
 															R.string.message_action_request_translate_again)
 													.equals(selectedItem)) {
-												doReRequestTranslate(message
-														.getId());
+//												doReRequestTranslate(message
+//														.getId());
 											}
 										}
 
@@ -509,7 +507,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 		sendErrorView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				doReRequestTranslate(message.getId());
+//				doReRequestTranslate(message.getId());
 			}
 		});
 	}
@@ -741,26 +739,26 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 		getContext().startActivity(intent);
 	}
 
-	protected void doReRequestTranslate(Long localId) {
-		Toast.makeText(getContext(),
-				getContext().getString(R.string.status_sending),
-				Toast.LENGTH_SHORT).show();
-
-		Message message = App.messageDAO.fetchMessage(localId);
-		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
-		message.setStatus_text(getContext().getString(R.string.data_sending));
-		App.messageDAO.mergeMessage(message);
-		getCursor().requery();
-
-		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
-				.getFile_type())) {// js 先上传图片然后发送请求
-			mMessage = message;
-			AbstractChatActivity.doUploadFile(message, mUploadTaskListener);
-		} else {
-			AbstractChatActivity.doRequestTranslate(message,
-					mRequestTranslateListener);
-		}
-	}
+//	protected void doReRequestTranslate(Long localId) {
+//		Toast.makeText(getContext(),
+//				getContext().getString(R.string.status_sending),
+//				Toast.LENGTH_SHORT).show();
+//
+//		Message message = App.messageDAO.fetchMessage(localId);
+//		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
+//		message.setStatus_text(getContext().getString(R.string.data_sending));
+//		App.messageDAO.mergeMessage(message);
+//		getCursor().requery();
+//
+//		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
+//				.getFile_type())) {// js 先上传图片然后发送请求
+//			mMessage = message;
+//			AbstractChatActivity.doUploadFile(message, mUploadTaskListener);
+//		} else {
+//			AbstractChatActivity.doRequestTranslate(message,
+//					mRequestTranslateListener);
+//		}
+//	}
 
 	private void doShare(String text) {
 		// create the send intent
@@ -939,7 +937,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 								.getString(
 										R.string.message_action_request_translate_again)
 								.equals(selectedItem)) {
-							doReRequestTranslate(message.getId());
+//							doReRequestTranslate(message.getId());
 						} else if (getContext().getString(
 								R.string.message_action_accept_translate)
 								.equals(selectedItem)) {

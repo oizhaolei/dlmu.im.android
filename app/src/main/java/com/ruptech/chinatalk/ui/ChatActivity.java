@@ -759,4 +759,6 @@ public class ChatActivity extends AbstractChatActivity {
         }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
                 selection, null, null);
     }
+
+
 }

@@ -11,14 +11,14 @@ public class Chat implements Serializable {
     protected String jid;
     protected String message;
     protected String type;
-    public String file_path;
-    protected String fileType;
-    protected String from_lang;
-    protected String to_lang;
-    public int from_content_length;
+    protected String filePath;
+    protected String fromLang;
+    protected String toLang;
+    protected int fromContentLength;
     protected String to_content;
     protected long message_id;
     protected String pid;
+    protected int status;
 
     public String getTo_content() {
         return to_content;
@@ -102,26 +102,42 @@ public class Chat implements Serializable {
     }
 
     public String getFromLang() {
-        return from_lang;
+        return fromLang;
     }
 
-    public void setFromLang(String from_lang) {
-        this.from_lang = from_lang;
+    public void setFromLang(String fromLang) {
+        this.fromLang = fromLang;
     }
 
     public String getToLang() {
-        return to_lang;
+        return toLang;
     }
 
-    public void setToLang(String to_lang) {
-        this.to_lang = to_lang;
+    public void setToLang(String toLang) {
+        this.toLang = toLang;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public int getFromContentLength() {
+        return fromContentLength;
+    }
+
+    public void setFromContentLength(int fromContentLength) {
+        this.fromContentLength = fromContentLength;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

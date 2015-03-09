@@ -336,9 +336,9 @@ public class ChatAdapter extends CursorAdapter {
                                    final String content) {
         List<String> menuList = new ArrayList<>();
         if (!AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat
-                .getFileType())
+                .getType())
                 && !AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat
-                .getFileType())) {
+                .getType())) {
 
             menuList.add(mContext.getString(R.string.message_action_copy));
             menuList.add(mContext.getString(R.string.message_action_share));
@@ -393,10 +393,10 @@ public class ChatAdapter extends CursorAdapter {
     private String getMessageMenuFromContent(final Chat chat) {
         String content;
         if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat
-                .getFileType())) {
+                .getType())) {
             content = mContext.getString(R.string.notification_picture);
         } else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat
-                .getFileType())) {
+                .getType())) {
             content = mContext.getString(R.string.notification_voice);
         } else {
             content = chat.getMessage();
@@ -578,37 +578,6 @@ public class ChatAdapter extends CursorAdapter {
         mContext.getContentResolver().update(rowuri, values, null, null);
     }
 
-
-//    private ViewHolder buildHolder(View convertView) {
-//        final ViewHolder holder = new ViewHolder(convertView);
-//        holder.contentLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Chat chat = (Chat) holder.contentLayout.getTag();
-//                        switch (which) {
-//                            case 0://R.string.auto_translate:
-//                                baiduTranslate(chat.getMessage(), "zh", "en");
-//                                break;
-//                            case 1://R.string.human_translate:
-//                                requestTTTalkTranslate(chat, "CN", "KR");
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                };
-//                builder.setItems(R.array.chat_action, positiveListener);
-//                builder.create().show();
-//            }
-//        });
-//
-//        return holder;
-//    }
-
     private void requestTTTalkTranslate(Chat chat, String fromLang, String toLang) {
         Collection<PacketExtension> extensions = new ArrayList<>();
         String callback_id = chat.getPid();
@@ -752,7 +721,7 @@ public class ChatAdapter extends CursorAdapter {
             return;
 
         photoImageView.setVisibility(View.VISIBLE);
-        final String file_path = chat.file_path;
+        final String file_path = chat.getFilePath();
         String fileName = file_path.substring(file_path.lastIndexOf('/') + 1);
         if (progressBar != null)
             progressBar.setVisibility(View.GONE);
@@ -788,17 +757,17 @@ public class ChatAdapter extends CursorAdapter {
             return;
 
         rightVoiceImageView.setVisibility(View.VISIBLE);
-        rightVoiceImageView.setTag(chat.file_path);
+        rightVoiceImageView.setTag(chat.getFilePath());
         rightLengthTextView.setVisibility(View.VISIBLE);
-        rightLengthTextView.setText(chat.from_content_length + "'");
+        rightLengthTextView.setText(chat.getFromContentLength() + "'");
         // 下载语音
         File voiceFolder = Utils.getVoiceFolder(mContext);
-        File mVoiceFile = new File(voiceFolder, chat.file_path);
-        File mDownVoiceFile = new File(voiceFolder, chat.file_path
+        File mVoiceFile = new File(voiceFolder, chat.getFilePath());
+        File mDownVoiceFile = new File(voiceFolder, chat.getFilePath()
                 + AppPreferences.VOICE_SURFIX);
         if (!mVoiceFile.exists() && !mDownVoiceFile.exists()) {
-            if (!Utils.isEmpty(chat.file_path)) {
-                Utils.uploadVoiceFile(mContext, chat.file_path, null);
+            if (!Utils.isEmpty(chat.getFilePath())) {
+                Utils.uploadVoiceFile(mContext, chat.getFilePath(), null);
             }
         }
     }

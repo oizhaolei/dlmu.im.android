@@ -35,9 +35,9 @@ public class TTTalkExtension implements PacketExtension {
 
     public String toXML() {
         StringBuilder buf = new StringBuilder();
-        buf.append("<").append(ELEMENT_NAME).append(" xmlns=\"").append(NAMESPACE).append("\" ");
+        buf.append("<").append(ELEMENT_NAME).append(" xmlns=\"").append(NAMESPACE).append("\"");
         for(Map.Entry<String, String> entry : map.entrySet()){
-            buf.append(entry.getKey() + "=\"" + entry.getValue() + "\" ");
+            buf.append(" " + entry.getKey() + "=\"" + entry.getValue() + "\"");
         }
         buf.append("/>");
         return buf.toString();

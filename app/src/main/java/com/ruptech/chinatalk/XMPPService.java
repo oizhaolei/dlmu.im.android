@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.NetChangeEvent;
+import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -290,10 +291,10 @@ public class XMPPService extends BaseService {
     }
 
     // 发送消息
-    public void sendMessage(String user, String message, String type) {
+    public void sendMessage(String user, Chat chat) {
         if (App.mSmack != null)
-            App.mSmack.sendMessage(user, message, type);
+            App.mSmack.sendMessage(user, chat);
         else
-            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, message, type);
+            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, chat);
     }
 }
