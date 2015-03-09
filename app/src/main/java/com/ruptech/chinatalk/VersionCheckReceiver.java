@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.ruptech.chinatalk.event.NewVersionFoundEvent;
+import com.ruptech.chinatalk.event.RefreshNewMarkEvent;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
@@ -27,13 +28,16 @@ public class VersionCheckReceiver extends BroadcastReceiver {
         public void onPostExecute(GenericTask task, TaskResult result) {
             ServerAppInfo serverAppInfo = ((RetrieveServerVersionTask) task).getServerAppInfo();
             if (serverAppInfo == null) {
+                App.mBadgeCount.versionCount = 0;
             } else {
                 PrefUtils.saveVersionCheckedTime();
                 App.versionChecked = true;
                 if (serverAppInfo.verCode > Utils.getAppVersionCode()) {
                     App.mBus.post(new NewVersionFoundEvent());
+                    App.mBadgeCount.versionCount = 1;
                 }
             }
+            App.mBus.post(new RefreshNewMarkEvent());
         }
     };
     private ApkUpgrade apkUpgrade;
