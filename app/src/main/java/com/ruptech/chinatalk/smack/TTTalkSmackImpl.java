@@ -56,6 +56,8 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
@@ -354,6 +356,19 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                             App.mBus.post(new SystemMessageEvent(chatMessage));
                         }
 
+                        Collection<PacketExtension> extensions = msg.getExtensions();
+                        TTTalkExtension tttalkExtension = null;
+                        String type = null;
+                        for(PacketExtension ext : extensions){
+                            if (ext instanceof TTTalkExtension){
+                                tttalkExtension =(TTTalkExtension)ext;
+                                break;
+                            }
+                        }
+                        if (tttalkExtension != null){
+                            type = tttalkExtension.getValue("type");
+                        }
+
                         // try to extract a carbon
                         Carbon cc = CarbonManager.getCarbon(msg);
                         if (cc != null
@@ -373,7 +388,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                                 return;
 
                             addChatMessageToDB(ChatProvider.OUTGOING, fromJID,
-                                    chatMessage, ChatProvider.DS_SENT_OR_READ,
+                                    chatMessage, type, ChatProvider.DS_SENT_OR_READ,
                                     System.currentTimeMillis(),
                                     msg.getPacketID());
                             // always return after adding
@@ -399,19 +414,16 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                         else
                             ts = System.currentTimeMillis();
 
-                        if (fromJID.startsWith(App.properties.getProperty("translator_jid"))){
-                            Collection<PacketExtension> extensions = msg.getExtensions();
-                            for(PacketExtension ext : extensions){
-                                if (ext instanceof TTTalkExtension){
-                                    TTTalkExtension tttalkExtension =(TTTalkExtension)ext;
-                                    String messageId = tttalkExtension.getValue("message_id");
-                                    setToContent(messageId, chatMessage);
-                                }
-                            }
 
+
+                        if (fromJID.startsWith(App.properties.getProperty("translator_jid"))){
+                            if (tttalkExtension != null){
+                                String messageId = tttalkExtension.getValue("message_id");
+                                setToContent(messageId, chatMessage);
+                            }
                         }else{
                             addChatMessageToDB(ChatProvider.INCOMING, fromJID,
-                                    chatMessage, ChatProvider.DS_NEW, ts,
+                                    chatMessage, type, ChatProvider.DS_NEW, ts,
                                     msg.getPacketID());
                         }
 
@@ -436,13 +448,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 + " = ?  " , new String[]{messageID});
     }
 
-    private void addChatMessageToDB(int direction, String JID, String message,
+    private void addChatMessageToDB(int direction, String JID, String message, String type,
                                     int delivery_status, long ts, String packetID) {
         ContentValues values = new ContentValues();
 
         values.put(ChatTable.Columns.DIRECTION, direction);
         values.put(ChatTable.Columns.JID, JID);
         values.put(ChatTable.Columns.MESSAGE, message);
+        values.put(ChatTable.Columns.TYPE, type);
         values.put(ChatTable.Columns.DELIVERY_STATUS, delivery_status);
         values.put(ChatTable.Columns.DATE, ts);
         values.put(ChatTable.Columns.PACKET_ID, packetID);
@@ -644,37 +657,37 @@ public class TTTalkSmackImpl implements TTTalkSmack {
     }
 
     @Override
-    public void sendMessage(String toJID, String message, Collection<PacketExtension> extensions) {
+    public void sendMessage(String toJID, String message, String type) {
 
         final Message newMessage = new Message(toJID, Message.Type.chat);
         newMessage.setBody(message);
         newMessage.addExtension(new DeliveryReceiptRequest());
-        if (extensions != null) {
-            //TODO: merge tttalk extensions
-            for (PacketExtension extension : extensions) {
-                newMessage.addExtension(extension);
-            }
-        }
+        Map<String, String> map = new HashMap<>();
+
+        TTTalkExtension ttTalkExtension = new TTTalkExtension(map);
+        map.put("type", type);
+        newMessage.addExtension(new TTTalkExtension(map));
 
         if (isAuthenticated()) {
-            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message,
+            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message, type,
                     ChatProvider.DS_SENT_OR_READ, System.currentTimeMillis(),
                     newMessage.getPacketID());
             mXMPPConnection.sendPacket(newMessage);
         } else {
             // send offline -> store to DB
-            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message,
+            addChatMessageToDB(ChatProvider.OUTGOING, toJID, message, type,
                     ChatProvider.DS_NEW, System.currentTimeMillis(),
                     newMessage.getPacketID());
         }
     }
 
     public static void sendOfflineMessage(ContentResolver cr, String toJID,
-                                          String message) {
+                                          String message, String type) {
         ContentValues values = new ContentValues();
         values.put(ChatTable.Columns.DIRECTION, ChatProvider.OUTGOING);
         values.put(ChatTable.Columns.JID, toJID);
         values.put(ChatTable.Columns.MESSAGE, message);
+        values.put(ChatTable.Columns.TYPE, type);
         values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
         values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
 

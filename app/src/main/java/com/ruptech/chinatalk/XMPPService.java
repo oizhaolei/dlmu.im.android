@@ -27,10 +27,6 @@ import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.squareup.otto.Subscribe;
 
-import org.jivesoftware.smack.packet.PacketExtension;
-
-import java.util.Collection;
-
 /**
  * Helper class providing methods and constants common to other classes in the
  * app.
@@ -294,10 +290,10 @@ public class XMPPService extends BaseService {
     }
 
     // 发送消息
-    public void sendMessage(String user, String message, Collection<PacketExtension> extensions) {
+    public void sendMessage(String user, String message, String type) {
         if (App.mSmack != null)
-            App.mSmack.sendMessage(user, message, extensions);
+            App.mSmack.sendMessage(user, message, type);
         else
-            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, message);
+            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, message, type);
     }
 }

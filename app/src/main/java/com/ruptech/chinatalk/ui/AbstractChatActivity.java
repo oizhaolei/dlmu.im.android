@@ -746,10 +746,14 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
     protected TranslateClient client;
 
     protected static final String[] PROJECTION_FROM = new String[]{
-            TableContent.ChatTable.Columns.ID, TableContent.ChatTable.Columns.DATE,
+            TableContent.ChatTable.Columns.ID,
+            TableContent.ChatTable.Columns.DATE,
             TableContent.ChatTable.Columns.DIRECTION,
-            TableContent.ChatTable.Columns.JID, TableContent.ChatTable.Columns.MESSAGE,
+            TableContent.ChatTable.Columns.JID,
+            TableContent.ChatTable.Columns.MESSAGE,
+            TableContent.ChatTable.Columns.TYPE,
             TableContent.ChatTable.Columns.TO_MESSAGE,
+            TableContent.ChatTable.Columns.DATE,
             TableContent.ChatTable.Columns.MESSAGE_ID,
             TableContent.ChatTable.Columns.DELIVERY_STATUS,
             TableContent.ChatTable.Columns.PACKET_ID};// 查询字段
@@ -813,7 +817,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
     protected void sendMessageIfNotNull(String content) {
         if (content.length() >= 1) {
             if (App.mService != null) {
-                App.mService.sendMessage(mWithJabberID, content, null);
+                App.mService.sendMessage(mWithJabberID, content, AppPreferences.MESSAGE_TYPE_NAME_TEXT);
                 if (!App.mService.isAuthenticated())
                     Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
             }

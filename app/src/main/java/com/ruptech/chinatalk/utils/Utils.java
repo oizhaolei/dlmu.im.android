@@ -1550,8 +1550,9 @@ public class Utils {
         String name = "TTTalk.org";
         if (tttalkID > 0) {
             Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(), tttalkID);
-            name = friend.getFriend_nickname();
-            if (friend == null || Utils.isEmpty(name)) {
+            if (friend != null)
+                name = friend.getFriend_nickname();
+            if (Utils.isEmpty(name)) {
                 User user = App.userDAO.fetchUser(tttalkID);
                 if (user != null)
                     name = user.getFullname();

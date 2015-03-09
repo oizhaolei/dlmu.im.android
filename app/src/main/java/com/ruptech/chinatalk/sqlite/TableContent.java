@@ -999,6 +999,7 @@ public abstract class TableContent {
             public final String DIRECTION = "from_me";
             public final String JID = "jid";
             public final String MESSAGE = "message";
+            public final String TYPE = "type";
             public final String TO_MESSAGE = "to_content";
             public final String MESSAGE_ID = "message_id";
             public final String DELIVERY_STATUS = "read";
@@ -1023,6 +1024,7 @@ public abstract class TableContent {
             create.append(Columns.DIRECTION + " INTEGER, ");
             create.append(Columns.JID + " TEXT, ");
             create.append(Columns.MESSAGE + " TEXT, ");
+            create.append(Columns.TYPE + " TEXT, ");
             create.append(Columns.TO_MESSAGE + " TEXT, ");
             create.append(Columns.DELIVERY_STATUS + " INTEGER, ");
             create.append(Columns.MESSAGE_ID + " TEXT, ");
@@ -1042,7 +1044,7 @@ public abstract class TableContent {
 
         public String[] getIndexColumns() {
             return new String[] { Columns.ID, Columns.DATE, Columns.DIRECTION, Columns.JID,
-                    Columns.MESSAGE, Columns.TO_MESSAGE,
+                    Columns.MESSAGE, Columns.TO_MESSAGE, Columns.TYPE,
                     Columns.DELIVERY_STATUS, Columns.MESSAGE_ID, Columns.PACKET_ID };
         }
 
@@ -1066,6 +1068,8 @@ public abstract class TableContent {
                     .getColumnIndex(Columns.ID)));
             chat.setMessage(cursor.getString(cursor
                     .getColumnIndex(Columns.MESSAGE)));
+            chat.setType(cursor.getString(cursor
+                    .getColumnIndex(Columns.TYPE)));
             chat.setTo_content(cursor.getString(cursor
                     .getColumnIndex(Columns.TO_MESSAGE)));
             chat.setFromMe(cursor.getInt(cursor
@@ -1089,6 +1093,7 @@ public abstract class TableContent {
             v.put(Columns.DIRECTION, chat.getFromMe());
             v.put(Columns.JID, chat.getJid());
             v.put(Columns.MESSAGE, chat.getMessage());
+            v.put(Columns.TYPE, chat.getType());
             v.put(Columns.TO_MESSAGE, chat.getTo_content());
             v.put(Columns.DELIVERY_STATUS, chat.getRead());
             v.put(Columns.MESSAGE_ID, chat.getMessageId());
@@ -1102,6 +1107,7 @@ public abstract class TableContent {
             tmpList.add(Columns.DIRECTION);
             tmpList.add(Columns.JID);
             tmpList.add(Columns.MESSAGE);
+            tmpList.add(Columns.TYPE);
             return tmpList;
         }
     }

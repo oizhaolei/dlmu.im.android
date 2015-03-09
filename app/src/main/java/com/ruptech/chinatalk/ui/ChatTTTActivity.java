@@ -444,7 +444,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
                 // ListAdapter adapter = new ChatWindowAdapter(cursor,
                 // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
                 ListAdapter adapter = new ChatAdapter(ChatTTTActivity.this,
-                        cursor, PROJECTION_FROM, client);
+                        cursor, PROJECTION_FROM, client, null);
                 getMessageListView().setAdapter(adapter);
                 getMessageListView().setSelection(adapter.getCount() - 1);
             }

@@ -9,8 +9,13 @@ public class Chat implements Serializable {
     protected int fromMe;
     protected int read;
     protected String jid;
-    protected long tttalkid = 48547;
     protected String message;
+    protected String type;
+    public String file_path;
+    protected String fileType;
+    protected String from_lang;
+    protected String to_lang;
+    public int from_content_length;
     protected String to_content;
     protected long message_id;
     protected String pid;
@@ -75,9 +80,7 @@ public class Chat implements Serializable {
     public String getPid() {
         return pid;
     }
-    public long getTTTalkId() {
-        return tttalkid;
-    }
+
     public void setPid(String pid) {
         this.pid = pid;
     }
@@ -88,5 +91,37 @@ public class Chat implements Serializable {
 
     public void setMessageId(long messageId){
         message_id = messageId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getFromLang() {
+        return from_lang;
+    }
+
+    public void setFromLang(String from_lang) {
+        this.from_lang = from_lang;
+    }
+
+    public String getToLang() {
+        return to_lang;
+    }
+
+    public void setToLang(String to_lang) {
+        this.to_lang = to_lang;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }
