@@ -2,6 +2,7 @@ package com.ruptech.chinatalk;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -11,12 +12,14 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
@@ -31,6 +34,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.http.Http2Server;
 import com.ruptech.chinatalk.http.HttpServer;
 import com.ruptech.chinatalk.http.HttpStoryServer;
@@ -46,6 +50,7 @@ import com.ruptech.chinatalk.sqlite.UserDAO;
 import com.ruptech.chinatalk.sqlite.UserPhotoDAO;
 import com.ruptech.chinatalk.task.TaskManager;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
+import com.ruptech.chinatalk.ui.UpdateVersionServiceActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
@@ -54,8 +59,10 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 import com.tencent.tauth.Tencent;
 
@@ -241,9 +248,9 @@ public class App extends Application implements
 
     public static int displayWidth;
 
-    private PendingIntent versionCheckPendingIntent;
-    private PendingIntent uploadUserLocationPendingIntent;
-    private PendingIntent retrieveInfoPeriodPendingIntent;
+    public static PendingIntent versionCheckPendingIntent;
+    public static PendingIntent uploadUserLocationPendingIntent;
+    public static PendingIntent retrieveInfoPeriodPendingIntent;
 
     public void exitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
@@ -354,8 +361,8 @@ public class App extends Application implements
         checkPreviousException();
 
         // receiver 定期执行
-        cancelReceiverPendingIntent();
-        startPeriodReceiver();
+        cancelPeriodTaskReceiver();
+        startPeriodTaskReceiver();
     }
 
     @Override
@@ -383,7 +390,6 @@ public class App extends Application implements
         }
 
         mBus.unregister(this);
-        cancelReceiverPendingIntent();
         super.onTerminate();
     }
 
@@ -450,17 +456,26 @@ public class App extends Application implements
         App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
     }
 
-    private void cancelReceiverPendingIntent(){
-        Utils.cancelReceiverPendingIntent(App.mContext, versionCheckPendingIntent);
-        Utils.cancelReceiverPendingIntent(App.mContext, retrieveInfoPeriodPendingIntent);
-        Utils.cancelReceiverPendingIntent(App.mContext, uploadUserLocationPendingIntent);
+    public static void cancelPeriodTaskReceiver(){
+        Utils.cancelReceiverPendingIntent(App.mContext, App.versionCheckPendingIntent);
+        Utils.cancelReceiverPendingIntent(App.mContext, App.retrieveInfoPeriodPendingIntent);
+        Utils.cancelReceiverPendingIntent(App.mContext, App.uploadUserLocationPendingIntent);
     }
 
-    private void startPeriodReceiver(){
-        versionCheckPendingIntent =  Utils.startVersionCheckReceiver(App.mContext);
-        retrieveInfoPeriodPendingIntent = Utils.startInfoPeriodReceiver(App.mContext);
-        uploadUserLocationPendingIntent = Utils.startUserLocationReceiver(App.mContext);
+    public static  void startPeriodTaskReceiver(){
+        if(App.versionCheckPendingIntent == null){
+            Utils.startVersionCheckReceiver(App.mContext);
+        }
+        if(App.retrieveInfoPeriodPendingIntent == null){
+            Utils.startInfoPeriodReceiver(App.mContext);
+        }
+        if(App.uploadUserLocationPendingIntent == null){
+            Utils.startUserLocationReceiver(App.mContext);
+        }
     }
 
-
+    @Subscribe
+    public void answerNewVersionFound(NewVersionFoundEvent event) {
+        Utils.doNotifyVersionUpdate(App.mContext);
+    }
 }

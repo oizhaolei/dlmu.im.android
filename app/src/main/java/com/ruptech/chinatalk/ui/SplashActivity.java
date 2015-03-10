@@ -67,7 +67,7 @@ public class SplashActivity extends Activity {
 	private void checkVersion() {
 		if (App.readServerAppInfo() != null
 				&& App.readServerAppInfo().verCode > App.mApkVersionOfClient.verCode) {
-			notificateUpdateVersion();
+			Utils.doNotifyVersionUpdate(this);
 		}
 	}
 
@@ -101,31 +101,6 @@ public class SplashActivity extends Activity {
 		Intent intent = new Intent(SplashActivity.this,
 				LoginLoadingActivity.class);
 		startActivity(intent);
-	}
-
-	private void notificateUpdateVersion() {
-		String content = getString(R.string.please_click_to_update_newapk);
-		int defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND;
-		long when = System.currentTimeMillis();
-		NotificationCompat.Builder mBuilder = new MyNotificationBuilder(this)
-				.setSmallIcon(R.drawable.ic_tttalk_gray_light)
-				.setLargeIcon(
-						BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_launcher))
-				.setContentTitle(getString(R.string.app_name))
-				.setTicker(content).setContentText(content)
-				.setVibrate(AppPreferences.NOTIFICATION_VIBRATE)
-				.setDefaults(defaults).setAutoCancel(true).setWhen(when)
-				.setShowSetting(false);
-		Intent notificationIntent = UpdateVersionServiceActivity
-				.createIntent(getApplicationContext());
-		PendingIntent contentIntent = PendingIntent.getActivity(
-				getApplicationContext(), 0, notificationIntent, 0);
-		mBuilder.setContentIntent(contentIntent);
-		App.notificationManager.cancel(R.string.new_version_loading_begin);
-		App.notificationManager.cancel(R.string.please_click_to_update_newapk);
-		App.notificationManager.notify(R.string.please_click_to_update_newapk,
-				mBuilder.build());
 	}
 
 	@Override

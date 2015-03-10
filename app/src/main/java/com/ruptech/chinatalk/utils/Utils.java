@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -42,6 +43,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -71,6 +73,7 @@ import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
 import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.LoginLoadingActivity;
+import com.ruptech.chinatalk.ui.UpdateVersionServiceActivity;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
 import com.ruptech.chinatalk.ui.user.ChangeTel3Activity;
@@ -78,6 +81,7 @@ import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.ServerAppInfo.LangTrans;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.GuideViewManager;
+import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1590,36 +1594,33 @@ public class Utils {
     }
 
     //Receiver 定期取得数据处理
-    public static PendingIntent startInfoPeriodReceiver(Context context) {
+    public static void startInfoPeriodReceiver(Context context) {
 //        long client_period_time = ServerAppInfo.DEFAULT_CLIENT_PERIOD_SECONDS;
 //        if (App.readServerAppInfo().client_period_timer > 0)
 //            client_period_time = App.readServerAppInfo().client_period_timer;
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent retrieveInfoPeriodIntent = new Intent(context, InfoPeriodReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, retrieveInfoPeriodIntent, 0);
+        App.retrieveInfoPeriodPendingIntent = PendingIntent.getBroadcast(context, 0, retrieveInfoPeriodIntent, 0);
 //        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, client_period_time * 1000, retrieveInfoPeriodPendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 30 * 1000, pendingIntent);
-        return pendingIntent;
+        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 600 * 1000, App.retrieveInfoPeriodPendingIntent);
     }
 
     //Receiver 用户地址
-    public static PendingIntent startUserLocationReceiver(Context context) {
+    public static void startUserLocationReceiver(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent uploadUserLocationIntent = new Intent(context, UserLocationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, uploadUserLocationIntent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 20 * 1000, pendingIntent);
-        return pendingIntent;
+        App.uploadUserLocationPendingIntent = PendingIntent.getBroadcast(context, 0, uploadUserLocationIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, 6 * 1000, 15 * 60 * 1000, App.uploadUserLocationPendingIntent);
     }
 
     //Receiver 版本检查
-    public static PendingIntent  startVersionCheckReceiver(Context context) {
+    public static void  startVersionCheckReceiver(Context context) {
         //version check
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, 0, 60 * 60 * 1000, pendingIntent);
-        return pendingIntent;
+        App.versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, 60 * 1000, 60 * 60 * 1000, App.versionCheckPendingIntent);
     }
 
     public static void cancelReceiverPendingIntent(Context context, PendingIntent pendingIntent) {
@@ -1627,5 +1628,30 @@ public class Utils {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
         }
+    }
+
+    public static void doNotifyVersionUpdate(Context context){
+        String content = context.getString(R.string.please_click_to_update_newapk);
+        int defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND;
+        long when = System.currentTimeMillis();
+        NotificationCompat.Builder mBuilder = new MyNotificationBuilder(context)
+                .setSmallIcon(R.drawable.ic_tttalk_gray_light)
+                .setLargeIcon(
+                        BitmapFactory.decodeResource(context.getResources(),
+                                R.drawable.ic_launcher))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setTicker(content).setContentText(content)
+                .setVibrate(AppPreferences.NOTIFICATION_VIBRATE)
+                .setDefaults(defaults).setAutoCancel(true).setWhen(when)
+                .setShowSetting(false);
+        Intent notificationIntent = UpdateVersionServiceActivity
+                .createIntent(context);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context, 0, notificationIntent, 0);
+        mBuilder.setContentIntent(contentIntent);
+        App.notificationManager.cancel(R.string.new_version_loading_begin);
+        App.notificationManager.cancel(R.string.please_click_to_update_newapk);
+        App.notificationManager.notify(R.string.please_click_to_update_newapk,
+                mBuilder.build());
     }
 }
