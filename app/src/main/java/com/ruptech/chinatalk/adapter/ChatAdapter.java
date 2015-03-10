@@ -126,7 +126,7 @@ public class ChatAdapter extends CursorAdapter {
         ContentValues cv = new ContentValues();
         cv.put(ChatTable.Columns.MESSAGE_ID, messageID);
         if (to_content == null || to_content.length() == 0)
-            cv.put(ChatTable.Columns.TO_MESSAGE, "Translating...");
+            cv.put(ChatTable.Columns.TO_MESSAGE, mContext.getString(R.string.message_status_text_translating));
         else
             cv.put(ChatTable.Columns.TO_MESSAGE, to_content);
 
@@ -941,13 +941,13 @@ public class ChatAdapter extends CursorAdapter {
                 + " = ?  " , new String[]{String.valueOf(chat.getId())});
     }
 
-    public void doBaiduTranslate(Chat chat) {
+    public void doBaiduTranslate(final Chat chat) {
 
         if (TextUtils.isEmpty(chat.getMessage()))
             return;
 
         if (mClient != null){
-            mClient.translate(chat.getMessage(), chat.getFromLang(), chat.getToLang(), new ITransResultCallback() {
+            mClient.translate(chat.getMessage(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
 
                 @Override
                 public void onResult(TransResult result) {// 翻译结果回调
@@ -964,11 +964,20 @@ public class ChatAdapter extends CursorAdapter {
                             msg = result.error_msg;
                         }
                         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                        setToContent(chat.getId(), result.trans_result);
                     }
                 }
             });
         }
 
+    }
+
+    private void setToContent(int chatID, String message) {
+        ContentValues cv = new ContentValues();
+        cv.put(ChatTable.Columns.TO_MESSAGE, message);
+
+        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
+                + " = ?  " , new String[]{String.valueOf(chatID)});
     }
 
     private void doTTTalkTranslate(Chat chat) {

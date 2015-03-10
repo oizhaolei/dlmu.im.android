@@ -1654,4 +1654,18 @@ public class Utils {
         App.notificationManager.notify(R.string.please_click_to_update_newapk,
                 mBuilder.build());
     }
+
+    public static String convert2BaiduLang(String lang) {
+
+        String[] langs = App.mContext.getResources().getStringArray(
+                R.array.baidu_language_short_adapter);
+        String[] baidu_langs = App.mContext.getResources().getStringArray(
+                R.array.baidu_language_short);
+        for (int i = 0; i < baidu_langs.length; i++) {
+            if (langs[i].equals(lang)) {
+                return baidu_langs[i];
+            }
+        }
+        return null;
+    }
 }

@@ -351,7 +351,9 @@ public class ChatActivity extends AbstractChatActivity {
 
     // 【重要】 onCreate时候初始化翻译相关功能
     private void initTransClient() {
-        client = new TranslateClient(this, App.properties.getProperty("baidu_api_key"));
+        String baidu_api_key = App.getMetaValue(this, "api_key");
+
+        client = new TranslateClient(this, baidu_api_key);
 
         // 这里可以设置为在线优先、离线优先、 只在线、只离线 4种模式，默认为在线优先。
         client.setPriority(TranslateClient.Priority.OFFLINE_FIRST);

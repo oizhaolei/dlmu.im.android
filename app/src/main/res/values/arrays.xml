@@ -259,4 +259,29 @@
         <item>@string/auto_translation_msg</item>
         <item>@string/human_translation</item>
     </string-array>
+
+    <string-array name="baidu_language_short">
+        <item>zh</item>
+        <item>en</item>
+        <item>jp</item>
+        <item>kor</item>
+        <item>spa</item>
+        <item>fra</item>
+        <item>th</item>
+        <item>ara</item>
+        <item>ru</item>
+        <item>pt</item>
+    </string-array>
+    <string-array name="baidu_language_short_adapter">
+        <item>CN</item>
+        <item>EN</item>
+        <item>JP</item>
+        <item>KR</item>
+        <item>es</item>
+        <item>fr</item>
+        <item>th</item>
+        <item>ar</item>
+        <item>ru</item>
+        <item>pt</item>
+    </string-array>
 </resources>
