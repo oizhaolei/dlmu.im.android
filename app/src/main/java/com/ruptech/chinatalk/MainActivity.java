@@ -503,11 +503,7 @@ public class MainActivity extends ActionBarActivity implements
     public void answerNewVersionFound(NewVersionFoundEvent event) {
         mainHandler.post(new Runnable() {
             public void run() {
-                //TODO 需要做checkApkUpdate
-                //downloadApk.checkApkUpdate(true);
-                Toast.makeText(App.mContext,
-                        "answerNewVersionFound",
-                        Toast.LENGTH_SHORT).show();
+                Utils.doNotifyVersionUpdate(App.mContext);
             }
         });
     }
