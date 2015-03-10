@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
@@ -18,6 +19,7 @@ import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerUtilities;
@@ -450,7 +452,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                             addChatMessageToDB(chat);
                         }
 
-                        App.mBus.post(new NewChatEvent(fromJID, chatMessage));
+                        App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
 
                     }
                 } catch (Exception e) {
@@ -473,10 +475,16 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
     private void addChatMessageToDB(Chat chat) {
         ContentValues values = new ContentValues();
+        String content = chat.getMessage();
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
+            content = App.mContext.getString(R.string.notification_picture);
+        } else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
+            content = App.mContext.getString(R.string.notification_voice);
+        }
 
         values.put(ChatTable.Columns.DIRECTION, chat.getFromMe());
         values.put(ChatTable.Columns.JID, chat.getJid());
-        values.put(ChatTable.Columns.MESSAGE, chat.getMessage());
+        values.put(ChatTable.Columns.MESSAGE, content);
         values.put(ChatTable.Columns.TYPE, chat.getType());
         values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
         values.put(ChatTable.Columns.CONTENT_LENGTH, chat.getFromContentLength());

@@ -15,8 +15,14 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.event.NewChatEvent;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.ui.ChatActivity;
+import com.ruptech.chinatalk.ui.ChatTTTActivity;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
+import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -191,5 +197,84 @@ public abstract class BaseService extends Service {
         // }
         // }
         return false;
+    }
+
+    public void displayMessageNotification(NewChatEvent event) {
+
+        String title = null;
+        String fromJid = event.fromJID;
+        String type = event.type;
+        String content = event.chatMessage;
+
+        long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
+
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(type)) {
+            content = getString(R.string.notification_picture);
+        } else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(type)) {
+            content = getString(R.string.notification_voice);
+        }
+        if (Utils.isEmpty(content))
+            return;
+
+        User user;
+        if (fromUserId == -1) {
+            user = null;
+            title = getString(R.string.translation_secretary);
+        } else {
+            user = App.userDAO.fetchUser(fromUserId);
+            if (user != null) {
+                String name = Utils.getFriendName(fromUserId, user.getFullname());
+                title = String.format(GCMIntentService.PUSH_TITLE_PATTERN,
+                        name, getString(R.string.push_title_message));
+            } else {
+                return ;
+            }
+        }
+
+        // 新消息个数
+        // PrefUtils.savePrefNewMessageCount(message.userid,
+        // PrefUtils.getPrefNewMessageCount(message.userid) + 1);
+        int notiId = Long.valueOf(fromUserId).intValue();
+
+        if (fromUserId > 0) {
+            App.mBadgeCount.addNewMessageCount(fromUserId);
+        }
+        Intent notificationIntent;
+        if (user != null) {
+            notificationIntent = new Intent(this, ChatActivity.class);
+            notificationIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+        }else{
+            notificationIntent = new Intent(this, ChatTTTActivity.class);
+        }
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                notiId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        MyNotificationBuilder mBuilder = MessageReceiver
+                .createNotificationBuilder(this, title, content, null,
+                        PrefUtils.getPrefTranslatedNoticeMessage());
+        mBuilder.setTicker(content);
+        mBuilder.setContentIntent(contentIntent);
+
+        if (title.equalsIgnoreCase(GCMIntentService.getQATitle())
+                || title.equalsIgnoreCase(GCMIntentService
+                .getAnnouncementTitle()))
+            mBuilder.setShowSetting(false);
+
+        App.notificationManager.cancel(notiId);
+        App.notificationManager.notify(notiId, mBuilder.build());
+
+//        // 如果选择TTS播放，处理
+//        if (PrefUtils.getPrefTranslatedNoticeTts()) {
+//            // TTS
+//            if (!Utils.tts(context, message.getTo_lang(),
+//                    message.getFrom_lang(), content)) {
+//                Toast.makeText(
+//                        context,
+//                        context.getString(R.string.tts_no_supported_language),
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        }
+
     }
 }

@@ -46,7 +46,6 @@ import com.ruptech.chinatalk.ui.setting.AgreementActivity;
 import com.ruptech.chinatalk.ui.setting.IntroduceActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.user.SignupProfileActivity;
-import com.ruptech.chinatalk.utils.ApkUpgrade;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.InviteFriendUtils;
@@ -523,7 +522,7 @@ public class MainActivity extends ActionBarActivity implements
         mainHandler.post(new Runnable() {
             public void run() {
                 MediaPlayer.create(MainActivity.this, R.raw.office).start();
-                App.mService.notifyClient(event.fromJID, Utils.getFriendNameFromOF_JID(event.fromJID), event.chatMessage, true);
+                App.mService.displayMessageNotification(event);
             }
         });
     }
