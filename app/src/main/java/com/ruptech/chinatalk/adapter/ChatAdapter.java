@@ -57,11 +57,8 @@ import com.ruptech.chinatalk.utils.face.EmojiParser;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.CustomDialog;
 
-import org.jivesoftware.smack.packet.PacketExtension;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ChatAdapter extends CursorAdapter {
@@ -191,12 +188,15 @@ public class ChatAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder) view.getTag();
         Chat chat = TableContent.ChatTable.parseCursor(cursor);
-
         boolean mine = isMine(chat);
         User user;
         if (mine) {
+            chat.setToLang(mFriendUser.getLang());
+            chat.setFromLang(App.readUser().getLang());
             user = App.readUser();
         } else {
+            chat.setFromLang(mFriendUser.getLang());
+            chat.setToLang(App.readUser().getLang());
             user = mFriendUser;
         }
 
@@ -709,11 +709,6 @@ public class ChatAdapter extends CursorAdapter {
     }
 
 
-    public void requestTranslate(Chat chat, String from_lang, String to_lang) {
-        XmppRequestTranslateTask mRequestTranslateTask = new XmppRequestTranslateTask(chat, from_lang, to_lang);
-        mRequestTranslateTask.setListener(mRequestTranslateListener);
-        mRequestTranslateTask.execute();
-    }
 
     static class ViewHolder {
         private TextView createDateTextView;
@@ -952,7 +947,7 @@ public class ChatAdapter extends CursorAdapter {
             return;
 
         if (mClient != null){
-            mClient.translate(chat.getMessage(), mFriendUser.getLang(), App.readUser().getLang(), new ITransResultCallback() {
+            mClient.translate(chat.getMessage(), chat.getFromLang(), chat.getToLang(), new ITransResultCallback() {
 
                 @Override
                 public void onResult(TransResult result) {// 翻译结果回调
@@ -977,8 +972,9 @@ public class ChatAdapter extends CursorAdapter {
     }
 
     private void doTTTalkTranslate(Chat chat) {
-        Collection<PacketExtension> extensions = new ArrayList<>();
-        String callback_id = chat.getPid();
-        requestTranslate(chat, chat.getFromLang(), chat.getToLang());
+        XmppRequestTranslateTask mRequestTranslateTask = new XmppRequestTranslateTask(chat);
+        mRequestTranslateTask.setListener(mRequestTranslateListener);
+        mRequestTranslateTask.execute();
     }
+
 }

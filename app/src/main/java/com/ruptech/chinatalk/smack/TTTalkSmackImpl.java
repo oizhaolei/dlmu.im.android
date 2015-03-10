@@ -94,10 +94,11 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         boolean requireSsl = PrefUtils.getPrefBoolean(
                 PrefUtils.REQUIRE_TLS, false);
 
-        ProviderManager.getInstance().addExtensionProvider(TTTalkRequestExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkRequestExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
 
         this.mXMPPConfig = new ConnectionConfiguration(server, port);
 
@@ -138,6 +139,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         // add delivery receipts
         pm.addExtensionProvider(DeliveryReceipt.ELEMENT,
                 DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+        pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
 
         pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME,
                 TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
@@ -364,6 +366,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
                         Collection<PacketExtension> extensions = msg.getExtensions();
                         TTTalkExtension tttalkExtension = null;
+                        TTTalkTranslatedExtension tttalkTranslatedExtension = null;
                         String type = null;
                         String file_path = null;
                         int content_length = 0;
@@ -371,7 +374,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                         for(PacketExtension ext : extensions){
                             if (ext instanceof TTTalkExtension){
                                 tttalkExtension =(TTTalkExtension)ext;
-                                break;
+                            }else if (ext instanceof TTTalkTranslatedExtension){
+                                tttalkTranslatedExtension =(TTTalkTranslatedExtension)ext;
                             }
                         }
                         if (tttalkExtension != null){
@@ -434,8 +438,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                             ts = System.currentTimeMillis();
 
                         if (fromJID.startsWith(App.properties.getProperty("translator_jid"))){
-                            if (tttalkExtension != null){
-                                String messageId = tttalkExtension.getValue("message_id");
+                            if (tttalkTranslatedExtension != null ){
+                                String messageId = tttalkTranslatedExtension.getMessage_id();
                                 setToContent(messageId, chatMessage);
                             }
                         }else{
@@ -466,12 +470,12 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         mXMPPConnection.addPacketListener(mPacketListener, filter);
     }
 
-    private void setToContent(String messageID, String message) {
+    private void setToContent(String chatID, String message) {
         ContentValues cv = new ContentValues();
         cv.put(ChatTable.Columns.TO_MESSAGE, message);
 
-        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.MESSAGE_ID
-                + " = ?  " , new String[]{messageID});
+        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
+                + " = ?  " , new String[]{chatID});
     }
 
 //    private void addChatMessageToDB(int direction, String JID, String message, String type,

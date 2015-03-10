@@ -4,26 +4,26 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.xmlpull.v1.XmlPullParser;
 
-public class TTTalkRequestExtension extends AbstractTTTalkExtension {
-    public static final String ELEMENT_NAME = "request";
-    private String fee = null;
+public class TTTalkTranslatedExtension extends AbstractTTTalkExtension {
+    public static final String ELEMENT_NAME = "translated";
+    private String cost = null;
     private String message_id = null;
-    private String create_date = null;
+    private String balance = null;
 
-    public TTTalkRequestExtension(String test, String ver, String title, String fee, String message_id, String create_date) {
+    public TTTalkTranslatedExtension(String test, String ver, String title, String cost, String message_id, String balance) {
         super(test, ver, title);
 
-        this.fee = fee;
+        this.cost = cost;
         this.message_id = message_id;
-        this.create_date = create_date;
+        this.balance = balance;
     }
 
-    public String getFee() {
-        return fee;
+    public String getCost() {
+        return cost;
     }
 
-    public String getCreate_date() {
-        return create_date;
+    public String getBalance() {
+        return balance;
     }
 
     public String getMessage_id() {
@@ -40,9 +40,9 @@ public class TTTalkRequestExtension extends AbstractTTTalkExtension {
                 .append(' ').append("test=\"").append(getTest()).append("\"")
                 .append(' ').append("ver=\"").append(getVer()).append("\"")
                 .append(' ').append("title=\"").append(getTitle()).append("\"")
-                .append(' ').append("fee=\"").append(fee).append("\"")
+                .append(' ').append("cost=\"").append(cost).append("\"")
                 .append(' ').append("message_id=\"").append(message_id).append("\"")
-                .append(' ').append("create_date=\"").append(create_date).append("\"")
+                .append(' ').append("balance=\"").append(balance).append("\"")
                 .append("/>");
         return buf.toString();
     }
@@ -54,15 +54,15 @@ public class TTTalkRequestExtension extends AbstractTTTalkExtension {
             String test = parser.getAttributeValue("", "test");
             String ver = parser.getAttributeValue("", "ver");
             String title = parser.getAttributeValue("", "title");
-            String fee = parser.getAttributeValue("", "fee");
+            String cost = parser.getAttributeValue("", "cost");
             String message_id = parser.getAttributeValue("", "message_id");
-            String create_date = parser.getAttributeValue("", "create_date");
+            String balance = parser.getAttributeValue("", "balance");
 
             while (parser.getEventType() != 3) {
                 parser.next();
             }
 
-            return new TTTalkRequestExtension(test, ver, title, fee, message_id, create_date);
+            return new TTTalkTranslatedExtension(test, ver, title, cost, message_id, balance);
         }
     }
 }

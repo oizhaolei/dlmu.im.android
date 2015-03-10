@@ -1,25 +1,28 @@
 package com.ruptech.chinatalk.http;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import android.util.Log;
+
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.Friend;
+import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.utils.AppPreferences;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
+import com.ruptech.chinatalk.utils.PrefUtils;
+import com.ruptech.chinatalk.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
-import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.model.Friend;
-import com.ruptech.chinatalk.model.Message;
-import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.utils.AppPreferences;
-import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.Utils;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class HttpServer extends HttpConnection {
 	private final String TAG = Utils.CATEGORY
@@ -992,8 +995,9 @@ public class HttpServer extends HttpConnection {
 
 	/**
 	 *
-	 * @param encrypt
-	 * @param login
+	 * @param username
+	 * @param password
+     * @param encrypt
 	 * @return
 	 * @throws Exception
 	 */
@@ -1059,22 +1063,22 @@ public class HttpServer extends HttpConnection {
 		return success;
 	}
 
-    public Message xmpp_requestTranslate(long localId, long toUserId,
-                                    String fromLang, String toLang, String text, int contentLength,
-                                    String filetype, String lastUpdatedate, String filePath)
+    public Message xmpp_requestTranslate(Chat chat)
             throws Exception {
         Map<String, String> params = new HashMap<String, String>();
-        params.put("local_id", String.valueOf(localId));
-        params.put("to_userid", String.valueOf(toUserId));
-        params.put("from_lang", fromLang);
-        params.put("to_lang", toLang);
-        if (text == null)
-            text = "";
-        params.put("text", text);
-        params.put("content_length", String.valueOf(contentLength));
-        params.put("filetype", filetype);
-        params.put("update_date", lastUpdatedate);
-        params.put("file_path", filePath);
+        params.put("local_id", String.valueOf(System.currentTimeMillis()));
+        params.put("to_userid", String.valueOf(0));
+        params.put("from_lang", chat.getFromLang());
+        params.put("to_lang", chat.getToLang());
+        if (chat.getMessage() == null)
+            chat.setMessage("");
+        params.put("text", chat.getMessage());
+        params.put("content_length", String.valueOf(chat.getFromContentLength()));
+        params.put("filetype", chat.getType());
+        params.put("update_date", DateCommonUtils.getUtcDate(new Date(),
+                DateCommonUtils.DF_yyyyMMddHHmmssSSS));
+        params.put("file_path", chat.getFilePath());
+        params.put("callback_id",String.valueOf(chat.getId()));
         if (BuildConfig.DEBUG)
             Log.v(TAG, "params:" + params);
 
