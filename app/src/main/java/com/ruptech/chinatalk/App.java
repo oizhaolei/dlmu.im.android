@@ -361,6 +361,7 @@ public class App extends Application implements
         checkPreviousException();
 
         // receiver 定期执行
+        cancelPeriodTaskReceiver();
         startPeriodTaskReceiver();
     }
 
@@ -455,11 +456,13 @@ public class App extends Application implements
         App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
     }
 
-    public static  void startPeriodTaskReceiver(){
+    public static void cancelPeriodTaskReceiver(){
         Utils.cancelReceiverPendingIntent(App.mContext, App.versionCheckPendingIntent);
         Utils.cancelReceiverPendingIntent(App.mContext, App.retrieveInfoPeriodPendingIntent);
         Utils.cancelReceiverPendingIntent(App.mContext, App.uploadUserLocationPendingIntent);
+    }
 
+    public static  void startPeriodTaskReceiver(){
         if(App.versionCheckPendingIntent == null){
             Utils.startVersionCheckReceiver(App.mContext);
         }

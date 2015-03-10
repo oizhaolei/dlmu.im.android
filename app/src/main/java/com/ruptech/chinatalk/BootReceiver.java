@@ -23,6 +23,7 @@ public class BootReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         Log.i(TAG, "action = " + action);
 
+        App.cancelPeriodTaskReceiver();
         if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
             int connectivity = NetUtil.getNetworkState(context);
             App.mBus.post(new NetChangeEvent(connectivity));
