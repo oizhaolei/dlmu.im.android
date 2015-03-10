@@ -300,4 +300,13 @@ public class MessageDAO {
 			Log.i(TAG, "fetchNoMessageIdMessage : " + list);
 		return list;
 	}
+
+    public List<Message> fetchAllMessage(){
+        List<Message> list = mSqlTemplate.queryForList(mRowMapper,
+                MessageTable.getName(), null, null, null, null,
+                null, null, null);
+        if (BuildConfig.DEBUG)
+            Log.i(TAG, "fetchAllMessage : " + list);
+        return list;
+    }
 }

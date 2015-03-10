@@ -217,4 +217,20 @@ public class ChatProvider extends ContentProvider {
 
     }
 
+    @Override
+    public int bulkInsert(Uri url, ContentValues[] values) {
+        if (URI_MATCHER.match(url) != MESSAGES) {
+            throw new IllegalArgumentException("Cannot insert into URL: " + url);
+        }
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        db.delete(TABLE_NAME, null, null);
+        int insertCount = 0;
+        for(ContentValues value : values){
+            insertCount += db.insert(TABLE_NAME, null, value);
+        }
+        Log.v("bulkInsert====>", "#" + insertCount);
+
+        getContext().getContentResolver().notifyChange(url, null);
+        return insertCount;
+    }
 }
