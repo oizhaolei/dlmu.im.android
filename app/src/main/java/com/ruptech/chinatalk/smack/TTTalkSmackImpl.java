@@ -16,7 +16,6 @@ import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
-import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.utils.NetUtil;
@@ -58,8 +57,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
@@ -97,7 +94,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
-        ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
 
         this.mXMPPConfig = new ConnectionConfiguration(server, port);
@@ -139,10 +136,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         // add delivery receipts
         pm.addExtensionProvider(DeliveryReceipt.ELEMENT,
                 DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-        pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
-
-        pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME,
-                TTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
         pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT,
                 DeliveryReceipt.NAMESPACE,
                 new DeliveryReceiptRequest.Provider());
@@ -379,9 +372,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                             }
                         }
                         if (tttalkExtension != null){
-                            type = tttalkExtension.getValue(TableContent.ChatTable.Columns.TYPE);
-                            file_path = tttalkExtension.getValue(TableContent.ChatTable.Columns.FILE_PATH);
-                            content_length = Integer.parseInt(tttalkExtension.getValue(TableContent.ChatTable.Columns.CONTENT_LENGTH));
+                            type = tttalkExtension.getType();
+                            file_path = tttalkExtension.getFilePath();
+                            content_length = tttalkExtension.getContentLength();
                         }
 
                         // try to extract a carbon
@@ -477,21 +470,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
                 + " = ?  " , new String[]{chatID});
     }
-
-//    private void addChatMessageToDB(int direction, String JID, String message, String type,
-//                                    int delivery_status, long ts, String packetID) {
-//        ContentValues values = new ContentValues();
-//
-//        values.put(ChatTable.Columns.DIRECTION, direction);
-//        values.put(ChatTable.Columns.JID, JID);
-//        values.put(ChatTable.Columns.MESSAGE, message);
-//        values.put(ChatTable.Columns.TYPE, type);
-//        values.put(ChatTable.Columns.DELIVERY_STATUS, delivery_status);
-//        values.put(ChatTable.Columns.DATE, ts);
-//        values.put(ChatTable.Columns.PACKET_ID, packetID);
-//
-//        mContentResolver.insert(ChatProvider.CONTENT_URI, values);
-//    }
 
     private void addChatMessageToDB(Chat chat) {
         ContentValues values = new ContentValues();
@@ -709,12 +687,13 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         String message = chat.getMessage();
         newMessage.setBody(message);
         newMessage.addExtension(new DeliveryReceiptRequest());
-
-        Map<String, String> map = new HashMap<>();
-        map.put(TableContent.ChatTable.Columns.TYPE, chat.getType());
-        map.put(TableContent.ChatTable.Columns.FILE_PATH, chat.getFilePath());
-        map.put(TableContent.ChatTable.Columns.CONTENT_LENGTH, String.valueOf(chat.getFromContentLength()));
-        newMessage.addExtension(new TTTalkExtension(map));
+        newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
+                AbstractTTTalkExtension.VALUE_VER,
+                AbstractTTTalkExtension.VALUE_TITLE,
+                chat.getType(),
+                chat.getFilePath(),
+                String.valueOf(chat.getFromContentLength())
+                ));
 
         Log.e(TAG, newMessage.toXML());
 
