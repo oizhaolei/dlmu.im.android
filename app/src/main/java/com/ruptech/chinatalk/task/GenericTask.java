@@ -12,7 +12,7 @@ import com.ruptech.chinatalk.http.NetworkException;
 import com.ruptech.chinatalk.http.ServerSideException;
 import com.ruptech.chinatalk.utils.Utils;
 
-public abstract class GenericTask extends AsyncTask<TaskParams, Object, TaskResult> implements Observer {
+public abstract class GenericTask extends AsyncTask<Object, Object, TaskResult> implements Observer {
 	protected final String TAG = "TaskManager";
 	private String msg;
 
@@ -33,7 +33,7 @@ public abstract class GenericTask extends AsyncTask<TaskParams, Object, TaskResu
 	}
 
 	@Override
-	protected TaskResult doInBackground(TaskParams... params) {
+	protected TaskResult doInBackground(Object... params) {
 		TaskResult result;
 		try {
 			result = _doInBackground();
