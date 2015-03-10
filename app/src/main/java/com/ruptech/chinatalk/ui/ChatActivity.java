@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.baidutranslate.openapi.TranslateClient;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
@@ -348,6 +349,16 @@ public class ChatActivity extends AbstractChatActivity {
 		Utils.onBackPressed(this);
 	}
 
+    // 【重要】 onCreate时候初始化翻译相关功能
+    private void initTransClient() {
+        String baidu_api_key = App.getMetaValue(this, "api_key");
+
+        client = new TranslateClient(this, baidu_api_key);
+
+        // 这里可以设置为在线优先、离线优先、 只在线、只离线 4种模式，默认为在线优先。
+        client.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
+    }
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		long start = System.currentTimeMillis();
@@ -355,6 +366,7 @@ public class ChatActivity extends AbstractChatActivity {
 		setContentView(R.layout.activity_chat);
 		ButterKnife.inject(this);
 
+        initTransClient();
 		mFriendUser = getUserFromExtras();
 		if (mFriendUser == null) {
 			Toast.makeText(this, R.string.user_infomation_is_invalidate,

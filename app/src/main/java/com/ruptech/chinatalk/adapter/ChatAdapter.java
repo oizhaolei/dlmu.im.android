@@ -44,6 +44,7 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
+import com.ruptech.chinatalk.ui.FullScreenActivity;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
@@ -56,11 +57,8 @@ import com.ruptech.chinatalk.utils.face.EmojiParser;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.CustomDialog;
 
-import org.jivesoftware.smack.packet.PacketExtension;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ChatAdapter extends CursorAdapter {
@@ -128,7 +126,7 @@ public class ChatAdapter extends CursorAdapter {
         ContentValues cv = new ContentValues();
         cv.put(ChatTable.Columns.MESSAGE_ID, messageID);
         if (to_content == null || to_content.length() == 0)
-            cv.put(ChatTable.Columns.TO_MESSAGE, "Translating...");
+            cv.put(ChatTable.Columns.TO_MESSAGE, mContext.getString(R.string.message_status_text_translating));
         else
             cv.put(ChatTable.Columns.TO_MESSAGE, to_content);
 
@@ -154,35 +152,7 @@ public class ChatAdapter extends CursorAdapter {
                 .getColumnIndexOrThrow(ChatTable.Columns.DATE);
     }
 
-    public void baiduTranslate(String content, String fromLang, String toLang) {
 
-        if (TextUtils.isEmpty(content))
-            return;
-
-        if (mClient != null){
-            mClient.translate(content, fromLang, toLang, new ITransResultCallback() {
-
-                @Override
-                public void onResult(TransResult result) {// 翻译结果回调
-                    if (result == null) {
-                        Log.d(TAG, "Trans Result is null");
-
-                    } else {
-                        Log.d(TAG, result.toJSONString());
-
-                        String msg;
-                        if (result.error_code == 0) {// 没错
-                            msg = result.trans_result;
-                        } else {
-                            msg = result.error_msg;
-                        }
-                        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
-
-    }
 
     @Override
     public int getItemViewType(int position) {
@@ -218,12 +188,15 @@ public class ChatAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder) view.getTag();
         Chat chat = TableContent.ChatTable.parseCursor(cursor);
-
         boolean mine = isMine(chat);
         User user;
         if (mine) {
+            chat.setToLang(mFriendUser.getLang());
+            chat.setFromLang(App.readUser().getLang());
             user = App.readUser();
         } else {
+            chat.setFromLang(mFriendUser.getLang());
+            chat.setToLang(App.readUser().getLang());
             user = mFriendUser;
         }
 
@@ -428,22 +401,22 @@ public class ChatAdapter extends CursorAdapter {
                         if (mContext
                                 .getString(R.string.message_action_copy)
                                 .equals(selectedItem)) {
-//                            doCopy(content);
+                            doCopy(chat);
                         } else if (mContext.getString(
                                 R.string.message_action_share).equals(
                                 selectedItem)) {
-//                            doShare(content);
+                            doShare(chat);
                         } else if (mContext.getString(
                                 R.string.message_action_fullscreen).equals(
                                 selectedItem)) {
-//                            doFullscreen(content);
+                            doFullscreen(chat);
                         } else if (mContext.getString(
                                 R.string.message_action_tts).equals(
                                 selectedItem)) {
-//                            doTTS(message.from_lang, message.to_lang, content);// from_lang优先
+                            doTTS(chat);// from_lang优先
                         } else if (mContext.getString(
                                 R.string.delete_message).equals(selectedItem)) {
-//                            deleteMessageByMsgId(message.messageid);
+                            doDelete(chat);
                         } else if (mContext.getString(
                                         R.string.message_action_request_translate_again)
                                 .equals(selectedItem)) {
@@ -452,11 +425,11 @@ public class ChatAdapter extends CursorAdapter {
                                 R.string.message_action_auto_translation)
                                 .equals(selectedItem)) {
 //                            doAcceptTranslate(message.messageid);
-                            baiduTranslate(chat.getMessage(), "zh", "en");
+                            doBaiduTranslate(chat);
                         } else if (mContext.getString(
                                 R.string.message_action_accept_translate)
                                 .equals(selectedItem)) {
-                            requestTTTalkTranslate(chat, "CN", "KR");
+                            doTTTalkTranslate(chat);
                         } else if (mContext.getString(
                                 R.string.message_action_retrieve_message)
                                 .equals(selectedItem)) {
@@ -735,17 +708,7 @@ public class ChatAdapter extends CursorAdapter {
         mContext.getContentResolver().update(rowuri, values, null, null);
     }
 
-    private void requestTTTalkTranslate(Chat chat, String fromLang, String toLang) {
-        Collection<PacketExtension> extensions = new ArrayList<>();
-        String callback_id = chat.getPid();
-        requestTranslate(chat, fromLang, toLang);
-    }
 
-    public void requestTranslate(Chat chat, String from_lang, String to_lang) {
-        XmppRequestTranslateTask mRequestTranslateTask = new XmppRequestTranslateTask(chat, from_lang, to_lang);
-        mRequestTranslateTask.setListener(mRequestTranslateListener);
-        mRequestTranslateTask.execute();
-    }
 
     static class ViewHolder {
         private TextView createDateTextView;
@@ -928,4 +891,99 @@ public class ChatAdapter extends CursorAdapter {
         imageParams.height = mWidth / 4;
         itemView.setLayoutParams(imageParams);
     }
+
+    private void doCopy(Chat chat) {
+        android.text.ClipboardManager clipboard = (android.text.ClipboardManager) mContext
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.setText(chat.getMessage());
+        Toast.makeText(mContext,
+                mContext.getString(R.string.already_copy_to_clipboard),
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void doFullscreen(Chat chat) {
+        Intent intent = new Intent(mContext, FullScreenActivity.class);
+        intent.putExtra(FullScreenActivity.EXTRA_MESSAGE, chat.getMessage());
+        mContext.startActivity(intent);
+    }
+
+    private void doShare(Chat chat) {
+        // create the send intent
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+        // set the type
+        shareIntent.setType("text/plain");
+
+        // add a subject
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+
+        // add the message
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, chat.getMessage());
+
+        // start the chooser for sharing
+        mContext.startActivity(
+                Intent.createChooser(shareIntent,
+                        mContext.getString(R.string.app_name)));
+    }
+
+    private void doTTS(Chat chat) {
+        if (!Utils.tts(mContext, chat.getFromLang(), chat.getToLang(), chat.getMessage())) {
+            Toast.makeText(mContext,
+                    mContext.getString(R.string.tts_no_supported_language),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void doDelete(Chat chat) {
+        ContentValues cv = new ContentValues();
+
+        mContentResolver.delete(ChatProvider.CONTENT_URI, ChatTable.Columns.ID
+                + " = ?  " , new String[]{String.valueOf(chat.getId())});
+    }
+
+    public void doBaiduTranslate(final Chat chat) {
+
+        if (TextUtils.isEmpty(chat.getMessage()))
+            return;
+
+        if (mClient != null){
+            mClient.translate(chat.getMessage(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
+
+                @Override
+                public void onResult(TransResult result) {// 翻译结果回调
+                    if (result == null) {
+                        Log.d(TAG, "Trans Result is null");
+
+                    } else {
+                        Log.d(TAG, result.toJSONString());
+
+                        String msg;
+                        if (result.error_code == 0) {// 没错
+                            msg = result.trans_result;
+                        } else {
+                            msg = result.error_msg;
+                        }
+                        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                        setToContent(chat.getId(), result.trans_result);
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void setToContent(int chatID, String message) {
+        ContentValues cv = new ContentValues();
+        cv.put(ChatTable.Columns.TO_MESSAGE, message);
+
+        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
+                + " = ?  " , new String[]{String.valueOf(chatID)});
+    }
+
+    private void doTTTalkTranslate(Chat chat) {
+        XmppRequestTranslateTask mRequestTranslateTask = new XmppRequestTranslateTask(chat);
+        mRequestTranslateTask.setListener(mRequestTranslateListener);
+        mRequestTranslateTask.execute();
+    }
+
 }

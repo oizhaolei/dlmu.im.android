@@ -251,7 +251,12 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 			if (result == TaskResult.OK) {
 				if (mChat != null) {
                     mChat.setFilePath(photoTask.getFileInfo().fileName);
-                    mChat.setMessage(photoTask.getFileInfo().fileName);
+                    if (AppPreferences.MESSAGE_TYPE_NAME_VOICE
+                            .equals(mChat.getType()))
+                        mChat.setMessage(getString(R.string.notification_voice));
+                    else
+                        mChat.setMessage(getString(R.string.notification_picture));
+                    
                     sendMessageIfNotNull(mChat);
                 }
 			} else if (result == TaskResult.FAILED) {
@@ -508,6 +513,9 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 			unregisterReceiver(mHandleMessageReceiver);
 		} catch (Exception e) {
 		}
+        if (client != null) {
+            client.onDestroy();
+        }
 		super.onDestroy();
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "onDestroy:" + (System.currentTimeMillis() - start));

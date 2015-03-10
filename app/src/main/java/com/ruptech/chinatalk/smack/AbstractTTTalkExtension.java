@@ -4,9 +4,13 @@ import org.jivesoftware.smack.packet.PacketExtension;
 
 public abstract class AbstractTTTalkExtension implements PacketExtension {
     public static final String NAMESPACE = "http://tttalk.org/protocol/tttalk";
-    private String test = null;
-    private String ver = null;
-    private String title = null;
+    public static final String VALUE_TEST = "test";
+    public static final String VALUE_VER = "1.0";
+    public static final String VALUE_TITLE = "title";
+
+    private String test = VALUE_TEST;
+    private String ver = VALUE_VER;
+    private String title = VALUE_TITLE;
 
     public AbstractTTTalkExtension(String test, String ver, String title) {
         this.test = test;
