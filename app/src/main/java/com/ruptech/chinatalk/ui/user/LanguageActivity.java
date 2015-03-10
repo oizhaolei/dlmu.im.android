@@ -133,8 +133,8 @@ public class LanguageActivity extends ActionBarActivity {
 	private String getAdditionalLanguages(int deleteIndex) {
 		StringBuffer sb = new StringBuffer();
 		String[] additionalList = mUser.getAdditionalLangs();
-		String toDelete = additionalList[deleteIndex];
-		if (additionalList != null) {
+		if (additionalList != null && additionalList.length > 0) {
+            String toDelete = additionalList[deleteIndex];
 			for (String l : additionalList) {
 				if (!toDelete.equals(l)) {
 					sb.append(l).append(',');
