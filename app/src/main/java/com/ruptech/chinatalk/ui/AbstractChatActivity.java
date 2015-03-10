@@ -508,6 +508,9 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 			unregisterReceiver(mHandleMessageReceiver);
 		} catch (Exception e) {
 		}
+        if (client != null) {
+            client.onDestroy();
+        }
 		super.onDestroy();
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "onDestroy:" + (System.currentTimeMillis() - start));
