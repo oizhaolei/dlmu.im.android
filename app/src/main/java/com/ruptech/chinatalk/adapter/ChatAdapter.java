@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -29,6 +31,7 @@ import com.baidu.baidutranslate.openapi.TranslateClient;
 import com.baidu.baidutranslate.openapi.callback.ITransResultCallback;
 import com.baidu.baidutranslate.openapi.entity.TransResult;
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Chat;
@@ -41,6 +44,7 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
+import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -66,14 +70,37 @@ public class ChatAdapter extends CursorAdapter {
         MY_PHOTO, MY_VOICE, MY_TEXT, FRIEND_PHOTO, FRIEND_VOICE, FRIEND_TEXT, TYPE_COUNT
     }
 
+    static class MyHandler extends Handler {
+        private final ImageView mVoiceImageView;
+        private final ProgressBar mPlayProcessBar;
+
+        MyHandler(ImageView voiceImageView, ProgressBar playProcessBar) {
+            mVoiceImageView = voiceImageView;
+            mPlayProcessBar = playProcessBar;
+        }
+
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            String returnUrl = msg.getData().getString("url");
+            if (!Utils.isEmpty(returnUrl)) {
+                playVoice(returnUrl, mVoiceImageView, mPlayProcessBar);
+            } else {
+                Toast.makeText(App.mContext, R.string.file_not_found,
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private static final int DELAY_NEWMSG = 2000;
     private final TranslateClient mClient;
     private ActionBarActivity mContext;
     private LayoutInflater mInflater;
     private ContentResolver mContentResolver;
+    private ArrayList<String> chatPhotoList;
     private User mFriendUser;
     public int mWidth;
     int CREATE_DATE_INDEX;
+
 
     private final TaskListener mRequestTranslateListener = new TaskAdapter() {
 
@@ -203,11 +230,141 @@ public class ChatAdapter extends CursorAdapter {
         bindProfileThumb(user, holder.userThumbImageView, holder.smsImageView,
                 holder.langImageView);
         bindUserThumbClickEvent(holder.userThumbView, user);
+        bindImageClickEvent(chat, holder.photoImageView);
+        bindVoiceClickEvent(chat, holder.voiceImageView,
+                holder.playProcessBar, holder.bubbleLayout);
         bindLayoutClickEvent(chat, holder.bubbleLayout);
         bindFromView(chat, holder);
         bindToView(chat, holder.translatedContentTextView,
                 holder.autoTranslationLayout);
         bindDateTimeView(cursor, holder.createDateTextView);
+    }
+
+    private static void playVoice(String url, final ImageView voiceImageView,
+                                  final ProgressBar playProcessBar) {
+        if (BuildConfig.DEBUG)
+            Log.w(TAG, "url:" + url);
+        try {
+            if (App.mPlayer != null) {
+                App.mPlayer.release();
+                App.mPlayer = null;
+            }
+            App.mPlayer = new MediaPlayer();
+            App.mPlayer.setDataSource(url);
+            App.mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            App.mPlayer.prepare();
+            App.mPlayer.start();
+
+            voiceImageView.setVisibility(View.GONE);
+            playProcessBar.setVisibility(View.VISIBLE);
+
+            App.mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mPlayer) {
+                    voiceImageView.setVisibility(View.VISIBLE);
+                    playProcessBar.setVisibility(View.GONE);
+                    App.mPlayer.stop();
+                    App.mPlayer.release();
+                }
+            });
+        } catch (Exception e) {
+            voiceImageView.setVisibility(View.VISIBLE);
+            playProcessBar.setVisibility(View.GONE);
+            Utils.sendClientException(e, url);
+            if (BuildConfig.DEBUG)
+                Log.e(TAG, url, e);
+        }
+    };
+
+    protected void bindVoiceClickEvent(final Chat chat,
+                                       final ImageView voiceImageView, final ProgressBar playProcessBar,
+                                       final View bubbleLayout) {
+
+        if (voiceImageView == null || playProcessBar == null)
+            return;
+
+        bubbleLayout.setOnClickListener(null);
+        if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
+            bubbleLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // if (message.getMessage_status() !=
+                    // AppPreferences.MESSAGE_STATUS_SEND_FAILED) {
+                    String url = "";
+                    String file_path = chat.getFilePath();
+                    File voiceFolder = Utils.getVoiceFolder(mContext);
+                    File mVoiceFile = new File(voiceFolder, file_path);
+                    File mDownVoiceFile = new File(voiceFolder,
+                            file_path + AppPreferences.VOICE_SURFIX);
+                    if (mVoiceFile.exists()) {
+                        url = file_path;
+                        playVoice(voiceFolder + "/" + url, voiceImageView,
+                                playProcessBar);
+                    } else if (mDownVoiceFile.exists()) {
+                        url = file_path + AppPreferences.VOICE_SURFIX;
+                        playVoice(voiceFolder + "/" + url, voiceImageView,
+                                playProcessBar);
+                    } else {
+                        if (!Utils.isEmpty(file_path)) {
+                            final MyHandler myHandler = new MyHandler(
+                                    voiceImageView, playProcessBar);
+                            Utils.uploadVoiceFile(mContext, file_path,
+                                    myHandler);
+                        } else {
+                            Toast.makeText(mContext,
+                                    R.string.play_voice_failure,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                // }
+            });
+        }
+    }
+
+    protected void bindImageClickEvent(final Chat chat,
+                                       View photoImageView) {
+
+        if (photoImageView == null)
+            return;
+
+        photoImageView.setOnClickListener(null);
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
+            photoImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (chat.getStatus() != AppPreferences.MESSAGE_STATUS_SEND_FAILED) {
+                        gotoImageViewActivity(chat.getFilePath());
+                    }
+                }
+            });
+        }
+    }
+
+    private void setChatPhotoList(Cursor chatsCursor) {
+        chatPhotoList = new ArrayList<>();
+        for (chatsCursor.moveToFirst(); !chatsCursor.isAfterLast(); chatsCursor
+                .moveToNext()) {
+            Chat chat = ChatTable.parseCursor(chatsCursor);
+            if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO
+                    .equals(chat.getType())) {
+                final String file_path = chat.getFilePath();
+                String fileName = file_path.substring(file_path
+                        .lastIndexOf('/') + 1);
+                chatPhotoList.add(App.readServerAppInfo().getServerOriginal(
+                        fileName));
+            }
+        }
+    }
+
+    private void gotoImageViewActivity(String file_path) {
+        setChatPhotoList(getCursor());
+        int position = chatPhotoList.indexOf(App.readServerAppInfo()
+                .getServerOriginal(file_path));
+        Intent intent = new Intent(mContext, ImageViewActivity.class);
+        intent.putExtra(ImageViewActivity.EXTRA_POSITION, position);
+        intent.putExtra(ImageViewActivity.EXTRA_IMAGE_URLS, chatPhotoList);
+        mContext.startActivity(intent);
     }
 
     protected void bindLayoutClickEvent(final Chat chat, View layoutView) {
@@ -726,18 +883,11 @@ public class ChatAdapter extends CursorAdapter {
         if (progressBar != null)
             progressBar.setVisibility(View.GONE);
         if (!Utils.isEmpty(fileName)) {
-            String tag = (String) photoImageView.getTag();
-            if (!fileName.equals(tag)) {
-                ImageManager.imageLoader.displayImage(App
-                                .readServerAppInfo().getServerMiddle(fileName),
-                        photoImageView, ImageManager.getOptionsLandscape());
-                photoImageView.setTag(fileName);
-                setItemSize(photoImageView);
-            } else {
-                photoImageView.setImageBitmap(ImageManager
-                        .getDefaultLandscape(mContext));
-                photoImageView.setTag(null);
-            }
+            ImageManager.imageLoader.displayImage(App
+                            .readServerAppInfo().getServerMiddle(fileName),
+                    photoImageView, ImageManager.getOptionsLandscape());
+            photoImageView.setTag(fileName);
+            setItemSize(photoImageView);
         } else {
             photoImageView.setImageBitmap(ImageManager
                     .getDefaultLandscape(mContext));

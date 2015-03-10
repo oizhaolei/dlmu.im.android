@@ -816,5 +816,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             }
             getMessageEditText().setText(null);
         }
+        getVoiceRecordButton().setEnabled(true);
     }
 }
