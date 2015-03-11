@@ -2,6 +2,7 @@ package com.ruptech.chinatalk.smack;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -56,19 +57,18 @@ import org.jivesoftware.smackx.forward.Forwarded;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.DelayInfo;
+import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.provider.DelayInfoProvider;
 import org.jivesoftware.smackx.provider.DiscoverInfoProvider;
-import org.jivesoftware.smackx.provider.MUCAdminProvider;
-import org.jivesoftware.smackx.provider.MUCOwnerProvider;
-import org.jivesoftware.smackx.provider.MUCUserProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
+import java.util.Date;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
@@ -77,20 +77,21 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
     protected final String TAG = Utils.CATEGORY
             + TTTalkSmackImpl.class.getSimpleName();
-    //    final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
-//            ChatConstants._ID, ChatConstants.JID, ChatConstants.MESSAGE,
-//            ChatConstants.DATE, ChatConstants.PACKET_ID};
-//    final static private String SEND_OFFLINE_SELECTION = ChatConstants.DIRECTION
-//            + " = "
-//            + ChatConstants.OUTGOING
-//            + " AND "
-//            + ChatConstants.DELIVERY_STATUS + " = " + ChatConstants.DS_NEW;
+
+    final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
+            ChatTable.Columns.ID, ChatTable.Columns.JID, ChatTable.Columns.MESSAGE,
+            ChatTable.Columns.DATE, ChatTable.Columns.PACKET_ID};
+    final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.DIRECTION
+            + " = " + ChatProvider.OUTGOING + " AND "
+            + ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
+
     private final ContentResolver mContentResolver;
     private ConnectionConfiguration mXMPPConfig;
     private XMPPConnection mXMPPConnection;
     private InvitationListener mInvitationListener;
     private PacketListener mPacketListener;
     private PacketListener mSendFailureListener;
+    private ConnectionListener mConnectionListener;
     private Roster mRoster;
     private RosterListener mRosterListener;
 
@@ -178,32 +179,12 @@ public class TTTalkSmackImpl implements TTTalkSmack {
             SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
             SmackConfiguration.setKeepAliveInterval(-1);
             SmackConfiguration.setDefaultPingInterval(0);
-            registerRosterListener();// 监听联系人动态变化
+
             mXMPPConnection.connect();
             if (!mXMPPConnection.isConnected()) {
                 throw new XMPPException("SMACK connect failed without exception!");
             }
-            mXMPPConnection.addConnectionListener(new ConnectionListener() {
-                public void connectionClosedOnError(Exception e) {
-                    App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
-                }
 
-                public void connectionClosed() {
-                    App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
-                }
-
-                public void reconnectingIn(int seconds) {
-                    App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
-                }
-
-                public void reconnectionFailed(Exception e) {
-                    App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
-                }
-
-                public void reconnectionSuccessful() {
-                    App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
-                }
-            });
             initServiceDiscovery();// 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
             // SMACK auto-logins if we were authenticated before
             if (!mXMPPConnection.isAuthenticated()) {
@@ -334,23 +315,56 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         return StatusMode.offline;
     }
 
+    private void unRegisterAllListener() {
+        mXMPPConnection.removeConnectionListener(mConnectionListener);
+        mXMPPConnection.removePacketListener(mPacketListener);
+        mXMPPConnection.removePacketSendFailureListener(mSendFailureListener);
+        MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
+        mRoster.removeRosterListener(mRosterListener);
+    }
+
     private void registerAllListener() {
         // actually, authenticated must be true now, or an exception must have
         // been thrown.
         if (isAuthenticated()) {
+            registerConnectionListener();
             registerMessageListener();
             registerMessageSendFailureListener();
             registerChatRoomInvitationListener();
+            registerRosterListener();// 监听联系人动态变化
 //            registerPongListener();
-//            sendOfflineMessages();
-//            if (mSmackListener == null) {
-//                mXMPPConnection.disconnect();
-//                return;
-//            }
-//            // we need to "ping" the service to let it know we are actually
-//            // connected, even when no roster entries will come in
-//            mSmackListener.onRosterChanged();
+            sendOfflineMessages();
+
         }
+    }
+
+    private void registerConnectionListener(){
+        if (mConnectionListener != null)
+            mXMPPConnection.removeConnectionListener(mConnectionListener);
+
+        mConnectionListener = new ConnectionListener() {
+            public void connectionClosedOnError(Exception e) {
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
+            }
+
+            public void connectionClosed() {
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
+            }
+
+            public void reconnectingIn(int seconds) {
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
+            }
+
+            public void reconnectionFailed(Exception e) {
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
+            }
+
+            public void reconnectionSuccessful() {
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
+            }
+        };
+
+        mXMPPConnection.addConnectionListener(mConnectionListener);
     }
 
     private void registerChatRoomInvitationListener() {
@@ -363,7 +377,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         if (mInvitationListener != null)
             MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
 
-        MultiUserChat.addInvitationListener(mXMPPConnection, new InvitationListener() {
+        mInvitationListener = new InvitationListener() {
             @Override
             public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason,
                                            final String password, final Message message) {
@@ -376,7 +390,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 }
 
             }
-        });
+        };
+
+        MultiUserChat.addInvitationListener(mXMPPConnection, mInvitationListener);
     }
 
     /**
@@ -720,15 +736,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         Log.d(TAG, "unRegisterCallback()");
         // remove callbacks _before_ tossing old connection
         try {
-            mXMPPConnection.removePacketListener(mPacketListener);
-            mXMPPConnection
-                    .removePacketSendFailureListener(mSendFailureListener);
-
+            unRegisterAllListener();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             // ignore it!
             return false;
         }
+
+
         if (mXMPPConnection.isConnected()) {
             // work around SMACK's #%&%# blocking disconnect()
             new Thread() {
@@ -814,5 +829,50 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         } else {
             return jid;
         }
+    }
+
+    /**
+     * ************** start 发送离线消息 **********************
+     */
+    public void sendOfflineMessages() {
+        Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
+                SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
+        final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
+        final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.JID);
+        final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.MESSAGE);
+        final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.DATE);
+        final int PACKETID_COL = cursor
+                .getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
+        ContentValues mark_sent = new ContentValues();
+        mark_sent.put(ChatTable.Columns.DELIVERY_STATUS,
+                ChatProvider.DS_SENT_OR_READ);
+        while (cursor.moveToNext()) {
+            int _id = cursor.getInt(_ID_COL);
+            String toJID = cursor.getString(JID_COL);
+            String message = cursor.getString(MSG_COL);
+            String packetID = cursor.getString(PACKETID_COL);
+            long ts = cursor.getLong(TS_COL);
+            Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
+            final Message newMessage = new Message(toJID, Message.Type.chat);
+            newMessage.setBody(message);
+            DelayInformation delay = new DelayInformation(new Date(ts));
+            newMessage.addExtension(delay);
+            newMessage.addExtension(new DelayInfo(delay));
+            newMessage.addExtension(new DeliveryReceiptRequest());
+            if ((packetID != null) && (packetID.length() > 0)) {
+                newMessage.setPacketID(packetID);
+            } else {
+                packetID = newMessage.getPacketID();
+                mark_sent.put(ChatTable.Columns.PACKET_ID, packetID);
+            }
+            Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
+                    + ChatProvider.QUERY_URI + "/" + _id);
+            mContentResolver.update(rowuri, mark_sent, null, null);
+            mXMPPConnection.sendPacket(newMessage); // must be after marking
+            // delivered, otherwise it
+            // may override the
+            // SendFailListener
+        }
+        cursor.close();
     }
 }

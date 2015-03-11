@@ -78,6 +78,7 @@
         android:shadowColor="#19000000"
         android:shadowDy="1.0"
         android:shadowRadius="1.0"
+        android:background="@drawable/new_mark"
         android:text="10"
         android:textColor="#ffffffff"
         android:textSize="10.0dip" />

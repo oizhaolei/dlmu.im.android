@@ -200,6 +200,10 @@ public class ChatAdapter extends CursorAdapter {
             user = mFriendUser;
         }
 
+        if (!mine && chat.getRead() == ChatProvider.DS_NEW) {
+            markAsReadDelayed(chat.getId(), DELAY_NEWMSG);
+        }
+
         bindProfileThumb(user, holder.userThumbImageView, holder.smsImageView,
                 holder.langImageView);
         bindUserThumbClickEvent(holder.userThumbView, user);
