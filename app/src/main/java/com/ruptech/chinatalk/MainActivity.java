@@ -29,6 +29,7 @@ import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.RefreshNewMarkEvent;
+import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -596,6 +597,15 @@ public class MainActivity extends ActionBarActivity implements
         mainHandler.post(new Runnable() {
             public void run() {
                 App.mService.displayPresentNotification(event);
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerStoryReceived(final StoryEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                App.mService.displayStoryNotification(event);
             }
         });
     }
