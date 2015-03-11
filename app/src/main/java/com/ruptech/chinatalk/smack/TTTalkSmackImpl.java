@@ -18,6 +18,7 @@ import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
+import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
@@ -108,10 +109,10 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         ProviderManager.getInstance().addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
-        ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
-        ProviderManager.getInstance().addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
+       ProviderManager.getInstance().addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
         ProviderManager.getInstance().addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkStoryExtension.Provider());
 
         this.mXMPPConfig = new ConnectionConfiguration(server, port);
 
@@ -411,6 +412,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                         TTTalkAnnouncementExtension tttalkAnnouncementExtension = null;
                         TTTalkFriendExtension tttalkFriendExtension = null;
                         TTTalkPresentExtension tttalkPresentExtension = null;
+                        TTTalkStoryExtension tttalkStoryExtension = null;
                         String type = null;
                         String file_path = null;
                         int content_length = 0;
@@ -430,6 +432,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                                 tttalkFriendExtension =(TTTalkFriendExtension)ext;
                             } else if (ext instanceof TTTalkPresentExtension){
                                 tttalkPresentExtension =(TTTalkPresentExtension)ext;
+                            } else if (ext instanceof TTTalkStoryExtension){
+                                tttalkStoryExtension =(TTTalkStoryExtension)ext;
                             }
                         }
 
@@ -443,6 +447,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                             App.mBus.post(new FriendEvent(tttalkFriendExtension.getFullname(),Integer.valueOf(tttalkFriendExtension.getFriend_id())));
                         } else if(tttalkPresentExtension != null){
                             App.mBus.post(new PresentEvent(Long.valueOf(tttalkPresentExtension.getPresent_id()),Long.valueOf(tttalkPresentExtension.getTo_user_photo_id()),tttalkPresentExtension.getFullname(),tttalkPresentExtension.getTo_user_photo_id(),tttalkPresentExtension.getPic_url()));
+                        } else if(tttalkStoryExtension != null){
+                            App.mBus.post(new StoryEvent(tttalkStoryExtension.getPhoto_id(),tttalkStoryExtension.getTitle(),tttalkStoryExtension.getContent(),tttalkStoryExtension.getFullname()));
                         } else {
                             if (tttalkExtension != null) {
                                 type = tttalkExtension.getType();

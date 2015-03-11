@@ -20,13 +20,17 @@ import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
+import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ChatTTTActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -231,7 +235,7 @@ public abstract class BaseService extends Service {
                 title = String.format(GCMIntentService.PUSH_TITLE_PATTERN,
                         name, getString(R.string.push_title_message));
             } else {
-                return ;
+                return;
             }
         }
 
@@ -247,7 +251,7 @@ public abstract class BaseService extends Service {
         if (user != null) {
             notificationIntent = new Intent(this, ChatActivity.class);
             notificationIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
-        }else{
+        } else {
             notificationIntent = new Intent(this, ChatTTTActivity.class);
         }
 
@@ -300,7 +304,7 @@ public abstract class BaseService extends Service {
         FriendsRequestReceiver.doRetrieveNewFriend(App.readUser().getId(), false);
     }
 
-    public void displayPresentNotification(PresentEvent event){
+    public void displayPresentNotification(PresentEvent event) {
         String PUSH_TITLE_PATTERN = "%s %s";
         String notificationTitle = String.format(PUSH_TITLE_PATTERN,
                 event.fullname, getString(R.string.push_title_present_donate));
@@ -315,6 +319,77 @@ public abstract class BaseService extends Service {
                     notificationContent, notificationTitle, event.present_id,
                     event.pic_url, null,
                     PrefUtils.getPrefTranslatedNoticeLike());
+        }
+    }
+
+    public void displayStoryNotification(StoryEvent event) {
+        String PUSH_TITLE_PATTERN = "%s %s";
+        String title = event.title;
+        String photoId = event.photo_id;
+        String fullName = event.fullname;
+        String content = event.content;
+        if ("story_new_comment".equals(title)) {
+            String fullname = event.fullname;
+            if (!Utils.isEmpty(fullname)) {
+                String notificationTitle = getString(R.string.new_story_comment);
+                String comment_fullname = String
+                        .format(PUSH_TITLE_PATTERN,
+                                fullname, getString(R.string.push_title_story_new_comment));
+
+                UserStoryReceiver.doRetrieveNewComment(
+                        Long.valueOf(photoId), notificationTitle,
+                        comment_fullname,
+                        PrefUtils.getPrefTranslatedNoticeComment());
+            }
+        } else if ("story_like".equals(title)) {
+            String notificationTitle = getString(R.string.new_story_like);
+            String fullname = String.format(
+                    GCMIntentService.PUSH_TITLE_PATTERN,
+                    fullName,
+                    getString(R.string.push_title_story_like));
+
+            UserStoryReceiver.doRetrieveNewComment(
+                    Long.valueOf(photoId), notificationTitle, fullname,
+                    PrefUtils.getPrefTranslatedNoticeLike());
+        } else if ("story_new".equals(title)) {
+            String notificationTitle = getString(R.string.new_story);
+            if (!Utils.isEmpty(content))
+                notificationTitle = content;
+            String fullname = String.format(
+                    GCMIntentService.PUSH_TITLE_PATTERN,
+                    fullName,
+                    getString(R.string.push_title_story_new));
+            UserStoryReceiver.doRetrieveNewComment(
+                    Long.valueOf(photoId), notificationTitle, fullname,
+                    PrefUtils.getPrefTranslatedNoticeFriend());
+        } else if ("story_new_translate".equals(title)) {
+            String fullname = String
+                    .format(GCMIntentService.PUSH_TITLE_PATTERN,
+                            fullName,
+                            getString(R.string.push_title_story_new_translate));
+            UserStoryReceiver.doRetrieveNewTranslate(
+                    Long.valueOf(photoId), content, fullname,
+                    PrefUtils.getPrefTranslatedNoticeTranslate());
+        } else if ("story_like_translate".equals(title)) {
+            String fullname = String
+                    .format(GCMIntentService.PUSH_TITLE_PATTERN,
+                            fullName,
+                            getString(R.string.push_title_tranlate_like));
+            UserStoryReceiver.doRetrieveNewTranslate(
+                    Long.valueOf(photoId), content, fullname,
+                    PrefUtils.getPrefTranslatedNoticeLike());
+        } else if ("story_new_comment_reply".equals(title)) {
+            String notificationTitle = getString(R.string.new_story_comment_reply);
+            String fullname = String
+                    .format(GCMIntentService.PUSH_TITLE_PATTERN,
+                            fullName,
+                            getString(R.string.push_title_story_new_comment_reply));
+
+            if (!Utils.isEmpty(content))
+                notificationTitle = content;
+            UserStoryReceiver.doRetrieveNewComment(
+                    Long.valueOf(photoId), notificationTitle, fullname,
+                    PrefUtils.getPrefTranslatedNoticeReply());
         }
     }
 }
