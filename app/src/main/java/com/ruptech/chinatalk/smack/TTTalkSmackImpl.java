@@ -9,10 +9,14 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.db.RosterProvider;
+import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
+import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
+import com.ruptech.chinatalk.event.PresentEvent;
+import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
@@ -99,6 +103,15 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 PrefUtils.SMACKDEBUG, false);
         boolean requireSsl = PrefUtils.getPrefBoolean(
                 PrefUtils.REQUIRE_TLS, false);
+
+        ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
+        ProviderManager.getInstance().addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
 
         this.mXMPPConfig = new ConnectionConfiguration(server, port);
 
@@ -393,6 +406,11 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                         Collection<PacketExtension> extensions = msg.getExtensions();
                         TTTalkExtension tttalkExtension = null;
                         TTTalkTranslatedExtension tttalkTranslatedExtension = null;
+                        TTTalkBalanceExtension tttalkBalanceExtension = null;
+                        TTTalkQaExtension tttalkQaExtension = null;
+                        TTTalkAnnouncementExtension tttalkAnnouncementExtension = null;
+                        TTTalkFriendExtension tttalkFriendExtension = null;
+                        TTTalkPresentExtension tttalkPresentExtension = null;
                         String type = null;
                         String file_path = null;
                         int content_length = 0;
@@ -400,90 +418,113 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                         for(PacketExtension ext : extensions){
                             if (ext instanceof TTTalkExtension){
                                 tttalkExtension =(TTTalkExtension)ext;
-                            }else if (ext instanceof TTTalkTranslatedExtension){
+                            } else if (ext instanceof TTTalkTranslatedExtension){
                                 tttalkTranslatedExtension =(TTTalkTranslatedExtension)ext;
+                            } else if (ext instanceof TTTalkBalanceExtension){
+                                tttalkBalanceExtension =(TTTalkBalanceExtension)ext;
+                            } else if (ext instanceof TTTalkQaExtension){
+                                tttalkQaExtension =(TTTalkQaExtension)ext;
+                            } else if (ext instanceof TTTalkAnnouncementExtension){
+                                tttalkAnnouncementExtension =(TTTalkAnnouncementExtension)ext;
+                            } else if (ext instanceof TTTalkFriendExtension){
+                                tttalkFriendExtension =(TTTalkFriendExtension)ext;
+                            } else if (ext instanceof TTTalkPresentExtension){
+                                tttalkPresentExtension =(TTTalkPresentExtension)ext;
                             }
                         }
-                        if (tttalkExtension != null){
-                            type = tttalkExtension.getType();
-                            file_path = tttalkExtension.getFilePath();
-                            content_length = tttalkExtension.getContentLength();
-                        }
 
-                        // try to extract a carbon
-                        Carbon cc = CarbonManager.getCarbon(msg);
-                        if (cc != null
-                                && cc.getDirection() == Carbon.Direction.received) {
-                            Log.d(TAG, "carbon: " + cc.toXML());
-                            msg = (Message) cc.getForwarded()
-                                    .getForwardedPacket();
-                            chatMessage = msg.getBody();
-                            // fall through
-                        } else if (cc != null
-                                && cc.getDirection() == Carbon.Direction.sent) {
-                            Log.d(TAG, "carbon: " + cc.toXML());
-                            msg = (Message) cc.getForwarded()
-                                    .getForwardedPacket();
-                            chatMessage = msg.getBody();
-                            if (chatMessage == null)
+                        if(tttalkBalanceExtension != null){
+                            App.readUser().setBalance(Double.valueOf(tttalkBalanceExtension.getBalance()));
+                        } else if(tttalkQaExtension != null){
+                            App.mBus.post(new QAEvent(msg.getBody(), Integer.valueOf(tttalkQaExtension.getqa_id())));
+                        } else if(tttalkAnnouncementExtension != null){
+                            App.mBus.post(new AnnouncementEvent(msg.getBody(),Integer.valueOf(tttalkAnnouncementExtension.get_announcement_id())));
+                        } else if(tttalkFriendExtension != null){
+                            App.mBus.post(new FriendEvent(tttalkFriendExtension.getFullname(),Integer.valueOf(tttalkFriendExtension.getFriend_id())));
+                        } else if(tttalkPresentExtension != null){
+                            App.mBus.post(new PresentEvent(Long.valueOf(tttalkPresentExtension.getPresent_id()),Long.valueOf(tttalkPresentExtension.getTo_user_photo_id()),tttalkPresentExtension.getFullname(),tttalkPresentExtension.getTo_user_photo_id(),tttalkPresentExtension.getPic_url()));
+                        } else {
+                            if (tttalkExtension != null) {
+                                type = tttalkExtension.getType();
+                                file_path = tttalkExtension.getFilePath();
+                                content_length = tttalkExtension.getContentLength();
+                            }
+
+                            // try to extract a carbon
+                            Carbon cc = CarbonManager.getCarbon(msg);
+                            if (cc != null
+                                    && cc.getDirection() == Carbon.Direction.received) {
+                                Log.d(TAG, "carbon: " + cc.toXML());
+                                msg = (Message) cc.getForwarded()
+                                        .getForwardedPacket();
+                                chatMessage = msg.getBody();
+                                // fall through
+                            } else if (cc != null
+                                    && cc.getDirection() == Carbon.Direction.sent) {
+                                Log.d(TAG, "carbon: " + cc.toXML());
+                                msg = (Message) cc.getForwarded()
+                                        .getForwardedPacket();
+                                chatMessage = msg.getBody();
+                                if (chatMessage == null)
+                                    return;
+
+                                Chat chat = new Chat();
+                                chat.setFromMe(ChatProvider.OUTGOING);
+                                chat.setMessage(chatMessage);
+                                chat.setType(type);
+                                chat.setFilePath(file_path);
+                                chat.setFromContentLength(content_length);
+                                chat.setJid(fromJID);
+                                chat.setPid(msg.getPacketID());
+                                chat.setStatus(ChatProvider.DS_SENT_OR_READ);
+                                chat.setDate(System.currentTimeMillis());
+
+                                addChatMessageToDB(chat);
+                                // always return after adding
                                 return;
-
-                            Chat chat = new Chat();
-                            chat.setFromMe(ChatProvider.OUTGOING);
-                            chat.setMessage(chatMessage);
-                            chat.setType(type);
-                            chat.setFilePath(file_path);
-                            chat.setFromContentLength(content_length);
-                            chat.setJid(fromJID);
-                            chat.setPid(msg.getPacketID());
-                            chat.setStatus(ChatProvider.DS_SENT_OR_READ);
-                            chat.setDate(System.currentTimeMillis());
-
-                            addChatMessageToDB(chat);
-                            // always return after adding
-                            return;
-                        }
-
-                        if (chatMessage == null) {
-                            return;
-                        }
-
-                        if (msg.getType() == Message.Type.error) {
-                            chatMessage = "<Error> " + chatMessage;
-                        }
-
-                        long ts;
-                        DelayInfo timestamp = (DelayInfo) msg.getExtension(
-                                "delay", "urn:xmpp:delay");
-                        if (timestamp == null)
-                            timestamp = (DelayInfo) msg.getExtension("x",
-                                    "jabber:x:delay");
-                        if (timestamp != null)
-                            ts = timestamp.getStamp().getTime();
-                        else
-                            ts = System.currentTimeMillis();
-
-                        if (fromJID.startsWith(App.properties.getProperty("translator_jid"))){
-                            if (tttalkTranslatedExtension != null ){
-                                String messageId = tttalkTranslatedExtension.getMessage_id();
-                                setToContent(messageId, chatMessage);
                             }
-                        }else{
-                            Chat chat = new Chat();
-                            chat.setFromMe(ChatProvider.INCOMING);
-                            chat.setMessage(chatMessage);
-                            chat.setType(type);
-                            chat.setFilePath(file_path);
-                            chat.setFromContentLength(content_length);
-                            chat.setJid(fromJID);
-                            chat.setPid(msg.getPacketID());
-                            chat.setStatus(ChatProvider.DS_NEW);
-                            chat.setDate(ts);
 
-                            addChatMessageToDB(chat);
+                            if (chatMessage == null) {
+                                return;
+                            }
+
+                            if (msg.getType() == Message.Type.error) {
+                                chatMessage = "<Error> " + chatMessage;
+                            }
+
+                            long ts;
+                            DelayInfo timestamp = (DelayInfo) msg.getExtension(
+                                    "delay", "urn:xmpp:delay");
+                            if (timestamp == null)
+                                timestamp = (DelayInfo) msg.getExtension("x",
+                                        "jabber:x:delay");
+                            if (timestamp != null)
+                                ts = timestamp.getStamp().getTime();
+                            else
+                                ts = System.currentTimeMillis();
+
+                            if (fromJID.startsWith(App.properties.getProperty("translator_jid"))) {
+                                if (tttalkTranslatedExtension != null) {
+                                    String messageId = tttalkTranslatedExtension.getMessage_id();
+                                    setToContent(messageId, chatMessage);
+                                }
+                            } else {
+                                Chat chat = new Chat();
+                                chat.setFromMe(ChatProvider.INCOMING);
+                                chat.setMessage(chatMessage);
+                                chat.setType(type);
+                                chat.setFilePath(file_path);
+                                chat.setFromContentLength(content_length);
+                                chat.setJid(fromJID);
+                                chat.setPid(msg.getPacketID());
+                                chat.setStatus(ChatProvider.DS_NEW);
+                                chat.setDate(ts);
+
+                                addChatMessageToDB(chat);
+                            }
+
+                            App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
                         }
-
-                        App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
 
                     }
                 } catch (Exception e) {

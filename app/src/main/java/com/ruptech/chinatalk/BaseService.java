@@ -15,7 +15,11 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.event.AnnouncementEvent;
+import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
+import com.ruptech.chinatalk.event.PresentEvent;
+import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ChatTTTActivity;
@@ -276,5 +280,41 @@ public abstract class BaseService extends Service {
 //            }
 //        }
 
+    }
+
+    public void displayQaNotification(QAEvent event) {
+        String notifyTitle = getString(R.string.qa);
+        String content = event.content;
+        MessageReceiver.notify(App.mContext, notifyTitle, content,
+                R.string.qa, -1, true);
+    }
+
+    public void displayAnnouncementNotification(AnnouncementEvent event) {
+        String notifyTitle = getString(R.string.announcement);
+        String content = event.content;
+        MessageReceiver.notify(App.mContext, notifyTitle, content,
+                R.string.announcement, -1, true);
+    }
+
+    public void displayFrirendNotification(FriendEvent event) {
+        FriendsRequestReceiver.doRetrieveNewFriend(App.readUser().getId(), false);
+    }
+
+    public void displayPresentNotification(PresentEvent event){
+        String PUSH_TITLE_PATTERN = "%s %s";
+        String notificationTitle = String.format(PUSH_TITLE_PATTERN,
+                event.fullname, getString(R.string.push_title_present_donate));
+        String notificationContent = getString(R.string.news_title_gift_donate);
+        if (event.to_user_photo_id > 0) {
+            PresentDonateReceiver.doRetrieveUserPhoto(
+                    event.to_user_photo_id, notificationContent,
+                    notificationTitle, event.present_id, event.pic_url,
+                    PrefUtils.getPrefTranslatedNoticeLike());
+        } else {
+            PresentDonateReceiver.sendPresentDonteNotice(this,
+                    notificationContent, notificationTitle, event.present_id,
+                    event.pic_url, null,
+                    PrefUtils.getPrefTranslatedNoticeLike());
+        }
     }
 }
