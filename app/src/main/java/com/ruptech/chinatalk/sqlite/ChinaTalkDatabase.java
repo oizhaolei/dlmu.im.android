@@ -162,7 +162,6 @@ public class ChinaTalkDatabase {
 	private static void udpateTable57to62(SQLiteDatabase db) {
         db.execSQL(ChatTable.getCreateSQL());
         db.execSQL(RosterTable.getCreateSQL());
-        putMessageTableMsgToChatTable();
 	}
 
     private static void udpateTable61to62(SQLiteDatabase db) {
@@ -226,38 +225,4 @@ public class ChinaTalkDatabase {
 	public SQLiteOpenHelper getSQLiteOpenHelper() {
 		return mOpenHelper;
 	}
-
-    private static void putMessageTableMsgToChatTable(){
-        List<Message> messageList = App.messageDAO.fetchAllMessage();
-        // add to db
-        if(messageList.size() > 0) {
-            ContentValues[] valuesArray = new ContentValues[messageList.size()];
-            int i = 0;
-            for (Message message : messageList) {
-                ContentValues values = new ContentValues();
-                if (App.readUser().getId() == message.getUserid()) {
-                    values.put(TableContent.ChatTable.Columns.DIRECTION, com.ruptech.chinatalk.db.ChatProvider.OUTGOING);
-                } else {
-                    values.put(TableContent.ChatTable.Columns.DIRECTION, com.ruptech.chinatalk.db.ChatProvider.INCOMING);
-                }
-                String jid = String.format("chinatalk_%d@tttalk.org", message.getUserid());
-                values.put(TableContent.ChatTable.Columns.JID, jid);
-                values.put(TableContent.ChatTable.Columns.MESSAGE_ID, message.getMessageid());
-                values.put(TableContent.ChatTable.Columns.MESSAGE, message.getFrom_content());
-                values.put(TableContent.ChatTable.Columns.TO_MESSAGE, message.getTo_content());
-                values.put(TableContent.ChatTable.Columns.TYPE, message.getFile_type());
-                values.put(TableContent.ChatTable.Columns.FILE_PATH, message.getFile_path());
-                values.put(TableContent.ChatTable.Columns.CONTENT_LENGTH, message.getFrom_content_length());
-                values.put(TableContent.ChatTable.Columns.DELIVERY_STATUS, com.ruptech.chinatalk.db.ChatProvider.DS_SENT_OR_READ);
-                values.put(TableContent.ChatTable.Columns.DATE,
-                        DateCommonUtils.parseToDateFromString(message.getCreate_date()).getTime() +
-                                TimeZone.getDefault().getRawOffset());
-                values.put(TableContent.ChatTable.Columns.PACKET_ID, "");
-
-                valuesArray[i] = values;
-                i += 1;
-            }
-            App.mContext.getContentResolver().bulkInsert(com.ruptech.chinatalk.db.ChatProvider.CONTENT_URI, valuesArray);
-        }
-    }
 }

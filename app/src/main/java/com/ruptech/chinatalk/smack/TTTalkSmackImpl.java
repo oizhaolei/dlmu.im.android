@@ -32,6 +32,7 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import org.jivesoftware.smack.AccountManager;
+import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -52,12 +53,17 @@ import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.carbons.Carbon;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.forward.Forwarded;
+import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.DelayInfo;
 import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.provider.DelayInfoProvider;
 import org.jivesoftware.smackx.provider.DiscoverInfoProvider;
+import org.jivesoftware.smackx.provider.MUCAdminProvider;
+import org.jivesoftware.smackx.provider.MUCOwnerProvider;
+import org.jivesoftware.smackx.provider.MUCUserProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
@@ -82,6 +88,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
     private final ContentResolver mContentResolver;
     private ConnectionConfiguration mXMPPConfig;
     private XMPPConnection mXMPPConnection;
+    private InvitationListener mInvitationListener;
     private PacketListener mPacketListener;
     private PacketListener mSendFailureListener;
     private Roster mRoster;
@@ -129,27 +136,30 @@ public class TTTalkSmackImpl implements TTTalkSmack {
     static void registerSmackProviders() {
         ProviderManager pm = ProviderManager.getInstance();
         // add IQ handling
-        pm.addIQProvider("query", "http://jabber.org/protocol/disco#info",
-                new DiscoverInfoProvider());
+        pm.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
 
         // add delayed delivery notifications
-        pm.addExtensionProvider("delay", "urn:xmpp:delay",
-                new DelayInfoProvider());
+        pm.addExtensionProvider("delay", "urn:xmpp:delay", new DelayInfoProvider());
         pm.addExtensionProvider("x", "jabber:x:delay", new DelayInfoProvider());
         // add carbons and forwarding
-        pm.addExtensionProvider("forwarded", Forwarded.NAMESPACE,
-                new Forwarded.Provider());
+        pm.addExtensionProvider("forwarded", Forwarded.NAMESPACE, new Forwarded.Provider());
         pm.addExtensionProvider("sent", Carbon.NAMESPACE, new Carbon.Provider());
-        pm.addExtensionProvider("received", Carbon.NAMESPACE,
-                new Carbon.Provider());
+        pm.addExtensionProvider("received", Carbon.NAMESPACE, new Carbon.Provider());
         // add delivery receipts
-        pm.addExtensionProvider(DeliveryReceipt.ELEMENT,
-                DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-        pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT,
-                DeliveryReceipt.NAMESPACE,
-                new DeliveryReceiptRequest.Provider());
+        pm.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+        pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
         // add XMPP Ping (XEP-0199)
         pm.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
+        //MUC User
+//        pm.addExtensionProvider("x", "http://jabber.org/protocol/muc#user", new MUCUserProvider());
+//        pm.addIQProvider("query", "http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
+//        pm.addIQProvider("query", "http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
+
+        pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
+        pm.addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
+        pm.addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
+        pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
+        pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
 
         ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
         ServiceDiscoveryManager.setIdentityType(XMPP_IDENTITY_TYPE);
@@ -330,6 +340,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         if (isAuthenticated()) {
             registerMessageListener();
             registerMessageSendFailureListener();
+            registerChatRoomInvitationListener();
 //            registerPongListener();
 //            sendOfflineMessages();
 //            if (mSmackListener == null) {
@@ -340,6 +351,32 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 //            // connected, even when no roster entries will come in
 //            mSmackListener.onRosterChanged();
         }
+    }
+
+    private void registerChatRoomInvitationListener() {
+
+        ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(mXMPPConnection);
+        boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
+        Log.e(TAG, "mucSupported:"+mucSupported);
+
+
+        if (mInvitationListener != null)
+            MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
+
+        MultiUserChat.addInvitationListener(mXMPPConnection, new InvitationListener() {
+            @Override
+            public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason,
+                                           final String password, final Message message) {
+                Log.e(TAG,  String.format("invitationReceived - room:%s, inviter:%s, reason:%s, password:%s, message:%s", room,inviter,reason,password,message.toXML()));
+                try {
+                    MultiUserChat muc = new MultiUserChat(conn, room);
+                    muc.join(getUser());
+                } catch (org.jivesoftware.smack.XMPPException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+
+            }
+        });
     }
 
     /**
