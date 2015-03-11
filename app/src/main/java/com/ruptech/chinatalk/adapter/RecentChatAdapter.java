@@ -73,9 +73,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         msgcursor.moveToFirst();
         int count = msgcursor.getInt(0);
         ViewHolder viewHolder;
-        if (convertView == null
-                || convertView.getTag(R.drawable.ic_launcher
-                + (int) dateMilliseconds) == null) {
+        if (convertView == null) {
             convertView = mLayoutInflater.inflate(
                     R.layout.item_recent_chat, parent, false);
             viewHolder = new ViewHolder(convertView);

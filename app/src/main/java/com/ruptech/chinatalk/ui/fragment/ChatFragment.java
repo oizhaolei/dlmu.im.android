@@ -1,7 +1,6 @@
 package com.ruptech.chinatalk.ui.fragment;
 
 import android.app.Activity;
-import android.content.AsyncQueryHandler;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -37,7 +36,6 @@ import com.ruptech.chinatalk.adapter.RecentChatAdapter;
 import com.ruptech.chinatalk.model.CommentNews;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
-import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -53,7 +51,6 @@ import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
-import com.ruptech.chinatalk.widget.ChatListCursorAdapter;
 import com.ruptech.chinatalk.widget.CommentNewsListAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -127,7 +124,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	public static String[] SUB_COMMENT_NEWS_TYPE_ARRAY = { "story_new_comment",
 			"story_new_comment_reply", "story_like", "story_new", "friend",
 			"announcement", "qa", "present_donate" };
-	private ChatListCursorAdapter mChatListViewAdapter;
+//	private ChatListCursorAdapter mChatListViewAdapter;
 	private CommentNewsListAdapter mNewsListAdapter;
 
 	private CommentNewsListAdapter mCommentListAdapter;
@@ -145,7 +142,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	private final BroadcastReceiver mHandleChatListReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			refreshChatPage();
+//			refreshChatPage();
 		}
 	};
 
@@ -166,7 +163,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	public void afterTextChanged(Editable s) {
 		keyword = s.toString();
 		if (!beforeSearchText.equals(keyword)) {
-			refreshChatPage();
+//			refreshChatPage();
 		}
 		beforeSearchText = keyword;
 
@@ -260,7 +257,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == Activity.RESULT_OK) {
 			if (this.getActiveLayout() == chatLayoutView) {
-				refreshChatPage();
+//				refreshChatPage();
 			}
 		}
 	}
@@ -268,7 +265,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mChatListViewAdapter = new ChatListCursorAdapter(getActivity(), null);
+//		mChatListViewAdapter = new ChatListCursorAdapter(getActivity(), null);
 		mNewsListAdapter = new CommentNewsListAdapter(getActivity(),
 				SUB_NEWS_TYPE);
 		mCommentListAdapter = new CommentNewsListAdapter(getActivity(),
@@ -365,21 +362,21 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 				new IntentFilter(CommonUtilities.REFERSH_NEW_MARK_ACTION));
 	}
 
-	private void refreshChatPage() {
-		String args[] = new String[] { String.valueOf(App.readUser().getId()),
-				keyword };
-		new AsyncQueryHandler(getActivity().getContentResolver()) {
-
-			@Override
-			protected void onQueryComplete(int token, Object cookie,
-					Cursor cursor) {
-				chatsCursor = cursor;
-				mChatListViewAdapter.changeCursor(chatsCursor);
-				updateChatTabNewMark();
-			}
-
-		}.startQuery(0, null, ChatProvider.CONTENT_URI, null, null, args, null);
-	}
+//	private void refreshChatPage() {
+//		String args[] = new String[] { String.valueOf(App.readUser().getId()),
+//				keyword };
+//		new AsyncQueryHandler(getActivity().getContentResolver()) {
+//
+//			@Override
+//			protected void onQueryComplete(int token, Object cookie,
+//					Cursor cursor) {
+//				chatsCursor = cursor;
+//				mChatListViewAdapter.changeCursor(chatsCursor);
+//				updateChatTabNewMark();
+//			}
+//
+//		}.startQuery(0, null, ChatProvider.CONTENT_URI, null, null, args, null);
+//	}
 
 	public void refreshCurrentTab() {
 		onRefresh(true);
@@ -388,9 +385,9 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 	private void refreshLayout(int checkedId) {
 		switch (checkedId) {
 		case R.string.main_sub_tab_chat:
-			if (mChatListViewAdapter.getCursor() == null
-					|| mChatListViewAdapter.getCount() == 0)
-				refreshChatPage();
+//			if (mChatListViewAdapter.getCursor() == null
+//					|| mChatListViewAdapter.getCount() == 0)
+//				refreshChatPage();
 			break;
 		case R.string.main_sub_tab_comment:
 			if (mCommentListAdapter.getCursor() == null
