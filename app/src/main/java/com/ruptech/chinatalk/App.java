@@ -66,6 +66,8 @@ import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 import com.tencent.tauth.Tencent;
 
+import org.jivesoftware.smack.SmackAndroid;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -75,6 +77,7 @@ public class App extends Application implements
     public static Bus mBus;
     public static TTTalkSmack mSmack;
     static public Properties properties;
+    private SmackAndroid smack;
 
     public static void baiduRegiste(Context context) {
 //        PushManager.startWork(context, PushConstants.LOGIN_TYPE_API_KEY,
@@ -315,6 +318,7 @@ public class App extends Application implements
 
         mBus = new Bus(ThreadEnforcer.ANY);
         mBus.register(this);
+        smack = SmackAndroid.init(this);
 
         AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
         properties = assetsPropertyReader.getProperties("env.properties");
@@ -388,8 +392,13 @@ public class App extends Application implements
             mPlayer.release();
             mPlayer = null;
         }
+        if (smack != null) {
+            smack.onDestroy();
+        }
+        if (mBus != null) {
+            mBus.unregister(this);
+        }
 
-        mBus.unregister(this);
         super.onTerminate();
     }
 
