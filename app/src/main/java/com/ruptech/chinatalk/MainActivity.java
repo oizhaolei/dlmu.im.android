@@ -18,12 +18,16 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.MainTabLayout.OnTabClickListener;
+import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.BalanceChangeEvetnt;
+import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
+import com.ruptech.chinatalk.event.PresentEvent;
+import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.RefreshNewMarkEvent;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -556,6 +560,42 @@ public class MainActivity extends ActionBarActivity implements
                 Toast.makeText(App.mContext,
                         R.string.stop_receiving_messages,
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerQaReceived(final QAEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                App.mService.displayQaNotification(event);
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerAnnouncementReceived(final AnnouncementEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                App.mService.displayAnnouncementNotification(event);
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerFriendReceived(final FriendEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                App.mService.displayFrirendNotification(event);
+            }
+        });
+    }
+
+    @Subscribe
+    public void answerPrsentReceived(final PresentEvent event) {
+        mainHandler.post(new Runnable() {
+            public void run() {
+                App.mService.displayPresentNotification(event);
             }
         });
     }
