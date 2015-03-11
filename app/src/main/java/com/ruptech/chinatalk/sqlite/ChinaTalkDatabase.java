@@ -1,6 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
@@ -11,23 +10,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
-import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.db.*;
-import com.ruptech.chinatalk.model.Message;
-import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
-
-import java.util.List;
-import java.util.TimeZone;
 
 import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
@@ -57,13 +49,13 @@ public class ChinaTalkDatabase {
 				Log.d(TAG, "Upgrade Database.");
 			if (oldVersion == 57) {
                 try {
-                    udpateTable57to62(db);
+                    udpateTable57to63(db);
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
-            }else if (oldVersion == 61) {
+            }else if (oldVersion == 62) {
                 try {
-                    udpateTable61to62(db);
+                    udpateTable62to63(db);
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
@@ -87,7 +79,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 62;
+	public static final int DATABASE_VERSION = 63;
 
 	/**
 	 * self instance
@@ -159,14 +151,14 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable57to62(SQLiteDatabase db) {
+	private static void udpateTable57to63(SQLiteDatabase db) {
         db.execSQL(ChatTable.getCreateSQL());
         db.execSQL(RosterTable.getCreateSQL());
+        db.execSQL(ChatTable.getBulkInsertSQL());
 	}
 
-    private static void udpateTable61to62(SQLiteDatabase db) {
-        db.execSQL(ChatTable.getDropSQL());
-        db.execSQL(ChatTable.getCreateSQL());
+    private static void udpateTable62to63(SQLiteDatabase db) {
+        db.execSQL(ChatTable.getBulkInsertSQL());
     }
 
 	/**
