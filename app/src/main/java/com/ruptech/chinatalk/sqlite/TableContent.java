@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.CommentNews;
@@ -1044,6 +1046,43 @@ public abstract class TableContent {
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + sql);
             return sql;
+        }
+
+        public String getBulkInsertSQL() {
+            long userid = App.readUser().getId();
+            StringBuffer bulkInsertSql = new StringBuffer(512);
+            bulkInsertSql.append("INSERT INTO ").append(getName()).append("( ");
+            bulkInsertSql.append(Columns.DATE + ", ");
+            bulkInsertSql.append(Columns.DIRECTION + ", ");
+            bulkInsertSql.append(Columns.JID + ", ");
+            bulkInsertSql.append(Columns.MESSAGE + ", ");
+            bulkInsertSql.append(Columns.TYPE + ", ");
+            bulkInsertSql.append(Columns.FILE_PATH + ", ");
+            bulkInsertSql.append(Columns.CONTENT_LENGTH + ", ");
+            bulkInsertSql.append(Columns.TO_MESSAGE + ", ");
+            bulkInsertSql.append(Columns.MESSAGE_ID + ", ");
+            bulkInsertSql.append(Columns.DELIVERY_STATUS + ", ");
+            bulkInsertSql.append(Columns.PACKET_ID);
+            bulkInsertSql.append(") ");
+            bulkInsertSql.append("SELECT ");
+            bulkInsertSql.append("strftime('%s', " + MessageTable.Columns.CREATE_DATE + ") * 1000, ");
+            bulkInsertSql.append("CASE " + MessageTable.Columns.USERID + " WHEN " + userid + " THEN 1 ELSE 0 END, ");
+            bulkInsertSql.append("'chinatalk_' || CASE " + MessageTable.Columns.USERID + " WHEN " + userid + " THEN " + MessageTable.Columns.TO_USERID  + " ELSE " + MessageTable.Columns.USERID + " END || '@tttalk.org', ");
+            bulkInsertSql.append(MessageTable.Columns.FROM_CONTENT + ", ");
+            bulkInsertSql.append(MessageTable.Columns.FILE_TYPE + ", ");
+            bulkInsertSql.append(MessageTable.Columns.FILE_PATH + ", ");
+            bulkInsertSql.append(MessageTable.Columns.FROM_CONTENT_LENGTH + ", ");
+            bulkInsertSql.append(MessageTable.Columns.TO_CONTENT + ", ");
+            bulkInsertSql.append(MessageTable.Columns.MESSAGEID + ", ");
+            bulkInsertSql.append(ChatProvider.DS_SENT_OR_READ + ", ");
+            bulkInsertSql.append("'' ");
+            bulkInsertSql.append("FROM " + MessageTable.getName() + " ");
+            bulkInsertSql.append("ORDER BY " + MessageTable.Columns.ID + " ASC");
+
+
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + bulkInsertSql.toString());
+            return bulkInsertSql.toString();
         }
 
         public String[] getIndexColumns() {
