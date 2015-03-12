@@ -264,7 +264,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 				params.put("message_id", String.valueOf(message.getMessageid()));
 				params = HttpConnection.genParams(params);
 				String mUrl = App.getHttpServer().genRequestURL(
-						"auto_translation_help.php", params);
+						"help/auto_translation_help.php", params);
 
 				Intent intent = new Intent(mContext, WebViewActivity.class);
 				intent.putExtra(WebViewActivity.EXTRA_WEBVIEW_URL, mUrl);

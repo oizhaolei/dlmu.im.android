@@ -351,7 +351,7 @@ public class ChatActivity extends AbstractChatActivity {
 
     // 【重要】 onCreate时候初始化翻译相关功能
     private void initTransClient() {
-        String baidu_api_key = App.getMetaValue(this, "api_key");
+        String baidu_api_key = App.properties.getProperty("baidu_api_key");
 
         client = new TranslateClient(this, baidu_api_key);
 

@@ -53,7 +53,6 @@ import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.user.SignupProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
-import com.ruptech.chinatalk.utils.InviteFriendUtils;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
@@ -420,31 +419,6 @@ public class MainActivity extends ActionBarActivity implements
                     chatFragment.refreshCurrentTab();
                 }
                 break;
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        Uri uri = getIntent().getData();
-        if (uri != null) {
-            // TODO : send point to user.
-            getIntent().setData(null);
-            Bundle mExtrass = null;
-            getIntent().replaceExtras(mExtrass);
-            String invite_user_id = uri.getQueryParameter("invite_user_id");
-
-            try {
-                if (invite_user_id != null
-                        && Long.parseLong(invite_user_id) != App.readUser()
-                        .getId()) {
-                    InviteFriendUtils.doAcceptInviteTask(this, invite_user_id);
-                }
-            } catch (NumberFormatException e) {
-                Log.i(TAG, e.getMessage());
-            }
-
         }
     }
 

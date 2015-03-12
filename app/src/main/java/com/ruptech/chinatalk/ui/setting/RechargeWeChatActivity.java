@@ -251,9 +251,8 @@ public class RechargeWeChatActivity extends ActionBarActivity implements
 			packageParams.add(new BasicNameValuePair("fee_type", "1"));// 币种，1人民币
 			packageParams.add(new BasicNameValuePair("input_charset", "UTF-8"));// 字符编码
 			String notify_url = App.readServerAppInfo().getAppServerUrl()
-					+ "wechatpay.php";
+					+ "recharge/wechatpay.php";
 			// String notify_url =
-			// "http://epg.jccast.com:8081/chinatalk/gaols/v1.4/wechatpay.php";
 			packageParams.add(new BasicNameValuePair("notify_url", notify_url));// 接收财付通通知的URL
 			packageParams.add(new BasicNameValuePair("out_trade_no",
 					genOutTradNo()));// 商家订单号

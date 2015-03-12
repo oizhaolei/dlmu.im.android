@@ -67,7 +67,7 @@ public final class ServerUtilities {
 
                 @Override
                 protected Void doInBackground(Void... params) {
-                    String ifPage = "openfire_devices.php";
+                    String ifPage = "push/openfire_devices.php";
                     boolean result = register(token, userid, ifPage);
                     if(result){
                         App.mBus.post(new OnlineEvent());
