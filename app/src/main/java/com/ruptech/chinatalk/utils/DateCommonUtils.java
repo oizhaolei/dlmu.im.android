@@ -248,4 +248,80 @@ public class DateCommonUtils {
 			}
 		}
 	}
+
+    /**
+     * 同年不显示年，同年同月不显示年月，同年同月同日不显示年月日
+     *
+     * @param timeMillis
+     *            !显示的时间
+     * @param withHM
+     *            是否需要显示时分：0否，1是
+     * @param dayFormat
+     *            今天显示的格式：0显示时间，1显示今天
+     * @return
+     */
+    public static String formatDateToString(long  timeMillis, boolean withHM,
+                                                 boolean dayFormat) {
+        try {
+            String formatConvUtcDateStr = " ";
+            Calendar cal = Calendar.getInstance();
+            Date datetime = new Date(timeMillis);
+            cal.setTime(datetime);
+            int utcYear = cal.get(Calendar.YEAR);
+            int utcMonth = cal.get(Calendar.MONTH);
+            int utcDay = cal.get(Calendar.DATE);
+            int utcHour = cal.get(Calendar.HOUR_OF_DAY);
+            int utcMinute = cal.get(Calendar.MINUTE);
+            String formatUtcMinute = utcMinute < 10 ? "0"
+                    + String.valueOf(utcMinute) : String.valueOf(utcMinute);// 分钟两位数
+
+            String currentDateStr = DateCommonUtils.dateFormat(new Date(),
+                    DateCommonUtils.DF_yyyyMMddHHmmssSSS);
+            Date currentDatetime = parseToDateFromString(currentDateStr);
+            cal.setTime(currentDatetime);
+            int currentYear = cal.get(Calendar.YEAR);
+            int currentMonth = cal.get(Calendar.MONTH);
+            int currentDay = cal.get(Calendar.DATE);
+
+            if (utcYear == currentYear && utcMonth == currentMonth
+                    && utcDay == currentDay) {// 同一天显示
+                if (dayFormat) {
+                    formatConvUtcDateStr += App.mContext
+                            .getString(R.string.today);
+                } else {
+                    formatConvUtcDateStr += utcHour + ":" + formatUtcMinute
+                            + " ";
+                    withHM = false;
+                }
+
+            } else if (utcYear == currentYear) {// 不是同一天且同一年显示
+                int daysBetween = daysBetween(datetime, currentDatetime);
+                if (daysBetween == 1) {// 昨天
+                    formatConvUtcDateStr += App.mContext
+                            .getString(R.string.yesterday);
+                } else if (daysBetween == 2) {// 前天
+                    formatConvUtcDateStr += App.mContext
+                            .getString(R.string.before_yesterday);
+                } else {// 显示月日
+                    formatConvUtcDateStr += DateCommonUtils.dateFormat(
+                            new Date(timeMillis),
+                            App.mContext.getString(R.string.df_mmdd));
+                }
+            } else {// 不是同一年显示
+                formatConvUtcDateStr += DateCommonUtils.dateFormat(new Date(
+                        timeMillis), App.mContext
+                        .getString(R.string.df_yyyymmdd));
+            }
+            if (withHM) {
+                formatConvUtcDateStr += " " + utcHour + ":" + formatUtcMinute
+                        + " ";
+            }
+            return formatConvUtcDateStr;
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "Could not parse date string: " + timeMillis);
+            return "";
+        }
+    }
+
 }

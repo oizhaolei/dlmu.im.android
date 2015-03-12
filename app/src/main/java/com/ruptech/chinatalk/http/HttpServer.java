@@ -988,6 +988,7 @@ public class HttpServer extends HttpConnection {
 		params.put("username", username);
 		params.put("password", password);
 		params.put("encrypt", String.valueOf(encrypt));
+        params.put("serial", String.valueOf(android.os.Build.SERIAL));
 
 		Response res = _get("user/user_login.php", params);
 		JSONObject result = res.asJSONObject();
@@ -1017,6 +1018,7 @@ public class HttpServer extends HttpConnection {
 		params.put("file_path", file_path);
 		params.put("gender", gender);
 		params.put("lang", lang);
+        params.put("serial", String.valueOf(android.os.Build.SERIAL));
 
 		Response res = _get("user/user_signup.php", params);
 		JSONObject result = res.asJSONObject();
