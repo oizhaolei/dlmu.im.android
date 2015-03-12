@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.adapter.ChatAdapter;
+import com.ruptech.chinatalk.adapter.TTTChatAdapter;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
@@ -443,7 +443,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
                                            Cursor cursor) {
                 // ListAdapter adapter = new ChatWindowAdapter(cursor,
                 // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
-                ListAdapter adapter = new ChatAdapter(ChatTTTActivity.this,
+                ListAdapter adapter = new TTTChatAdapter(ChatTTTActivity.this,
                         cursor, PROJECTION_FROM, client, null);
                 getMessageListView().setAdapter(adapter);
                 getMessageListView().setSelection(adapter.getCount() - 1);
