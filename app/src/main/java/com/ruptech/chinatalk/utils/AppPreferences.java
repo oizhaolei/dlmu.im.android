@@ -15,8 +15,7 @@ public class AppPreferences {
 	public static long[] NOTIFICATION_VIBRATE = new long[] { 0, 200, 100, 200 };// 数组是以毫秒为单位的暂停、震动、暂停……时间
 
 	final public static String[] SERVER_BASE_URL = {
-			"http://app.tttalk.org/tttalk150214/",
-			"http://115.68.24.72/tttalk150214/" };
+			"http://211.149.218.190:8080/liujiuyi.api/" };
 
 	public static final String SERVER_BASE_VERSION = "v1.4/";
 
