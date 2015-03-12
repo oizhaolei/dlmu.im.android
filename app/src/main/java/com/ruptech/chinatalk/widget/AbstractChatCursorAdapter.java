@@ -309,11 +309,12 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
         if (prevPubDate > 0 && pubDate > 0) {
             boolean isDiff = (pubDate - prevPubDate) > DateCommonUtils.CHAT_TIME_SPAN_SIZE;
             if (isDiff) {
-                dateTextView.setText(TimeUtil.getChatTime(pubDate) + pubDate);
+                dateTextView.setText(DateCommonUtils.formatDateToString(pubDate, true, false));
                 dateTextView.setVisibility(View.VISIBLE);
             }
         } else if (prevPubDate == 0 && pubDate > 0) {
-            dateTextView.setText(TimeUtil.getChatTime(pubDate));
+            dateTextView.setText(DateCommonUtils.formatDateToString(
+                    pubDate, true, true));
             dateTextView.setVisibility(View.VISIBLE);
         }
     }

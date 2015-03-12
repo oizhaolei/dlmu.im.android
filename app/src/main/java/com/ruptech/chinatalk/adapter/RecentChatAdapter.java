@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.TimeUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
@@ -56,7 +57,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         cursor.moveToPosition(position);
         long dateMilliseconds = cursor.getLong(cursor
                 .getColumnIndex(ChatTable.Columns.DATE));
-        String date = TimeUtil.getChatTime(dateMilliseconds);
+        String date = DateCommonUtils.formatDateToString(dateMilliseconds, false, false);
         String message = cursor.getString(cursor
                 .getColumnIndex(ChatTable.Columns.MESSAGE));
         String jid = cursor.getString(cursor
@@ -95,8 +96,8 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         if (msgcursor.getInt(0) > 0) {
             viewHolder.msgView.setText(msgcursor.getString(msgcursor
                     .getColumnIndex(ChatTable.Columns.MESSAGE)));
-            viewHolder.dataView.setText(TimeUtil.getChatTime(msgcursor
-                    .getLong(msgcursor.getColumnIndex(ChatTable.Columns.DATE))));
+            viewHolder.dataView.setText(DateCommonUtils.formatDateToString(msgcursor
+                    .getLong(msgcursor.getColumnIndex(ChatTable.Columns.DATE)),false, false));
             viewHolder.unReadView.setText(msgcursor.getString(0));
         }
         viewHolder.unReadView.setVisibility(count > 0 ? View.VISIBLE
