@@ -82,9 +82,6 @@ public class ProfileActivity extends ActionBarActivity {
 	@InjectView(R.id.activity_profile_user_password_layout)
 	View profileUserPassword;
 
-	@InjectView(R.id.activity_profile_user_tel_imageview)
-	View profileUserTelImageView;
-
 	@InjectView(R.id.activity_profile_volunteer_imageview)
 	ImageView volunteerImageView;
 
@@ -137,15 +134,6 @@ public class ProfileActivity extends ActionBarActivity {
 		}
 	}
 
-	@OnClick(R.id.activity_profile_user_tel_layout)
-	public void changeUserTel(View v) {
-		if (mUser == null || Utils.isThirdPartyLogin())
-			return;
-		Intent intent = new Intent(this, ChangeTel1Activity.class);
-		intent.putExtra(EXTRA_USER, mUser);
-		startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-	}
-
 	private void displayLangView() {
 		langImageView.setImageResource(Utils.getLanguageFlag(mUser.lang));
 		mLanguageTextView.setText(Utils.getLangDisplayName(mUser.getLang()));
@@ -187,7 +175,6 @@ public class ProfileActivity extends ActionBarActivity {
 				if (Utils.isThirdPartyLogin()) {
 					profileUserTelView.setClickable(false);
 					profileUserPassword.setVisibility(View.GONE);
-					profileUserTelImageView.setVisibility(View.INVISIBLE);
 				}
 
 				if (mUser != null && mUser.getIs_volunteer() > 0) {

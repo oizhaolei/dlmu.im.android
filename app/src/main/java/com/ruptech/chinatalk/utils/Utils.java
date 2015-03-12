@@ -76,7 +76,6 @@ import com.ruptech.chinatalk.ui.LoginLoadingActivity;
 import com.ruptech.chinatalk.ui.UpdateVersionServiceActivity;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
-import com.ruptech.chinatalk.ui.user.ChangeTel3Activity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.ServerAppInfo.LangTrans;
 import com.ruptech.chinatalk.widget.CustomDialog;
@@ -288,7 +287,6 @@ public class Utils {
     public static void doLogout(Context context) {
         // 关闭所有可能打开的activity
         UserStoryCommentActivity.close();
-        ChangeTel3Activity.close();
         AbstractChatActivity.close();
         MainActivity.close();
         ProfileActivity.close();

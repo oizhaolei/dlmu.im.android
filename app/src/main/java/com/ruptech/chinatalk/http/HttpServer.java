@@ -963,21 +963,6 @@ public class HttpServer extends HttpConnection {
 		}
 	}
 
-	public boolean sendUserVerifyCode(String tel) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("tel", tel);
-
-		Response res = _get("send_sms_verify_code.php", params);
-
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (!success) {
-			String msg = result.getString("msg");
-			throw new ServerSideException(msg);
-		}
-		return success;
-	}
-
 	public void uploadUserLocation(int late6, int lnge6) throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("late6", String.valueOf(late6));
