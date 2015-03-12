@@ -467,8 +467,11 @@ public class App extends Application implements
 
     public static void cancelPeriodTaskReceiver(){
         Utils.cancelReceiverPendingIntent(App.mContext, App.versionCheckPendingIntent);
+        App.versionCheckPendingIntent = null;
         Utils.cancelReceiverPendingIntent(App.mContext, App.retrieveInfoPeriodPendingIntent);
+        App.retrieveInfoPeriodPendingIntent = null;
         Utils.cancelReceiverPendingIntent(App.mContext, App.uploadUserLocationPendingIntent);
+        App.uploadUserLocationPendingIntent = null;
     }
 
     public static  void startPeriodTaskReceiver(){
