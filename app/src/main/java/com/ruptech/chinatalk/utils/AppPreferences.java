@@ -10,15 +10,7 @@ public class AppPreferences {
 
 	public static final long RETRIEVE_INTERVAL_FRIENDS_REQUEST = 30 * 1000;// 30seconds
 
-	public static final int REFRESH_INTERVAL_MILLIS = 10 * 1000;// 10seconds
-
 	public static long[] NOTIFICATION_VIBRATE = new long[] { 0, 200, 100, 200 };// 数组是以毫秒为单位的暂停、震动、暂停……时间
-
-	final public static String[] SERVER_BASE_URL = {
-			"http://app.tttalk.org/tttalk150214/",
-			"http://115.68.24.72/tttalk150214/" };
-
-	public static final String SERVER_BASE_VERSION = "v1.4/";
 
 	public static final int MESSAGE_STATUS_SEND_FAILED = -1;
 	public static final int MESSAGE_STATUS_BEFORE_SEND = 0;

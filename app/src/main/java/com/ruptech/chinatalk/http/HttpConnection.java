@@ -195,9 +195,6 @@ public abstract class HttpConnection {
 	/**
 	 * Issues an HTTP GET request.
 	 * 
-	 * @param url
-	 *            the request url
-	 *
 	 * @return the response
 	 * @throws HttpException
 	 */
@@ -244,17 +241,19 @@ public abstract class HttpConnection {
 	public ServerAppInfo ver() throws Exception {
 		Response res = null;
 		List<String> excludeUrls = new ArrayList<>();
+        String[] SERVER_BASE_URL = new String[]{
+                App.properties.getProperty("SERVER_BASE_URL1"),App.properties.getProperty("SERVER_BASE_URL2")
+        };
 		for (int i = 0; res == null
-				&& i < AppPreferences.SERVER_BASE_URL.length; i++) {
-			String url = AppPreferences.SERVER_BASE_URL[i]
-					+ AppPreferences.SERVER_BASE_VERSION + "ver.php";
+				&& i < SERVER_BASE_URL.length; i++) {
+			String url = SERVER_BASE_URL[i] + "utils/ver.php";
 			try {
 				res = get(url);
 				JSONObject verInfo = res.asJSONObject();
 				ServerAppInfo info = ServerAppInfo.parse(verInfo, excludeUrls);
 				return info;
 			} catch (Exception e) {
-				excludeUrls.add(AppPreferences.SERVER_BASE_URL[i]);
+				excludeUrls.add(SERVER_BASE_URL[i]);
 				if (BuildConfig.DEBUG)
 					Log.e(TAG, e.getMessage(), e);
 			}

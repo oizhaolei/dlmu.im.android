@@ -43,7 +43,6 @@ import com.ruptech.chinatalk.thirdparty.qq.QQUtil;
 import com.ruptech.chinatalk.thirdparty.sina.SinaUtil;
 import com.ruptech.chinatalk.thirdparty.sina.SinaWeiboShareResponseActivity;
 import com.ruptech.chinatalk.thirdparty.wechat.WeChatUtil;
-import com.ruptech.chinatalk.ui.friend.FriendInviteActivity;
 import com.ruptech.chinatalk.ui.setting.RechargeAlipayActivity;
 import com.ruptech.chinatalk.ui.setting.RechargeRmbBankTransferActivity;
 import com.ruptech.chinatalk.ui.setting.RechargeWeChatActivity;
@@ -295,11 +294,6 @@ public class MyWalletActivity extends ActionBarActivity implements
 
     public void alipayRecharge(View v) {
         Intent intent = new Intent(this, RechargeAlipayActivity.class);
-        startActivity(intent);
-    }
-
-    public void doInviteFriend(View v) {
-        Intent intent = new Intent(this, FriendInviteActivity.class);
         startActivity(intent);
     }
 

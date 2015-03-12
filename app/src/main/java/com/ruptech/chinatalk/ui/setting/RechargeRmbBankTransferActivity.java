@@ -156,7 +156,7 @@ public class RechargeRmbBankTransferActivity extends ActionBarActivity
 		params.put("serialno", String.valueOf(serialNo));
 		params = HttpConnection.genParams(params);
  
-		mUrl = App.getHttpServer().genRequestURL("recharge_rmb_bank_transfer.php", params);
+		mUrl = App.getHttpServer().genRequestURL("recharge/recharge_rmb_bank_transfer.php", params);
 
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, mUrl);

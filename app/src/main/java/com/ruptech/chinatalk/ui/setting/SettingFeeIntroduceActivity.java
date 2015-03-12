@@ -56,7 +56,7 @@ public class SettingFeeIntroduceActivity extends ActionBarActivity implements
 			return;
 		}
 
-		String url = String.format("%smessage_fee_memo.php", App
+		String url = String.format("%shelp/message_fee_memo.php", App
 				.readServerAppInfo().getAppServerUrl());
 		wv.clearCache(true);
 		wv.setWebViewClient(new WebViewClient() {

@@ -28,7 +28,7 @@ public class AlipayResult {
 
 		// 网址需要做URL编码
 		sb.append(URLEncoder.encode(App.readServerAppInfo().getAppServerUrl()
-				+ "alipay_call_back_return.php", "UTF-8"));
+				+ "recharge/alipay_call_back_return.php", "UTF-8"));
 		sb.append("\"&service=\"mobile.securitypay.pay");
 		sb.append("\"&_input_charset=\"UTF-8");
 		sb.append("\"&return_url=\"");

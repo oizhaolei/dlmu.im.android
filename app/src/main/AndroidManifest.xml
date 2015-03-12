@@ -335,10 +335,6 @@
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
         <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendInviteActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.ruptech.chinatalk.ui.dialog.ChangeFriendMemoActivity"
             android:icon="@drawable/ic_tttalk_gray_light"
             android:screenOrientation="portrait"
@@ -590,11 +586,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <!-- 在百度开发者中心查询应用的API Key -->
-        <meta-data
-            android:name="api_key"
-            android:value="MYWoBG9XA2AXKe4ofVfO1Pld" />
 
         <!-- 微信分享响应Activity -->
         <activity

@@ -24,7 +24,7 @@ public class ServerAppInfo extends AppVersion {
 	}
 	public class Server implements Serializable {
 		private static final long serialVersionUID = 3040651635748361478L;
-		public String appServerUrl = AppPreferences.SERVER_BASE_URL[0];
+		public String appServerUrl;
 		public String appServer2Url;
 		public String appServerRestUrl;
 		public String fileServerUrl;
@@ -55,7 +55,6 @@ public class ServerAppInfo extends AppVersion {
 		info.verName = verInfo.getString("verName");
 		info.verCode = verInfo.getInt("verCode");
 		info.fileSize = verInfo.getInt("fileSize");
-		info.refreshIntervalMillis = verInfo.getInt("refreshIntervalSeconds") * 1000;
 		info.point_by_photo_like = verInfo.optInt("point_by_photo_like");
 		info.point_by_translate_like = verInfo
 				.optInt("point_by_translate_like");
@@ -67,7 +66,7 @@ public class ServerAppInfo extends AppVersion {
 		if (verInfo.has("server_list")) {
 			JSONArray server_list = verInfo.getJSONArray("server_list");
 			int size = server_list.length();
-			List<ServerAppInfo.Server> serverArray = new ArrayList<ServerAppInfo.Server>();
+			List<ServerAppInfo.Server> serverArray = new ArrayList<>();
 			Server s = null;
 			for (int i = 0; i < size; i++) {
 				JSONObject server = server_list.getJSONObject(i);
@@ -96,7 +95,7 @@ public class ServerAppInfo extends AppVersion {
 		if (verInfo.has("langs")) {
 			JSONArray list = verInfo.getJSONArray("langs");
 			int size = list.length();
-			List<LangTrans> langsArray = new ArrayList<ServerAppInfo.LangTrans>();
+			List<LangTrans> langsArray = new ArrayList<>();
 			for (int i = 0; i < size; i++) {
 				JSONArray lang = list.getJSONArray(i);
 				String lang1 = lang.getString(0);
@@ -170,7 +169,6 @@ public class ServerAppInfo extends AppVersion {
 	 */
 	private static final long serialVersionUID = 7846953512025127354L;
 
-	private int refreshIntervalMillis = AppPreferences.REFRESH_INTERVAL_MILLIS;
 
 	private ServerAppInfo() {
 		super();
@@ -194,11 +192,7 @@ public class ServerAppInfo extends AppVersion {
 	}
 
 	public String getAppServerUrl() {
-		return _getServer().appServerUrl + AppPreferences.SERVER_BASE_VERSION;
-	}
-
-	public int getRefreshIntervalMillis() {
-		return refreshIntervalMillis;
+		return _getServer().appServerUrl;
 	}
 
 	private String getServerUrl(String prefix, String uri) {

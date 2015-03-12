@@ -218,7 +218,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 				params = HttpConnection.genParams(params);
 
 				String returnUrl = App.getHttpServer().genRequestURL(
-						"recharge_return.php", params);
+						"recharge/recharge_return.php", params);
 				wv.loadUrl(returnUrl, Utils.additionalHeaders());
 			}
 		}
@@ -291,7 +291,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 			params.put("serialno", String.valueOf(serialNo));
 			params = HttpConnection.genParams(params);
 
-			url = App.getHttpServer().genRequestURL("recharge_start1.php",
+			url = App.getHttpServer().genRequestURL("recharge/recharge_start1.php",
 					params);
 			break;
 		case MyWalletActivity.ONLINE_PAY_TYPE_PAYPAL:
@@ -301,7 +301,7 @@ public class RechargeWebpayActivity extends ActionBarActivity implements
 			params = HttpConnection.genParams(params);
 
 			url = App.getHttpServer().genRequestURL(
-					"paypal_recharge_start.php", params);
+					"recharge/paypal_recharge_start.php", params);
 			break;
 		default:
 			break;

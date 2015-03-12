@@ -29,8 +29,8 @@ public class HttpServer extends HttpConnection {
 			+ HttpServer.class.getSimpleName();
 
 	private User _getUser(String[] prop, Map<String, String> params)
-			throws ServerSideException, Exception, JSONException {
-		Response res = _get("user.php", params);
+			throws Exception {
+		Response res = _get("user/user.php", params);
 		JSONObject result = res.asJSONObject();
 		if (result.getBoolean("success")) {
 			if (prop != null && result.has("tel")) {
@@ -93,32 +93,12 @@ public class HttpServer extends HttpConnection {
 		}
 	}
 
-	public User acceptInvite(String invite_user_id) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("invite_from", invite_user_id);
-		params.put("invite_to", String.valueOf(App.readUser().getId()));
-
-		Response res = _get("tttalk_accept_invite.php", params);
-		JSONObject result = res.asJSONObject();
-		if (result.getBoolean("success")) {
-			if (!"null".equals(result.getString("data"))) {
-				JSONObject data0 = result.getJSONObject("data");
-				User user = new User(data0);
-				return user;
-			}
-
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-		return null;
-	}
-
 	public List<Message> acceptTranslateMessage(long message_id)
 			throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("message_id", String.valueOf(message_id));
 
-		Response res = _get("message_accept_translate.php", params);
+		Response res = _get("message/message_accept_translate.php", params);
 
 		return _parseMessage(res);
 	}
@@ -136,7 +116,7 @@ public class HttpServer extends HttpConnection {
 		params.put("is_contact", isContact);
 		params.put("update_date", lastUpdatedate);
 
-		Response res = _get("friend_add.php", params);
+		Response res = _get("friend/friend_add.php", params);
 
 		_parseFriends(res, userList, friendList);
 	}
@@ -147,7 +127,7 @@ public class HttpServer extends HttpConnection {
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "addQa");
 
-		Response res = _get("qa_add.php", params);
+		Response res = _get("help/qa_add.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -161,7 +141,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friend_id));
 
-		Response res = _get("friend_block.php", params);
+		Response res = _get("friend/friend_block.php", params);
 
 		JSONObject result = res.asJSONObject();
 		if (result.getBoolean("success")) {
@@ -178,7 +158,7 @@ public class HttpServer extends HttpConnection {
 		params.put("memo", memo);
 		params.put("func", "change_friend_memo");
 
-		Response res = _get("user_change_profile.php", params);
+		Response res = _get("user/user_change_profile.php", params);
 		JSONObject result = res.asJSONObject();
 		if (result.getBoolean("success")) {
 			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
@@ -195,7 +175,7 @@ public class HttpServer extends HttpConnection {
 		params.put("nickname", nickName);
 		params.put("func", "change_friend_nickname");
 
-		Response res = _get("user_change_profile.php", params);
+		Response res = _get("user/user_change_profile.php", params);
 		JSONObject result = res.asJSONObject();
 		if (result.getBoolean("success")) {
 			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
@@ -212,7 +192,7 @@ public class HttpServer extends HttpConnection {
 		params.put("password", password);
 		params.put("func", "change_pwd");
 
-		Response res = _get("user_change_profile.php", params);
+		Response res = _get("user/user_change_profile.php", params);
 		JSONObject result = res.asJSONObject();
 		return _parseUser(result, res);
 	}
@@ -241,7 +221,7 @@ public class HttpServer extends HttpConnection {
 			}
 		}
 
-		Response res = _get("user_change_profile.php", params);
+		Response res = _get("user/user_change_profile.php", params);
 		JSONObject result = res.asJSONObject();
 		return _parseUser(result, res);
 	}
@@ -315,7 +295,7 @@ public class HttpServer extends HttpConnection {
 
 	public boolean deleteUser() throws Exception {
 		Map<String, String> params = new HashMap<>();
-		Response res = _get("user_delete.php", params);
+		Response res = _get("user/user_delete.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -328,7 +308,7 @@ public class HttpServer extends HttpConnection {
 	public int freeRecharge(String type) throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("type", type);
-		Response res = _get("recharge_free.php", params);
+		Response res = _get("recharge/recharge_free.php", params);
 		JSONObject result = res.asJSONObject();
 		if (result.getBoolean("success")) {
 			String msg = result.getString("msg");
@@ -350,7 +330,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 		params.put("friend_id", friend_id);
-		Response res = _get("friend_add_check.php", params);
+		Response res = _get("friend/friend_add_check.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -381,7 +361,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("report_content", report_content);
-		Response res = _get("friend_report.php", params);
+		Response res = _get("friend/friend_report.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -398,7 +378,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("wallet_priority", String.valueOf(wallet_priority));
-		Response res = _get("friend_wallet_priority.php", params);
+		Response res = _get("friend/friend_wallet_priority.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -415,7 +395,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(id));
 
-		Response res = _get("announcement.php", params);
+		Response res = _get("help/announcement.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -435,7 +415,7 @@ public class HttpServer extends HttpConnection {
 	public JSONObject getGuide() throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("language", Utils.getUserLanguage());
-		Response res = _get("guide.php", params);
+		Response res = _get("help/guide.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -456,7 +436,7 @@ public class HttpServer extends HttpConnection {
 		params.put("friend_last_update_date", friend_last_update_date);
 		params.put("announcement_last_update_date",
 				announcement_last_update_date);
-		Response res = _get("info_period_timeline.php", params);
+		Response res = _get("timeline/info_period_timeline.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -484,7 +464,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(message_id));
 
-		Response res = _get("message.php", params);
+		Response res = _get("message/message.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -499,7 +479,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("localIds", String.valueOf(localIds));
 
-		Response res = _get("message.php", params);
+		Response res = _get("message/message.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -517,7 +497,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("id", String.valueOf(qa_id));
 
-		Response res = _get("qa.php", params);
+		Response res = _get("help/qa.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -530,7 +510,7 @@ public class HttpServer extends HttpConnection {
 	}
 
 	public List<Map<String, String>> getRechargePrice() throws Exception {
-		Response res = _get("recharge_price.php", null);
+		Response res = _get("recharge/recharge_price.php", null);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -600,7 +580,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
-		Response res = _get("user_signup_check.php", params);
+		Response res = _get("user/user_signup_check.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -623,7 +603,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("friend_id", String.valueOf(friend_id));
 
-		Response res = _get("friend_delete.php", params);
+		Response res = _get("friend/friend_delete.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -656,7 +636,7 @@ public class HttpServer extends HttpConnection {
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "params:" + params);
 
-		Response res = _get("message_request_translate.php", params);
+		Response res = _get("message/message_request_translate.php", params);
 
 		return _parseMessage(res);
 	}
@@ -665,7 +645,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("message_id", String.valueOf(message_id));
 
-		Response res = _get("message_request_verify.php", params);
+		Response res = _get("message/message_request_verify.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -680,7 +660,7 @@ public class HttpServer extends HttpConnection {
 			throws Exception {
 		Map<String, String> params = new HashMap<>();
 
-		Response res = _get("announcement_list.php", params);
+		Response res = _get("help/announcement_list.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -699,7 +679,7 @@ public class HttpServer extends HttpConnection {
 
 	public JSONObject retrieveBadgeCount() throws Exception {
 		Map<String, String> params = new HashMap<>();
-		Response res = _get("badge_count.php", params);
+		Response res = _get("utils/badge_count.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -714,7 +694,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("since_id", String.valueOf(sinceId));
 
-		Response res = _get("retrieve_blocked_friends.php", params);
+		Response res = _get("friend/retrieve_blocked_friends.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -740,7 +720,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("since_id", String.valueOf(sinceId));
 
-		Response res = _get("follower_friend_timeline.php", params);
+		Response res = _get("timeline/follower_friend_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -766,7 +746,7 @@ public class HttpServer extends HttpConnection {
 		params.put("late6", String.valueOf(late6));
 		params.put("lnge6", String.valueOf(lnge6));
 
-		Response res = _get("lbs_user_timeline.php", params);
+		Response res = _get("timeline/lbs_user_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -790,7 +770,7 @@ public class HttpServer extends HttpConnection {
 		params.put("friend_id", String.valueOf(friendId));
 		params.put("min_message_id", String.valueOf(minMessageId));
 
-		Response res = _get("message_history.php", params);
+		Response res = _get("message/message_history.php", params);
 
 		return _parseMessage(res);
 	}
@@ -801,7 +781,7 @@ public class HttpServer extends HttpConnection {
 		params.put("userid", String.valueOf(userId));
 		params.put("update_date", lastUpdatedate);
 
-		Response res = _get("friend_timeline.php", params);
+		Response res = _get("timeline/friend_timeline.php", params);
 
 		_parseFriends(res, userList, friendList);
 	}
@@ -812,14 +792,14 @@ public class HttpServer extends HttpConnection {
 		params.put("userid", String.valueOf(userId));
 		params.put("update_date", updateDate);
 
-		Response res = _get("message_timeline.php", params);
+		Response res = _get("timeline/message_timeline.php", params);
 
 		return _parseMessage(res);
 	}
 
 	public List<User> retrieveOnlineUsers() throws Exception {
 		Map<String, String> params = new HashMap<>();
-		Response res = _get("online_user_timeline.php", params);
+		Response res = _get("timeline/online_user_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -839,7 +819,7 @@ public class HttpServer extends HttpConnection {
 
 	public List<User> retrievePopularUsers() throws Exception {
 		Map<String, String> params = new HashMap<>();
-		Response res = _get("popular_user_timeline.php", params);
+		Response res = _get("timeline/popular_user_timeline.php", params);
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
 		if (success) {
@@ -860,7 +840,7 @@ public class HttpServer extends HttpConnection {
 	public List<Map<String, String>> retrieveQAList(int qa_id) throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("qa_id", String.valueOf(qa_id));
-		Response res = _get("qa_list.php", params);
+		Response res = _get("help/qa_list.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -887,7 +867,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("lang", lang);
 		params.put("start_number", start_number);
-		Response res = _get("translator_rank_list.php", params);
+		Response res = _get("help/translator_rank_list.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -912,7 +892,7 @@ public class HttpServer extends HttpConnection {
 	public List<Map<String, String>> retrieveVerifyMessage() throws Exception {
 		Map<String, String> params = new HashMap<>();
 
-		Response res = _get("user_verify_message_list.php", params);
+		Response res = _get("user/user_verify_message_list.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -940,7 +920,7 @@ public class HttpServer extends HttpConnection {
 		if (App.readUser() != null) {
 			params.put("tel", App.readUser().getTel());
 		}
-		Response res = _get("logging_client_message.php", params);
+		Response res = _get("utils/logging_client_message.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -952,7 +932,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
-		Response res = _get("send_sms_forget_password.php", params);
+		Response res = _get("user/send_sms_forget_password.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -967,7 +947,7 @@ public class HttpServer extends HttpConnection {
 		Map<String, String> params = new HashMap<>();
 		params.put("tel", tel);
 
-		Response res = _get("send_sms_verify_code.php", params);
+		Response res = _get("user/send_sms_verify_code.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -983,7 +963,7 @@ public class HttpServer extends HttpConnection {
 		params.put("late6", String.valueOf(late6));
 		params.put("lnge6", String.valueOf(lnge6));
 
-		Response res = _get("user_upload_location.php", params);
+		Response res = _get("user/user_upload_location.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -1009,7 +989,7 @@ public class HttpServer extends HttpConnection {
 		params.put("password", password);
 		params.put("encrypt", String.valueOf(encrypt));
 
-		Response res = _get("user_login.php", params);
+		Response res = _get("user/user_login.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -1038,7 +1018,7 @@ public class HttpServer extends HttpConnection {
 		params.put("gender", gender);
 		params.put("lang", lang);
 
-		Response res = _get("user_signup.php", params);
+		Response res = _get("user/user_signup.php", params);
 		JSONObject result = res.asJSONObject();
 
 		if (result.getBoolean("success")) {
@@ -1052,7 +1032,7 @@ public class HttpServer extends HttpConnection {
 		params.put("tel", tel);
 		params.put("verify_code", verify_code);
 
-		Response res = _get("sms_verify_code_verify.php", params);
+		Response res = _get("user/sms_verify_code_verify.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
@@ -1082,7 +1062,7 @@ public class HttpServer extends HttpConnection {
         if (BuildConfig.DEBUG)
             Log.v(TAG, "params:" + params);
 
-        Response res = _get("xmpp_translate.php", params);
+        Response res = _get("message/xmpp_translate.php", params);
         JSONObject result = res.asJSONObject();
 
         boolean success = result.getBoolean("success");
