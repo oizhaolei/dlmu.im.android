@@ -3,9 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.io.File;
-import java.util.Map;
-
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -16,14 +13,18 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.io.File;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class VerifyMessageListArrayAdapter extends ArrayAdapter<Map<String, String>> {
 

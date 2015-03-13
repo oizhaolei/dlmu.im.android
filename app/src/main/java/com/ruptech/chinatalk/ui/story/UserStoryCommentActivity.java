@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static butterknife.ButterKnife.findById;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -53,9 +47,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.PresentDonateReceiver;
@@ -101,6 +92,16 @@ import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.UserStoryCommentListArrayAdapter;
 import com.ruptech.chinatalk.widget.UserStoryCommentListArrayAdapter.ViewHolder;
 import com.ruptech.chinatalk.widget.UserStoryListCursorAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+import static butterknife.ButterKnife.findById;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class UserStoryCommentActivity extends ActionBarActivity implements
 		SwipeRefreshLayout.OnRefreshListener {

@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +31,9 @@ import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.UserStoryGridArrayAdapter;
 import com.ruptech.chinatalk.widget.UserStoryListArrayAdapter;
 import com.ruptech.chinatalk.widget.UserStoryListCursorAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserStoryNewListActivity extends ActionBarActivity implements
 		SwipeRefreshLayout.OnRefreshListener {

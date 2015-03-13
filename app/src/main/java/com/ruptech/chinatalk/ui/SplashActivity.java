@@ -1,16 +1,10 @@
 package com.ruptech.chinatalk.ui;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NotificationCompat;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -19,10 +13,11 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SplashActivity extends Activity {
 

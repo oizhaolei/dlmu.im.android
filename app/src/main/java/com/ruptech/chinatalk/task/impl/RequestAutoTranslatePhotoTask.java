@@ -1,12 +1,12 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 对tbl_user_photo的翻译

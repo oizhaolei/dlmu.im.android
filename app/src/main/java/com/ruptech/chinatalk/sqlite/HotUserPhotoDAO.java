@@ -1,6 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -10,6 +9,8 @@ import android.util.Log;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.utils.Utils;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
 
 public class HotUserPhotoDAO {
 

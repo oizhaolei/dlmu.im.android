@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.smack;
 
-import com.ruptech.chinatalk.utils.Utils;
-
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.xmlpull.v1.XmlPullParser;

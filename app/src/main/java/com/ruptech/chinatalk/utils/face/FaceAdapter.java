@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.utils.face;
 
-import java.util.List;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.ruptech.chinatalk.R;
+
+import java.util.List;
 
 public class FaceAdapter extends BaseAdapter {
 

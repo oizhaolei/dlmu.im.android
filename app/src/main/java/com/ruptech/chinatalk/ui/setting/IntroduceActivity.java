@@ -10,11 +10,12 @@ import android.view.MenuItem;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class IntroduceActivity extends ActionBarActivity implements
 		OnRefreshListener {

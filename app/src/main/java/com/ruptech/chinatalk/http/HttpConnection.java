@@ -1,17 +1,5 @@
 package com.ruptech.chinatalk.http;
 
-import java.io.File;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpException;
-import org.json.JSONObject;
-
 import android.util.Log;
 
 import com.github.kevinsawicki.http.HttpRequest;
@@ -20,9 +8,20 @@ import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
+
+import org.apache.http.HttpException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class HttpConnection {
 	private static final String ANONYMOS_USER_ID = "3637";

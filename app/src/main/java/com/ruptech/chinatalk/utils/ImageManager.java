@@ -16,14 +16,6 @@
 
 package com.ruptech.chinatalk.utils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -51,6 +43,14 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Manages retrieval and storage of icon images. Use the put method to download

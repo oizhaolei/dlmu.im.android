@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Channel;
@@ -20,6 +16,11 @@ import com.ruptech.chinatalk.ui.story.ChannelPopularListActivity;
 import com.ruptech.chinatalk.widget.DiscoverChannelArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SubDiscoverChannelFragment extends ListFragment implements
 		OnRefreshListener {

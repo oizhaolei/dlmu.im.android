@@ -3,10 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -18,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -32,6 +26,13 @@ import com.ruptech.chinatalk.task.impl.RetrieveChannelListTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
 
 public class ChannelListCursorAdapter extends CursorAdapter {
 

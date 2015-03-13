@@ -1,6 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,6 +18,8 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public class MessageListCursorAdapter extends AbstractMessageCursorAdapter {
 

@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.user;
 
-import java.util.List;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Gift;
@@ -22,6 +18,11 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveUserGiftListTask;
 import com.ruptech.chinatalk.ui.gift.GiftDonateActivity;
 import com.ruptech.chinatalk.widget.UserGiftListArrayAdapter;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ProfilePresentFragment extends ScrollTabHolderFragment {
 	private UserGiftListArrayAdapter mUserGiftListArrayAdapter;

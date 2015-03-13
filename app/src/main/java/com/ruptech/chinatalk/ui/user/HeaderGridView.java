@@ -15,6 +15,7 @@ package com.ruptech.chinatalk.ui.user;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import android.content.Context;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
@@ -28,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.WrapperListAdapter;
+
 import java.util.ArrayList;
 
 /**

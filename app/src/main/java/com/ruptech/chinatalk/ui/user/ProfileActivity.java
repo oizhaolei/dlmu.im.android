@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.user;
 
-import java.util.ArrayList;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -10,9 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -25,6 +20,12 @@ import com.ruptech.chinatalk.ui.dialog.ChangePasswordActivity;
 import com.ruptech.chinatalk.ui.dialog.ChangePhotoActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class ProfileActivity extends ActionBarActivity {
 	protected static final int EXTRA_ACTIVITY_RESULT_MODIFY_USER = 1;

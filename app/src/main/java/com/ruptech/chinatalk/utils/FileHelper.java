@@ -1,13 +1,13 @@
 package com.ruptech.chinatalk.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
-
 import android.content.Context;
 import android.os.Environment;
 
 import com.ruptech.chinatalk.App;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * 对SD卡文件的管理

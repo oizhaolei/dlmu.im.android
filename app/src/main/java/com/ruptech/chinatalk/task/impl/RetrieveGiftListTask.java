@@ -1,11 +1,11 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.List;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Gift;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import java.util.List;
 
 public class RetrieveGiftListTask extends GenericTask {
 

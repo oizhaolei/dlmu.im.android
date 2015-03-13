@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.gift;
 
-import java.text.NumberFormat;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -13,8 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -26,6 +22,11 @@ import com.ruptech.chinatalk.task.impl.GiftDonateTask;
 import com.ruptech.chinatalk.ui.user.MyWalletActivity;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.text.NumberFormat;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class GiftDonateActivity extends ActionBarActivity {
 

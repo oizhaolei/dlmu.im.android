@@ -4,18 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.map.MyLocation;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskAdapter;
-import com.ruptech.chinatalk.task.TaskListener;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.task.impl.UploadUserLocationTask;
-import com.ruptech.chinatalk.utils.ApkUpgrade;
-import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.ServerAppInfo;
-import com.ruptech.chinatalk.utils.Utils;
 
 
 /**

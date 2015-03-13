@@ -1,12 +1,12 @@
 package com.ruptech.chinatalk.model;
 
-import java.io.Serializable;
+import com.ruptech.chinatalk.http.Response;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ruptech.chinatalk.http.Response;
-import com.ruptech.chinatalk.utils.DateCommonUtils;
+import java.io.Serializable;
 
 public class UserPhoto extends Item implements Serializable {
 	/**

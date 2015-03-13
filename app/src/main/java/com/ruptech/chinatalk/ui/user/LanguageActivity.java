@@ -11,9 +11,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
@@ -24,6 +21,10 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.UserProfileChangeTask;
 import com.ruptech.chinatalk.ui.dialog.ChangeLanguageActivity;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class LanguageActivity extends ActionBarActivity {
 

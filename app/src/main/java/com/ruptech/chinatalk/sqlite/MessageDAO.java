@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +11,10 @@ import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public class MessageDAO {
 

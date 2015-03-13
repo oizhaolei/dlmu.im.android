@@ -1,10 +1,5 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore.Images.Media;
@@ -12,6 +7,11 @@ import android.provider.MediaStore.Images.Media;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RetrieveAlbumTask extends GenericTask {
 

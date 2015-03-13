@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.io.File;
-import java.io.Serializable;
-
 import android.util.Log;
 
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
@@ -10,6 +7,9 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.AppPreferences;
+
+import java.io.File;
+import java.io.Serializable;
 
 public class FileUploadTask extends GenericTask {
 	public static class FileUploadInfo implements Serializable {

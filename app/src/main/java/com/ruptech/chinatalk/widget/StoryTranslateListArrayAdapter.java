@@ -3,7 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
@@ -16,8 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -35,6 +32,11 @@ import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
 
 public class StoryTranslateListArrayAdapter extends
 		ArrayAdapter<StoryTranslate> {

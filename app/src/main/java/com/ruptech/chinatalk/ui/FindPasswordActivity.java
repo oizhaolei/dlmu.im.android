@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui;
 
-import java.util.Locale;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,9 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -20,6 +15,12 @@ import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.FindPasswordTask;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Activity which displays a login screen to the user, offering registration as

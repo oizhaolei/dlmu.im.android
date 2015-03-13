@@ -1,13 +1,13 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.List;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
 
 public class RecommendedFriendTask extends GenericTask {
 

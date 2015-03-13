@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static butterknife.ButterKnife.findById;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.Intent;
@@ -21,8 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -30,6 +26,12 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChatListCursorAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class UserStoryReplyActivity extends ActionBarActivity implements
 		TextWatcher {

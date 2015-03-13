@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.task;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,6 +8,9 @@ import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.http.NetworkException;
 import com.ruptech.chinatalk.http.ServerSideException;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public abstract class GenericTask extends AsyncTask<Object, Object, TaskResult> implements Observer {
 	protected final String TAG = "TaskManager";

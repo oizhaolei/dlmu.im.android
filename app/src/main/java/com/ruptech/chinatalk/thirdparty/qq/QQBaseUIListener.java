@@ -1,13 +1,13 @@
 package com.ruptech.chinatalk.thirdparty.qq;
 
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
+
+import org.json.JSONObject;
 
 public class QQBaseUIListener implements IUiListener {
 	private Context mContext;

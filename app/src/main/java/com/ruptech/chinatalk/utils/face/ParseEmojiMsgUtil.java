@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.utils.face;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +12,12 @@ import android.util.Log;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ParseEmojiMsgUtil {
 	private static final String TAG = ParseEmojiMsgUtil.class.getSimpleName();

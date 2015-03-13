@@ -3,8 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.List;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -14,8 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -29,6 +25,11 @@ import com.ruptech.chinatalk.task.impl.DiscoverTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class DiscoverUserArrayAdapter extends ArrayAdapter<User> {
 

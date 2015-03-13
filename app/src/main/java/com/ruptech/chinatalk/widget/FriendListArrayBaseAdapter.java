@@ -3,8 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.ArrayList;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextPaint;
@@ -17,8 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -33,6 +29,11 @@ import com.ruptech.chinatalk.task.impl.FriendAddTask;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.processbutton.ActionProcessButton;
+
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FriendListArrayBaseAdapter extends ArrayAdapter<User> {
 	static class ViewHolder {

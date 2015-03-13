@@ -3,12 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
-import it.sephiroth.android.library.imagezoom.ImageViewTouch;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
-
-import java.util.List;
-
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -22,6 +16,13 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
+
+import static butterknife.ButterKnife.findById;
 
 public class ImagePagerAdapter extends PagerAdapter {
 	private final LayoutInflater inflater;

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -455,15 +454,15 @@ public class MainActivity extends ActionBarActivity implements
         dialog = new CustomDialog(instance)
                 .setTitle(getString(R.string.tips))
                 .setMessage(
-                        getString(R.string.system_free_recharge_inform,
-                                App.readServerAppInfo().signup_give_balance))
+		                getString(R.string.system_free_recharge_inform,
+				                App.readServerAppInfo().signup_give_balance))
                 .setPositiveButton(R.string.alert_dialog_ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                            }
-                        });// 创建;
+		                new DialogInterface.OnClickListener() {
+			                @Override
+			                public void onClick(DialogInterface dialog,
+			                                    int whichButton) {
+			                }
+		                });// 创建;
         dialog.show();
         PrefUtils.removeShowSystemFreeRechargePointInform(App.readUser()
                 .getTel());

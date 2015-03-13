@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
@@ -19,6 +17,9 @@ import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.widget.DiscoverUserArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SubDiscoverUserFragment extends ListFragment implements
 		OnRefreshListener {

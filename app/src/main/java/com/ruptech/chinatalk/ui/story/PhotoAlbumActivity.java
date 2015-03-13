@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -26,8 +20,6 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
@@ -41,6 +33,15 @@ import com.ruptech.chinatalk.utils.FileHelper;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.AlbumListAdapter;
+
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class PhotoAlbumActivity extends ActionBarActivity {
 	static final int EXTRA_ACTIVITY_RESULT_SEND_STORY = 1012;

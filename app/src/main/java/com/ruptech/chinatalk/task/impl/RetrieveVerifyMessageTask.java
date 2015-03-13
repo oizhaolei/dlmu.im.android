@@ -1,11 +1,11 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import java.util.List;
+import java.util.Map;
 
 public class RetrieveVerifyMessageTask extends GenericTask {
 

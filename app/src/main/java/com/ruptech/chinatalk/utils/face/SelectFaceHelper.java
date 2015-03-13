@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.utils.face;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -21,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.ruptech.chinatalk.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectFaceHelper implements OnItemClickListener {
 	public interface OnFaceOprateListener {

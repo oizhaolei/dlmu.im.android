@@ -6,6 +6,10 @@
 
 package com.ruptech.chinatalk.utils;
 
+import android.util.Log;
+
+import com.ruptech.chinatalk.BuildConfig;
+
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -14,10 +18,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
-
-import android.util.Log;
-
-import com.ruptech.chinatalk.BuildConfig;
 
 public class Rsa {
 	static class Base64 {

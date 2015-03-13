@@ -1,11 +1,11 @@
 package com.ruptech.chinatalk.utils;
 
+import com.ruptech.chinatalk.App;
+
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.ruptech.chinatalk.App;
 
 public class AlipayResult {
 

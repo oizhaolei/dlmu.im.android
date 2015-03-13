@@ -3,9 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +11,9 @@ import android.support.v4.util.SparseArrayCompat;
 
 import com.ruptech.chinatalk.ui.user.ScrollTabHolder;
 import com.ruptech.chinatalk.ui.user.ScrollTabHolderFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TapPagerAdapter extends FragmentPagerAdapter {
 

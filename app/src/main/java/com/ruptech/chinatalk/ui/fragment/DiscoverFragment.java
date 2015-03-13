@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,9 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.map.MyLocation;
@@ -43,6 +38,12 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.DiscoverKeywordListAdapter;
 import com.ruptech.chinatalk.widget.DiscoverUserArrayAdapter.OnDiscoverListener;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class DiscoverFragment extends Fragment implements TextWatcher,
 		OnDiscoverListener {

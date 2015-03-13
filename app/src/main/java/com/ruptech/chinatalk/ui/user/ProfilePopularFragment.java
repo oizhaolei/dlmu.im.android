@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
@@ -23,6 +21,9 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
 import com.ruptech.chinatalk.widget.UserPhotoListArrayAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ProfilePopularFragment extends ScrollTabHolderFragment implements
 		OnRefreshListener {

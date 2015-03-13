@@ -2,7 +2,6 @@ package com.ruptech.chinatalk;
 
 import android.app.ActivityManager;
 import android.app.Application;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -12,14 +11,12 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
@@ -50,7 +47,6 @@ import com.ruptech.chinatalk.sqlite.UserDAO;
 import com.ruptech.chinatalk.sqlite.UserPhotoDAO;
 import com.ruptech.chinatalk.task.TaskManager;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
-import com.ruptech.chinatalk.ui.UpdateVersionServiceActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
@@ -59,7 +55,6 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -77,7 +72,7 @@ public class App extends Application implements
     public static Bus mBus;
     public static TTTalkSmack mSmack;
     static public Properties properties;
-    private SmackAndroid smack;
+    private SmackAndroid smackAndroid;
 
     public static void baiduRegiste(Context context) {
 //        PushManager.startWork(context, PushConstants.LOGIN_TYPE_API_KEY,
@@ -318,7 +313,7 @@ public class App extends Application implements
 
         mBus = new Bus(ThreadEnforcer.ANY);
         mBus.register(this);
-        smack = SmackAndroid.init(this);
+        smackAndroid = SmackAndroid.init(this);
 
         AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
         properties = assetsPropertyReader.getProperties("env.properties");
@@ -392,8 +387,8 @@ public class App extends Application implements
             mPlayer.release();
             mPlayer = null;
         }
-        if (smack != null) {
-            smack.onDestroy();
+        if (smackAndroid != null) {
+            smackAndroid.onDestroy();
         }
         if (mBus != null) {
             mBus.unregister(this);

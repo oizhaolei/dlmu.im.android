@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.MessageReceiver;
 import com.ruptech.chinatalk.R;
@@ -63,15 +61,6 @@ public class LoginLoadingActivity extends Activity {
         MessageReceiver.doRetrieveNewMessage(currentActivity, App.readUser()
                 .getId(), dispNotification);
         gotoMainActivity(currentActivity);
-    }
-
-    protected static void onmRetrieveFavoriteUserImageBegin() {
-    }
-
-    protected static void onmRetrieveFavoriteUserImageFailure(String msg) {
-        if (BuildConfig.DEBUG) {
-            Log.d("RetrieveFavoriteUserImageFailure", msg);
-        }
     }
 
     protected static LoginLoadingActivity instance;

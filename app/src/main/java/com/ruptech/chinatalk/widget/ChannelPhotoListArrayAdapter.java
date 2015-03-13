@@ -3,10 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.widget.Toast;
@@ -23,6 +19,10 @@ import com.ruptech.chinatalk.task.impl.RetrieveChannelPhotoListTask;
 import com.ruptech.chinatalk.ui.story.ChannelPopularListActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
+
+import java.util.List;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
 
 public class ChannelPhotoListArrayAdapter extends UserStoryListArrayAdapter {
 	public static void changeLocalChannel(Channel channel) {

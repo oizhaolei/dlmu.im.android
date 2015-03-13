@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.ui.gift;
 
-import java.text.NumberFormat;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,8 +11,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -30,6 +25,12 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.GiftListArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
+
+import java.text.NumberFormat;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class GiftListActivity extends ActionBarActivity implements
 		SwipeRefreshLayout.OnRefreshListener {

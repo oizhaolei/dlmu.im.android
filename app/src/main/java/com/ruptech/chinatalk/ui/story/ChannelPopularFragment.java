@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Channel;
@@ -15,6 +13,9 @@ import com.ruptech.chinatalk.ui.user.ScrollTabHolderFragment;
 import com.ruptech.chinatalk.widget.ChannelPhotoListArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ChannelPopularFragment extends ScrollTabHolderFragment implements
 		OnRefreshListener {

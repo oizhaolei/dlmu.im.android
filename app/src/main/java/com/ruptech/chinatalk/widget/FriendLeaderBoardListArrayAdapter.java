@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FriendLeaderBoardListArrayAdapter extends ArrayAdapter<User> {
 	static class ViewHolder {

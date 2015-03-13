@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.friend;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,8 +13,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
@@ -32,6 +28,11 @@ import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.FriendListArrayBaseAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FriendsLbsListActivity extends ActionBarActivity implements
 		SwipeRefreshLayout.OnRefreshListener {

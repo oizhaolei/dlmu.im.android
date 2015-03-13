@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-import it.sephiroth.android.library.imagezoom.ImageViewTouch;
-import it.sephiroth.android.library.imagezoom.ImageViewTouch.OnImageViewTouchSingleTapListener;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,8 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -33,6 +27,14 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ImageProgressBar;
 import com.ruptech.chinatalk.widget.UserStoryListCursorAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import it.sephiroth.android.library.imagezoom.ImageViewTouch.OnImageViewTouchSingleTapListener;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class UserStoryImageViewActivity extends ActionBarActivity {
 

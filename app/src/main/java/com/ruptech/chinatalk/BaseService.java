@@ -42,7 +42,6 @@ public abstract class BaseService extends Service {
     private NotificationManager mNotificationManager;
     private ActivityManager mActivityManager;
     private Notification mNotification;
-    private Intent mNotificationIntent;
     private Vibrator mVibrator;
     private Map<String, Integer> mNotificationCount = new HashMap<>(
             2);
@@ -59,7 +58,6 @@ public abstract class BaseService extends Service {
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getString(R.string.app_name));
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationIntent = new Intent(this, ChatActivity.class);
         mActivityManager = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
     }
 
@@ -142,6 +140,7 @@ public abstract class BaseService extends Service {
         mNotification = new Notification(R.drawable.ic_launcher, ticker,
                 System.currentTimeMillis());
         Uri userNameUri = Uri.parse(fromJid);
+        Intent  mNotificationIntent = new Intent(this, ChatActivity.class);
         mNotificationIntent.setData(userNameUri);
         mNotificationIntent.putExtra(ChatActivity.INTENT_EXTRA_USERNAME,
                 fromUserId);

@@ -1,10 +1,10 @@
 package com.ruptech.chinatalk.task.impl;
 
-import org.json.JSONObject;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import org.json.JSONObject;
 
 public class BadgeCountTask extends GenericTask {
 

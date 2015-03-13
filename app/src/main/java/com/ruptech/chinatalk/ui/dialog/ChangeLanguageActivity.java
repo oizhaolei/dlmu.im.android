@@ -10,8 +10,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -26,6 +24,9 @@ import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.LangListViewAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ChangeLanguageActivity extends AbstractUserActivity {
 

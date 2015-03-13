@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -12,8 +10,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Channel;
@@ -27,6 +23,11 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChannelListArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MyChannelListActivity extends ActionBarActivity implements
 		OnRefreshListener {

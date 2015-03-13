@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.ui.friend;
 
-import static butterknife.ButterKnife.findById;
-
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +13,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -37,6 +31,13 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.FriendLeaderBoardListArrayAdapter;
 import com.ruptech.chinatalk.widget.ImageProgressBar;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
 
 public class LeaderboardLevelFragment extends ScrollTabHolderFragment {
 

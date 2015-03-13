@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
-
-import java.io.File;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +22,10 @@ import android.widget.Toast;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.io.File;
+
+import static butterknife.ButterKnife.findById;
 
 public class RecordButton extends Button {
 	private class ObtainDecibelThread extends Thread {

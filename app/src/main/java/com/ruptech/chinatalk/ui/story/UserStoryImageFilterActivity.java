@@ -16,12 +16,34 @@
 
 package com.ruptech.chinatalk.ui.story;
 
-import static butterknife.ButterKnife.findById;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.utils.Utils;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImage3x3ConvolutionFilter;
@@ -49,29 +71,8 @@ import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
 import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.PointF;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
-import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.utils.Utils;
+import static butterknife.ButterKnife.findById;
 
 public class UserStoryImageFilterActivity extends ActionBarActivity implements
 		OnPictureSavedListener {

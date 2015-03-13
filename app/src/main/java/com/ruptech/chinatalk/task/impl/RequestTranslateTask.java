@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.List;
-
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
@@ -12,6 +10,8 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
+
+import java.util.List;
 
 public class RequestTranslateTask extends GenericTask {
 	private Message message;

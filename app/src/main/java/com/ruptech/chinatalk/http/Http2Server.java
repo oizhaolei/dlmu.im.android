@@ -1,18 +1,18 @@
 package com.ruptech.chinatalk.http;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.http.HttpException;
-import org.json.JSONObject;
-
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.impl.FileUploadTask.FileUploadInfo;
 import com.ruptech.chinatalk.utils.Utils;
+
+import org.apache.http.HttpException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * for story module. using RESTFul

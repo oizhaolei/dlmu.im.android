@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,9 +14,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
@@ -35,6 +26,16 @@ import com.ruptech.chinatalk.task.impl.RequestQuestionTask;
 import com.ruptech.chinatalk.task.impl.RetrieveQATask;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class SettingQaActivity extends ActionBarActivity implements
 		OnRefreshListener {

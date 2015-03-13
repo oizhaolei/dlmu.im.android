@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ApplyTranslatorActivity extends ActionBarActivity {
 
