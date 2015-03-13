@@ -103,6 +103,7 @@ public class AppPreferences {
 	public static final long TTT_REQUEST_TO_USERID = 0;
 	public static final long STORY_REQUEST_TO_USERID = 10;
     public static final String TTT_OF_USERNAME = "tttalk.org";
+    public static final String GROUP_CHAT_SUFFIX = "@conference.tttalk.org";
 
 	// 第三方插件类别
 	public static final String THIRD_PARTY_TYPE_QQ = "QQ";

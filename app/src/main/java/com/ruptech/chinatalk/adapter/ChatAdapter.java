@@ -1,67 +1,33 @@
 package com.ruptech.chinatalk.adapter;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.baidutranslate.openapi.TranslateClient;
-import com.baidu.baidutranslate.openapi.callback.ITransResultCallback;
-import com.baidu.baidutranslate.openapi.entity.TransResult;
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Chat;
-import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskAdapter;
-import com.ruptech.chinatalk.task.TaskListener;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
-import com.ruptech.chinatalk.ui.FullScreenActivity;
-import com.ruptech.chinatalk.ui.ImageViewActivity;
-import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
-import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
-import com.ruptech.chinatalk.utils.DateCommonUtils;
-import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.TimeUtil;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.utils.face.EmojiParser;
-import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.AbstractChatCursorAdapter;
-import com.ruptech.chinatalk.widget.AbstractMessageCursorAdapter;
-import com.ruptech.chinatalk.widget.CustomDialog;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChatAdapter extends AbstractChatCursorAdapter {
     private static final String TAG = ChatAdapter.class.getName();
@@ -96,14 +62,12 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
 
     private static final int DELAY_NEWMSG = 2000;
     private ActionBarActivity mContext;
-    private User mFriendUser;
 
-    public ChatAdapter(ActionBarActivity context, Cursor cursor, String[] from, TranslateClient client, User friend) {
+    public ChatAdapter(ActionBarActivity context, Cursor cursor, String[] from, TranslateClient client) {
         // super(context, android.R.layout.simple_list_item_1, cursor, from,
         // to);
         super(context, cursor);
         mContext = context;
-        mFriendUser = friend;
         mClient = client;
         mInflater = LayoutInflater.from(context);
         mContentResolver = context.getContentResolver();
@@ -148,7 +112,13 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
         final ViewHolder holder = (ViewHolder) view.getTag();
         Chat chat = TableContent.ChatTable.parseCursor(cursor);
         boolean mine = isMine(chat);
-        User user;
+
+        User user, mFriendUser;
+        mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(chat.getJid()));
+        if (mFriendUser == null ){
+            mFriendUser = new User();
+            mFriendUser.setLang("CN");
+        }
         if (mine) {
             chat.setToLang(mFriendUser.getLang());
             chat.setFromLang(App.readUser().getLang());

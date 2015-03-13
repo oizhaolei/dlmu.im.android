@@ -3,6 +3,7 @@ package com.ruptech.chinatalk.ui.setting;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +32,13 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChatUserListAdapter;
 import com.ruptech.chinatalk.widget.MyGridView;
 
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.Occupant;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -58,6 +66,9 @@ public class ChatSettingActivity extends ActionBarActivity {
 	private FriendOperate friendOperate;
 
 	boolean isMyFriend = false;
+    protected String mWithJabberID = null;// 当前聊天用户的ID
+    protected boolean isGroupChat = false;
+    protected MultiUserChat chatRoom;
 
 	private final TaskListener mFriendWalletPriorityTaskListener = new TaskAdapter() {
 
@@ -133,6 +144,24 @@ public class ChatSettingActivity extends ActionBarActivity {
 		return null;
 	}
 
+    private void parseExtras(){
+        mWithJabberID = (String) getIntent().getExtras().get(ChatActivity.EXTRA_JID);
+        isGroupChat = Utils.isGroupChat(mWithJabberID);
+        if (isGroupChat){
+            chatRoom = App.mSmack.createChatRoomByRoomName(mWithJabberID);
+            if (!chatRoom.isJoined()){
+                try {
+                    chatRoom.join(App.mSmack.getUser());
+                }catch(Exception e){
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        }else{
+            mFriendUser = getUserFromExtras();
+            friendOperate = new FriendOperate(this, mFriendUser, UserType.FRIEND);
+        }
+    }
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -141,8 +170,8 @@ public class ChatSettingActivity extends ActionBarActivity {
 		getSupportActionBar().setTitle(R.string.chat_setting);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		instance = this;
-		mFriendUser = getUserFromExtras();
-		friendOperate = new FriendOperate(this, mFriendUser, UserType.FRIEND);
+        parseExtras();
+
 		setupComponents();
 	}
 
@@ -153,74 +182,104 @@ public class ChatSettingActivity extends ActionBarActivity {
 		}
 		return true;
 	}
+
+    private List<User> getGroupChatUserList() {
+        List<User> list = new ArrayList();
+        try {
+            Iterator<Occupant> iterator = chatRoom.getParticipants().iterator();
+            while (iterator.hasNext()){
+                Occupant occupant = iterator.next();
+                list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(occupant.getJid())));
+            }
+
+            iterator = chatRoom.getModerators().iterator();
+            while (iterator.hasNext()){
+                Occupant occupant = iterator.next();
+                list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(occupant.getJid())));
+            }
+
+        }catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return list;
+    }
+
 	private void setupComponents() {
-		String friendName = Utils.getFriendName(mFriendUser.getId(),
-				mFriendUser.getFullname());
-		shareWalletTextView.setText(getString(R.string.share_wallet_for,
-				friendName));
-		Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(),
-				mFriendUser.getId());
-		shareWalletSlipswitch.setChecked(friend != null
-				&& friend.getWallet_priority() != 0);
-		shareWalletSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							doSaveChatSetting(1);
-							walletMemoView.setVisibility(View.GONE);
-						} else {
-							doSaveChatSetting(0);
-							walletMemoView.setVisibility(View.VISIBLE);
-						}
-					}
-				});
+        if (!isGroupChat){
+            String friendName = Utils.getFriendName(mFriendUser.getId(),
+                    mFriendUser.getFullname());
+            shareWalletTextView.setText(getString(R.string.share_wallet_for,
+                    friendName));
+            Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(),
+                    mFriendUser.getId());
+            shareWalletSlipswitch.setChecked(friend != null
+                    && friend.getWallet_priority() != 0);
+            shareWalletSlipswitch
+                    .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView,
+                                                     boolean isChecked) {
+                            if (isChecked) {
+                                doSaveChatSetting(1);
+                                walletMemoView.setVisibility(View.GONE);
+                            } else {
+                                doSaveChatSetting(0);
+                                walletMemoView.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
 
-		if (friend == null) {
-			isMyFriend = false;
-			shareWalletSlipswitch.setVisibility(View.GONE);
-			walletMemoView.setVisibility(View.GONE);
-			friend = App.friendDAO.fetchFriend(mFriendUser.getId(), App
-					.readUser().getId());
-		} else {
-			isMyFriend = true;
-			if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
-				shareWalletSlipswitch.setVisibility(View.VISIBLE);
-				if (friend.getWallet_priority() != 0) {
-					walletMemoView.setVisibility(View.GONE);
-				} else {
-					walletMemoView.setVisibility(View.VISIBLE);
-				}
-			} else {
-				shareWalletSlipswitch.setVisibility(View.GONE);
-			}
-		}
+            if (friend == null) {
+                isMyFriend = false;
+                shareWalletSlipswitch.setVisibility(View.GONE);
+                walletMemoView.setVisibility(View.GONE);
+                friend = App.friendDAO.fetchFriend(mFriendUser.getId(), App
+                        .readUser().getId());
+            } else {
+                isMyFriend = true;
+                if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
+                    shareWalletSlipswitch.setVisibility(View.VISIBLE);
+                    if (friend.getWallet_priority() != 0) {
+                        walletMemoView.setVisibility(View.GONE);
+                    } else {
+                        walletMemoView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    shareWalletSlipswitch.setVisibility(View.GONE);
+                }
+            }
 
-		isTopslipswitch.setChecked(friend != null && friend.getIs_top() == 1);
-		isTopslipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							doSaveChatTopSetting(1, isMyFriend);
-						} else {
-							doSaveChatTopSetting(0, isMyFriend);
-						}
-					}
-				});
+            isTopslipswitch.setChecked(friend != null && friend.getIs_top() == 1);
+            isTopslipswitch
+                    .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView,
+                                                     boolean isChecked) {
+                            if (isChecked) {
+                                doSaveChatTopSetting(1, isMyFriend);
+                            } else {
+                                doSaveChatTopSetting(0, isMyFriend);
+                            }
+                        }
+                    });
+        }
+
 
         chatUserAdapter = new ChatUserListAdapter(this, R.layout.item_chat_user);
-        chatUserAdapter.add(mFriendUser);
+        if (isGroupChat) {
+            chatUserAdapter.addAll(getGroupChatUserList());
+        }else{
+            chatUserAdapter.add(mFriendUser);
+        }
         chatUserGridView.setAdapter(chatUserAdapter);
         chatUserGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if (position == chatUserAdapter.getCount() -1 ){
+                if (position == chatUserAdapter.getCount() - 1) {
                     //TODO: invite users to group chat
                     Toast.makeText(ChatSettingActivity.this, "Invite", Toast.LENGTH_SHORT).show();
-                }else{
+                    App.mSmack.createChatRoom(chatUserAdapter.getUserList());
+                } else {
                     Intent intent = new Intent(ChatSettingActivity.this,
                             FriendProfileActivity.class);
                     User user = chatUserAdapter.getItem(position);
@@ -229,5 +288,6 @@ public class ChatSettingActivity extends ActionBarActivity {
                 }
             }
         });
-	}
+    }
+
 }

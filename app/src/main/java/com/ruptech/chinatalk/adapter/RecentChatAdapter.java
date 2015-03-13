@@ -14,7 +14,6 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
-import com.ruptech.chinatalk.utils.TimeUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
@@ -85,7 +84,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         String name = Utils.getFriendNameFromOF_JID(jid);
-        viewHolder.jidView.setText(name);
+        viewHolder.jidView.setText(jid);
         viewHolder.msgView.setText(XMPPUtils
                 .convertNormalStringToSpannableString(mContext, message, true));
         viewHolder.dataView.setText(date);

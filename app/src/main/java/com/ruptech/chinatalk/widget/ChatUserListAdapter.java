@@ -12,6 +12,9 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -66,5 +69,12 @@ public class ChatUserListAdapter extends ArrayAdapter<User> {
 		return convertView;
 	}
 
+    public List<User> getUserList(){
+        List<User> list = new ArrayList<>();
+        for(int i=0;i<super.getCount();i++){
+            list.add(getItem(i));
+        }
+        return list;
+    }
 
 }

@@ -132,12 +132,12 @@ public class ChatTTTActivity extends AbstractChatActivity {
 	public void doRefleshFooterBySelectLang() {
 	}
 
-	@Override
+
 	String getFriendLang() {
 		return toLang;
 	}
 
-	@Override
+
 	public long getFriendUserId() {
 		return AppPreferences.TTT_REQUEST_TO_USERID;// 翻译小秘书
 	}
