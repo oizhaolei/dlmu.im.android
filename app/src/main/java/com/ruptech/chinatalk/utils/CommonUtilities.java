@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.utils;
 
-import java.io.Serializable;
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -10,6 +8,8 @@ import com.ruptech.chinatalk.MessageReceiver;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.StoryTranslate;
 import com.ruptech.chinatalk.model.UserPhoto;
+
+import java.io.Serializable;
 
 /**
  * Helper class providing methods and constants common to other classes in the

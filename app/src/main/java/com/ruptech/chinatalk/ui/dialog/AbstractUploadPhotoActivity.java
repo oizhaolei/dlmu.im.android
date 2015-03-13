@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.dialog;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -21,6 +19,8 @@ import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.io.File;
 
 public abstract class AbstractUploadPhotoActivity extends Activity {
 

@@ -7,13 +7,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.AbsListView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.ui.fragment.SlidingTabLayout;
 import com.ruptech.chinatalk.ui.user.ScrollTabHolder;
 import com.ruptech.chinatalk.widget.TapPagerAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FriendsLeaderboardListActivity extends ActionBarActivity implements
 		ScrollTabHolder, ViewPager.OnPageChangeListener {

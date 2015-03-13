@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +13,8 @@ import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
 
 public class CommentNewsDAO {
 	private static final String TAG = Utils.CATEGORY

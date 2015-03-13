@@ -3,10 +3,11 @@ package com.ruptech.chinatalk.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FullScreenActivity extends Activity {
 	@InjectView(R.id.activity_fullscren_message)

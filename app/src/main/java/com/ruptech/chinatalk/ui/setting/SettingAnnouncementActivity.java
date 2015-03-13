@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import java.util.Map;
-
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -10,8 +8,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -22,6 +18,11 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveAnnouncementTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.AnnouncementListArrayAdapter;
+
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SettingAnnouncementActivity extends ActionBarActivity implements
 		OnRefreshListener {

@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
-
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +11,10 @@ import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.model.UserProp;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
 
 class UserPropDAO {
 	private static final String TAG = Utils.CATEGORY + UserPropDAO.class.getSimpleName();

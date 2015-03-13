@@ -1,12 +1,5 @@
 package com.ruptech.chinatalk.ui;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +18,13 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.FileHelper;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * 更新版本

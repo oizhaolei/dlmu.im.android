@@ -1,11 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
@@ -25,6 +19,12 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.ui.setting.SettingQaActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import static butterknife.ButterKnife.findById;
 public class GuideViewManager {
 
 	private static final float yOffsetMax = 50;

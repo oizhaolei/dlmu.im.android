@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
-
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +9,10 @@ import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 
 public class FriendDAO {
 	private static final String TAG = Utils.CATEGORY

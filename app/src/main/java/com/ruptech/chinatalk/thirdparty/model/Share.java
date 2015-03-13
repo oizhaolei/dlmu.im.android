@@ -1,12 +1,12 @@
 package com.ruptech.chinatalk.thirdparty.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.io.Serializable;
 
 public class Share implements Parcelable, Serializable {
 

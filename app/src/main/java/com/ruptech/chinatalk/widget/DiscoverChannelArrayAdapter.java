@@ -3,8 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.List;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -25,6 +23,8 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChannelListCursorAdapter.ViewHolder;
+
+import java.util.List;
 
 public class DiscoverChannelArrayAdapter extends ArrayAdapter<Channel> {
 

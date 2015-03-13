@@ -3,8 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.Locale;
 
 public class LangListViewAdapter extends AbstractLangListViewAdapter {
 

@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.MessageReceiver;
 import com.ruptech.chinatalk.R;

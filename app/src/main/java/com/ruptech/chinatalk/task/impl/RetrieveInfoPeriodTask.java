@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
@@ -13,6 +9,10 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class RetrieveInfoPeriodTask extends GenericTask {
 

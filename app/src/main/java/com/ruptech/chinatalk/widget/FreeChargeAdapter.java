@@ -7,11 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.ui.user.MyWalletActivity.RechargeItem;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class FreeChargeAdapter extends ArrayAdapter<RechargeItem> {
 	class ViewHolder {

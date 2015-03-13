@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import java.util.List;
-import java.util.Map;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,8 +16,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.alipay.sdk.app.PayTask;
 import com.ruptech.chinatalk.BuildConfig;
@@ -32,6 +27,12 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RechargePriceTask;
 import com.ruptech.chinatalk.utils.AlipayResult;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class RechargeAlipayActivity extends ActionBarActivity implements
 		OnItemClickListener, OnRefreshListener {

@@ -3,7 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -26,6 +23,11 @@ import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class FriendListCursorAdapter extends CursorAdapter {
 	static class ViewHolder {

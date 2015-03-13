@@ -1,17 +1,17 @@
 package com.ruptech.chinatalk.utils;
 
+import android.util.Log;
+
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.chinatalk.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import android.util.Log;
-
-import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.R;
 
 public class DateCommonUtils {
 

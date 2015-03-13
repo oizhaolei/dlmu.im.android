@@ -1,10 +1,10 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.Map;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import java.util.Map;
 
 public class RetrieveQaByIdTask extends GenericTask {
 	private Map<String, String> qa;

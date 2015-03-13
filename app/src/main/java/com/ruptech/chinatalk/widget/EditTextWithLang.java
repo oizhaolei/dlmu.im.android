@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import java.util.List;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +23,8 @@ import com.ruptech.chinatalk.ui.user.LanguageActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
 
 public class EditTextWithLang extends EditText {
 	private final static String TAG = "EditTextWithLang";

@@ -3,10 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -18,8 +14,6 @@ import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -32,6 +26,13 @@ import com.ruptech.chinatalk.task.impl.RetrievePopularStoryTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class HotListCursorAdapter extends CursorAdapter {
 

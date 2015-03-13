@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.sqlite;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +12,10 @@ import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
 
 public class ChannelDAO {
 	private static final String TAG = Utils.CATEGORY

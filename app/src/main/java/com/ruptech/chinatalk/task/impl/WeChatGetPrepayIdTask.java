@@ -1,6 +1,12 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.security.KeyStore;
+import android.util.Log;
+
+import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.chinatalk.http.ServerSideException;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.ui.setting.RechargeWeChatActivity;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,13 +28,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import android.util.Log;
-
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.http.ServerSideException;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.ui.setting.RechargeWeChatActivity;
+import java.security.KeyStore;
 
 public class WeChatGetPrepayIdTask extends GenericTask {
 

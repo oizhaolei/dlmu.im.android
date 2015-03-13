@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,8 +12,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.UserPhoto;
@@ -29,6 +25,11 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.MyCommentListArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MyCommentListActivity extends ActionBarActivity implements
 SwipeRefreshLayout.OnRefreshListener {

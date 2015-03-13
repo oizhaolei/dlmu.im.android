@@ -19,8 +19,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -37,6 +35,9 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChannelPhotoListArrayAdapter;
 import com.ruptech.chinatalk.widget.TapPagerAdapter;
 import com.ruptech.chinatalk.widget.processbutton.ActionProcessButton;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ChannelPopularListActivity extends ActionBarActivity implements
 		ScrollTabHolder, ViewPager.OnPageChangeListener {

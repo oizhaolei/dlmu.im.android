@@ -3,8 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import java.util.List;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
@@ -20,6 +18,8 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveUserPhotoListTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.List;
 
 public class UserPhotoListArrayAdapter extends UserStoryListArrayAdapter {
 

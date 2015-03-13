@@ -1,13 +1,13 @@
 package com.ruptech.chinatalk.task.impl;
 
-import org.json.JSONObject;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.http.Response;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.thirdparty.wechat.WeChatUtil;
 import com.ruptech.chinatalk.ui.LoginSignupActivity;
+
+import org.json.JSONObject;
 
 public class WeChatGetAccessTokenTask extends GenericTask {
 	;

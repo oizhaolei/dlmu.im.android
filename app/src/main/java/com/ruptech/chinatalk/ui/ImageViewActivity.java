@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.ui;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -37,6 +32,12 @@ import com.ruptech.chinatalk.widget.Gallery;
 import com.ruptech.chinatalk.widget.ImagePagerAdapter;
 import com.ruptech.chinatalk.widget.ImageProgressBar;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class ImageViewActivity extends ActionBarActivity {
 	private class ImageOnPageChangeListener implements OnPageChangeListener {

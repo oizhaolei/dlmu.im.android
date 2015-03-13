@@ -1,11 +1,11 @@
 package com.ruptech.chinatalk.task;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import android.util.Log;
 
 import com.ruptech.chinatalk.BuildConfig;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public class TaskManager extends Observable {
 	public static final Integer CANCEL_ALL = 1;

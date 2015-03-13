@@ -1,8 +1,5 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import java.util.List;
-import java.util.Map;
-
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -11,8 +8,6 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -22,6 +17,12 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveVerifyMessageTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.VerifyMessageListArrayAdapter;
+
+import java.util.List;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SettingVerifyActivity extends ActionBarActivity implements
 		OnRefreshListener {

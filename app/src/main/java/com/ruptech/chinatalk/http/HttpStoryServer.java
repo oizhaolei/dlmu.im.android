@@ -1,15 +1,5 @@
 package com.ruptech.chinatalk.http;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpException;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.util.Log;
 
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
@@ -26,6 +16,16 @@ import com.ruptech.chinatalk.ui.story.AbstractUserStoryListActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
+
+import org.apache.http.HttpException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * for story module. using RESTFul

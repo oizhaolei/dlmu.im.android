@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,9 +21,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -56,6 +49,14 @@ import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.EditTextWithLang;
 import com.ruptech.chinatalk.widget.StoryTranslateListArrayAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class UserStoryTranslateActivity extends ActionBarActivity implements
 		SwipeRefreshLayout.OnRefreshListener {

@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
-
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,6 +11,10 @@ import android.widget.LinearLayout;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+
+import static butterknife.ButterKnife.findById;
 
 public class Gallery extends LinearLayout {
 	public abstract interface OnGalleryItemClickListener {

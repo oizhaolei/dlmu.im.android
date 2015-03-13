@@ -1,10 +1,5 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -19,14 +14,20 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
+
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class SettingBalanceActivity extends ActionBarActivity implements
 OnRefreshListener {

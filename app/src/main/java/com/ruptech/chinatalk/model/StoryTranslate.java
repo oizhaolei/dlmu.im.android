@@ -1,11 +1,11 @@
 package com.ruptech.chinatalk.model;
 
-import java.io.Serializable;
+import com.ruptech.chinatalk.http.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ruptech.chinatalk.http.Response;
+import java.io.Serializable;
 
 public class StoryTranslate implements Serializable {
 

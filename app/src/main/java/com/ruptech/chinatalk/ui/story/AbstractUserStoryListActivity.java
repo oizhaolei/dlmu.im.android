@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,8 +16,6 @@ import android.widget.AbsListView.RecyclerListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -36,6 +32,11 @@ import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.UserStoryListArrayAdapter;
+
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public abstract class AbstractUserStoryListActivity extends ActionBarActivity
 		implements SwipeRefreshLayout.OnRefreshListener {

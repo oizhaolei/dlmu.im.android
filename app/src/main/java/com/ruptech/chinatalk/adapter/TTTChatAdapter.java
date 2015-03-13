@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.baidu.baidutranslate.openapi.TranslateClient;
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.MessageReceiver;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Chat;
@@ -28,9 +27,7 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
-import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.TimeUtil;
-import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.AbstractChatCursorAdapter;
 
 public class TTTChatAdapter extends AbstractChatCursorAdapter {

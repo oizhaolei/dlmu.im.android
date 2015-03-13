@@ -1,10 +1,5 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import static butterknife.ButterKnife.findById;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -16,6 +11,11 @@ import android.widget.TextView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static butterknife.ButterKnife.findById;
 
 public class SegmentTabLayout extends LinearLayout implements OnClickListener {
 

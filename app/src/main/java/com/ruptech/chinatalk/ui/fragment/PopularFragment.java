@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,8 +15,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -35,6 +31,12 @@ import com.ruptech.chinatalk.widget.HotListCursorAdapter;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout;
 import com.ruptech.chinatalk.widget.SwipeRefreshLayout.OnRefreshListener;
 import com.ruptech.chinatalk.widget.UserStoryListCursorAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class PopularFragment extends Fragment implements OnRefreshListener,
 		OnSegmentClickListener {

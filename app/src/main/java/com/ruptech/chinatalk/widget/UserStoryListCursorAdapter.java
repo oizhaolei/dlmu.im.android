@@ -3,12 +3,6 @@
  */
 package com.ruptech.chinatalk.widget;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,6 +53,12 @@ import com.ruptech.chinatalk.utils.ThirdPartyUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.TopGallery.OnGalleryItemClickListener;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class UserStoryListCursorAdapter extends CursorAdapter implements
 		OnGalleryItemClickListener {

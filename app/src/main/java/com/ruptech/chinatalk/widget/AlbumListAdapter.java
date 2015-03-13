@@ -1,10 +1,5 @@
 package com.ruptech.chinatalk.widget;
 
-import static butterknife.ButterKnife.findById;
-
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -19,11 +14,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.utils.ImageManager;
+
+import java.util.List;
+import java.util.Map;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
 
 public class AlbumListAdapter extends ArrayAdapter<Map<String, String>> {
 	class ViewHolder {

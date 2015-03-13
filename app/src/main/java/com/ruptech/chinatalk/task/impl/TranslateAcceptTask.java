@@ -1,12 +1,12 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.List;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.AppPreferences;
+
+import java.util.List;
 
 /**
  * 接收者接收到message后，请求翻译。因为发送者费用不足支付翻译费用了。

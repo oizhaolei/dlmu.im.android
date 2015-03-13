@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Handler;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,7 +40,6 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
 import com.ruptech.chinatalk.task.impl.RequestVerifyTask;
 import com.ruptech.chinatalk.task.impl.RetrieveMessageTask;
 import com.ruptech.chinatalk.task.impl.TranslateAcceptTask;
@@ -56,7 +53,6 @@ import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
-import com.ruptech.chinatalk.utils.TimeUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.EmojiParser;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
@@ -66,8 +62,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 	static class MyHandler extends Handler {

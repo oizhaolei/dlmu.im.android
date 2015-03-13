@@ -1,14 +1,14 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RetrieveFriendsTask extends GenericTask {
 

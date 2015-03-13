@@ -1,10 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -39,6 +32,14 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.EditTextWithDel;
 import com.ruptech.chinatalk.widget.StoryTagListArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class UserStoryTagActivity extends ActionBarActivity {
 

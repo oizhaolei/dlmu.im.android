@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.fragment;
 
-import java.text.NumberFormat;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -40,6 +35,12 @@ import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ThirdPartyUtil;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.text.NumberFormat;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class MyselfFragment extends Fragment {
 

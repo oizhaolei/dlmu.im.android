@@ -1,13 +1,5 @@
 package com.ruptech.chinatalk;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +16,14 @@ import com.ruptech.chinatalk.ui.story.UserStoryCommentActivity;
 import com.ruptech.chinatalk.ui.story.UserStoryGiftListActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.Utils;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 
 /**
  *

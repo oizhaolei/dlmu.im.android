@@ -1,16 +1,16 @@
 package com.ruptech.chinatalk.task.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscoverTask extends GenericTask {
 

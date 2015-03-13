@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.content.BroadcastReceiver;
@@ -35,9 +31,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
@@ -68,6 +61,14 @@ import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class UserStorySaveActivity extends ActionBarActivity {
 	public enum UploadStatus {

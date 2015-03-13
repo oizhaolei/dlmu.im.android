@@ -15,9 +15,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
@@ -41,6 +38,10 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.GenderSpinnerAdapter;
 import com.ruptech.chinatalk.widget.LangSpinnerAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class SignupProfileActivity extends ActionBarActivity {
 

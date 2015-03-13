@@ -1,9 +1,9 @@
 package com.ruptech.chinatalk.model;
 
-import java.io.Serializable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 public class Friend implements Serializable {
 
