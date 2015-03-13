@@ -291,34 +291,34 @@ public class MessageReceiver {
         } else if (PrefUtils.existsMessage(message)) {
             return false;
         } else {
-            App.messageDAO.mergeMessage(message);
-            // 如果没和当前这个人聊天进行推送，否则仅仅保存数据库;
-            // 推送的TTT message lang与当前TTT画面语言不一致也需要提醒。
-            int message_status = message.getMessage_status();
-            if ((message.getTo_userid() == App.readUser().getId() || message
-                    .getTo_userid() == AppPreferences.TTT_REQUEST_TO_USERID)
-                    && (AbstractChatActivity.instance == null
-                    || (AbstractChatActivity.instance.getFriendUserId() != message
-                    .getTo_userid() && AbstractChatActivity.instance
-                    .getFriendUserId() != message.getUserid()) || (message
-                    .getTo_userid() == AppPreferences.TTT_REQUEST_TO_USERID && isDifferentTTTLang(
-                    message.getFrom_lang(), message.getTo_lang())))
-                    && isMessageStatusEnd(message_status)) {
-
-                PrefUtils.writeMessageList(message);
-                return MessageReceiver.displayMessageNotification(context,
-                        message, App.readUser().getId());
-            } else {
-                // 如果和这个人正在聊天，并且消息是自动翻译，但是本地余额足的时候刷新下这个人的信息
-                if ((message.getTo_userid() == App.readUser().getId() && message
-                        .getUserid() != AppPreferences.TTT_REQUEST_TO_USERID)
-                        && message.getAuto_translate() == AppPreferences.AUTO_TRANSLATE_MESSSAGE) {
-                    User friendUser = App.userDAO.fetchUser(message.userid);
-                    if (friendUser.getBalance() > AppPreferences.MINI_BALANCE) {
-                        doRetrieveUser(message.getUserid());
-                    }
-                }
-            }
+//            App.messageDAO.mergeMessage(message);
+//            // 如果没和当前这个人聊天进行推送，否则仅仅保存数据库;
+//            // 推送的TTT message lang与当前TTT画面语言不一致也需要提醒。
+//            int message_status = message.getMessage_status();
+//            if ((message.getTo_userid() == App.readUser().getId() || message
+//                    .getTo_userid() == AppPreferences.TTT_REQUEST_TO_USERID)
+//                    && (AbstractChatActivity.instance == null
+//                    || (AbstractChatActivity.instance.getFriendUserId() != message
+//                    .getTo_userid() && AbstractChatActivity.instance
+//                    .getFriendUserId() != message.getUserid()) || (message
+//                    .getTo_userid() == AppPreferences.TTT_REQUEST_TO_USERID && isDifferentTTTLang(
+//                    message.getFrom_lang(), message.getTo_lang())))
+//                    && isMessageStatusEnd(message_status)) {
+//
+//                PrefUtils.writeMessageList(message);
+//                return MessageReceiver.displayMessageNotification(context,
+//                        message, App.readUser().getId());
+//            } else {
+//                // 如果和这个人正在聊天，并且消息是自动翻译，但是本地余额足的时候刷新下这个人的信息
+//                if ((message.getTo_userid() == App.readUser().getId() && message
+//                        .getUserid() != AppPreferences.TTT_REQUEST_TO_USERID)
+//                        && message.getAuto_translate() == AppPreferences.AUTO_TRANSLATE_MESSSAGE) {
+//                    User friendUser = App.userDAO.fetchUser(message.userid);
+//                    if (friendUser.getBalance() > AppPreferences.MINI_BALANCE) {
+//                        doRetrieveUser(message.getUserid());
+//                    }
+//                }
+//            }
             return false;
         }
     }

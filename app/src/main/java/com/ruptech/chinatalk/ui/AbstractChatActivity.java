@@ -32,7 +32,6 @@ import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.db.RosterProvider;
-import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
@@ -58,6 +57,8 @@ import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.RecordButton.OnFinishedRecordListener;
+
+import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import java.io.File;
 import java.io.IOException;
@@ -209,6 +210,8 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	protected Friend mFriend;
 
 	protected boolean isFriend = true;
+    protected boolean isGroupChat = false;
+    protected MultiUserChat chatRoom;
 
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
 		@Override
@@ -360,12 +363,9 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		mRetrieveUserTask.execute();
 	}
 
-	protected void doUpload(String content, String fromLang,
-			String toLang, Long toUserId, String file_path, int contentLength,
+	protected void doUpload(String content, String file_path, int contentLength,
 			String filetype) {
         Chat chat = new Chat();
-        chat.setFromLang(fromLang);
-        chat.setToLang(toLang);
         chat.setType(filetype);
         chat.setFromContentLength(contentLength);
         chat.setFilePath(file_path);
@@ -382,9 +382,9 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		super.finish();
 	}
 
-	abstract String getFriendLang();
-
-	public abstract long getFriendUserId();
+//	abstract String getFriendLang();
+//
+//	public abstract long getFriendUserId();
 
 	abstract View getKeyboardButton();
 
@@ -395,14 +395,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	abstract View getMessageTypeButton();
 
 	abstract String getMyLang();
-
-	// 获取下一页的数据
-	Cursor getPreviousChatsCursor() {
-		onPage = onPage + 1;
-		Cursor chatsCursor = App.messageDAO.fetchMessages(App.readUser()
-				.getId(), getFriendUserId(), onPage);
-		return chatsCursor;
-	}
 
 	abstract View getSendButton();
 
@@ -525,7 +517,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	public void onPause() {
 		long start = System.currentTimeMillis();
 		super.onPause();
-		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
+//		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
 		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
 		// Back
 		instance = null;
@@ -567,8 +559,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		long start = System.currentTimeMillis();
 		super.onResume();
 		instance = this;
-		App.notificationManager.cancel(Long.valueOf(getFriendUserId())
-				.intValue());
+		App.notificationManager.cancel(mWithJabberID.hashCode());
 		doRefresh();
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "onResume:" + (System.currentTimeMillis() - start));
@@ -616,36 +607,25 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 				Utils.sendClientException(e);
 			}
 			String fromLang = getMyLang();
-			String toLang = getFriendLang();
-			Long toUserId = getFriendUserId();
 			String content = null;
 
 			String file_path = mPhotoFile.getAbsolutePath();
 			int contentLength = 0;
 			String filetype = AppPreferences.MESSAGE_TYPE_NAME_PHOTO;
 
-            doUpload(content, fromLang, toLang, toUserId,
-					file_path, contentLength, filetype);
+            doUpload(content, file_path, contentLength, filetype);
 
 		}
 	}
 
 	private void sendText(String content, boolean noTranslate) {
 		String fromLang = getMyLang();
-		if (noTranslate) {
-			fromLang = getFriendLang();
-		}
-		String toLang = getFriendLang();
-		Long toUserId = getFriendUserId();
-
 		String file_path = null;
 		int contentLength = Utils.textLength(content);
 		String filetype = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
 
         Chat chat = new Chat();
         chat.setMessage(content);
-        chat.setFromLang(fromLang);
-        chat.setToLang(toLang);
         chat.setType(filetype);
         chat.setFromContentLength(contentLength);
         chat.setFilePath(file_path);
@@ -659,9 +639,9 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             message.setId(localId);
             message.setMessageid(localId);
             message.setUserid(App.readUser().getId());
-            message.setTo_userid(toUserId);
+//            message.setTo_userid(toUserId);
             message.setFrom_lang(fromLang);
-            message.setTo_lang(toLang);
+//            message.setTo_lang(toLang);
             message.setFrom_content(content);
             message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
             message.setStatus_text(getString(R.string.data_sending));
@@ -691,17 +671,13 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 	}
 
 	private void sendVoice() {
-		String fromLang = getMyLang();
-		String toLang = getFriendLang();
-		Long toUserId = getFriendUserId();
-		String content = null;
 
+		String content = null;
 		String file_path = mVoiceFile.getName();
 		int contentLength = getVoiceLength(this, mVoiceFile);
 		String filetype = AppPreferences.MESSAGE_TYPE_NAME_VOICE;
 
-        doUpload(content, fromLang, toLang, toUserId,
-				file_path, contentLength, filetype);
+        doUpload(content, file_path, contentLength, filetype);
 	}
 
 	protected void setupComponents() {
@@ -854,9 +830,14 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
         String content = chat.getMessage();
         if (content.length() >= 1) {
             if (App.mService != null) {
-                App.mService.sendMessage(mWithJabberID, chat);
-                if (!App.mService.isAuthenticated())
-                    Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
+                if (isGroupChat){
+                    App.mService.sendGroupMessage(chatRoom, chat);
+                }else{
+                    App.mService.sendMessage(mWithJabberID, chat);
+                    if (!App.mService.isAuthenticated())
+                        Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
+
+                }
             }
             getMessageEditText().setText(null);
         }

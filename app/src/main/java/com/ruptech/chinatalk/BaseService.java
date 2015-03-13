@@ -212,14 +212,18 @@ public abstract class BaseService extends Service {
         if (isTranslationSecretary(fromJid)){
             title = getString(R.string.translation_secretary);
         }else{
-            long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
-            User user = App.userDAO.fetchUser(fromUserId);
+            boolean isGroupChat = Utils.isGroupChat(fromJid);
             String name;
-            if (user != null) {
-                name = Utils.getFriendName(fromUserId, user.getFullname());
-            } else {
-                //TODO: Get group chat name;
-                name = "Group Chat";
+            if (isGroupChat){
+                name = "Group Chat:" + fromJid.substring(0, fromJid.indexOf("@"));
+            }else{
+                long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
+                User user = App.userDAO.fetchUser(fromUserId);
+                if (user != null) {
+                    name = Utils.getFriendName(fromUserId, user.getFullname());
+                } else {
+                    name = "No name";
+                }
             }
             title = String.format(GCMIntentService.PUSH_TITLE_PATTERN,
                     name, getString(R.string.push_title_message));

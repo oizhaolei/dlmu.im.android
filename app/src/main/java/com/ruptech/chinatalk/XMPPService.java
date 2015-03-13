@@ -28,6 +28,8 @@ import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.squareup.otto.Subscribe;
 
+import org.jivesoftware.smackx.muc.MultiUserChat;
+
 /**
  * Helper class providing methods and constants common to other classes in the
  * app.
@@ -296,5 +298,17 @@ public class XMPPService extends BaseService {
             App.mSmack.sendMessage(user, chat);
         else
             TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, chat);
+    }
+
+    // 发送消息
+    public void sendGroupMessage(MultiUserChat chatRoom, Chat chat) {
+        try {
+            if (chatRoom != null)
+                App.mSmack.sendGroupMessage(chatRoom, chat);
+            else
+                TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), chatRoom.getRoom(), chat);
+        }catch (Exception e){
+            Log.d(TAG, e.getMessage());
+        }
     }
 }
