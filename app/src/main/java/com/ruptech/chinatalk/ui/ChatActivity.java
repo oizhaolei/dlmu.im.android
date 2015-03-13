@@ -73,8 +73,6 @@ public class ChatActivity extends AbstractChatActivity {
 
 	static final String TAG = Utils.CATEGORY
 			+ ChatActivity.class.getSimpleName();
-
-	private User mFriendUser;
 	private boolean isExpandedState = false;
 
 	@InjectView(R.id.activity_chat_voice_button)

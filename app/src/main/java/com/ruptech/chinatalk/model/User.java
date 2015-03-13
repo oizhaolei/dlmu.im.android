@@ -68,6 +68,8 @@ public class User extends Item implements Serializable {
 
 	private int exp_point;
 
+    public String terminal_type;
+
 	public User() {
 	}
 
@@ -126,6 +128,7 @@ public class User extends Item implements Serializable {
 			}
 		} catch (Exception e) {
 		}
+        terminal_type = json.optString("terminal_type");
 		create_id = json.optString("create_id");
 		create_date = DateCommonUtils.parseToDateFromString(json
 				.optString("create_date"));
@@ -213,6 +216,10 @@ public class User extends Item implements Serializable {
 	public double getBalance() {
 		return balance;
 	}
+
+    public String getTerminal_type() {
+        return terminal_type;
+    }
 
 	public String getCreate_id() {
 		return create_id;
@@ -421,6 +428,10 @@ public class User extends Item implements Serializable {
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
+
+    public void setTerminal_type(String terminal_type) {
+        this.terminal_type = terminal_type;
+    }
 
 	public void setUpdate_date(Date update_date) {
 		this.update_date = update_date;

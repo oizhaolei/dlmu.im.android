@@ -148,7 +148,7 @@ public class UserDAO {
 				.getDb(false)
 				.rawQuery(
 						"select u._id, f.friend_nickname, f.friend_memo, f.friend_method, password, tel, fullname, lang, user_memo, balance, "
-								+ "create_id, u.create_date, update_id, update_date, active, gender, pic_url, point "
+								+ "terminal_type, create_id, u.create_date, update_id, update_date, active, gender, pic_url, point "
 								+ "from tbl_user u, tbl_friend f "
 								+ "where u._id=f.friend_id and f.done =1 and f.user_id=? "
 								+ "order by f.friend_nickname", args);

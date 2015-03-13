@@ -497,7 +497,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                                 chat.setStatus(ChatProvider.DS_SENT_OR_READ);
                                 chat.setDate(System.currentTimeMillis());
 
-                                addChatMessageToDB(chat);
+                                addChatMessageToDB(mContentResolver, chat);
                                 // always return after adding
                                 return;
                             }
@@ -538,7 +538,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                                 chat.setStatus(ChatProvider.DS_NEW);
                                 chat.setDate(ts);
 
-                                addChatMessageToDB(chat);
+                                addChatMessageToDB(mContentResolver, chat);
                             }
 
                             App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
@@ -563,7 +563,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 + " = ?  " , new String[]{chatID});
     }
 
-    private void addChatMessageToDB(Chat chat) {
+    public static void addChatMessageToDB(ContentResolver mContentResolver, Chat chat) {
         ContentValues values = new ContentValues();
         String content = chat.getMessage();
         if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
@@ -806,7 +806,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
             // send offline -> store to DB
             chat.setStatus(ChatProvider.DS_NEW);
         }
-        addChatMessageToDB(chat);
+        addChatMessageToDB(mContentResolver, chat);
     }
 
     public static void sendOfflineMessage(ContentResolver cr, String toJID,
