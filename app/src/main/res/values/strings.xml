@@ -569,4 +569,6 @@
     <string name="status_offline">离线</string>
     <string name="status_busy">忙碌</string>
     <string name="status_online">在线</string>
+
+    <string name="invite_chat">Invite</string>
 </resources>

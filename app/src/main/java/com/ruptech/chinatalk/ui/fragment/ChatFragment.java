@@ -34,7 +34,6 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
 import com.ruptech.chinatalk.model.CommentNews;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
@@ -193,9 +192,8 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 
 
     private void startChatActivity(String userJid, String userName) {
-        User user = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(userJid));
         Intent chatIntent = new Intent(getActivity(),ChatActivity.class);
-        chatIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+        chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
         startActivity(chatIntent);
     }
 

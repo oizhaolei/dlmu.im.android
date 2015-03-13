@@ -316,7 +316,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:icon="@drawable/ic_tttalk_gray_light"
             android:theme="@style/activityDialog" />
-        <activity
+
         <activity
             android:name="com.ruptech.chinatalk.ui.dialog.ChangeFriendMemoActivity"
             android:icon="@drawable/ic_tttalk_gray_light"

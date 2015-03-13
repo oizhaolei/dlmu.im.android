@@ -1,17 +1,16 @@
 package com.ruptech.chinatalk.ui.setting;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -25,8 +24,16 @@ import com.ruptech.chinatalk.task.impl.FriendWalletPriorityTask;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.FriendOperate;
 import com.ruptech.chinatalk.ui.FriendOperate.UserType;
+import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
+import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.widget.ChatUserListAdapter;
+import com.ruptech.chinatalk.widget.MyGridView;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class ChatSettingActivity extends ActionBarActivity {
 	private final String TAG = Utils.CATEGORY
@@ -46,6 +53,7 @@ public class ChatSettingActivity extends ActionBarActivity {
 	ToggleButton isTopslipswitch;
 
 	private User mFriendUser;
+    private ChatUserListAdapter chatUserAdapter;
 
 	private FriendOperate friendOperate;
 
@@ -72,6 +80,9 @@ public class ChatSettingActivity extends ActionBarActivity {
 
 	@InjectView(R.id.activity_chat_setting_share_wallet_memo_textview)
 	View walletMemoView;
+
+    @InjectView(R.id.activity_chat_setting_user_grid)
+    MyGridView chatUserGridView;
 
 	@OnClick(R.id.activity_chat_setting_block_layout)
 	public void chatBlockHistory(View v) {
@@ -115,7 +126,8 @@ public class ChatSettingActivity extends ActionBarActivity {
 	private User getUserFromExtras() {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			User user = (User) extras.get(ChatActivity.EXTRA_FRIEND);
+			String fromJid = (String) extras.get(ChatActivity.EXTRA_JID);
+            User user = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(fromJid));
 			return user;
 		}
 		return null;
@@ -198,5 +210,24 @@ public class ChatSettingActivity extends ActionBarActivity {
 						}
 					}
 				});
+
+        chatUserAdapter = new ChatUserListAdapter(this, R.layout.item_chat_user);
+        chatUserAdapter.add(mFriendUser);
+        chatUserGridView.setAdapter(chatUserAdapter);
+        chatUserGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                if (position == chatUserAdapter.getCount() -1 ){
+                    //TODO: invite users to group chat
+                    Toast.makeText(ChatSettingActivity.this, "Invite", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(ChatSettingActivity.this,
+                            FriendProfileActivity.class);
+                    User user = chatUserAdapter.getItem(position);
+                    intent.putExtra(ProfileActivity.EXTRA_USER, user);
+                    ChatSettingActivity.this.startActivity(intent);
+                }
+            }
+        });
 	}
 }
