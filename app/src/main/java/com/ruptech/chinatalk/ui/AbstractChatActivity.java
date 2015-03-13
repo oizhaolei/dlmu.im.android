@@ -30,10 +30,13 @@ import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -46,6 +49,7 @@ import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
@@ -59,6 +63,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * 
@@ -100,6 +105,8 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 	}
 
+    public User mFriendUser;
+
 	static final int CHANGE_NICKNAME = 5678;
 
 	static final int CHAT_RETURN_PHOTO = 4321;
@@ -126,15 +133,13 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 		}
 	}
 
-//	public static void doRequestTranslate(Chat chat,
-//			TaskListener requestTranslateListener) {
-//		if (BuildConfig.DEBUG)
-//			Log.v(TAG, "doRequestTranslate");
-//
-//		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
-//		mRequestTranslateTask.setListener(requestTranslateListener);
-//		mRequestTranslateTask.execute();
-//	}
+	public void doRequestTranslate(Message message) {
+		if (BuildConfig.DEBUG)
+			Log.v(TAG, "doRequestTranslate");
+
+		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
+		mRequestTranslateTask.execute();
+	}
 
 	public static void doUploadFile(Chat chat,
 			TaskListener mUploadTaskListener) {
@@ -625,7 +630,43 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
         chat.setFromContentLength(contentLength);
         chat.setFilePath(file_path);
 
-		sendMessageIfNotNull(chat);
+        //新旧版本比较
+        if(mFriendUser!=null &&
+                (Utils.isEmpty(mFriendUser.getTerminal_type()) || mFriendUser.getTerminal_type() != App.readUser().getTerminal_type())){
+            //新版本发给旧版本
+            Message message = new Message();
+            long localId = System.currentTimeMillis();
+            message.setId(localId);
+            message.setMessageid(localId);
+            message.setUserid(App.readUser().getId());
+//            message.setTo_userid(toUserId);
+            message.setFrom_lang(fromLang);
+//            message.setTo_lang(toLang);
+            message.setFrom_content(content);
+            message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
+            message.setStatus_text(getString(R.string.data_sending));
+            message.setFile_path(file_path);
+            message.setFrom_content_length(contentLength);
+            message.setFile_type(filetype);
+            String createDateStr = DateCommonUtils.getUtcDate(new Date(),
+                    DateCommonUtils.DF_yyyyMMddHHmmssSSS);
+            message.create_date = createDateStr;
+            message.update_date = createDateStr;
+            doRequestTranslate(message);
+
+            //chat
+            chat.setFromMe(ChatProvider.OUTGOING);
+            chat.setJid(mWithJabberID);
+            chat.setPid(null);
+            chat.setDate(System.currentTimeMillis());
+
+
+            TTTalkSmackImpl.addChatMessageToDB(getContentResolver(), chat);
+            getMessageEditText().setText(null);
+        }else{
+            //新版本发给新版本
+            sendMessageIfNotNull(chat);
+        }
 
 	}
 

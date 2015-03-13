@@ -881,6 +881,7 @@ public abstract class TableContent {
 			public final String CREATE_DATE = "create_date";
 			public final String UPDATE_ID = "update_id";
 			public final String UPDATE_DATE = "update_date";
+            public final String TERMINAL_TYPE = "terminal_type";
 		}
 
 		public final Columns Columns = new Columns();
@@ -907,6 +908,7 @@ public abstract class TableContent {
 			create.append(Columns.BALANCE + " DOUBLE, ");
 			create.append(Columns.POINT + " INT, ");
 			create.append(Columns.PIC_URL + " TEXT, ");
+            create.append(Columns.TERMINAL_TYPE + " TEXT, ");
 			create.append(Columns.CREATE_ID + " TEXT, ");
 			create.append(Columns.CREATE_DATE + " date, ");
 			create.append(Columns.UPDATE_ID + " TEXT, ");
@@ -928,7 +930,7 @@ public abstract class TableContent {
 			return new String[] { Columns.ID, Columns.PASSWORD, Columns.TEL,
 					Columns.FULLNAME, Columns.LANG, Columns.ACTIVE,
 					Columns.GENDER, Columns.USER_MEMO, Columns.BALANCE,
-					Columns.POINT, Columns.PIC_URL, Columns.CREATE_ID,
+					Columns.POINT, Columns.PIC_URL, Columns.TERMINAL_TYPE, Columns.CREATE_ID,
 					Columns.CREATE_DATE, Columns.UPDATE_ID, Columns.UPDATE_DATE };
 		}
 
@@ -959,6 +961,8 @@ public abstract class TableContent {
 			user.point = cursor.getInt(cursor.getColumnIndex(Columns.POINT));
 			user.pic_url = cursor.getString(cursor
 					.getColumnIndex(Columns.PIC_URL));
+            user.terminal_type = cursor.getString(cursor
+                    .getColumnIndex(Columns.TERMINAL_TYPE));
 			user.create_id = cursor.getString(cursor
 					.getColumnIndex(Columns.CREATE_ID));
 			user.create_date = DateCommonUtils.parseToDateFromString(cursor
@@ -984,6 +988,7 @@ public abstract class TableContent {
 			v.put(Columns.BALANCE, user.balance);
 			v.put(Columns.POINT, user.point);
 			v.put(Columns.PIC_URL, user.pic_url);
+            v.put(Columns.TERMINAL_TYPE, user.terminal_type);
 			v.put(Columns.CREATE_ID, user.create_id);
 			v.put(Columns.CREATE_DATE, DateCommonUtils.dateFormat(
 					user.create_date, DateCommonUtils.DF_yyyyMMddHHmmssSSS));
