@@ -114,7 +114,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 			if (BuildConfig.DEBUG)
 				Log.e(TAG, url, e);
 		}
-	};
+	}
 
 	private ArrayList<String> chatPhotoList;
 

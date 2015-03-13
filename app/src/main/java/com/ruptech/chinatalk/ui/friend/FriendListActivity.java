@@ -77,7 +77,7 @@ public class FriendListActivity extends ActionBarActivity implements
 		if (resultCode == Activity.RESULT_OK) {
 			mFriendListViewAdapter.notifyDataSetChanged();
 		}
-	};
+	}
 
 	@Override
 	public void onBackPressed() {

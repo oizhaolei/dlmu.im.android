@@ -42,7 +42,7 @@ import com.ruptech.chinatalk.R;
 public class ActionProcessButton extends ProcessButton {
 
     public enum Mode {
-        PROGRESS, ENDLESS;
+        PROGRESS, ENDLESS
     }
 
     public static class ProgressBar {
