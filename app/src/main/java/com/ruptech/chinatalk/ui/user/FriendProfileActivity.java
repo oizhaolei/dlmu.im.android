@@ -682,7 +682,7 @@ public class FriendProfileActivity extends ActionBarActivity implements
 
 	public void sendMessageButton(View v) {
 		Intent intent = new Intent(this, ChatActivity.class);
-		intent.putExtra(ChatActivity.EXTRA_FRIEND, mUser);
+        intent.putExtra(ChatActivity.EXTRA_JID, mUser.getOF_JabberID());
 		this.startActivity(intent);
 	}
 

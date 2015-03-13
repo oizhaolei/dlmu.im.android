@@ -352,7 +352,7 @@ public class MessageReceiver {
                 User user = App.userDAO.fetchUser(Long.valueOf(notiId));
                 if (user != null) {
                     notificationIntent = new Intent(context, ChatActivity.class);
-                    notificationIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+                    notificationIntent.putExtra(ChatActivity.EXTRA_JID, user.getOF_JabberID());
                 }
         }
 

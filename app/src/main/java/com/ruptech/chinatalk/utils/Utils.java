@@ -1591,6 +1591,10 @@ public class Utils {
         return tttalkId;
     }
 
+    public static String getOF_JIDFromTTTalkId(long tttalkId){
+        return String.format("chinatalk_%d@tttalk.org",tttalkId);
+    }
+
     //Receiver 定期取得数据处理
     public static void startInfoPeriodReceiver(Context context) {
 //        long client_period_time = ServerAppInfo.DEFAULT_CLIENT_PERIOD_SECONDS;

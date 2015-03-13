@@ -22,15 +22,12 @@ import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ChatTTTActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -207,6 +204,30 @@ public abstract class BaseService extends Service {
         return false;
     }
 
+    private boolean isTranslationSecretary(String fromJid){
+        return fromJid.startsWith("tttalk.org@");
+    }
+
+    private String getMessageTitle(String fromJid){
+        String title = null;
+        if (isTranslationSecretary(fromJid)){
+            title = getString(R.string.translation_secretary);
+        }else{
+            long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
+            User user = App.userDAO.fetchUser(fromUserId);
+            String name;
+            if (user != null) {
+                name = Utils.getFriendName(fromUserId, user.getFullname());
+            } else {
+                //TODO: Get group chat name;
+                name = "Group Chat";
+            }
+            title = String.format(GCMIntentService.PUSH_TITLE_PATTERN,
+                    name, getString(R.string.push_title_message));
+        }
+        return title;
+    }
+
     public void displayMessageNotification(NewChatEvent event) {
 
         String title = null;
@@ -224,33 +245,17 @@ public abstract class BaseService extends Service {
         if (Utils.isEmpty(content))
             return;
 
-        User user;
-        if (fromUserId == -1) {
-            user = null;
-            title = getString(R.string.translation_secretary);
-        } else {
-            user = App.userDAO.fetchUser(fromUserId);
-            if (user != null) {
-                String name = Utils.getFriendName(fromUserId, user.getFullname());
-                title = String.format(GCMIntentService.PUSH_TITLE_PATTERN,
-                        name, getString(R.string.push_title_message));
-            } else {
-                return;
-            }
-        }
+        title = getMessageTitle(fromJid);
 
-        // 新消息个数
-        // PrefUtils.savePrefNewMessageCount(message.userid,
-        // PrefUtils.getPrefNewMessageCount(message.userid) + 1);
-        int notiId = Long.valueOf(fromUserId).intValue();
+        int notiId = fromJid.hashCode();
 
         if (fromUserId > 0) {
-            App.mBadgeCount.addNewMessageCount(fromUserId);
+            App.mBadgeCount.addNewMessageCount(fromJid);
         }
         Intent notificationIntent;
-        if (user != null) {
+        if (!isTranslationSecretary(fromJid)) {
             notificationIntent = new Intent(this, ChatActivity.class);
-            notificationIntent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+            notificationIntent.putExtra(ChatActivity.EXTRA_JID, fromJid);
         } else {
             notificationIntent = new Intent(this, ChatTTTActivity.class);
         }

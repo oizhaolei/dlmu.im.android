@@ -211,7 +211,7 @@ public class ChatActivity extends AbstractChatActivity {
 
 	public void doSetting(MenuItem item) {
 		Intent intent = new Intent(this, ChatSettingActivity.class);
-		intent.putExtra(ChatActivity.EXTRA_FRIEND, mFriendUser);
+		intent.putExtra(ChatActivity.EXTRA_JID, mWithJabberID);
 		this.startActivity(intent);
 	}
 
@@ -266,15 +266,10 @@ public class ChatActivity extends AbstractChatActivity {
 		return mSendButton;
 	}
 
-	private User getUserFromExtras() {
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			User user = (User) extras.get(EXTRA_FRIEND);
-			return user;
-		}
-		return null;
-	}
-
+    private void parseExtras(){
+        mWithJabberID = (String) getIntent().getExtras().get(EXTRA_JID);
+        mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(mWithJabberID));
+    }
 	@Override
 	View getVoiceButton() {
 		return voiceTypeButton;
@@ -367,7 +362,8 @@ public class ChatActivity extends AbstractChatActivity {
 		ButterKnife.inject(this);
 
         initTransClient();
-		mFriendUser = getUserFromExtras();
+        parseExtras();
+
 		if (mFriendUser == null) {
 			Toast.makeText(this, R.string.user_infomation_is_invalidate,
 					Toast.LENGTH_LONG).show();
@@ -391,8 +387,7 @@ public class ChatActivity extends AbstractChatActivity {
 				&& friendUserInfo.getDone() == AppPreferences.FRIEND_BLOCK_STATUS) {
 			Toast.makeText(this, R.string.friend_block_msg, Toast.LENGTH_LONG)
 					.show();
-			App.notificationManager.cancel(Long.valueOf(getFriendUserId())
-					.intValue());
+			App.notificationManager.cancel(mWithJabberID.hashCode());
 			finish();
 			return;
 		}
