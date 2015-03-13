@@ -65,15 +65,6 @@ public class LoginLoadingActivity extends Activity {
         gotoMainActivity(currentActivity);
     }
 
-    protected static void onmRetrieveFavoriteUserImageBegin() {
-    }
-
-    protected static void onmRetrieveFavoriteUserImageFailure(String msg) {
-        if (BuildConfig.DEBUG) {
-            Log.d("RetrieveFavoriteUserImageFailure", msg);
-        }
-    }
-
     protected static LoginLoadingActivity instance;
 
     public static final String PREF_USERINFO_NAME = "pref_userinfo_name";

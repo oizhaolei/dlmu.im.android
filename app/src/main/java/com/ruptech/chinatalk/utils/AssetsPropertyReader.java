@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Created by oizhaolei on 14/12/25.
- */
 public class AssetsPropertyReader {
     private Context context;
     private Properties properties;

@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,12 +12,12 @@ import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.Utils;
 
 public class BootReceiver extends BroadcastReceiver {
-	private static final String TAG = Utils.CATEGORY
-			+ BootReceiver.class.getSimpleName();
+    private static final String TAG = Utils.CATEGORY
+            + BootReceiver.class.getSimpleName();
     public static final String BOOT_COMPLETED_ACTION = "com.ruptech.tttalk.action.BOOT_COMPLETED";
 
     @Override
-	public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         Log.i(TAG, "action = " + action);
 
@@ -43,5 +41,5 @@ public class BootReceiver extends BroadcastReceiver {
             context.startService(i);
             App.startPeriodTaskReceiver();
         }
-	}
+    }
 }
