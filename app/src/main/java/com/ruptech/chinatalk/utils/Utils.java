@@ -1591,6 +1591,15 @@ public class Utils {
         return tttalkId;
     }
 
+    public static boolean isGroupChat(String jid){
+        return jid.contains(AppPreferences.GROUP_CHAT_SUFFIX);
+    }
+
+    public static String parseJIDFromGroupChatJID(String groupChatJID){
+        String jid = groupChatJID.substring(groupChatJID.indexOf(AppPreferences.GROUP_CHAT_SUFFIX) + AppPreferences.GROUP_CHAT_SUFFIX.length());
+        return jid;
+    }
+
     public static String getOF_JIDFromTTTalkId(long tttalkId){
         return String.format("chinatalk_%d@tttalk.org",tttalkId);
     }

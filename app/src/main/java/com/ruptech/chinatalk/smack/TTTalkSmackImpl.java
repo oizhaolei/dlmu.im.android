@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -23,6 +24,7 @@ import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -51,12 +53,17 @@ import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.GroupChatInvitation;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.carbons.Carbon;
 import org.jivesoftware.smackx.carbons.CarbonManager;
 import org.jivesoftware.smackx.forward.Forwarded;
 import org.jivesoftware.smackx.muc.InvitationListener;
+import org.jivesoftware.smackx.muc.InvitationRejectionListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.packet.DelayInfo;
 import org.jivesoftware.smackx.packet.DelayInformation;
 import org.jivesoftware.smackx.packet.VCard;
@@ -70,6 +77,8 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
     public static final String XMPP_IDENTITY_NAME = "tttalk";
@@ -144,6 +153,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         // add XMPP Ping (XEP-0199)
         pm.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
         //MUC User
+        //  Group Chat Invitations
+        pm.addExtensionProvider("x","jabber:x:conference", new GroupChatInvitation.Provider());
+
 //        pm.addExtensionProvider("x", "http://jabber.org/protocol/muc#user", new MUCUserProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
@@ -382,6 +394,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 try {
                     MultiUserChat muc = new MultiUserChat(conn, room);
                     muc.join(getUser());
+                    muc.sendMessage("Joined by " + App.readUser().getFullname());
                 } catch (org.jivesoftware.smack.XMPPException e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -809,6 +822,42 @@ public class TTTalkSmackImpl implements TTTalkSmack {
         addChatMessageToDB(mContentResolver, chat);
     }
 
+    @Override
+    public void sendGroupMessage(MultiUserChat chatRoom,Chat chat){
+        final Message newMessage = new Message(chatRoom.getRoom(), Message.Type.groupchat);
+
+        String message = chat.getMessage();
+        newMessage.setBody(message);
+        newMessage.addExtension(new DeliveryReceiptRequest());
+        newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
+                AbstractTTTalkExtension.VALUE_VER,
+                AbstractTTTalkExtension.VALUE_TITLE,
+                chat.getType(),
+                chat.getFilePath(),
+                String.valueOf(chat.getFromContentLength())
+        ));
+
+        Log.e(TAG, newMessage.toXML());
+
+        chat.setFromMe(ChatProvider.OUTGOING);
+        chat.setJid(chatRoom.getRoom());
+        chat.setPid(newMessage.getPacketID());
+        chat.setDate(System.currentTimeMillis());
+
+        if (isAuthenticated()) {
+            chat.setStatus(ChatProvider.DS_SENT_OR_READ);
+            try {
+                chatRoom.sendMessage(newMessage);
+            }catch(Exception e){
+                Log.d(TAG, e.getMessage());
+            }
+        } else {
+            // send offline -> store to DB
+            chat.setStatus(ChatProvider.DS_NEW);
+        }
+        addChatMessageToDB(mContentResolver, chat);
+    }
+
     public static void sendOfflineMessage(ContentResolver cr, String toJID,
                                           Chat chat) {
         ContentValues values = new ContentValues();
@@ -876,5 +925,71 @@ public class TTTalkSmackImpl implements TTTalkSmack {
             // SendFailListener
         }
         cursor.close();
+    }
+
+    @Override
+    public MultiUserChat createChatRoom(List<User> inviteUserList){
+        MultiUserChat room = null;
+        try {
+            String roomName = String.valueOf(App.readUser().getId());
+            for(User user : inviteUserList){
+                roomName = String.format("%s_%d", roomName, user.getId());
+            }
+            roomName = String.format("%s@conference.tttalk.org", roomName);
+            room = new MultiUserChat(mXMPPConnection, roomName);
+            room.addInvitationRejectionListener(new InvitationRejectionListener() {
+                public void invitationDeclined(String invitee, String reason) {
+                    //TODO:
+                    Toast.makeText(App.mContext, "invitationDeclined", Toast.LENGTH_SHORT).show();
+                }
+            });
+            room.create(App.mSmack.getUser());
+            room.join(App.mSmack.getUser());
+
+            Form form = room.getConfigurationForm();
+            Form submitForm = form.createAnswerForm();
+            for (Iterator fields = form.getFields(); fields.hasNext(); ) {
+                FormField field = (FormField) fields.next();
+                if (!FormField.TYPE_HIDDEN.equals(field.getType()) && field.getVariable() != null) {
+                    submitForm.setDefaultAnswer(field.getVariable());
+                }
+            }
+            submitForm.setAnswer("muc#roomconfig_publicroom", true);
+            room.sendConfigurationForm(submitForm);
+
+            for(User user : inviteUserList) {
+                room.invite(user.getOF_JabberID(), "Meet me in this excellent room");
+            }
+            room.sendMessage("Created room by " + App.readUser().getFullname());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return room;
+    }
+
+    public MultiUserChat createChatRoomByRoomName(String roomName){
+        try {
+            MultiUserChat chatRoom = new MultiUserChat(mXMPPConnection, roomName);
+            if (!chatRoom.isJoined()) {
+                chatRoom.join(App.mSmack.getUser());
+            }
+            return chatRoom;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return null;
+    }
+
+    public void getChatRoomInfo(String roomName){
+        try {
+            RoomInfo info = MultiUserChat.getRoomInfo(mXMPPConnection, roomName);
+            Log.e(TAG, "Number of occupants:" + info.getOccupantsCount());
+            Log.e(TAG, "Room Subject:" + info.getSubject());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
