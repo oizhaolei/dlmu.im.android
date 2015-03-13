@@ -1,8 +1,8 @@
 package com.ruptech.chinatalk.utils;
 
-import java.util.Iterator;
-
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class BadgeCount {
 	private JSONObject newMessageCountJson = new JSONObject();
@@ -35,25 +35,37 @@ public class BadgeCount {
 		return totalCount;
 	}
 
-	public void addNewMessageCount(Long friendId) {
-		int oldCount = getNewMessageCount(friendId);
+	public void addNewMessageCount(String fromJID) {
+		int oldCount = getNewMessageCount(fromJID);
 		oldCount++;
 		try {
-			newMessageCountJson.put(String.valueOf(friendId), oldCount);
+			newMessageCountJson.put(fromJID, oldCount);
 			saveToPref();
 		} catch (Exception e) {
 
 		}
 	}
 
-	public void removeNewMessageCount(Long friendId) {
-		newMessageCountJson.remove(String.valueOf(friendId));
+    public void addNewMessageCount(Long friendID) {
+        addNewMessageCount(Utils.getOF_JIDFromTTTalkId(friendID));
+    }
+
+	public void removeNewMessageCount(String fromJID) {
+		newMessageCountJson.remove(fromJID);
 		saveToPref();
 	}
 
-	public int getNewMessageCount(Long friendId) {
-		return newMessageCountJson.optInt(String.valueOf(friendId));
+    public void removeNewMessageCount(Long friendID) {
+        removeNewMessageCount(Utils.getOF_JIDFromTTTalkId(friendID));
+    }
+
+	public int getNewMessageCount(String fromJID) {
+		return newMessageCountJson.optInt(fromJID);
 	}
+
+    public int getNewMessageCount(Long friendID) {
+        return getNewMessageCount(Utils.getOF_JIDFromTTTalkId(friendID));
+    }
 
 	public void loadBadgeCount() {
 		newMessageCountJson = PrefUtils.getPrefNewMessageCount();

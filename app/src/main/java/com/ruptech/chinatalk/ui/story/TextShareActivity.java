@@ -1,7 +1,5 @@
 package com.ruptech.chinatalk.ui.story;
 
-import static butterknife.ButterKnife.findById;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,8 +10,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
@@ -22,6 +18,12 @@ import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ChatTTTActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.FriendListCursorAdapter;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import static butterknife.ButterKnife.findById;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class TextShareActivity extends ActionBarActivity {
 
@@ -78,7 +80,7 @@ public class TextShareActivity extends ActionBarActivity {
 
 	private void send_message(User user) {
 		Intent intent = new Intent(this, ChatActivity.class);
-		intent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+        intent.putExtra(ChatActivity.EXTRA_JID, user.getOF_JabberID());
 		if (sharedText != null)
 			intent.putExtra(SEND_TEXT, sharedText);
 		startActivity(intent);

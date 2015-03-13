@@ -1,150 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_background" >
 
+
     <LinearLayout
-        android:id="@+id/activity_chat_setting_layout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_share_wallet_layout"
+        <com.ruptech.chinatalk.widget.MyGridView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical" >
+            android:id="@+id/activity_chat_setting_user_grid"
+            android:numColumns="4"
+            android:horizontalSpacing="2dp"
+            android:verticalSpacing="2dp" />
+
+        <LinearLayout
+            android:id="@+id/activity_chat_setting_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_share_wallet_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:id="@+id/activity_chat_setting_share_wallet_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/share_wallet_for" />
+
+                <ToggleButton
+                    android:id="@+id/activity_chat_setting_share_wallet_slipswitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp" />
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/activity_chat_setting_share_wallet_textview"
+                android:id="@+id/activity_chat_setting_share_wallet_memo_textview"
                 style="@style/importance_contents_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/share_wallet_for" />
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="2dp"
+                android:text="@string/share_wallet_memo"
+                android:textColor="@color/orange" />
 
-            <ToggleButton
-                android:id="@+id/activity_chat_setting_share_wallet_slipswitch"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_is_on_top_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
-        </RelativeLayout>
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical" >
 
-        <TextView
-            android:id="@+id/activity_chat_setting_share_wallet_memo_textview"
-            style="@style/importance_contents_text_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="2dp"
-            android:text="@string/share_wallet_memo"
-            android:textColor="@color/orange" />
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/is_on_top" />
 
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_is_on_top_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical" >
+                <ToggleButton
+                    android:id="@+id/activity_chat_setting_share_is_on_top_slipswitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp" />
+            </RelativeLayout>
 
-            <TextView
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_report_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/is_on_top" />
+                android:layout_marginTop="30dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical">
 
-            <ToggleButton
-                android:id="@+id/activity_chat_setting_share_is_on_top_slipswitch"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/activity_chat_setting_report_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/friend_menu_report" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_block_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
-        </RelativeLayout>
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical">
 
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_report_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/activity_chat_setting_block_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/friend_menu_block" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/activity_chat_setting_report_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_clean_history_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/friend_menu_report" />
-        </RelativeLayout>
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical">
 
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_block_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/activity_chat_setting_clean_history_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/friend_menu_clean_chat_history" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/activity_chat_setting_block_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/activity_chat_setting_get_history_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/friend_menu_block" />
-        </RelativeLayout>
+                android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical">
 
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_clean_history_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/activity_chat_setting_clean_history_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/friend_menu_clean_chat_history" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/activity_chat_setting_get_history_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/activity_chat_setting_get_history_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="@string/friend_menu_more_chat_history" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/activity_chat_setting_get_history_textview"
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:padding="10dp"
+                    android:text="@string/friend_menu_more_chat_history" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
+</ScrollView>
 
-</RelativeLayout>

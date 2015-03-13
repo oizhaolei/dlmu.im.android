@@ -199,7 +199,7 @@ public class FriendListActivity extends ActionBarActivity implements
 				if (gotoActivityFlag == 0) {
 					Intent intent = new Intent(FriendListActivity.this,
 							ChatActivity.class);
-					intent.putExtra(ChatActivity.EXTRA_FRIEND, user);
+                    intent.putExtra(ChatActivity.EXTRA_JID, user.getOF_JabberID());
 					startActivity(intent);
 				} else {
 					gotoProfileActivity(FriendListActivity.this, user);

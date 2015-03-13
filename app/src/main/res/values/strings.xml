@@ -415,7 +415,7 @@
     <string name="wechat_check_pay_nosupport">Payment is not supported with the current version of WeChat.</string>
     <string name="wechat_pay_result_callback_msg">WeChat Payment Result：%s</string>
     <string name="share_wallet_for">Pay translation fee for %s</string>
-    <string name="is_on_top">Stichy on top</string>
+    <string name="is_on_top">Sticky on top</string>
     <string name="wifi_are_not_available">The current Wifi is not available, version update consumes 2G/3G/4G mobile phone network traffic to some extent, are you sure you want to continue?</string>
     <string name="story_translate_tips_dialog_title">Invite you to join TTTalk translator team</string>
     <string name="story_translate_tips_dialog_content">★Benefits\n 1. Improve your translation ability.\n 2. Become an international diplomatic angel.</string>
@@ -569,4 +569,6 @@
     <string name="status_offline">离线</string>
     <string name="status_busy">忙碌</string>
     <string name="status_online">在线</string>
+
+    <string name="invite_chat">Invite</string>
 </resources>

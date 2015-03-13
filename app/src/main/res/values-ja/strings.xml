@@ -550,5 +550,5 @@
     <string name="share_to_my_friend">アプリをお勧め</string>
     <string name="invite_message">「%1$s」様が貴方をTTTalkに招待しました。\n翻訳チャットで世界と出会いましょう。\n%2$s</string>
     <string name="channel_is_not_exist">チャットの存在しない。</string>
-
+    <string name="invite_chat">招待</string>
 </resources>

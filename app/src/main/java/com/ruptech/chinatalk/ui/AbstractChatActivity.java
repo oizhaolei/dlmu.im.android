@@ -110,7 +110,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 
 	static final int CHAT_RETURN_PHOTO = 4321;
 
-	public static final String EXTRA_FRIEND = "EXTRA_FRIEND";
+    public static final String EXTRA_JID = "EXTRA_JID";
 
 	static final int FRIEND_BLACK = 7856;
 
@@ -472,12 +472,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 						}
 						sendPhoto();
 					}
-				}
-			} else if (requestCode == CHANGE_NICKNAME) {
-				if (null != data.getExtras()) {
-					Bundle extras = data.getExtras();
-					Friend friend = (Friend) extras.get(EXTRA_FRIEND);
-					mFriend = friend;
 				}
 			} else if (requestCode == FRIEND_BLACK) {
 				this.finish();
