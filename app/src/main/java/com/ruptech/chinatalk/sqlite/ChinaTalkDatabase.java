@@ -53,7 +53,7 @@ public class ChinaTalkDatabase {
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
-            }else if (oldVersion == 62) {
+            }else if (oldVersion >= 62) {
                 try {
                     udpateTable62to64(db);
                 } catch (Exception e) {
