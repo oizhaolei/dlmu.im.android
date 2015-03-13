@@ -55,7 +55,7 @@ public class ChinaTalkDatabase {
                 }
             }else if (oldVersion == 62) {
                 try {
-                    udpateTable62to63(db);
+                    udpateTable62to64(db);
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
@@ -159,8 +159,10 @@ public class ChinaTalkDatabase {
                 + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
 	}
 
-    private static void udpateTable62to63(SQLiteDatabase db) {
+    private static void udpateTable62to64(SQLiteDatabase db) {
         db.execSQL(ChatTable.getBulkInsertSQL());
+        db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
+                + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
     }
 
 	/**
