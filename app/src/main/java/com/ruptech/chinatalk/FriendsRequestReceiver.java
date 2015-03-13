@@ -2,7 +2,7 @@ package com.ruptech.chinatalk;
 
 import com.ruptech.chinatalk.task.impl.RetrieveFriendsTask;
 import com.ruptech.chinatalk.utils.Utils;
-
+@Deprecated
 public class FriendsRequestReceiver {
 	static final String TAG = Utils.CATEGORY
 			+ FriendsRequestReceiver.class.getSimpleName();

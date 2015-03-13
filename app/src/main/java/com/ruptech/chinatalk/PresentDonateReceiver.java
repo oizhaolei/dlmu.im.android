@@ -30,6 +30,7 @@ import java.net.URL;
  * @author Administrator
  *
  */
+@Deprecated
 public class PresentDonateReceiver {
 	private static void copy(InputStream in, OutputStream out)
 			throws IOException {

@@ -31,7 +31,7 @@ public class LoginLoadingActivity extends Activity {
      * 进入主画面
      */
     public static void gotoMainActivity(final Activity currentActivity) {
-        App.registePush(currentActivity);
+//        App.registePush(currentActivity);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -43,7 +43,7 @@ public class LoginLoadingActivity extends Activity {
 
     public static void loginSuccessHandler(Activity currentActivity) {
         // Utils.hideProgress(currentActivity);
-        App.registePush(currentActivity);
+//        App.registePush(currentActivity);
         App.userDAO.mergeUser(App.readUser());
 
         App.messageDAO.gc();// 删除超过MAX_MSG_GC_NUM垃圾数据

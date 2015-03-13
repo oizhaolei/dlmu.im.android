@@ -25,6 +25,7 @@ import java.util.Map;
 /**
  *
  */
+@Deprecated
 public class BaiduPushMessageReceiver {
     public static boolean isRegistered() {
         return registered;

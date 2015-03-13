@@ -1,32 +1,29 @@
-package com.ruptech.chinatalk.smack;
+package com.ruptech.chinatalk.smack.ext;
 
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.xmlpull.v1.XmlPullParser;
 
-public class TTTalkFriendExtension extends AbstractTTTalkExtension {
-    public static final String ELEMENT_NAME = "friend";
-    private String friend_id = null;
-    private String fullname = null;
+public class TTTalkAnnouncementExtension extends AbstractTTTalkExtension {
+    public static final String ELEMENT_NAME = "announcement";
+    private String announcement_id = null;
 
-    public TTTalkFriendExtension(String test, String ver, String title, String friend_id, String fullname) {
+    public TTTalkAnnouncementExtension(String test, String ver, String title, String announcement_id) {
         super(test, ver, title);
 
-        this.friend_id = friend_id;
-        this.fullname = fullname;
+        this.announcement_id = announcement_id;
     }
 
-    public String getFriend_id() {
-        return friend_id;
-    }
 
-    public String getFullname(){
-        return fullname;
+
+    public String get_announcement_id() {
+        return announcement_id;
     }
 
     public String getElementName() {
         return ELEMENT_NAME;
     }
+
 
     public String toXML() {
         StringBuilder buf = new StringBuilder();
@@ -34,8 +31,7 @@ public class TTTalkFriendExtension extends AbstractTTTalkExtension {
                 .append(' ').append("test=\"").append(getTest()).append("\"")
                 .append(' ').append("ver=\"").append(getVer()).append("\"")
                 .append(' ').append("title=\"").append(getTitle()).append("\"")
-                .append(' ').append("friend_id=\"").append(friend_id).append("\"")
-                .append(' ').append("fullname=\"").append(fullname).append("\"")
+                .append(' ').append("announcement_id=\"").append(announcement_id).append("\"")
                 .append("/>");
         return buf.toString();
     }
@@ -47,14 +43,13 @@ public class TTTalkFriendExtension extends AbstractTTTalkExtension {
             String test = parser.getAttributeValue("", "test");
             String ver = parser.getAttributeValue("", "ver");
             String title = parser.getAttributeValue("", "title");
-            String friend_id = parser.getAttributeValue("", "friend_id");
-            String fullname = parser.getAttributeValue("", "fullname");
+            String announcement_id = parser.getAttributeValue("", "announcement_id");
 
             while (parser.getEventType() != 3) {
                 parser.next();
             }
 
-            return new TTTalkFriendExtension(test, ver, title, friend_id, fullname);
+            return new TTTalkAnnouncementExtension(test, ver, title, announcement_id);
         }
     }
 }

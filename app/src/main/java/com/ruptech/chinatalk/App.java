@@ -1,6 +1,5 @@
 package com.ruptech.chinatalk;
 
-import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,12 +7,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -74,24 +69,6 @@ public class App extends Application implements
     static public Properties properties;
     private SmackAndroid smackAndroid;
 
-    public static void baiduRegiste(Context context) {
-//        PushManager.startWork(context, PushConstants.LOGIN_TYPE_API_KEY,
-//                getMetaValue(context, "api_key"));
-    }
-
-    public static void gcmRegiste(final Context context) {
-//		// Make sure the device has the proper dependencies.
-//		GCMRegistrar.checkDevice(context);
-//		// Make sure the manifest was properly set - comment out this line
-//		// while developing the app, then uncomment it when it's ready.
-//		GCMRegistrar.checkManifest(context);
-//
-//		String regId = GCMRegistrar.getRegistrationId(context);
-//		if (Utils.isEmpty(regId)) {
-//			// Automatically registers application on startup.
-//			GCMRegistrar.register(context, SENDER_ID);
-//		}
-    }
 
     public static Http2Server getHttp2Server() {
         if (http2Server == null) {
@@ -114,31 +91,7 @@ public class App extends Application implements
         return httpStoryServer;
     }
 
-    // 获取ApiKey
-    public static String getMetaValue(Context context, String metaKey) {
-        Bundle metaData = null;
-        String apiKey = null;
-        if (context == null || metaKey == null) {
-            return null;
-        }
-        try {
-            ApplicationInfo ai = context.getPackageManager()
-                    .getApplicationInfo(context.getPackageName(),
-                            PackageManager.GET_META_DATA);
-            if (null != ai) {
-                metaData = ai.metaData;
-            }
-            if (null != metaData) {
-                apiKey = metaData.getString(metaKey);
-            }
-        } catch (NameNotFoundException e) {
-            Utils.sendClientException(e);
-
-        }
-        return apiKey;
-    }
-
-    public static boolean isAvailableShowMain() {
+	public static boolean isAvailableShowMain() {
         return App.isVersionChecked() && App.readUser() != null
                 && App.readServerAppInfo() != null;
     }
@@ -160,23 +113,6 @@ public class App extends Application implements
         if (user == null)
             user = PrefUtils.readUser();
         return user;
-    }
-
-    public static void registePush(Context context) {
-        Log.d(TAG, "App.onCreate push start");
-        if (Utils.isEmpty(App.simCountryIso) || "cn".equals(App.simCountryIso)) {
-            try {
-                // 百度云推送初始化
-                baiduRegiste(context);
-            } catch (Exception e) {
-            }
-        } else {
-            try {
-                // 谷歌推送注册
-                gcmRegiste(context);
-            } catch (Exception e) {
-            }
-        }
     }
 
     public static void removeUser() {
@@ -255,22 +191,7 @@ public class App extends Application implements
         System.exit(1);
     }
 
-    // 获取servic名
-    String getCurProcessName(Context context) {
-        int pid = android.os.Process.myPid();
-        ActivityManager mActivityManager = (ActivityManager) context
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager
-                .getRunningAppProcesses()) {
-            if (appProcess.pid == pid) {
-
-                return appProcess.processName;
-            }
-        }
-        return null;
-    }
-
-    private void getDisplaySize() {
+	private void getDisplaySize() {
         WindowManager wm = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -321,7 +242,6 @@ public class App extends Application implements
         // setup handler for uncaught exception
         Thread.setDefaultUncaughtExceptionHandler(this);
         mContext = this.getApplicationContext();
-        Log.i(TAG, "App.onCreate:" + getCurProcessName(this));
         TelephonyManager mTelephonyMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         simCountryIso = mTelephonyMgr.getSimCountryIso();
         if (BuildConfig.DEBUG)
@@ -340,6 +260,7 @@ public class App extends Application implements
                 }
             });
         } catch (Exception e) {
+	        Log.e(TAG, e.getMessage());
         }
 
         messageDAO = new MessageDAO(getApplicationContext());
@@ -402,7 +323,7 @@ public class App extends Application implements
         if (previousException != null) {
             SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
                     previousException);
-            //sendClientMessageTask.execute();
+            sendClientMessageTask.execute();
             PrefUtils.removePrefException();
         }
     }

@@ -55,38 +55,6 @@ public class XMPPService extends BaseService {
     private PendingIntent mPAlarmIntent;
     private BroadcastReceiver mAlarmReceiver = new ReconnectAlarmReceiver();
 
-    public static void sendTranslatedNotice(Context context, String msg,
-                                            boolean colse) {
-        final int iconRes = R.drawable.ic_launcher;
-        long when = System.currentTimeMillis();
-        int defaults = Notification.DEFAULT_LIGHTS;
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                context).setSmallIcon(iconRes)
-                .setContentTitle(context.getString(R.string.app_name))
-                .setContentText(msg);
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addNextIntent(notificationIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, 0);
-        mBuilder.setWhen(when);
-        mBuilder.setAutoCancel(true);
-        mBuilder.setDefaults(defaults);
-        mBuilder.setTicker(msg);
-        mBuilder.setContentIntent(resultPendingIntent);
-        App.notificationManager.notify(iconRes, mBuilder.build());
-
-        if (colse) {
-            // close after 10 seconds
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    App.notificationManager.cancel(iconRes);
-                }
-            }, 1000 * 10);
-        }
-    }
-
     /**
      * UI线程反馈连接失败
      *

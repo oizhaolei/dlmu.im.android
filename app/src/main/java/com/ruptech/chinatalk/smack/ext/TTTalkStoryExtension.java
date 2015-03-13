@@ -1,29 +1,37 @@
-package com.ruptech.chinatalk.smack;
+package com.ruptech.chinatalk.smack.ext;
 
 import org.jivesoftware.smack.packet.PacketExtension;
 import org.jivesoftware.smack.provider.PacketExtensionProvider;
 import org.xmlpull.v1.XmlPullParser;
 
-public class TTTalkAnnouncementExtension extends AbstractTTTalkExtension {
-    public static final String ELEMENT_NAME = "announcement";
-    private String announcement_id = null;
+public class TTTalkStoryExtension extends AbstractTTTalkExtension {
+    public static final String ELEMENT_NAME = "story";
+    private String photo_id;
+    private String content;
+    private String fullname;
 
-    public TTTalkAnnouncementExtension(String test, String ver, String title, String announcement_id) {
+    public TTTalkStoryExtension(String test, String ver, String title, String photo_id, String content, String fullname) {
         super(test, ver, title);
 
-        this.announcement_id = announcement_id;
+        this.photo_id = photo_id;
+        this.content = content;
+        this.fullname = fullname;
+    }
+    public String getPhoto_id(){
+        return photo_id;
     }
 
+    public String getContent(){
+        return content;
+    }
 
-
-    public String get_announcement_id() {
-        return announcement_id;
+    public String getFullname(){
+        return fullname;
     }
 
     public String getElementName() {
         return ELEMENT_NAME;
     }
-
 
     public String toXML() {
         StringBuilder buf = new StringBuilder();
@@ -31,7 +39,9 @@ public class TTTalkAnnouncementExtension extends AbstractTTTalkExtension {
                 .append(' ').append("test=\"").append(getTest()).append("\"")
                 .append(' ').append("ver=\"").append(getVer()).append("\"")
                 .append(' ').append("title=\"").append(getTitle()).append("\"")
-                .append(' ').append("announcement_id=\"").append(announcement_id).append("\"")
+                .append(' ').append("photo_id=\"").append(photo_id).append("\"")
+                .append(' ').append("content=\"").append(content).append("\"")
+                .append(' ').append("fullname=\"").append(fullname).append("\"")
                 .append("/>");
         return buf.toString();
     }
@@ -43,13 +53,15 @@ public class TTTalkAnnouncementExtension extends AbstractTTTalkExtension {
             String test = parser.getAttributeValue("", "test");
             String ver = parser.getAttributeValue("", "ver");
             String title = parser.getAttributeValue("", "title");
-            String announcement_id = parser.getAttributeValue("", "announcement_id");
+            String photo_id = parser.getAttributeValue("", "photo_id");
+            String content = parser.getAttributeValue("", "content");
+            String fullname = parser.getAttributeValue("", "fullname");
 
             while (parser.getEventType() != 3) {
                 parser.next();
             }
 
-            return new TTTalkAnnouncementExtension(test, ver, title, announcement_id);
+            return new TTTalkStoryExtension(test, ver, title, photo_id, content, fullname);
         }
     }
 }

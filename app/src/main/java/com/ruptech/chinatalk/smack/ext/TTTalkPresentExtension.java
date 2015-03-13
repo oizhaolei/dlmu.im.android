@@ -1,4 +1,4 @@
-package com.ruptech.chinatalk.smack;
+package com.ruptech.chinatalk.smack.ext;
 
 import com.ruptech.chinatalk.utils.Utils;
 

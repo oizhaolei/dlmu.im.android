@@ -37,7 +37,7 @@ import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
-import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -756,19 +756,19 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
     protected TranslateClient client;
 
     protected static final String[] PROJECTION_FROM = new String[]{
-            TableContent.ChatTable.Columns.ID,
-            TableContent.ChatTable.Columns.DATE,
-            TableContent.ChatTable.Columns.DIRECTION,
-            TableContent.ChatTable.Columns.JID,
-            TableContent.ChatTable.Columns.MESSAGE,
-            TableContent.ChatTable.Columns.TYPE,
-            TableContent.ChatTable.Columns.FILE_PATH,
-            TableContent.ChatTable.Columns.CONTENT_LENGTH,
-            TableContent.ChatTable.Columns.TO_MESSAGE,
-            TableContent.ChatTable.Columns.DATE,
-            TableContent.ChatTable.Columns.MESSAGE_ID,
-            TableContent.ChatTable.Columns.DELIVERY_STATUS,
-            TableContent.ChatTable.Columns.PACKET_ID};// 查询字段
+            ChatTable.Columns.ID,
+            ChatTable.Columns.DATE,
+            ChatTable.Columns.DIRECTION,
+            ChatTable.Columns.JID,
+            ChatTable.Columns.MESSAGE,
+            ChatTable.Columns.TYPE,
+            ChatTable.Columns.FILE_PATH,
+            ChatTable.Columns.CONTENT_LENGTH,
+            ChatTable.Columns.TO_MESSAGE,
+            ChatTable.Columns.DATE,
+            ChatTable.Columns.MESSAGE_ID,
+            ChatTable.Columns.DELIVERY_STATUS,
+            ChatTable.Columns.PACKET_ID};// 查询字段
     // 查询联系人数据库字段
     private static final String[] STATUS_QUERY = new String[]{
             RosterTable.Columns.STATUS_MODE,

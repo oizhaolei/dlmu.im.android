@@ -1209,7 +1209,7 @@ public class Utils {
     public static void onBackPressed(Activity activity) {
 
         if (!hasParent(activity)) {
-            App.registePush(activity);
+//            App.registePush(activity);
             LoginLoadingActivity.gotoMainActivity(activity);
             activity.finish();
         } else {

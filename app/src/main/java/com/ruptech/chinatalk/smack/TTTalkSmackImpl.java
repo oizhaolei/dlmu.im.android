@@ -25,6 +25,15 @@ import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.ext.AbstractTTTalkExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkAnnouncementExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkBalanceExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkFriendExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkPresentExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkQaExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkStoryExtension;
+import com.ruptech.chinatalk.smack.ext.TTTalkTranslatedExtension;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -81,568 +90,532 @@ import java.util.Iterator;
 import java.util.List;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
-    public static final String XMPP_IDENTITY_NAME = "tttalk";
-    public static final String XMPP_IDENTITY_TYPE = "phone";
-    public static final int PACKET_TIMEOUT = 30000;
+	public static final String XMPP_IDENTITY_NAME = "tttalk";
+	public static final String XMPP_IDENTITY_TYPE = "phone";
+	public static final int PACKET_TIMEOUT = 30000;
 
-    protected final String TAG = Utils.CATEGORY
-            + TTTalkSmackImpl.class.getSimpleName();
+	protected final String TAG = Utils.CATEGORY
+			+ TTTalkSmackImpl.class.getSimpleName();
 
-    final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
-            ChatTable.Columns.ID, ChatTable.Columns.JID, ChatTable.Columns.MESSAGE,
-            ChatTable.Columns.DATE, ChatTable.Columns.PACKET_ID};
-    final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.DIRECTION
-            + " = " + ChatProvider.OUTGOING + " AND "
-            + ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
+	final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
+			ChatTable.Columns.ID, ChatTable.Columns.JID, ChatTable.Columns.MESSAGE,
+			ChatTable.Columns.DATE, ChatTable.Columns.PACKET_ID};
+	final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.DIRECTION
+			+ " = " + ChatProvider.OUTGOING + " AND "
+			+ ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
 
-    private final ContentResolver mContentResolver;
-    private ConnectionConfiguration mXMPPConfig;
-    private XMPPConnection mXMPPConnection;
-    private InvitationListener mInvitationListener;
-    private PacketListener mPacketListener;
-    private PacketListener mSendFailureListener;
-    private ConnectionListener mConnectionListener;
-    private Roster mRoster;
-    private RosterListener mRosterListener;
+	private final ContentResolver mContentResolver;
+	private ConnectionConfiguration mXMPPConfig;
+	private XMPPConnection mXMPPConnection;
+	private InvitationListener mInvitationListener;
+	private PacketListener mPacketListener;
+	private PacketListener mSendFailureListener;
+	private ConnectionListener mConnectionListener;
+	private Roster mRoster;
+	private RosterListener mRosterListener;
 
-    static {
-        registerSmackProviders();
-    }
+	static {
+		registerSmackProviders();
+	}
 
-    public TTTalkSmackImpl(String server, int port, ContentResolver contentResolver) {
-        boolean smackDebug = PrefUtils.getPrefBoolean(
-                PrefUtils.SMACKDEBUG, false);
-        boolean requireSsl = PrefUtils.getPrefBoolean(
-                PrefUtils.REQUIRE_TLS, false);
+	public TTTalkSmackImpl(String server, int port, ContentResolver contentResolver) {
+		boolean smackDebug = PrefUtils.getPrefBoolean(
+				PrefUtils.SMACKDEBUG, false);
+		boolean requireSsl = PrefUtils.getPrefBoolean(
+				PrefUtils.REQUIRE_TLS, false);
 
-        this.mXMPPConfig = new ConnectionConfiguration(server, port);
+		this.mXMPPConfig = new ConnectionConfiguration(server, port);
 
-        this.mXMPPConfig.setReconnectionAllowed(false);
-        this.mXMPPConfig.setSendPresence(false);
-        this.mXMPPConfig.setCompressionEnabled(false); // disable for now
-        this.mXMPPConfig.setDebuggerEnabled(smackDebug);
-        this.mXMPPConfig.setSASLAuthenticationEnabled(requireSsl);
-        if (requireSsl) {
-            this.mXMPPConfig
-                    .setSecurityMode(ConnectionConfiguration.SecurityMode.required);
-        } else {
-            this.mXMPPConfig
-                    .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
-        }
-        this.mXMPPConnection = new XMPPConnection(mXMPPConfig);
-        mContentResolver = contentResolver;
-    }
+		this.mXMPPConfig.setReconnectionAllowed(false);
+		this.mXMPPConfig.setSendPresence(false);
+		this.mXMPPConfig.setCompressionEnabled(false); // disable for now
+		this.mXMPPConfig.setDebuggerEnabled(smackDebug);
+		this.mXMPPConfig.setSASLAuthenticationEnabled(requireSsl);
+		if (requireSsl) {
+			this.mXMPPConfig
+					.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
+		} else {
+			this.mXMPPConfig
+					.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+		}
+		this.mXMPPConnection = new XMPPConnection(mXMPPConfig);
+		mContentResolver = contentResolver;
+	}
 
-    // ping-pong服务器
+	// ping-pong服务器
 
-    static void registerSmackProviders() {
-        ProviderManager pm = ProviderManager.getInstance();
-        // add IQ handling
-        pm.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
+	static void registerSmackProviders() {
+		ProviderManager pm = ProviderManager.getInstance();
+		// add IQ handling
+		pm.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
 
-        // add delayed delivery notifications
-        pm.addExtensionProvider("delay", "urn:xmpp:delay", new DelayInfoProvider());
-        pm.addExtensionProvider("x", "jabber:x:delay", new DelayInfoProvider());
-        // add carbons and forwarding
-        pm.addExtensionProvider("forwarded", Forwarded.NAMESPACE, new Forwarded.Provider());
-        pm.addExtensionProvider("sent", Carbon.NAMESPACE, new Carbon.Provider());
-        pm.addExtensionProvider("received", Carbon.NAMESPACE, new Carbon.Provider());
-        // add delivery receipts
-        pm.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-        pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
-        // add XMPP Ping (XEP-0199)
-        pm.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
-        //MUC User
-        //  Group Chat Invitations
-        pm.addExtensionProvider("x","jabber:x:conference", new GroupChatInvitation.Provider());
+		// add delayed delivery notifications
+		pm.addExtensionProvider("delay", "urn:xmpp:delay", new DelayInfoProvider());
+		pm.addExtensionProvider("x", "jabber:x:delay", new DelayInfoProvider());
+		// add carbons and forwarding
+		pm.addExtensionProvider("forwarded", Forwarded.NAMESPACE, new Forwarded.Provider());
+		pm.addExtensionProvider("sent", Carbon.NAMESPACE, new Carbon.Provider());
+		pm.addExtensionProvider("received", Carbon.NAMESPACE, new Carbon.Provider());
+		// add delivery receipts
+		pm.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+		pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
+		// add XMPP Ping (XEP-0199)
+		pm.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
+		//MUC User
+		//  Group Chat Invitations
+		pm.addExtensionProvider("x", "jabber:x:conference", new GroupChatInvitation.Provider());
 
 //        pm.addExtensionProvider("x", "http://jabber.org/protocol/muc#user", new MUCUserProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
 
-        pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
-        pm.addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
-        pm.addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
-        pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
-        pm.addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
-        pm.addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
-        pm.addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
-        pm.addExtensionProvider(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkStoryExtension.Provider());
+		pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
+		pm.addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
+		pm.addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
+		pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
+		pm.addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
+		pm.addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
+		pm.addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
+		pm.addExtensionProvider(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkStoryExtension.Provider());
 
 
+		ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
+		ServiceDiscoveryManager.setIdentityType(XMPP_IDENTITY_TYPE);
+	}
 
-        ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
-        ServiceDiscoveryManager.setIdentityType(XMPP_IDENTITY_TYPE);
-    }
+	@Override
+	public boolean login(String account, String password) throws XMPPException {
+		try {
+			if (mXMPPConnection.isConnected()) {
+				try {
+					mXMPPConnection.disconnect();
+				} catch (Exception e) {
+					Log.d(TAG, "conn.disconnect() failed: " + e);
+				}
+			}
+			SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
+			SmackConfiguration.setKeepAliveInterval(-1);
+			SmackConfiguration.setDefaultPingInterval(0);
 
-    @Override
-    public boolean login(String account, String password) throws XMPPException {
-        try {
-            if (mXMPPConnection.isConnected()) {
-                try {
-                    mXMPPConnection.disconnect();
-                } catch (Exception e) {
-                    Log.d(TAG, "conn.disconnect() failed: " + e);
-                }
-            }
-            SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
-            SmackConfiguration.setKeepAliveInterval(-1);
-            SmackConfiguration.setDefaultPingInterval(0);
+			mXMPPConnection.connect();
+			if (!mXMPPConnection.isConnected()) {
+				throw new XMPPException("SMACK connect failed without exception!");
+			}
 
-            mXMPPConnection.connect();
-            if (!mXMPPConnection.isConnected()) {
-                throw new XMPPException("SMACK connect failed without exception!");
-            }
+			initServiceDiscovery();// 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
+			// SMACK auto-logins if we were authenticated before
+			if (!mXMPPConnection.isAuthenticated()) {
 
-            initServiceDiscovery();// 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
-            // SMACK auto-logins if we were authenticated before
-            if (!mXMPPConnection.isAuthenticated()) {
+				mXMPPConnection.login(account, password, XMPP_IDENTITY_NAME);
+			}
+			setStatusFromConfig();// 更新在线状态
+		} catch (org.jivesoftware.smack.XMPPException e) {
+			throw new XMPPException(e.getLocalizedMessage(),
+					e.getWrappedThrowable());
+		} catch (Exception e) {
+			// actually we just care for IllegalState or NullPointer or XMPPEx.
+			Log.e(TAG, "login(): " + Log.getStackTraceString(e));
+			throw new XMPPException(e.getLocalizedMessage(), e.getCause());
+		}
+		registerAllListener();// 注册监听其他的事件，比如新消息
 
-                mXMPPConnection.login(account, password, XMPP_IDENTITY_NAME);
-            }
-            setStatusFromConfig();// 更新在线状态
-        } catch (org.jivesoftware.smack.XMPPException e) {
-            throw new XMPPException(e.getLocalizedMessage(),
-                    e.getWrappedThrowable());
-        } catch (Exception e) {
-            // actually we just care for IllegalState or NullPointer or XMPPEx.
-            Log.e(TAG, "login(): " + Log.getStackTraceString(e));
-            throw new XMPPException(e.getLocalizedMessage(), e.getCause());
-        }
-        registerAllListener();// 注册监听其他的事件，比如新消息
+		ServerUtilities.registerOpenfirePushOnServer(getUser());
+		App.mBus.post(new OnlineEvent());
+		return mXMPPConnection.isAuthenticated();
+	}
 
-        ServerUtilities.registerOpenfirePushOnServer(getUser());
-        App.mBus.post(new OnlineEvent());
-        return mXMPPConnection.isAuthenticated();
-    }
+	/**
+	 * **************************** start 联系人数据库事件处理 *********************************
+	 */
+	private void registerRosterListener() {
+		mRoster = mXMPPConnection.getRoster();
+		mRosterListener = new RosterListener() {
+			private boolean isFristRoter;
 
-    /**
-     * **************************** start 联系人数据库事件处理 *********************************
-     */
-    private void registerRosterListener() {
-        mRoster = mXMPPConnection.getRoster();
-        mRosterListener = new RosterListener() {
-            private boolean isFristRoter;
+			@Override
+			public void presenceChanged(Presence presence) {
+				Log.i(TAG, "presenceChanged(" + presence.getFrom() + "): " + presence);
+				String jabberID = XMPPUtils.getJabberID(presence.getFrom());
+				RosterEntry rosterEntry = mRoster.getEntry(jabberID);
+				updateRosterEntryInDB(rosterEntry);
+				App.mBus.post(new RosterChangeEvent());
+			}
 
-            @Override
-            public void presenceChanged(Presence presence) {
-                Log.i(TAG, "presenceChanged(" + presence.getFrom() + "): " + presence);
-                String jabberID = XMPPUtils.getJabberID(presence.getFrom());
-                RosterEntry rosterEntry = mRoster.getEntry(jabberID);
-                updateRosterEntryInDB(rosterEntry);
-                App.mBus.post(new RosterChangeEvent());
-            }
+			@Override
+			public void entriesUpdated(Collection<String> entries) {
 
-            @Override
-            public void entriesUpdated(Collection<String> entries) {
+				Log.i(TAG, "entriesUpdated(" + entries + ")");
+				for (String entry : entries) {
+					RosterEntry rosterEntry = mRoster.getEntry(entry);
+					updateRosterEntryInDB(rosterEntry);
+				}
+				App.mBus.post(new RosterChangeEvent());
+			}
 
-                Log.i(TAG, "entriesUpdated(" + entries + ")");
-                for (String entry : entries) {
-                    RosterEntry rosterEntry = mRoster.getEntry(entry);
-                    updateRosterEntryInDB(rosterEntry);
-                }
-                App.mBus.post(new RosterChangeEvent());
-            }
+			@Override
+			public void entriesDeleted(Collection<String> entries) {
+				Log.i(TAG, "entriesDeleted(" + entries + ")");
+				for (String entry : entries) {
+					deleteRosterEntryFromDB(entry);
+				}
+				App.mBus.post(new RosterChangeEvent());
+			}
 
-            @Override
-            public void entriesDeleted(Collection<String> entries) {
-                Log.i(TAG, "entriesDeleted(" + entries + ")");
-                for (String entry : entries) {
-                    deleteRosterEntryFromDB(entry);
-                }
-                App.mBus.post(new RosterChangeEvent());
-            }
+			@Override
+			public void entriesAdded(Collection<String> entries) {
+				Log.i(TAG, "entriesAdded(" + entries + ")");
+				ContentValues[] cvs = new ContentValues[entries.size()];
+				int i = 0;
+				for (String entry : entries) {
+					RosterEntry rosterEntry = mRoster.getEntry(entry);
+					cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
+				}
+				mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
+				if (isFristRoter) {
+					isFristRoter = false;
+					App.mBus.post(new RosterChangeEvent());
+				}
+			}
+		};
+		mRoster.addRosterListener(mRosterListener);
+	}
 
-            @Override
-            public void entriesAdded(Collection<String> entries) {
-                Log.i(TAG, "entriesAdded(" + entries + ")");
-                ContentValues[] cvs = new ContentValues[entries.size()];
-                int i = 0;
-                for (String entry : entries) {
-                    RosterEntry rosterEntry = mRoster.getEntry(entry);
-                    cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
-                }
-                mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
-                if (isFristRoter) {
-                    isFristRoter = false;
-                    App.mBus.post(new RosterChangeEvent());
-                }
-            }
-        };
-        mRoster.addRosterListener(mRosterListener);
-    }
+	/**
+	 * ************** end 发送离线消息 **********************
+	 */
 
-    /**
-     * ************** end 发送离线消息 **********************
-     */
+	private void updateRosterEntryInDB(final RosterEntry entry) {
+		final ContentValues values = getContentValuesForRosterEntry(entry);
 
-    private void updateRosterEntryInDB(final RosterEntry entry) {
-        final ContentValues values = getContentValuesForRosterEntry(entry);
+		if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
+				RosterTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
+			addRosterEntryToDB(entry);
+	}
 
-        if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
-                RosterTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
-            addRosterEntryToDB(entry);
-    }
+	private void addRosterEntryToDB(final RosterEntry entry) {
+		ContentValues values = getContentValuesForRosterEntry(entry);
+		Uri uri = mContentResolver.insert(RosterProvider.CONTENT_URI, values);
+		Log.i(TAG, "addRosterEntryToDB: Inserted " + uri);
+	}
 
-    private void addRosterEntryToDB(final RosterEntry entry) {
-        ContentValues values = getContentValuesForRosterEntry(entry);
-        Uri uri = mContentResolver.insert(RosterProvider.CONTENT_URI, values);
-        Log.i(TAG, "addRosterEntryToDB: Inserted " + uri);
-    }
+	private void deleteRosterEntryFromDB(final String jabberID) {
+		int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
+				RosterTable.Columns.JID + " = ?", new String[]{jabberID});
+		Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
+	}
 
-    private void deleteRosterEntryFromDB(final String jabberID) {
-        int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
-                RosterTable.Columns.JID + " = ?", new String[]{jabberID});
-        Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
-    }
+	private ContentValues getContentValuesForRosterEntry(final RosterEntry entry) {
+		final ContentValues values = new ContentValues();
 
-    private ContentValues getContentValuesForRosterEntry(final RosterEntry entry) {
-        final ContentValues values = new ContentValues();
+		values.put(RosterTable.Columns.JID, entry.getUser());
+		values.put(RosterTable.Columns.ALIAS, getName(entry));
 
-        values.put(RosterTable.Columns.JID, entry.getUser());
-        values.put(RosterTable.Columns.ALIAS, getName(entry));
+		Presence presence = mRoster.getPresence(entry.getUser());
+		values.put(RosterTable.Columns.STATUS_MODE, getStatusInt(presence));
+		values.put(RosterTable.Columns.STATUS_MESSAGE, presence.getStatus());
+		values.put(RosterTable.Columns.GROUP, getGroup(entry.getGroups()));
 
-        Presence presence = mRoster.getPresence(entry.getUser());
-        values.put(RosterTable.Columns.STATUS_MODE, getStatusInt(presence));
-        values.put(RosterTable.Columns.STATUS_MESSAGE, presence.getStatus());
-        values.put(RosterTable.Columns.GROUP, getGroup(entry.getGroups()));
+		return values;
+	}
 
-        return values;
-    }
+	private int getStatusInt(final Presence presence) {
+		return getStatus(presence).ordinal();
+	}
 
-    private int getStatusInt(final Presence presence) {
-        return getStatus(presence).ordinal();
-    }
+	private StatusMode getStatus(Presence presence) {
+		if (presence.getType() == Presence.Type.available) {
+			if (presence.getMode() != null) {
+				return StatusMode.valueOf(presence.getMode().name());
+			}
+			return StatusMode.available;
+		}
+		return StatusMode.offline;
+	}
 
-    private StatusMode getStatus(Presence presence) {
-        if (presence.getType() == Presence.Type.available) {
-            if (presence.getMode() != null) {
-                return StatusMode.valueOf(presence.getMode().name());
-            }
-            return StatusMode.available;
-        }
-        return StatusMode.offline;
-    }
+	private void unRegisterAllListener() {
+		mXMPPConnection.removeConnectionListener(mConnectionListener);
+		mXMPPConnection.removePacketListener(mPacketListener);
+		mXMPPConnection.removePacketSendFailureListener(mSendFailureListener);
+		MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
+		mRoster.removeRosterListener(mRosterListener);
+	}
 
-    private void unRegisterAllListener() {
-        mXMPPConnection.removeConnectionListener(mConnectionListener);
-        mXMPPConnection.removePacketListener(mPacketListener);
-        mXMPPConnection.removePacketSendFailureListener(mSendFailureListener);
-        MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
-        mRoster.removeRosterListener(mRosterListener);
-    }
-
-    private void registerAllListener() {
-        // actually, authenticated must be true now, or an exception must have
-        // been thrown.
-        if (isAuthenticated()) {
-            registerConnectionListener();
-            registerMessageListener();
-            registerMessageSendFailureListener();
-            registerChatRoomInvitationListener();
-            registerRosterListener();// 监听联系人动态变化
+	private void registerAllListener() {
+		// actually, authenticated must be true now, or an exception must have
+		// been thrown.
+		if (isAuthenticated()) {
+			registerConnectionListener();
+			registerMessageListener();
+			registerMessageSendFailureListener();
+			registerChatRoomInvitationListener();
+			registerRosterListener();// 监听联系人动态变化
 //            registerPongListener();
-            sendOfflineMessages();
+			sendOfflineMessages();
 
-        }
-    }
+		}
+	}
 
-    private void registerConnectionListener(){
-        if (mConnectionListener != null)
-            mXMPPConnection.removeConnectionListener(mConnectionListener);
+	private void registerConnectionListener() {
+		if (mConnectionListener != null)
+			mXMPPConnection.removeConnectionListener(mConnectionListener);
 
-        mConnectionListener = new ConnectionListener() {
-            public void connectionClosedOnError(Exception e) {
-                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
-            }
+		mConnectionListener = new ConnectionListener() {
+			public void connectionClosedOnError(Exception e) {
+				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
+			}
 
-            public void connectionClosed() {
-                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
-            }
+			public void connectionClosed() {
+				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
+			}
 
-            public void reconnectingIn(int seconds) {
-                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
-            }
+			public void reconnectingIn(int seconds) {
+				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
+			}
 
-            public void reconnectionFailed(Exception e) {
-                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
-            }
+			public void reconnectionFailed(Exception e) {
+				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
+			}
 
-            public void reconnectionSuccessful() {
-                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
-            }
-        };
+			public void reconnectionSuccessful() {
+				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
+			}
+		};
 
-        mXMPPConnection.addConnectionListener(mConnectionListener);
-    }
+		mXMPPConnection.addConnectionListener(mConnectionListener);
+	}
 
-    private void registerChatRoomInvitationListener() {
+	private void registerChatRoomInvitationListener() {
 
-        ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(mXMPPConnection);
-        boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
-        Log.e(TAG, "mucSupported:"+mucSupported);
+		ServiceDiscoveryManager manager = ServiceDiscoveryManager.getInstanceFor(mXMPPConnection);
+		boolean mucSupported = manager.includesFeature("http://jabber.org/protocol/muc");
+		Log.e(TAG, "mucSupported:" + mucSupported);
 
 
-        if (mInvitationListener != null)
-            MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
+		if (mInvitationListener != null)
+			MultiUserChat.removeInvitationListener(mXMPPConnection, mInvitationListener);
 
-        mInvitationListener = new InvitationListener() {
-            @Override
-            public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason,
-                                           final String password, final Message message) {
-                Log.e(TAG,  String.format("invitationReceived - room:%s, inviter:%s, reason:%s, password:%s, message:%s", room,inviter,reason,password,message.toXML()));
-                try {
-                    MultiUserChat muc = new MultiUserChat(conn, room);
-                    muc.join(getUser());
-                    muc.sendMessage("Joined by " + App.readUser().getFullname());
-                } catch (org.jivesoftware.smack.XMPPException e) {
-                    Log.e(TAG, e.getMessage());
-                }
+		mInvitationListener = new InvitationListener() {
+			@Override
+			public void invitationReceived(final Connection conn, final String room, final String inviter, final String reason,
+			                               final String password, final Message message) {
+				Log.e(TAG, String.format("invitationReceived - room:%s, inviter:%s, reason:%s, password:%s, message:%s", room, inviter, reason, password, message.toXML()));
+				try {
+					MultiUserChat muc = new MultiUserChat(conn, room);
+					muc.join(getUser());
+					muc.sendMessage("Joined by " + App.readUser().getFullname());
+				} catch (org.jivesoftware.smack.XMPPException e) {
+					Log.e(TAG, e.getMessage());
+				}
 
-            }
-        };
+			}
+		};
 
-        MultiUserChat.addInvitationListener(mXMPPConnection, mInvitationListener);
-    }
+		MultiUserChat.addInvitationListener(mXMPPConnection, mInvitationListener);
+	}
 
-    /**
-     * ********* start 新消息处理 *******************
-     */
-    private void registerMessageListener() {
-        // do not register multiple packet listeners
-        if (mPacketListener != null)
-            mXMPPConnection.removePacketListener(mPacketListener);
+	/**
+	 * ********* start 新消息处理 *******************
+	 */
+	private void registerMessageListener() {
+		// do not register multiple packet listeners
+		if (mPacketListener != null)
+			mXMPPConnection.removePacketListener(mPacketListener);
 
-        PacketTypeFilter filter = new PacketTypeFilter(Message.class);
+		//TODO use PacketExtensionFilter
+		PacketTypeFilter filter = new PacketTypeFilter(Message.class);
 
-        mPacketListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                try {
-                    if (packet instanceof Message) {
-                        Message msg = (Message) packet;
-                        String chatMessage = msg.getBody();
+		mPacketListener = new PacketListener() {
+			public void processPacket(Packet packet) {
+				try {
+					Message msg = (Message) packet;
+					String chatMessage = msg.getBody();
 
-                        String fromJID = XMPPUtils.getJabberID(msg.getFrom());
+					String fromJID = XMPPUtils.getJabberID(msg.getFrom());
 
-                        Log.e(TAG, msg.toXML());
-                        if ("tttalk.org".equals(fromJID)) {
-                            App.mBus.post(new SystemMessageEvent(chatMessage));
-                        }
+					Log.e(TAG, msg.toXML());
+					if ("tttalk.org".equals(fromJID)) {
+						App.mBus.post(new SystemMessageEvent(chatMessage));
+					}
 
-                        Collection<PacketExtension> extensions = msg.getExtensions();
-                        TTTalkExtension tttalkExtension = null;
-                        TTTalkTranslatedExtension tttalkTranslatedExtension = null;
-                        TTTalkBalanceExtension tttalkBalanceExtension = null;
-                        TTTalkQaExtension tttalkQaExtension = null;
-                        TTTalkAnnouncementExtension tttalkAnnouncementExtension = null;
-                        TTTalkFriendExtension tttalkFriendExtension = null;
-                        TTTalkPresentExtension tttalkPresentExtension = null;
-                        TTTalkStoryExtension tttalkStoryExtension = null;
-                        String type = null;
-                        String file_path = null;
-                        int content_length = 0;
+					Collection<PacketExtension> extensions = msg.getExtensions();
+					TTTalkExtension tttalkExtension = null;
+					TTTalkTranslatedExtension tttalkTranslatedExtension = null;
+					TTTalkBalanceExtension tttalkBalanceExtension = null;
+					TTTalkQaExtension tttalkQaExtension = null;
+					TTTalkAnnouncementExtension tttalkAnnouncementExtension = null;
+					TTTalkFriendExtension tttalkFriendExtension = null;
+					TTTalkPresentExtension tttalkPresentExtension = null;
+					TTTalkStoryExtension tttalkStoryExtension = null;
+					String type = null;
+					String file_path = null;
+					int content_length = 0;
 
-                        for(PacketExtension ext : extensions){
-                            if (ext instanceof TTTalkExtension){
-                                tttalkExtension =(TTTalkExtension)ext;
-                            } else if (ext instanceof TTTalkTranslatedExtension){
-                                tttalkTranslatedExtension =(TTTalkTranslatedExtension)ext;
-                            } else if (ext instanceof TTTalkBalanceExtension){
-                                tttalkBalanceExtension =(TTTalkBalanceExtension)ext;
-                            } else if (ext instanceof TTTalkQaExtension){
-                                tttalkQaExtension =(TTTalkQaExtension)ext;
-                            } else if (ext instanceof TTTalkAnnouncementExtension){
-                                tttalkAnnouncementExtension =(TTTalkAnnouncementExtension)ext;
-                            } else if (ext instanceof TTTalkFriendExtension){
-                                tttalkFriendExtension =(TTTalkFriendExtension)ext;
-                            } else if (ext instanceof TTTalkPresentExtension){
-                                tttalkPresentExtension =(TTTalkPresentExtension)ext;
-                            } else if (ext instanceof TTTalkStoryExtension){
-                                tttalkStoryExtension =(TTTalkStoryExtension)ext;
-                            }
-                        }
+					for (PacketExtension ext : extensions) {
+						if (ext instanceof TTTalkExtension) {
+							tttalkExtension = (TTTalkExtension) ext;
+						} else if (ext instanceof TTTalkTranslatedExtension) {
+							tttalkTranslatedExtension = (TTTalkTranslatedExtension) ext;
+						} else if (ext instanceof TTTalkBalanceExtension) {
+							tttalkBalanceExtension = (TTTalkBalanceExtension) ext;
+						} else if (ext instanceof TTTalkQaExtension) {
+							tttalkQaExtension = (TTTalkQaExtension) ext;
+						} else if (ext instanceof TTTalkAnnouncementExtension) {
+							tttalkAnnouncementExtension = (TTTalkAnnouncementExtension) ext;
+						} else if (ext instanceof TTTalkFriendExtension) {
+							tttalkFriendExtension = (TTTalkFriendExtension) ext;
+						} else if (ext instanceof TTTalkPresentExtension) {
+							tttalkPresentExtension = (TTTalkPresentExtension) ext;
+						} else if (ext instanceof TTTalkStoryExtension) {
+							tttalkStoryExtension = (TTTalkStoryExtension) ext;
+						}
+					}
 
-                        if(tttalkBalanceExtension != null){
-                            App.readUser().setBalance(Double.valueOf(tttalkBalanceExtension.getBalance()));
-                        } else if(tttalkQaExtension != null){
-                            App.mBus.post(new QAEvent(msg.getBody(), Integer.valueOf(tttalkQaExtension.getqa_id())));
-                        } else if(tttalkAnnouncementExtension != null){
-                            App.mBus.post(new AnnouncementEvent(msg.getBody(),Integer.valueOf(tttalkAnnouncementExtension.get_announcement_id())));
-                        } else if(tttalkFriendExtension != null){
-                            App.mBus.post(new FriendEvent(tttalkFriendExtension.getFullname(),Integer.valueOf(tttalkFriendExtension.getFriend_id())));
-                        } else if(tttalkPresentExtension != null){
-                            App.mBus.post(new PresentEvent(Long.valueOf(tttalkPresentExtension.getPresent_id()),Long.valueOf(tttalkPresentExtension.getTo_user_photo_id()),tttalkPresentExtension.getFullname(),tttalkPresentExtension.getTo_user_photo_id(),tttalkPresentExtension.getPic_url()));
-                        } else if(tttalkStoryExtension != null){
-                            App.mBus.post(new StoryEvent(tttalkStoryExtension.getPhoto_id(),tttalkStoryExtension.getTitle(),tttalkStoryExtension.getContent(),tttalkStoryExtension.getFullname()));
-                        } else {
-                            if (tttalkExtension != null) {
-                                type = tttalkExtension.getType();
-                                file_path = tttalkExtension.getFilePath();
-                                content_length = tttalkExtension.getContentLength();
-                            }
+					if (tttalkBalanceExtension != null) {
+						App.readUser().setBalance(Double.valueOf(tttalkBalanceExtension.getBalance()));
+					} else if (tttalkQaExtension != null) {
+						App.mBus.post(new QAEvent(msg.getBody(), Integer.valueOf(tttalkQaExtension.getqa_id())));
+					} else if (tttalkAnnouncementExtension != null) {
+						App.mBus.post(new AnnouncementEvent(msg.getBody(), Integer.valueOf(tttalkAnnouncementExtension.get_announcement_id())));
+					} else if (tttalkFriendExtension != null) {
+						App.mBus.post(new FriendEvent(tttalkFriendExtension.getFullname(), Integer.valueOf(tttalkFriendExtension.getFriend_id())));
+					} else if (tttalkPresentExtension != null) {
+						App.mBus.post(new PresentEvent(Long.valueOf(tttalkPresentExtension.getPresent_id()), Long.valueOf(tttalkPresentExtension.getTo_user_photo_id()), tttalkPresentExtension.getFullname(), tttalkPresentExtension.getTo_user_photo_id(), tttalkPresentExtension.getPic_url()));
+					} else if (tttalkStoryExtension != null) {
+						App.mBus.post(new StoryEvent(tttalkStoryExtension.getPhoto_id(), tttalkStoryExtension.getTitle(), tttalkStoryExtension.getContent(), tttalkStoryExtension.getFullname()));
+					} else {
+						if (tttalkExtension != null) {
+							type = tttalkExtension.getType();
+							file_path = tttalkExtension.getFilePath();
+							content_length = tttalkExtension.getContentLength();
+						}
 
-                            // try to extract a carbon
-                            Carbon cc = CarbonManager.getCarbon(msg);
-                            if (cc != null
-                                    && cc.getDirection() == Carbon.Direction.received) {
-                                Log.d(TAG, "carbon: " + cc.toXML());
-                                msg = (Message) cc.getForwarded()
-                                        .getForwardedPacket();
-                                chatMessage = msg.getBody();
-                                // fall through
-                            } else if (cc != null
-                                    && cc.getDirection() == Carbon.Direction.sent) {
-                                Log.d(TAG, "carbon: " + cc.toXML());
-                                msg = (Message) cc.getForwarded()
-                                        .getForwardedPacket();
-                                chatMessage = msg.getBody();
-                                if (chatMessage == null)
-                                    return;
+						if (chatMessage == null) {
+							return;
+						}
 
-                                Chat chat = new Chat();
-                                chat.setFromMe(ChatProvider.OUTGOING);
-                                chat.setMessage(chatMessage);
-                                chat.setType(type);
-                                chat.setFilePath(file_path);
-                                chat.setFromContentLength(content_length);
-                                chat.setJid(fromJID);
-                                chat.setPid(msg.getPacketID());
-                                chat.setStatus(ChatProvider.DS_SENT_OR_READ);
-                                chat.setDate(System.currentTimeMillis());
+						if (msg.getType() == Message.Type.error) {
+							chatMessage = "<Error> " + chatMessage;
+						}
 
-                                addChatMessageToDB(mContentResolver, chat);
-                                // always return after adding
-                                return;
-                            }
+						long ts;
+						DelayInfo timestamp = (DelayInfo) msg.getExtension(
+								"delay", "urn:xmpp:delay");
+						if (timestamp == null)
+							timestamp = (DelayInfo) msg.getExtension("x",
+									"jabber:x:delay");
+						if (timestamp != null)
+							ts = timestamp.getStamp().getTime();
+						else
+							ts = System.currentTimeMillis();
 
-                            if (chatMessage == null) {
-                                return;
-                            }
+						if (fromJID.startsWith(App.properties.getProperty("translator_jid"))) {
+							if (tttalkTranslatedExtension != null) {
+								String messageId = tttalkTranslatedExtension.getMessage_id();
+								setToContent(messageId, chatMessage);
+							}
+						} else {
+							Chat chat = new Chat();
+							chat.setFromMe(ChatProvider.INCOMING);
+							chat.setMessage(chatMessage);
+							chat.setType(type);
+							chat.setFilePath(file_path);
+							chat.setFromContentLength(content_length);
+							chat.setJid(fromJID);
+							chat.setPid(msg.getPacketID());
+							chat.setStatus(ChatProvider.DS_NEW);
+							chat.setDate(ts);
 
-                            if (msg.getType() == Message.Type.error) {
-                                chatMessage = "<Error> " + chatMessage;
-                            }
+							addChatMessageToDB(mContentResolver, chat);
+						}
 
-                            long ts;
-                            DelayInfo timestamp = (DelayInfo) msg.getExtension(
-                                    "delay", "urn:xmpp:delay");
-                            if (timestamp == null)
-                                timestamp = (DelayInfo) msg.getExtension("x",
-                                        "jabber:x:delay");
-                            if (timestamp != null)
-                                ts = timestamp.getStamp().getTime();
-                            else
-                                ts = System.currentTimeMillis();
+						App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
+					}
 
-                            if (fromJID.startsWith(App.properties.getProperty("translator_jid"))) {
-                                if (tttalkTranslatedExtension != null) {
-                                    String messageId = tttalkTranslatedExtension.getMessage_id();
-                                    setToContent(messageId, chatMessage);
-                                }
-                            } else {
-                                Chat chat = new Chat();
-                                chat.setFromMe(ChatProvider.INCOMING);
-                                chat.setMessage(chatMessage);
-                                chat.setType(type);
-                                chat.setFilePath(file_path);
-                                chat.setFromContentLength(content_length);
-                                chat.setJid(fromJID);
-                                chat.setPid(msg.getPacketID());
-                                chat.setStatus(ChatProvider.DS_NEW);
-                                chat.setDate(ts);
+				} catch (Exception e) {
+					Log.e(TAG, "failed to process packet:");
+					Log.e(TAG, e.getMessage(), e);
+				}
+			}
+		};
 
-                                addChatMessageToDB(mContentResolver, chat);
-                            }
+		mXMPPConnection.addPacketListener(mPacketListener, filter);
+	}
 
-                            App.mBus.post(new NewChatEvent(fromJID, chatMessage, type));
-                        }
+	private void setToContent(String chatID, String message) {
+		ContentValues cv = new ContentValues();
+		cv.put(ChatTable.Columns.TO_MESSAGE, message);
 
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "failed to process packet:");
-                    Log.e(TAG, e.getMessage(), e);
-                }
-            }
-        };
+		mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
+				+ " = ?  ", new String[]{chatID});
+	}
 
-        mXMPPConnection.addPacketListener(mPacketListener, filter);
-    }
+	public static void addChatMessageToDB(ContentResolver mContentResolver, Chat chat) {
+		ContentValues values = new ContentValues();
+		String content = chat.getMessage();
+		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
+			content = App.mContext.getString(R.string.notification_picture);
+		} else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
+			content = App.mContext.getString(R.string.notification_voice);
+		}
 
-    private void setToContent(String chatID, String message) {
-        ContentValues cv = new ContentValues();
-        cv.put(ChatTable.Columns.TO_MESSAGE, message);
+		values.put(ChatTable.Columns.DIRECTION, chat.getFromMe());
+		values.put(ChatTable.Columns.JID, chat.getJid());
+		values.put(ChatTable.Columns.MESSAGE, content);
+		values.put(ChatTable.Columns.TYPE, chat.getType());
+		values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
+		values.put(ChatTable.Columns.CONTENT_LENGTH, chat.getFromContentLength());
+		values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
+		values.put(ChatTable.Columns.DATE, chat.getDate());
+		values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
 
-        mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
-                + " = ?  " , new String[]{chatID});
-    }
+		mContentResolver.insert(ChatProvider.CONTENT_URI, values);
+	}
 
-    public static void addChatMessageToDB(ContentResolver mContentResolver, Chat chat) {
-        ContentValues values = new ContentValues();
-        String content = chat.getMessage();
-        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
-            content = App.mContext.getString(R.string.notification_picture);
-        } else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
-            content = App.mContext.getString(R.string.notification_voice);
-        }
+	/**
+	 * ************** start 处理消息发送失败状态 **********************
+	 */
+	private void registerMessageSendFailureListener() {
+		// do not register multiple packet listeners
+		if (mSendFailureListener != null)
+			mXMPPConnection
+					.removePacketSendFailureListener(mSendFailureListener);
 
-        values.put(ChatTable.Columns.DIRECTION, chat.getFromMe());
-        values.put(ChatTable.Columns.JID, chat.getJid());
-        values.put(ChatTable.Columns.MESSAGE, content);
-        values.put(ChatTable.Columns.TYPE, chat.getType());
-        values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
-        values.put(ChatTable.Columns.CONTENT_LENGTH, chat.getFromContentLength());
-        values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
-        values.put(ChatTable.Columns.DATE, chat.getDate());
-        values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
+		PacketTypeFilter filter = new PacketTypeFilter(Message.class);
 
-        mContentResolver.insert(ChatProvider.CONTENT_URI, values);
-    }
+		mSendFailureListener = new PacketListener() {
+			public void processPacket(Packet packet) {
+				try {
+					if (packet instanceof Message) {
+						Message msg = (Message) packet;
+						String chatMessage = msg.getBody();
 
-    /**
-     * ************** start 处理消息发送失败状态 **********************
-     */
-    private void registerMessageSendFailureListener() {
-        // do not register multiple packet listeners
-        if (mSendFailureListener != null)
-            mXMPPConnection
-                    .removePacketSendFailureListener(mSendFailureListener);
-
-        PacketTypeFilter filter = new PacketTypeFilter(Message.class);
-
-        mSendFailureListener = new PacketListener() {
-            public void processPacket(Packet packet) {
-                try {
-                    if (packet instanceof Message) {
-                        Message msg = (Message) packet;
-                        String chatMessage = msg.getBody();
-
-                        Log.d("SmackableImp",
-                                "untranslate "
-                                        + chatMessage
-                                        + " could not be sent (ID:"
-                                        + (msg.getPacketID() == null ? "null"
-                                        : msg.getPacketID()) + ")");
+						Log.d("SmackableImp",
+								"untranslate "
+										+ chatMessage
+										+ " could not be sent (ID:"
+										+ (msg.getPacketID() == null ? "null"
+										: msg.getPacketID()) + ")");
 //                        changeMessageDeliveryStatus(msg.getPacketID(),
 //                                ChatConstants.DS_NEW);
-                    }
-                } catch (Exception e) {
-                    // SMACK silently discards exceptions dropped from
-                    // processPacket :(
-                    Log.e(TAG, "failed to process packet:");
-                    Log.e(TAG, e.getMessage(), e);
-                }
-            }
-        };
+					}
+				} catch (Exception e) {
+					// SMACK silently discards exceptions dropped from
+					// processPacket :(
+					Log.e(TAG, "failed to process packet:");
+					Log.e(TAG, e.getMessage(), e);
+				}
+			}
+		};
 
-        mXMPPConnection.addPacketSendFailureListener(mSendFailureListener,
-                filter);
-    }
+		mXMPPConnection.addPacketSendFailureListener(mSendFailureListener,
+				filter);
+	}
 
-    /**
-     * ************** end 处理消息发送失败状态 **********************
-     */
+	/**
+	 * ************** end 处理消息发送失败状态 **********************
+	 */
 
-    public void changeMessageDeliveryStatus(String packetID, int new_status) {
+	public void changeMessageDeliveryStatus(String packetID, int new_status) {
 //        ContentValues cv = new ContentValues();
 //        cv.put(ChatConstants.DELIVERY_STATUS, new_status);
 //        Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
@@ -650,346 +623,346 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 //        mContentResolver.update(rowuri, cv, ChatConstants.PACKET_ID
 //                + " = ? AND " + ChatConstants.DIRECTION + " = "
 //                + ChatConstants.OUTGOING, new String[]{packetID});
-    }
+	}
 
 
-    private String getGroup(Collection<RosterGroup> groups) {
-        for (RosterGroup group : groups) {
-            return group.getName();
-        }
-        return "";
-    }
+	private String getGroup(Collection<RosterGroup> groups) {
+		for (RosterGroup group : groups) {
+			return group.getName();
+		}
+		return "";
+	}
 
-    private String getName(RosterEntry rosterEntry) {
-        String name = rosterEntry.getName();
-        if (name != null && name.length() > 0) {
-            return name;
-        }
-        name = StringUtils.parseName(rosterEntry.getUser());
-        if (name.length() > 0) {
-            return name;
-        }
-        return rosterEntry.getUser();
-    }
-
-
-    /**
-     * 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
-     */
-    private void initServiceDiscovery() {
-        // register connection features
-        ServiceDiscoveryManager sdm = ServiceDiscoveryManager
-                .getInstanceFor(mXMPPConnection);
-        if (sdm == null)
-            sdm = new ServiceDiscoveryManager(mXMPPConnection);
-
-        sdm.addFeature("http://jabber.org/protocol/disco#info");
-
-        // reference PingManager, set ping flood protection to 10s
-        PingManager.getInstanceFor(mXMPPConnection).setPingMinimumInterval(
-                10 * 1000);
-        // reference DeliveryReceiptManager, add listener
-
-        DeliveryReceiptManager dm = DeliveryReceiptManager
-                .getInstanceFor(mXMPPConnection);
-        dm.enableAutoReceipts();
-        dm.registerReceiptReceivedListener(new DeliveryReceiptManager.ReceiptReceivedListener() {
-            public void onReceiptReceived(String fromJid, String toJid,
-                                          String receiptId) {
-                Log.d(TAG, "got delivery receipt for " + receiptId);
-                //changeMessageDeliveryStatus(receiptId, ChatConstants.DS_ACKED);
-            }
-        });
-    }
-
-    @Override
-    public boolean isAuthenticated() {
-        if (mXMPPConnection != null) {
-            return (mXMPPConnection.isConnected() && mXMPPConnection
-                    .isAuthenticated());
-        }
-        return false;
-    }
-
-    public void setStatusFromConfig() {
-        boolean messageCarbons = true;
-        String statusMode = PrefUtils.AVAILABLE;
-        String statusMessage = "online";
-        int priority = 0;
-        if (messageCarbons)
-            CarbonManager.getInstanceFor(mXMPPConnection).sendCarbonsEnabled(
-                    true);
-
-        Presence presence = new Presence(Presence.Type.available);
-        Presence.Mode mode = Presence.Mode.valueOf(statusMode);
-        presence.setMode(mode);
-        presence.setStatus(statusMessage);
-        presence.setPriority(priority);
-        mXMPPConnection.sendPacket(presence);
-    }
+	private String getName(RosterEntry rosterEntry) {
+		String name = rosterEntry.getName();
+		if (name != null && name.length() > 0) {
+			return name;
+		}
+		name = StringUtils.parseName(rosterEntry.getUser());
+		if (name.length() > 0) {
+			return name;
+		}
+		return rosterEntry.getUser();
+	}
 
 
-    @Override
-    public byte[] getAvatar(String jid) throws XMPPException {
-        try {
-            VCard vcard = new VCard();
-            vcard.load(mXMPPConnection, jid);
-            return vcard.getAvatar();
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            throw new XMPPException(e.getMessage());
-        }
-    }
+	/**
+	 * 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
+	 */
+	private void initServiceDiscovery() {
+		// register connection features
+		ServiceDiscoveryManager sdm = ServiceDiscoveryManager
+				.getInstanceFor(mXMPPConnection);
+		if (sdm == null)
+			sdm = new ServiceDiscoveryManager(mXMPPConnection);
 
-    @Override
-    public String getUser() {
-        return mXMPPConnection.getUser();
-    }
+		sdm.addFeature("http://jabber.org/protocol/disco#info");
 
-    @Override
-    public boolean logout() {
-        Log.d(TAG, "unRegisterCallback()");
-        // remove callbacks _before_ tossing old connection
-        try {
-            unRegisterAllListener();
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            // ignore it!
-            return false;
-        }
+		// reference PingManager, set ping flood protection to 10s
+		PingManager.getInstanceFor(mXMPPConnection).setPingMinimumInterval(
+				10 * 1000);
+		// reference DeliveryReceiptManager, add listener
+
+		DeliveryReceiptManager dm = DeliveryReceiptManager
+				.getInstanceFor(mXMPPConnection);
+		dm.enableAutoReceipts();
+		dm.registerReceiptReceivedListener(new DeliveryReceiptManager.ReceiptReceivedListener() {
+			public void onReceiptReceived(String fromJid, String toJid,
+			                              String receiptId) {
+				Log.d(TAG, "got delivery receipt for " + receiptId);
+				//changeMessageDeliveryStatus(receiptId, ChatConstants.DS_ACKED);
+			}
+		});
+	}
+
+	@Override
+	public boolean isAuthenticated() {
+		if (mXMPPConnection != null) {
+			return (mXMPPConnection.isConnected() && mXMPPConnection
+					.isAuthenticated());
+		}
+		return false;
+	}
+
+	public void setStatusFromConfig() {
+		boolean messageCarbons = true;
+		String statusMode = PrefUtils.AVAILABLE;
+		String statusMessage = "online";
+		int priority = 0;
+		if (messageCarbons)
+			CarbonManager.getInstanceFor(mXMPPConnection).sendCarbonsEnabled(
+					true);
+
+		Presence presence = new Presence(Presence.Type.available);
+		Presence.Mode mode = Presence.Mode.valueOf(statusMode);
+		presence.setMode(mode);
+		presence.setStatus(statusMessage);
+		presence.setPriority(priority);
+		mXMPPConnection.sendPacket(presence);
+	}
 
 
-        if (mXMPPConnection.isConnected()) {
-            // work around SMACK's #%&%# blocking disconnect()
-            new Thread() {
-                public void run() {
-                    Log.d(TAG, "shutDown thread started");
-                    mXMPPConnection.disconnect();
-                    App.mBus.post(new OfflineEvent());
-                    Log.d(TAG, "shutDown thread finished");
-                }
-            }.start();
-        }
-        return true;
-    }
+	@Override
+	public byte[] getAvatar(String jid) throws XMPPException {
+		try {
+			VCard vcard = new VCard();
+			vcard.load(mXMPPConnection, jid);
+			return vcard.getAvatar();
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+			throw new XMPPException(e.getMessage());
+		}
+	}
 
-    @Override
-    public boolean createAccount(String username, String password) {
-        boolean result = false;
-        try {
-            mXMPPConnection.connect();
-            AccountManager accountManager = new AccountManager(mXMPPConnection);
-            if (accountManager.supportsAccountCreation()) {
-                accountManager.createAccount(username, password);
-                result = true;
-            }
+	@Override
+	public String getUser() {
+		return mXMPPConnection.getUser();
+	}
 
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return result;
-    }
+	@Override
+	public boolean logout() {
+		Log.d(TAG, "unRegisterCallback()");
+		// remove callbacks _before_ tossing old connection
+		try {
+			unRegisterAllListener();
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+			// ignore it!
+			return false;
+		}
 
-    @Override
-    public void sendMessage(String toJID,Chat chat){
-        final Message newMessage = new Message(toJID, Message.Type.chat);
 
-        String message = chat.getMessage();
-        newMessage.setBody(message);
-        newMessage.addExtension(new DeliveryReceiptRequest());
-        newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
-                AbstractTTTalkExtension.VALUE_VER,
-                AbstractTTTalkExtension.VALUE_TITLE,
-                chat.getType(),
-                chat.getFilePath(),
-                String.valueOf(chat.getFromContentLength())
-                ));
+		if (mXMPPConnection.isConnected()) {
+			// work around SMACK's #%&%# blocking disconnect()
+			new Thread() {
+				public void run() {
+					Log.d(TAG, "shutDown thread started");
+					mXMPPConnection.disconnect();
+					App.mBus.post(new OfflineEvent());
+					Log.d(TAG, "shutDown thread finished");
+				}
+			}.start();
+		}
+		return true;
+	}
 
-        Log.e(TAG, newMessage.toXML());
+	@Override
+	public boolean createAccount(String username, String password) {
+		boolean result = false;
+		try {
+			mXMPPConnection.connect();
+			AccountManager accountManager = new AccountManager(mXMPPConnection);
+			if (accountManager.supportsAccountCreation()) {
+				accountManager.createAccount(username, password);
+				result = true;
+			}
 
-        chat.setFromMe(ChatProvider.OUTGOING);
-        chat.setJid(toJID);
-        chat.setPid(newMessage.getPacketID());
-        chat.setDate(System.currentTimeMillis());
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return result;
+	}
 
-        if (isAuthenticated()) {
-            chat.setStatus(ChatProvider.DS_SENT_OR_READ);
-            mXMPPConnection.sendPacket(newMessage);
-        } else {
-            // send offline -> store to DB
-            chat.setStatus(ChatProvider.DS_NEW);
-        }
-        addChatMessageToDB(mContentResolver, chat);
-    }
+	@Override
+	public void sendMessage(String toJID, Chat chat) {
+		final Message newMessage = new Message(toJID, Message.Type.chat);
 
-    @Override
-    public void sendGroupMessage(MultiUserChat chatRoom,Chat chat){
-        final Message newMessage = new Message(chatRoom.getRoom(), Message.Type.groupchat);
+		String message = chat.getMessage();
+		newMessage.setBody(message);
+		newMessage.addExtension(new DeliveryReceiptRequest());
+		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
+				AbstractTTTalkExtension.VALUE_VER,
+				AbstractTTTalkExtension.VALUE_TITLE,
+				chat.getType(),
+				chat.getFilePath(),
+				String.valueOf(chat.getFromContentLength())
+		));
 
-        String message = chat.getMessage();
-        newMessage.setBody(message);
-        newMessage.addExtension(new DeliveryReceiptRequest());
-        newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
-                AbstractTTTalkExtension.VALUE_VER,
-                AbstractTTTalkExtension.VALUE_TITLE,
-                chat.getType(),
-                chat.getFilePath(),
-                String.valueOf(chat.getFromContentLength())
-        ));
+		Log.e(TAG, newMessage.toXML());
 
-        Log.e(TAG, newMessage.toXML());
+		chat.setFromMe(ChatProvider.OUTGOING);
+		chat.setJid(toJID);
+		chat.setPid(newMessage.getPacketID());
+		chat.setDate(System.currentTimeMillis());
 
-        chat.setFromMe(ChatProvider.OUTGOING);
-        chat.setJid(chatRoom.getRoom());
-        chat.setPid(newMessage.getPacketID());
-        chat.setDate(System.currentTimeMillis());
+		if (isAuthenticated()) {
+			chat.setStatus(ChatProvider.DS_SENT_OR_READ);
+			mXMPPConnection.sendPacket(newMessage);
+		} else {
+			// send offline -> store to DB
+			chat.setStatus(ChatProvider.DS_NEW);
+		}
+		addChatMessageToDB(mContentResolver, chat);
+	}
 
-        if (isAuthenticated()) {
-            chat.setStatus(ChatProvider.DS_SENT_OR_READ);
-            try {
-                chatRoom.sendMessage(newMessage);
-            }catch(Exception e){
-                Log.d(TAG, e.getMessage());
-            }
-        } else {
-            // send offline -> store to DB
-            chat.setStatus(ChatProvider.DS_NEW);
-        }
-        addChatMessageToDB(mContentResolver, chat);
-    }
+	@Override
+	public void sendGroupMessage(MultiUserChat chatRoom, Chat chat) {
+		final Message newMessage = new Message(chatRoom.getRoom(), Message.Type.groupchat);
 
-    public static void sendOfflineMessage(ContentResolver cr, String toJID,
-                                          Chat chat) {
-        ContentValues values = new ContentValues();
-        values.put(ChatTable.Columns.DIRECTION, ChatProvider.OUTGOING);
-        values.put(ChatTable.Columns.JID, toJID);
-        values.put(ChatTable.Columns.MESSAGE, chat.getMessage());
-        values.put(ChatTable.Columns.TYPE, chat.getType());
-        values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
-        values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
+		String message = chat.getMessage();
+		newMessage.setBody(message);
+		newMessage.addExtension(new DeliveryReceiptRequest());
+		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
+				AbstractTTTalkExtension.VALUE_VER,
+				AbstractTTTalkExtension.VALUE_TITLE,
+				chat.getType(),
+				chat.getFilePath(),
+				String.valueOf(chat.getFromContentLength())
+		));
 
-        cr.insert(ChatProvider.CONTENT_URI, values);
-    }
+		Log.e(TAG, newMessage.toXML());
 
-    @Override
-    public String getNameForJID(String jid) {
-        if (null != this.mRoster.getEntry(jid)
-                && null != this.mRoster.getEntry(jid).getName()
-                && this.mRoster.getEntry(jid).getName().length() > 0) {
-            return this.mRoster.getEntry(jid).getName();
-        } else {
-            return jid;
-        }
-    }
+		chat.setFromMe(ChatProvider.OUTGOING);
+		chat.setJid(chatRoom.getRoom());
+		chat.setPid(newMessage.getPacketID());
+		chat.setDate(System.currentTimeMillis());
 
-    /**
-     * ************** start 发送离线消息 **********************
-     */
-    public void sendOfflineMessages() {
-        Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
-                SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
-        final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
-        final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.JID);
-        final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.MESSAGE);
-        final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.DATE);
-        final int PACKETID_COL = cursor
-                .getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
-        ContentValues mark_sent = new ContentValues();
-        mark_sent.put(ChatTable.Columns.DELIVERY_STATUS,
-                ChatProvider.DS_SENT_OR_READ);
-        while (cursor.moveToNext()) {
-            int _id = cursor.getInt(_ID_COL);
-            String toJID = cursor.getString(JID_COL);
-            String message = cursor.getString(MSG_COL);
-            String packetID = cursor.getString(PACKETID_COL);
-            long ts = cursor.getLong(TS_COL);
-            Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
-            final Message newMessage = new Message(toJID, Message.Type.chat);
-            newMessage.setBody(message);
-            DelayInformation delay = new DelayInformation(new Date(ts));
-            newMessage.addExtension(delay);
-            newMessage.addExtension(new DelayInfo(delay));
-            newMessage.addExtension(new DeliveryReceiptRequest());
-            if ((packetID != null) && (packetID.length() > 0)) {
-                newMessage.setPacketID(packetID);
-            } else {
-                packetID = newMessage.getPacketID();
-                mark_sent.put(ChatTable.Columns.PACKET_ID, packetID);
-            }
-            Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
-                    + ChatProvider.QUERY_URI + "/" + _id);
-            mContentResolver.update(rowuri, mark_sent, null, null);
-            mXMPPConnection.sendPacket(newMessage); // must be after marking
-            // delivered, otherwise it
-            // may override the
-            // SendFailListener
-        }
-        cursor.close();
-    }
+		if (isAuthenticated()) {
+			chat.setStatus(ChatProvider.DS_SENT_OR_READ);
+			try {
+				chatRoom.sendMessage(newMessage);
+			} catch (Exception e) {
+				Log.d(TAG, e.getMessage());
+			}
+		} else {
+			// send offline -> store to DB
+			chat.setStatus(ChatProvider.DS_NEW);
+		}
+		addChatMessageToDB(mContentResolver, chat);
+	}
 
-    @Override
-    public MultiUserChat createChatRoom(List<User> inviteUserList){
-        MultiUserChat room = null;
-        try {
-            String roomName = String.valueOf(App.readUser().getId());
-            for(User user : inviteUserList){
-                roomName = String.format("%s_%d", roomName, user.getId());
-            }
-            roomName = String.format("%s@conference.tttalk.org", roomName);
-            room = new MultiUserChat(mXMPPConnection, roomName);
-            room.addInvitationRejectionListener(new InvitationRejectionListener() {
-                public void invitationDeclined(String invitee, String reason) {
-                    //TODO:
-                    Toast.makeText(App.mContext, "invitationDeclined", Toast.LENGTH_SHORT).show();
-                }
-            });
-            room.create(App.mSmack.getUser());
-            room.join(App.mSmack.getUser());
+	public static void sendOfflineMessage(ContentResolver cr, String toJID,
+	                                      Chat chat) {
+		ContentValues values = new ContentValues();
+		values.put(ChatTable.Columns.DIRECTION, ChatProvider.OUTGOING);
+		values.put(ChatTable.Columns.JID, toJID);
+		values.put(ChatTable.Columns.MESSAGE, chat.getMessage());
+		values.put(ChatTable.Columns.TYPE, chat.getType());
+		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
+		values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
 
-            Form form = room.getConfigurationForm();
-            Form submitForm = form.createAnswerForm();
-            for (Iterator fields = form.getFields(); fields.hasNext(); ) {
-                FormField field = (FormField) fields.next();
-                if (!FormField.TYPE_HIDDEN.equals(field.getType()) && field.getVariable() != null) {
-                    submitForm.setDefaultAnswer(field.getVariable());
-                }
-            }
-            submitForm.setAnswer("muc#roomconfig_publicroom", true);
-            room.sendConfigurationForm(submitForm);
+		cr.insert(ChatProvider.CONTENT_URI, values);
+	}
 
-            for(User user : inviteUserList) {
-                room.invite(user.getOF_JabberID(), "Meet me in this excellent room");
-            }
-            room.sendMessage("Created room by " + App.readUser().getFullname());
+	@Override
+	public String getNameForJID(String jid) {
+		if (null != this.mRoster.getEntry(jid)
+				&& null != this.mRoster.getEntry(jid).getName()
+				&& this.mRoster.getEntry(jid).getName().length() > 0) {
+			return this.mRoster.getEntry(jid).getName();
+		} else {
+			return jid;
+		}
+	}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	/**
+	 * ************** start 发送离线消息 **********************
+	 */
+	public void sendOfflineMessages() {
+		Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
+				SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
+		final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
+		final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.JID);
+		final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.MESSAGE);
+		final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.DATE);
+		final int PACKETID_COL = cursor
+				.getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
+		ContentValues mark_sent = new ContentValues();
+		mark_sent.put(ChatTable.Columns.DELIVERY_STATUS,
+				ChatProvider.DS_SENT_OR_READ);
+		while (cursor.moveToNext()) {
+			int _id = cursor.getInt(_ID_COL);
+			String toJID = cursor.getString(JID_COL);
+			String message = cursor.getString(MSG_COL);
+			String packetID = cursor.getString(PACKETID_COL);
+			long ts = cursor.getLong(TS_COL);
+			Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
+			final Message newMessage = new Message(toJID, Message.Type.chat);
+			newMessage.setBody(message);
+			DelayInformation delay = new DelayInformation(new Date(ts));
+			newMessage.addExtension(delay);
+			newMessage.addExtension(new DelayInfo(delay));
+			newMessage.addExtension(new DeliveryReceiptRequest());
+			if ((packetID != null) && (packetID.length() > 0)) {
+				newMessage.setPacketID(packetID);
+			} else {
+				packetID = newMessage.getPacketID();
+				mark_sent.put(ChatTable.Columns.PACKET_ID, packetID);
+			}
+			Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
+					+ ChatProvider.QUERY_URI + "/" + _id);
+			mContentResolver.update(rowuri, mark_sent, null, null);
+			mXMPPConnection.sendPacket(newMessage); // must be after marking
+			// delivered, otherwise it
+			// may override the
+			// SendFailListener
+		}
+		cursor.close();
+	}
 
-        return room;
-    }
+	@Override
+	public MultiUserChat createChatRoom(List<User> inviteUserList) {
+		MultiUserChat room = null;
+		try {
+			String roomName = String.valueOf(App.readUser().getId());
+			for (User user : inviteUserList) {
+				roomName = String.format("%s_%d", roomName, user.getId());
+			}
+			roomName = String.format("%s@conference.tttalk.org", roomName);
+			room = new MultiUserChat(mXMPPConnection, roomName);
+			room.addInvitationRejectionListener(new InvitationRejectionListener() {
+				public void invitationDeclined(String invitee, String reason) {
+					//TODO:
+					Toast.makeText(App.mContext, "invitationDeclined", Toast.LENGTH_SHORT).show();
+				}
+			});
+			room.create(App.mSmack.getUser());
+			room.join(App.mSmack.getUser());
 
-    public MultiUserChat createChatRoomByRoomName(String roomName){
-        try {
-            MultiUserChat chatRoom = new MultiUserChat(mXMPPConnection, roomName);
-            if (!chatRoom.isJoined()) {
-                chatRoom.join(App.mSmack.getUser());
-            }
-            return chatRoom;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
+			Form form = room.getConfigurationForm();
+			Form submitForm = form.createAnswerForm();
+			for (Iterator fields = form.getFields(); fields.hasNext(); ) {
+				FormField field = (FormField) fields.next();
+				if (!FormField.TYPE_HIDDEN.equals(field.getType()) && field.getVariable() != null) {
+					submitForm.setDefaultAnswer(field.getVariable());
+				}
+			}
+			submitForm.setAnswer("muc#roomconfig_publicroom", true);
+			room.sendConfigurationForm(submitForm);
 
-        return null;
-    }
+			for (User user : inviteUserList) {
+				room.invite(user.getOF_JabberID(), "Meet me in this excellent room");
+			}
+			room.sendMessage("Created room by " + App.readUser().getFullname());
 
-    public void getChatRoomInfo(String roomName){
-        try {
-            RoomInfo info = MultiUserChat.getRoomInfo(mXMPPConnection, roomName);
-            Log.e(TAG, "Number of occupants:" + info.getOccupantsCount());
-            Log.e(TAG, "Room Subject:" + info.getSubject());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return room;
+	}
+
+	public MultiUserChat createChatRoomByRoomName(String roomName) {
+		try {
+			MultiUserChat chatRoom = new MultiUserChat(mXMPPConnection, roomName);
+			if (!chatRoom.isJoined()) {
+				chatRoom.join(App.mSmack.getUser());
+			}
+			return chatRoom;
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+
+		return null;
+	}
+
+	public void getChatRoomInfo(String roomName) {
+		try {
+			RoomInfo info = MultiUserChat.getRoomInfo(mXMPPConnection, roomName);
+			Log.e(TAG, "Number of occupants:" + info.getOccupantsCount());
+			Log.e(TAG, "Room Subject:" + info.getSubject());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

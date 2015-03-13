@@ -35,6 +35,7 @@ import java.util.List;
 /**
  * @author Administrator
  */
+@Deprecated
 public class MessageReceiver {
 
     static final String TAG = Utils.CATEGORY

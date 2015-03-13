@@ -19,6 +19,7 @@ import org.json.JSONObject;
 /**
  * IntentService responsible for handling GCM messages.
  */
+@Deprecated
 public class GCMIntentService {
     private static void displayGcmNotification(Context context, String title,
                                                String content) throws JSONException {
