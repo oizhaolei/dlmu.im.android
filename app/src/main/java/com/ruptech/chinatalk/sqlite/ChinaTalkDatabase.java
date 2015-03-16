@@ -49,7 +49,19 @@ public class ChinaTalkDatabase {
 				Log.d(TAG, "Upgrade Database.");
 			if (oldVersion == 57) {
                 try {
-                    udpateTable57to65(db);
+                    udpateTable57to64(db);
+                } catch (Exception e) {
+                    Utils.sendClientException(e);
+                }
+            }else if (oldVersion == 62) {
+                try {
+                    udpateTable62to63(db);
+                } catch (Exception e) {
+                    Utils.sendClientException(e);
+                }
+			}else if (oldVersion == 63) {
+                try {
+                    udpateTable63to64(db);
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
@@ -73,7 +85,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 65;
+	public static final int DATABASE_VERSION = 64;
 
 	/**
 	 * self instance
@@ -145,13 +157,23 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable57to65(SQLiteDatabase db) {
+	private static void udpateTable57to64(SQLiteDatabase db) {
         db.execSQL(ChatTable.getCreateSQL());
         db.execSQL(RosterTable.getCreateSQL());
         db.execSQL(ChatTable.getBulkInsertSQL());
         db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
                 + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
 	}
+
+    private static void udpateTable62to63(SQLiteDatabase db) {
+        db.execSQL(ChatTable.getBulkInsertSQL());
+    }
+
+    private static void udpateTable63to64(SQLiteDatabase db) {
+        db.execSQL(ChatTable.getBulkInsertSQL());
+        db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
+                + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
+    }
 
 	/**
 	 * SQLiteDatabase Open Helper

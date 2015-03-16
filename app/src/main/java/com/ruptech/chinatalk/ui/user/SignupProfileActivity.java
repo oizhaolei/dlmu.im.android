@@ -16,8 +16,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.event.ValidateEmailEvent;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -321,6 +323,10 @@ public class SignupProfileActivity extends ActionBarActivity {
 		IntroduceActivity.close();
 		AgreementActivity.close();
 		PrefUtils.saveShowSystemFreeRechargePointInform(mTempUser.getTel());
+
+        if(App.readUser()!=null && Utils.isMail(App.readUser().getTel()) && App.readUser().getAccount_valid() != 1){
+            App.mBus.post(new ValidateEmailEvent("", TaskResult.OK));
+        }
 
 		Intent intent = new Intent(this, LoginLoadingActivity.class);
 		intent.putExtra(LoginLoadingActivity.PREF_USERINFO_NAME,

@@ -571,4 +571,8 @@
     <string name="status_online">在线</string>
 
     <string name="invite_chat">Invite</string>
+    <string name="sent_verification_email">Verification email has been sent to your mailbox, check please.</string>
+    <string name="failed_to_send_verification_email">Failed to send verification email to your mailbox.</string>
+    <string name="email_verified">Email(verified)</string>
+    <string name="email_not_verified">Email(not verified)</string>
 </resources>

@@ -551,4 +551,8 @@
     <string name="invite_message">[%1$s]님이 당신을 TTTalk에 초대합니다. 번역채팅으로 또다른 세상을 만나보세요.\n 다운로드하려면 아래 링크를 클릭하십시오.\n%2$s</string>
     <string name="channel_is_not_exist">이 채널 존재하지 않습니다 。</string>
     <string name="invite_chat">초대</string>
+    <string name="sent_verification_email">검증이메일을 당신의 이메일주소에 발송했습니다.</string>
+    <string name="failed_to_send_verification_email">검증이메일발송에 실패했습니다.</string>
+    <string name="email_verified">이메일(검증완료)</string>
+    <string name="email_not_verified">이메일(미검증)</string>
 </resources>

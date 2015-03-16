@@ -1062,4 +1062,18 @@ public class HttpServer extends HttpConnection {
         throw new ServerSideException(msg);
 
     }
+
+    public boolean verifyMailSend() throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("email", App.readUser().getTel());
+
+        Response res = _get("verify_email_send.php", params);
+
+        JSONObject result = res.asJSONObject();
+        boolean success = result.getBoolean("success");
+        if (!success) {
+            throw new ServerSideException(result.getString("msg"));
+        }
+        return success;
+    }
 }

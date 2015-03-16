@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.facebook.Session;
 import com.nostra13.universalimageloader.cache.disc.impl.LimitedAgeDiscCache;
@@ -27,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.ruptech.chinatalk.event.NewVersionFoundEvent;
+import com.ruptech.chinatalk.event.ValidateEmailEvent;
 import com.ruptech.chinatalk.http.Http2Server;
 import com.ruptech.chinatalk.http.HttpServer;
 import com.ruptech.chinatalk.http.HttpStoryServer;
@@ -40,8 +42,13 @@ import com.ruptech.chinatalk.sqlite.HotUserPhotoDAO;
 import com.ruptech.chinatalk.sqlite.MessageDAO;
 import com.ruptech.chinatalk.sqlite.UserDAO;
 import com.ruptech.chinatalk.sqlite.UserPhotoDAO;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskAdapter;
+import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskManager;
+import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
+import com.ruptech.chinatalk.task.impl.VerifyMailSendTask;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
@@ -405,5 +412,35 @@ public class App extends Application implements
     @Subscribe
     public void answerNewVersionFound(NewVersionFoundEvent event) {
         Utils.doNotifyVersionUpdate(App.mContext);
+    }
+
+    @Subscribe
+    public void validateEmailResult(ValidateEmailEvent event) {
+        if (event.result == TaskResult.OK) {
+            sendVerifyEmail();
+        }
+    }
+
+    private void sendVerifyEmail(){
+        TaskListener taskListener = new TaskAdapter() {
+            @Override
+            public void onPostExecute(GenericTask task, TaskResult result) {
+
+                if (result == TaskResult.OK) {
+                    Toast.makeText(App.mContext, getString(R.string.sent_verification_email), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(App.mContext, getString(R.string.failed_to_send_verification_email), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onPreExecute(GenericTask task) {
+
+            }
+
+        };
+        VerifyMailSendTask task = new VerifyMailSendTask();
+        task.setListener(taskListener);
+        task.execute();
     }
 }
