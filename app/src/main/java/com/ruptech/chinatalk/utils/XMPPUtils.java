@@ -80,17 +80,4 @@ public class XMPPUtils {
         return message;
     }
 
-    public static void setImage(ImageView mHeadIcon, String jid) {
-        Log.v(TAG, jid);
-
-        try {
-            byte[] data = App.mSmack.getAvatar(jid);
-
-            Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
-            mHeadIcon.setImageBitmap(bm);
-        } catch (Exception e) {
-            mHeadIcon.setImageResource(R.drawable.ic_launcher);
-            // Log.e(TAG, e.getMessage(), e);
-        }
-    }
 }

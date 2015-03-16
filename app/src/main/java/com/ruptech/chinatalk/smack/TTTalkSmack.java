@@ -16,9 +16,7 @@ public interface TTTalkSmack {
 
     public boolean isAuthenticated();
 
-    byte[] getAvatar(String jid) throws XMPPException;
-
-    String getUser();
+	String getUser();
 
     public boolean createAccount(String username, String password);
     public void sendMessage(String user,Chat chat);
