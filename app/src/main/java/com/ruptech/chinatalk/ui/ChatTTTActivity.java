@@ -1,12 +1,15 @@
 package com.ruptech.chinatalk.ui;
 
-import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,51 +18,56 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.TTTChatAdapter;
 import com.ruptech.chinatalk.db.ChatProvider;
-import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskAdapter;
+import com.ruptech.chinatalk.task.TaskListener;
+import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
+import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
 import com.ruptech.chinatalk.ui.user.MyWalletActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.widget.EditTextWithFace;
+import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.widget.LangSpinnerAdapter;
-import com.ruptech.chinatalk.widget.RecordButton;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
- *
- * @author
+ * @author zhao
  */
-public class ChatTTTActivity extends AbstractChatActivity {
+public class ChatTTTActivity extends ActionBarActivity {
 
 	static final String TAG = Utils.CATEGORY
 			+ ChatTTTActivity.class.getSimpleName();
+	private TTTChatAdapter untranslatedMessageListAdapter;
 
 	/**
 	 * TTT根据新的lang列表，重新定位之前使用过的lang位置
-	 *
-	 * @param lang
-	 * @param langArray
-	 * @return
 	 */
-	public static int getLangArrayPosition(String lang, String[] langArray) {
+	private int getLangArrayPosition(String lang, String[] langArray) {
 		int pos = 0;
 		for (int i = 0; i < langArray.length; i++) {
 			if (lang.equalsIgnoreCase(langArray[i])) {
@@ -70,24 +78,10 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		return pos;
 	}
 
-	@InjectView(R.id.activity_ttt_chat_voice_button)
-	RecordButton mVoiceRecordButton;
 	@InjectView(R.id.activity_ttt_chat_message_edittext)
-	EditTextWithFace mMessageEditText;
+	EditText mMessageEditText;
 	@InjectView(R.id.activity_ttt_chat_message_listview)
 	ListView mMessageListView;
-
-	@InjectView(R.id.activity_ttt_chat_btn_send)
-	Button mSendButton;
-
-	@InjectView(R.id.activity_ttt_chat_message_type_button)
-	ImageView mMessageTypeButton;
-
-	@InjectView(R.id.activity_ttt_chat_message_type_keyboard_button)
-	View keyboardTypeButton;
-
-	private Cursor chatsCursor;
-
 	private String fromLang;
 	@InjectView(R.id.btn_swap)
 	ImageView mBtnSwap;
@@ -101,86 +95,16 @@ public class ChatTTTActivity extends AbstractChatActivity {
 	@InjectView(R.id.spinner_lang2)
 	Spinner mLang2Spinner;
 
-	@InjectView(R.id.activity_ttt_chat_select_message_type)
-	View mSelectMessageTypeView;
-
 	private String toLang;
-
-	@InjectView(R.id.activity_ttt_chat_message_type_voice_button)
-	View voiceTypeButton;
 
 	@InjectView(R.id.item_chatting_balance_remind_textview)
 	TextView remindItemFooterTextView;
-
-	@InjectView(R.id.text_layout)
-	LinearLayout remindItemFooterLayout;
-
-	@InjectView(R.id.expand_btn)
-	ImageView expandBtn;
 
 	@InjectView(R.id.remind_panel)
 	View remindItemFooterView;
 
 	private boolean isSelectedLang = false;
 
-	@Override
-	void displayFriend() {
-
-	}
-
-	@Override
-	public void doRefleshFooterBySelectLang() {
-	}
-
-
-	String getFriendLang() {
-		return toLang;
-	}
-
-
-	public long getFriendUserId() {
-		return AppPreferences.TTT_REQUEST_TO_USERID;// 翻译小秘书
-	}
-
-	@Override
-	View getKeyboardButton() {
-		return keyboardTypeButton;
-	}
-
-	@Override
-	EditText getMessageEditText() {
-		return mMessageEditText;
-	}
-
-	@Override
-	ListView getMessageListView() {
-		return mMessageListView;
-	}
-
-	@Override
-	View getMessageTypeButton() {
-		return mMessageTypeButton;
-	}
-
-	@Override
-	String getMyLang() {
-		return fromLang;
-	}
-
-	@Override
-	View getSendButton() {
-		return mSendButton;
-	}
-
-	@Override
-	View getVoiceButton() {
-		return voiceTypeButton;
-	}
-
-	@Override
-	TextView getVoiceRecordButton() {
-		return mVoiceRecordButton;
-	}
 
 	void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(TextShareActivity.SEND_TEXT);
@@ -190,25 +114,27 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		}
 	}
 
-	private void initInputPanel() {
-		boolean enableVoice = !googleTranslate;
-		voiceTypeButton.setVisibility(enableVoice ? View.VISIBLE : View.GONE);
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (App.readUser() == null) {
+			gotoSplashActivity();
+			finish();
+			return;
+		}
+		// 打开界面页码设为第一页
+		onPage = 1;
+
 		setContentView(R.layout.activity_ttt_chat);
 		ButterKnife.inject(this);
 
 		getSupportActionBar().setTitle(R.string.translation_secretary);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mWithJabberID = AppPreferences.TTT_OF_USERNAME;
+		mWithJabberID = AppPreferences.TTT_OF_USERNAME;
 		setupComponents();
 		switchTextInputMode();
 		handleSendText(getIntent());
-		initInputPanel();
 	}
 
 	@Override
@@ -224,33 +150,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		Utils.onBackPressed(this);
 	}
 
-	@OnClick(R.id.activity_ttt_chat_message_type_keyboard_button)
-	public void onSelectTextMessageType(View v) {
-		this.mSelectMessageTypeView.setVisibility(View.GONE);
-		switchTextInputMode();
-	}
 
-	@OnClick(R.id.activity_ttt_chat_message_type_voice_button)
-	public void onSelectVoiceMessageType(View v) {
-		this.mSelectMessageTypeView.setVisibility(View.GONE);
-		if (googleTranslate
-				|| App.readUser().getBalance() < AppPreferences.MINI_BALANCE) {
-			Toast.makeText(this,
-					getString(R.string.no_money_cannot_translate_voice),
-					Toast.LENGTH_SHORT).show();
-		} else {
-			switchVoiceMode();
-		}
-	}
-
-	@OnClick(R.id.activity_ttt_chat_select_message_type_voice_recognize_button)
-	public void onSelectVoiceRecognizeTextMessageType(View v) {
-		this.mSelectMessageTypeView.setVisibility(View.GONE);
-		switchTextInputMode();
-		voiceRecognition(fromLang);
-	}
-
-	@Override
 	protected void remindFooter() {
 		if (!isSelectedLang) {
 			remindItemFooterView.setVisibility(View.GONE);
@@ -281,33 +181,16 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		});
 	}
 
-	@OnClick(R.id.activity_ttt_chat_message_type_button)
-	public void selectMessageType(View v) {
-		if (mSelectMessageTypeView.getVisibility() == View.GONE) {
-			this.mSelectMessageTypeView.setVisibility(View.VISIBLE);
-
-			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(
-					mSelectMessageTypeView.getWindowToken(), 0);
-		} else if (mSelectMessageTypeView.getVisibility() == View.VISIBLE)
-			this.mSelectMessageTypeView.setVisibility(View.GONE);
-
-		if (mSelectMessageTypeView.getVisibility() == View.VISIBLE) {
-			initInputPanel();
-		}
-	}
-
 	@OnClick(R.id.activity_ttt_chat_btn_send)
 	public void send_ttt_text(View v) {
 		send_text();
 	}
 
-	@Override
-	public void setupComponents() {
-		super.setupComponents();
-		int lang1SpinnerSelectPos = 0;
+	private void setupComponents() {
+		mInputMethodManager = (InputMethodManager) this.getApplicationContext()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		mSelectMessageTypeView.setVisibility(View.GONE);
+		int lang1SpinnerSelectPos = 0;
 
 		mLang1Array = Utils.getServerTransLang();
 		LangSpinnerAdapter lang1Adapter = new LangSpinnerAdapter(this,
@@ -330,7 +213,7 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		mLang1Spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v,
-					int position, long id) {
+			                           int position, long id) {
 				mLang2Array = Utils
 						.getAvailableLang2ByLang1(mLang1Array[position]);
 				LangSpinnerAdapter lang2Adapter = new LangSpinnerAdapter(
@@ -344,6 +227,8 @@ public class ChatTTTActivity extends AbstractChatActivity {
 				if (!Utils.isEmpty(lastSelectedLang2)) {
 					mLang2Spinner.setSelection(getLangArrayPosition(
 							lastSelectedLang2, mLang2Array));
+				} else {
+					updateUntranslate(reQuery());
 				}
 			}
 
@@ -357,12 +242,11 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		mLang2Spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v,
-					int position, long id) {
+			                           int position, long id) {
 				fromLang = mLang1Array[mLang1Spinner.getSelectedItemPosition()];
 				toLang = mLang2Array[position];
 				PrefUtils.savePrefTTTLastSelectedLang(1, fromLang);
 				PrefUtils.savePrefTTTLastSelectedLang(2, toLang);
-
 
 
 				googleTranslate = Utils.isGoogleTranslate(fromLang, toLang);
@@ -374,49 +258,41 @@ public class ChatTTTActivity extends AbstractChatActivity {
 				if (googleTranslate) {
 					switchTextInputMode();
 				}
-				initInputPanel();
+				updateUntranslate(reQuery());
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-
 			}
-
 		});
 
-        setChatWindowAdapter();
-
+		untranslatedMessageListAdapter = new TTTChatAdapter(this,
+				reQuery());
+		mMessageListView.setAdapter(untranslatedMessageListAdapter);
 		mMessageListView.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScroll(AbsListView arg0, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
+			                     int visibleItemCount, int totalItemCount) {
 			}
 
 			@Override
 			public void onScrollStateChanged(AbsListView arg0, int arg1) {
 				mInputMethodManager.hideSoftInputFromWindow(
 						mMessageEditText.getWindowToken(), 0);
-				mSelectMessageTypeView.setVisibility(View.GONE);
 			}
 
 		});
 
-		mVoiceRecordButton.setOnFinishedRecordListener(voiceRecordListener);
-
-		mMessageEditText.clearImg();
 		mMessageEditText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				mMessageListView.setSelection(mMessageListView.getCount() - 1);
-				mSelectMessageTypeView.setVisibility(View.GONE);
 			}
 
 		});
 
-		InputFilter[] filters = { new LengthFilter() };
+		InputFilter[] filters = {new Utils.LengthFilter()};
 		mMessageEditText.setFilters(filters);
-
-		mMessageEditText.addTextChangedListener(mTextWatcher);
 
 		mBtnSwap.setOnClickListener(new OnClickListener() {
 			@Override
@@ -430,26 +306,256 @@ public class ChatTTTActivity extends AbstractChatActivity {
 		});
 	}
 
-    /**
-     * 设置聊天的Adapter
-     */
-    private void setChatWindowAdapter() {
-        String selection = TableContent.ChatTable.Columns.JID + "='" + mWithJabberID + "'";
-        // 异步查询数据库
-        new AsyncQueryHandler(getContentResolver()) {
+	static int onPage;
 
-            @Override
-            protected void onQueryComplete(int token, Object cookie,
-                                           Cursor cursor) {
-                // ListAdapter adapter = new ChatWindowAdapter(cursor,
-                // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
-                ListAdapter adapter = new TTTChatAdapter(ChatTTTActivity.this,
-                        cursor, PROJECTION_FROM, client, null);
-                getMessageListView().setAdapter(adapter);
-                getMessageListView().setSelection(adapter.getCount() - 1);
-            }
+	public void doRequestTranslate(Message message) {
+		if (BuildConfig.DEBUG)
+			Log.v(TAG, "doRequestTranslate");
 
-        }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
-                selection, null, null);
-    }
+		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
+		mRequestTranslateTask.setListener(mRequestTranslateListener);
+		mRequestTranslateTask.execute();
+	}
+
+
+	protected boolean googleTranslate;
+
+	InputMethodManager mInputMethodManager;
+
+	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+
+		@Override
+		public void onPostExecute(GenericTask task, TaskResult result) {
+			RequestTranslateTask fsTask = (RequestTranslateTask) task;
+			if (result == TaskResult.OK) {
+				onRequestTranslateSuccess(fsTask);
+			} else {
+				String msg = fsTask.getMsg();
+				Message message = fsTask.getMessage();
+				onRequestTranslateFailure(message, msg);
+			}
+		}
+
+		@Override
+		public void onPreExecute(GenericTask task) {
+			onRequestTranslateBegin();
+		}
+
+	};
+
+	protected int translatorCount = 0;
+
+
+	protected void doClearContent() {
+		mMessageEditText.setText("");
+	}
+
+
+	private void doRetrieveUser(long userId) {
+
+		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(userId);
+		mRetrieveUserTask.execute();
+	}
+
+
+	@Override
+	public void finish() {
+		super.finish();
+	}
+
+	private void gotoSplashActivity() {
+		Intent intent = new Intent(this, SplashActivity.class);
+		startActivity(intent);
+	}
+
+
+	@Override
+	protected void onDestroy() {
+		long start = System.currentTimeMillis();
+		super.onDestroy();
+		if (BuildConfig.DEBUG)
+			Log.i(TAG, "onDestroy:" + (System.currentTimeMillis() - start));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+//		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
+		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
+
+		getContentResolver().unregisterContentObserver(mUntranslateObserver);
+	}
+
+	void onRequestTranslateBegin() {
+		mMessageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+		mMessageEditText.selectAll();
+		switchTextInputMode();
+	}
+
+	void onRequestTranslateFailure(Message message, String msg) {
+		// save message
+		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
+		message.setStatus_text(getString(R.string.message_action_click_resend));
+		App.messageDAO.mergeMessage(message);
+
+		if (!Utils.isEmpty(msg)) {
+			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
+		Message message = fsTask.getMessage();
+		//chat
+		Chat chat = new Chat();
+		chat.setMessage(message.getFrom_content());
+		chat.setType(message.getFile_type());
+		chat.setFromContentLength(message.from_content_length);
+		chat.setFilePath(message.getFile_path());
+
+		chat.setFromMe(ChatProvider.OUTGOING);
+		chat.setJid(mWithJabberID);
+		chat.setPid(null);
+		chat.setDate(System.currentTimeMillis());
+
+
+		TTTalkSmackImpl.addChatMessageToDB(getContentResolver(), chat);
+
+		if (fsTask.getIsNeedRetrieveUser()) {
+			doRetrieveUser(App.readUser().getId());// 回到Setting画面，能够立刻看到balance变化。
+		}
+
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, "send Success");
+
+	}
+
+	private ContentObserver mUntranslateObserver = new ttChatObserver();
+	private Handler mainHandler = new Handler();
+
+	private class ttChatObserver extends ContentObserver {
+		public ttChatObserver() {
+			super(mainHandler);
+		}
+
+		public void onChange(boolean selfChange) {
+			mainHandler.postDelayed(new Runnable() {
+				public void run() {
+					updateUntranslate(reQuery());
+				}
+			}, 100);
+		}
+	}
+
+	public void updateUntranslate(Cursor c) {
+		Cursor oldCursor = untranslatedMessageListAdapter.swapCursor(c);
+		oldCursor.close();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		App.notificationManager.cancel(mWithJabberID.hashCode());
+
+		getContentResolver().registerContentObserver(ChatProvider.CONTENT_URI,
+				true, mUntranslateObserver);
+	}
+
+
+	void send_text() {
+		String content = mMessageEditText.getText().toString().trim();
+		// reform
+		if (content.replaceAll("\n", "").length() == 0) {
+			Toast.makeText(this, R.string.content_cannot_be_empty,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		// check
+		if (content.length() == 0) {
+			Toast.makeText(this, R.string.content_cannot_be_empty,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		String[] msgArray = content.split("]");
+		for (String msg : msgArray) {
+			if (!ParseEmojiMsgUtil.checkMsgFace(msg + "]")) {
+				break;
+			}
+		}
+		content = ParseEmojiMsgUtil.convertToMsg(
+				mMessageEditText.getText(), this);
+		sendText(content);
+
+	}
+
+	private void sendText(String content) {
+		int contentLength = Utils.textLength(content);
+		String fileType = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
+
+		//新版本发给旧版本
+		Message message = new Message();
+		long localId = System.currentTimeMillis();
+		message.setId(localId);
+		message.setMessageid(localId);
+		message.setUserid(App.readUser().getId());
+//            message.setTo_userid(toUserId);
+		message.setFrom_lang(fromLang);
+//            message.setTo_lang(toLang);
+		message.setFrom_content(content);
+		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
+		message.setStatus_text(getString(R.string.data_sending));
+		message.setFile_path(null);
+		message.setFrom_content_length(contentLength);
+		message.setFile_type(fileType);
+		String createDateStr = DateCommonUtils.getUtcDate(new Date(),
+				DateCommonUtils.DF_yyyyMMddHHmmssSSS);
+		message.create_date = createDateStr;
+		message.update_date = createDateStr;
+		doRequestTranslate(message);
+
+		mMessageEditText.setText(null);
+
+	}
+
+
+	protected void switchTextInputMode() {
+		mMessageEditText.setVisibility(View.VISIBLE);
+		mMessageEditText.requestFocus();
+		doClearContent();
+	}
+
+	protected String mWithJabberID = "ttt";// 当前聊天用户的ID
+
+	protected static final String[] TTT_CHAT_QUERY = new String[]{
+			ChatTable.Columns.ID,
+			ChatTable.Columns.DATE,
+			ChatTable.Columns.DIRECTION,
+			ChatTable.Columns.JID,
+			ChatTable.Columns.MESSAGE,
+			ChatTable.Columns.TYPE,
+			ChatTable.Columns.FILE_PATH,
+			ChatTable.Columns.CONTENT_LENGTH,
+			ChatTable.Columns.TO_MESSAGE,
+			ChatTable.Columns.DATE,
+			ChatTable.Columns.MESSAGE_ID,
+			ChatTable.Columns.DELIVERY_STATUS,
+			ChatTable.Columns.PACKET_ID};// 查询字段
+
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		// 窗口获取到焦点时绑定服务，失去焦点将解绑
+		if (hasFocus)
+			App.bindXMPPService();
+		else
+			App.unbindXMPPService();
+	}
+
+	private Cursor reQuery() {
+		//TODO
+		Cursor childCursor = getContentResolver().query(ChatProvider.CONTENT_URI,
+				TTT_CHAT_QUERY, null, null, null);
+		return childCursor;
+	}
+
 }

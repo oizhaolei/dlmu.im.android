@@ -1576,7 +1576,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 			}
 		});
 
-		InputFilter[] filters = { new AbstractChatActivity.LengthFilter() };
+		InputFilter[] filters = { new Utils.LengthFilter() };
 		mCommentEditText.setFilters(filters);
 		mInputMethodManager = (InputMethodManager) this.getApplicationContext()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);

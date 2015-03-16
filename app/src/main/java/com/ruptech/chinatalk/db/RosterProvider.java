@@ -60,19 +60,10 @@ public class RosterProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(GROUPS_URI, null);
         }
     };
-    public static SQLiteDatabase.CursorFactory mCursorFactory = new SQLiteDatabase.CursorFactory() {
-        @Override
-        public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
-                                String editTable, SQLiteQuery query) {
-            if (BuildConfig.DEBUG)
-                Log.i(TAG, query.toString());
-            return new SQLiteCursor(db, driver, editTable, query);
-        }
-    };
-    /*
-     * delay change notification, cancel previous attempts. this implements rate
-     * throttling on fast update sequences
-     */
+	/*
+	 * delay change notification, cancel previous attempts. this implements rate
+	 * throttling on fast update sequences
+	 */
     long last_notify = 0;
     private Handler mNotifyHandler = new Handler();
     private SQLiteOpenHelper mOpenHelper;

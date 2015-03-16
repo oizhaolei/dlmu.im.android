@@ -68,37 +68,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/remind_panel"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp" >
+            android:padding="5dp"  >
 
-            <ImageView
-                android:id="@+id/activity_ttt_chat_message_type_voice_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerVertical="true"
-                android:clickable="true"
-                android:src="@drawable/chat_voice_btn" />
-
-            <ImageView
-                android:id="@+id/activity_ttt_chat_message_type_keyboard_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_centerVertical="true"
-                android:clickable="true"
-                android:src="@drawable/chat_switch_keyboard_btn"
-                android:visibility="gone" />
-
-            <com.ruptech.chinatalk.widget.EditTextWithFace
+            <EditText
                 android:id="@+id/activity_ttt_chat_message_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/activity_ttt_chat_message_type_button"
-                android:layout_toRightOf="@+id/activity_ttt_chat_message_type_voice_button"
+                android:layout_toLeftOf="@+id/activity_ttt_chat_btn_send"
                 android:adjustViewBounds="true"
                 android:gravity="left|center_vertical"
                 android:inputType="textMultiLine"
@@ -107,7 +86,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall" >
 
                 <requestFocus />
-            </com.ruptech.chinatalk.widget.EditTextWithFace>
+            </EditText>
 
             <Button
                 android:id="@+id/activity_ttt_chat_btn_send"
@@ -119,67 +98,9 @@
                 android:background="@color/content_background"
                 android:gravity="center"
                 android:text="@string/send"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:visibility="gone" />
+                android:textAppearance="?android:attr/textAppearanceSmall"  />
 
-            <ImageView
-                android:id="@+id/activity_ttt_chat_message_type_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/chat_show_type_btn" />
-
-            <com.ruptech.chinatalk.widget.RecordButton
-                android:id="@+id/activity_ttt_chat_voice_button"
-                android:layout_width="match_parent"
-                android:layout_height="33dp"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_toLeftOf="@+id/activity_ttt_chat_message_type_button"
-                android:layout_toRightOf="@+id/activity_ttt_chat_message_type_voice_button"
-                android:background="@drawable/chat_voice_forward"
-                android:clickable="true"
-                android:text="@string/press_to_record"
-                android:textSize="15sp"
-                android:visibility="gone" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/activity_ttt_chat_select_message_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/input_panel"
-            android:background="#333"
-            android:gravity="center"
-            android:orientation="vertical" >
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" >
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <ImageButton
-                        android:id="@+id/activity_ttt_chat_select_message_type_voice_recognize_button"
-                        style="@style/text_appearance_small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/chat_content_bg"
-                        android:gravity="center"
-                        android:src="@drawable/chat_rec_button" />
-                </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
     </RelativeLayout>
 
     <ListView

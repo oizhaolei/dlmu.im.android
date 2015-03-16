@@ -20,6 +20,16 @@ public class Chat implements Serializable {
     protected String pid;
     protected int status;
 
+	public int getVerify_status() {
+		return verify_status;
+	}
+
+	public void setVerify_status(int verify_status) {
+		this.verify_status = verify_status;
+	}
+
+	protected int verify_status;
+
     public String getTo_content() {
         return to_content;
     }

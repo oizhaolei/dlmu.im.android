@@ -459,7 +459,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 				App.mBus.post(new StoryEvent(ext.getPhoto_id(), ext.getTitle(), ext.getContent(), ext.getFullname()));
 			}
 		}, storyFilter);
-		//TTTalkStoryExtension
+		//TTTalkTranslatedExtension
 		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkTranslatedExtension>(TTTalkTranslatedExtension.class) {
 			@Override
 			public void processExtension(Message msg, TTTalkTranslatedExtension ext) {

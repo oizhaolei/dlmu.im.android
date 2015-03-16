@@ -66,31 +66,11 @@
                 android:minWidth="75dp"
                 android:orientation="vertical" >
 
-                <ImageView
-                    android:id="@+id/item_chatting_ttt_right_voice_imageview"
-                    android:layout_width="17dp"
-                    android:layout_height="25dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="true"
-                    android:src="@drawable/right_chatfrom_voice_playing" />
-
-                <ProgressBar
-                    android:id="@+id/item_ttt_right_play_process_bar"
-                    style="@style/right_player_voice_from_style"
-                    android:layout_width="17dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/item_chatting_ttt_right_content_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:clickable="true"
                     android:gravity="left|center"
                     android:textColor="#ff000000"
                     android:textSize="16sp" />
@@ -148,23 +128,11 @@
                     android:id="@+id/item_chatting_ttt_left_content_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
                     android:text="@string/empty"
                     android:textColor="#ff000000"
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/item_chatting_ttt_auto_translation_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_chatting_ttt_left_to_layout"
-                android:layout_marginLeft="11dp"
-                android:layout_toRightOf="@id/item_chatting_ttt_left_user_thumb_imageview"
-                android:background="@drawable/background_auto_translation"
-                android:text="@string/auto_translation_msg"
-                android:textColor="#ff6600"
-                android:textSize="12sp" />
             <TextView
                 android:id="@+id/item_chatting_ttt_msg_send_status_textview"
                 android:layout_width="wrap_content"

@@ -71,40 +71,6 @@ import java.util.Date;
  */
 public abstract class AbstractChatActivity extends ActionBarActivity {
 
-	public static class LengthFilter implements InputFilter {
-
-		@Override
-		public CharSequence filter(CharSequence source, int start, int end,
-				Spanned dest, int dstart, int dend) {
-
-			int sourceLen = source.toString().length();
-			int destLen = dest.toString().length();
-			int cjkCharCount = getCJKCharCount(source.toString())
-					+ getCJKCharCount(dest.toString());
-
-			int strLen = (sourceLen + destLen - cjkCharCount + cjkCharCount * 3);
-			if (strLen > AppPreferences.MAX_INPUT_LENGTH) {
-				return "";
-			}
-			return source;
-		}
-	}
-
-	public static class TranslateLengthFilter implements InputFilter {
-
-		@Override
-		public CharSequence filter(CharSequence source, int start, int end,
-				Spanned dest, int dstart, int dend) {
-
-			int sourceLen = source.toString().length();
-			int destLen = dest.toString().length();
-			if (sourceLen + destLen > AppPreferences.MAX_TRANSLATE_INPUT_LENGTH) {
-				return "";
-			}
-			return source;
-		}
-	}
-
     public User mFriendUser;
 
 	static final int CHANGE_NICKNAME = 5678;
@@ -169,29 +135,6 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
 				});
 		mUploadTask.setListener(mUploadTaskListener);
 		mUploadTask.execute();
-	}
-
-	public static int getCJKCharCount(String text) {
-		int count = 0;
-		for (char c : text.toCharArray()) {
-			if ((Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HIRAGANA)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.KATAKANA)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_JAMO)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HANGUL_SYLLABLES)
-					|| (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)) {
-				count++;
-			}
-		}
-
-		return count;
 	}
 
 	public static void refreshFooterBySelectLang() {

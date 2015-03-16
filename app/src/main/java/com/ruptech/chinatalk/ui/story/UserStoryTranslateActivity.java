@@ -576,7 +576,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 				});
 		mTranslateEditText.setHintContent(R.string.please_enter_translation,
 				mUserPhoto.getLang());
-		InputFilter[] filters = { new AbstractChatActivity.TranslateLengthFilter() };
+		InputFilter[] filters = { new Utils.TranslateLengthFilter() };
 		mTranslateEditText.setFilters(filters);
 		mTranslateEditText.addTextChangedListener(new TextWatcher() {
 

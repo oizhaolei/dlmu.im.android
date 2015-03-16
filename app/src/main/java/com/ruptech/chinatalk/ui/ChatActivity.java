@@ -730,7 +730,7 @@ public class ChatActivity extends AbstractChatActivity {
 			}
 		});
 
-		InputFilter[] filters = { new LengthFilter() };
+		InputFilter[] filters = { new Utils.LengthFilter() };
 		mMessageEditText.setFilters(filters);
 
 		mMessageEditText.addTextChangedListener(mTextWatcher);

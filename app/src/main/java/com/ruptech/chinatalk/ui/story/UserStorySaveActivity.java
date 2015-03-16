@@ -662,7 +662,7 @@ public class UserStorySaveActivity extends ActionBarActivity {
 				}
 			}
 		});
-		InputFilter[] filters = { new AbstractChatActivity.LengthFilter() };
+		InputFilter[] filters = { new Utils.LengthFilter() };
 		mContentEditText.setFilters(filters);
 
 		mInputMethodManager = (InputMethodManager) this.getApplicationContext()

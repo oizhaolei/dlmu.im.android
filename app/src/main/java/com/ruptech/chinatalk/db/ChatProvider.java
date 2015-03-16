@@ -55,16 +55,7 @@ public class ChatProvider extends ContentProvider {
     }
 
     private static final String TAG = "ChatProvider";
-    public static SQLiteDatabase.CursorFactory mCursorFactory = new SQLiteDatabase.CursorFactory() {
-        @Override
-        public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
-                                String editTable, SQLiteQuery query) {
-            if (BuildConfig.DEBUG)
-                Log.i(TAG, query.toString());
-            return new SQLiteCursor(db, driver, editTable, query);
-        }
-    };
-    private SQLiteOpenHelper mOpenHelper;
+	private SQLiteOpenHelper mOpenHelper;
 
     public ChatProvider() {
     }
