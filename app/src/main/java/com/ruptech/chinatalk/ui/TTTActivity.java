@@ -474,7 +474,7 @@ public class TTTActivity extends ActionBarActivity {
 	private void sendText(String content) {
 		int contentLength = Utils.textLength(content);
 		String fileType = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
-		String 	fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
+		String fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
 		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
 
 		//新版本发给旧版本
@@ -543,15 +543,13 @@ public class TTTActivity extends ActionBarActivity {
 	};
 
 	private Cursor reQuery() {
-		String 	fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
+		String fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
 		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
 
-		String selection = MessageTable.Columns.TO_USERID +" = " + AppPreferences.TTT_REQUEST_TO_USERID +
-				" and "+MessageTable.Columns.FROM_LANG +" = '" + fromLang +"'" +
-				" and "+MessageTable.Columns.TO_LANG +" = '" + toLang +"'";
+		String selection = MessageTable.Columns.TO_USERID + " = ? and " + MessageTable.Columns.FROM_LANG + " = '? and " + MessageTable.Columns.TO_LANG + " = ?";
 
 		Cursor childCursor = getContentResolver().query(MessageProvider.CONTENT_URI,
-				TTT_MESSAGE_QUERY, selection, null, null);
+				TTT_MESSAGE_QUERY, selection, new String[]{String.valueOf(AppPreferences.TTT_REQUEST_TO_USERID), fromLang, toLang}, null);
 		return childCursor;
 	}
 
