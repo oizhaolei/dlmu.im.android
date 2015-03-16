@@ -21,7 +21,6 @@ import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.event.StoryEvent;
-import com.ruptech.chinatalk.event.SystemMessageEvent;
 import com.ruptech.chinatalk.event.TranslatedEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
@@ -509,39 +508,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			}
 		};
 		mXMPPConnection.addPacketListener(packetTTTalkListener, tttalkFilter);
-		//
-		PacketFilter filter = new PacketTypeFilter(Message.class);
-		PacketListener packetListener = new PacketListener ( ) {
-			public void processPacket(Packet packet) {
-				Message msg = (Message) packet;
 
-				String body = msg.getBody();
-				if (body == null) {
-					return;
-				}
-				String fromJID = XMPPUtils.getJabberID(msg.getFrom());
-
-				Log.e(TAG, msg.toXML());
-				if ("tttalk.org".equals(fromJID)) {
-					App.mBus.post(new SystemMessageEvent(body));
-				}
-
-				long ts = System.currentTimeMillis();
-
-				Chat chat = new Chat();
-				chat.setFromMe(ChatProvider.INCOMING);
-				chat.setMessage(body);
-				chat.setJid(fromJID);
-				chat.setPid(msg.getPacketID());
-				chat.setStatus(ChatProvider.DS_NEW);
-				chat.setDate(ts);
-
-				addChatMessageToDB(mContentResolver, chat);
-
-				App.mBus.post(new NewChatEvent(fromJID, body, null));
-			}
-		};
-		mXMPPConnection.addPacketListener(packetListener, filter);
 	}
 
 	private void setToContent(String chatID, String message) {
