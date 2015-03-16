@@ -83,8 +83,14 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        String name = Utils.getFriendNameFromOF_JID(jid);
-        viewHolder.jidView.setText(jid);
+        boolean isGroupChat = Utils.isGroupChat(jid);
+        String name;
+        if (isGroupChat)
+            name = Utils.getGroupChatName(jid);
+        else
+            name = Utils.getFriendNameFromOF_JID(jid);
+
+        viewHolder.jidView.setText(name);
         viewHolder.msgView.setText(XMPPUtils
                 .convertNormalStringToSpannableString(mContext, message, true));
         viewHolder.dataView.setText(date);

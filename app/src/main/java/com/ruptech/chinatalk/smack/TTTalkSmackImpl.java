@@ -391,7 +391,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 				Log.e(TAG, String.format("invitationReceived - room:%s, inviter:%s, reason:%s, password:%s, message:%s", room, inviter, reason, password, message.toXML()));
 				try {
 					MultiUserChat muc = new MultiUserChat(conn, room);
-					muc.join(getUser());
+					muc.join(App.readUser().getFullname());
 					muc.sendMessage("Joined by " + App.readUser().getFullname());
 				} catch (org.jivesoftware.smack.XMPPException e) {
 					Log.e(TAG, e.getMessage());
@@ -858,19 +858,21 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		MultiUserChat room = null;
 		try {
 			String roomName = String.valueOf(App.readUser().getId());
+            String nickName = App.readUser().getFullname();
 			for (User user : inviteUserList) {
 				roomName = String.format("%s_%d", roomName, user.getId());
+                nickName = String.format("%s, %s", nickName, user.getFullname());
 			}
 			roomName = String.format("%s@conference.tttalk.org", roomName);
 			room = new MultiUserChat(mXMPPConnection, roomName);
-			room.addInvitationRejectionListener(new InvitationRejectionListener() {
+            room.addInvitationRejectionListener(new InvitationRejectionListener() {
 				public void invitationDeclined(String invitee, String reason) {
 					//TODO:
 					Toast.makeText(App.mContext, "invitationDeclined", Toast.LENGTH_SHORT).show();
 				}
 			});
-			room.create(App.mSmack.getUser());
-			room.join(App.mSmack.getUser());
+			room.create(App.readUser().getFullname());
+			room.join(App.readUser().getFullname());
 
 			Form form = room.getConfigurationForm();
 			Form submitForm = form.createAnswerForm();
@@ -881,12 +883,19 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 				}
 			}
 			submitForm.setAnswer("muc#roomconfig_publicroom", true);
-			room.sendConfigurationForm(submitForm);
+            submitForm.setAnswer("muc#roomconfig_roomname", nickName);
+            submitForm.setAnswer("muc#roomconfig_roomdesc", nickName);
+            submitForm.setAnswer("muc#roomconfig_allowinvites", true);
+
+            room.sendConfigurationForm(submitForm);
 
 			for (User user : inviteUserList) {
 				room.invite(user.getOF_JabberID(), "Meet me in this excellent room");
+                room.grantOwnership(user.getOF_JabberID());
 			}
-			room.sendMessage("Created room by " + App.readUser().getFullname());
+            Chat chat = new Chat();
+            chat.setMessage("Created room by " + App.readUser().getFullname());
+			sendGroupMessage(room, chat);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -899,7 +908,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		try {
 			MultiUserChat chatRoom = new MultiUserChat(mXMPPConnection, roomName);
 			if (!chatRoom.isJoined()) {
-				chatRoom.join(App.mSmack.getUser());
+				chatRoom.join(App.readUser().getFullname());
 			}
 			return chatRoom;
 		} catch (Exception e) {
@@ -909,13 +918,15 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		return null;
 	}
 
-	public void getChatRoomInfo(String roomName) {
+	public RoomInfo getChatRoomInfo(String roomName) {
 		try {
 			RoomInfo info = MultiUserChat.getRoomInfo(mXMPPConnection, roomName);
 			Log.e(TAG, "Number of occupants:" + info.getOccupantsCount());
 			Log.e(TAG, "Room Subject:" + info.getSubject());
+            return info;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+        return null;
 	}
 }

@@ -6,6 +6,7 @@ import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
 
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
 
 import java.util.List;
 
@@ -25,5 +26,5 @@ public interface TTTalkSmack {
 
     public MultiUserChat createChatRoom(List<User> inviteUserList);
     public MultiUserChat createChatRoomByRoomName(String roomName);
-    public void getChatRoomInfo(String roomName);
+    public RoomInfo getChatRoomInfo(String roomName);
 }
