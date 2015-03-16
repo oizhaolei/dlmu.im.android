@@ -1117,7 +1117,7 @@ public abstract class TableContent {
 		            .getColumnIndex(Columns.MESSAGE_ID)));
             chat.setId(cursor.getInt(cursor
 		            .getColumnIndex(Columns.ID)));
-            chat.setMessage(cursor.getString(cursor
+            chat.setContent(cursor.getString(cursor
 		            .getColumnIndex(Columns.CONTENT)));
             chat.setType(cursor.getString(cursor
 		            .getColumnIndex(Columns.CONTENT_TYPE)));
@@ -1145,7 +1145,7 @@ public abstract class TableContent {
             v.put(Columns.CREATED_DATE, chat.getCreated_date());
             v.put(Columns.FROM_JID, chat.getFromJid());
             v.put(Columns.TO_JID, chat.getToJid());
-            v.put(Columns.CONTENT, chat.getMessage());
+            v.put(Columns.CONTENT, chat.getContent());
             v.put(Columns.CONTENT_TYPE, chat.getType());
             v.put(Columns.FILE_PATH, chat.getFilePath());
             v.put(Columns.VOICE_SECOND, chat.getFromContentLength());

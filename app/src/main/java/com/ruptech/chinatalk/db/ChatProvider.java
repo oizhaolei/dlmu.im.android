@@ -1,6 +1,7 @@
 package com.ruptech.chinatalk.db;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -13,8 +14,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.utils.AppPreferences;
 
 public class ChatProvider extends ContentProvider {
 
@@ -202,4 +207,25 @@ public class ChatProvider extends ContentProvider {
 
     }
 
+	public static void insertChat(ContentResolver contentResolver, Chat chat) {
+		ContentValues values = new ContentValues();
+		String content = chat.getContent();
+		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
+			content = App.mContext.getString(R.string.notification_picture);
+		} else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
+			content = App.mContext.getString(R.string.notification_voice);
+		}
+
+		values.put(ChatTable.Columns.FROM_JID, chat.getFromJid());
+		values.put(ChatTable.Columns.TO_JID, chat.getToJid());
+		values.put(ChatTable.Columns.CONTENT, content);
+		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
+		values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
+		values.put(ChatTable.Columns.VOICE_SECOND, chat.getFromContentLength());
+		values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
+		values.put(ChatTable.Columns.CREATED_DATE, chat.getCreated_date());
+		values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
+
+		contentResolver.insert(ChatProvider.CONTENT_URI, values);
+	}
 }

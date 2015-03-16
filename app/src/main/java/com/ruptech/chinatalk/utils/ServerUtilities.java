@@ -24,13 +24,13 @@ public final class ServerUtilities {
             + ServerUtilities.class.getSimpleName();
 
     public static boolean register(final String token,
-                                   long ttalkid, String ifPage) {
+                                   long clientId, String ifPage) {
         if (BuildConfig.DEBUG)
             Log.i(TAG, "registering device (regId = " + token + ")");
         Map<String, String> params = new HashMap<>();
         params.put("task", "register");
         params.put("devicetoken", token);
-        params.put("clientid", String.valueOf(ttalkid));
+        params.put("clientid", String.valueOf(clientId));
         params.put("appname", APPNAME);
         params.put("appversion", App.mApkVersionOfClient.verName);
         params.put("devicename", android.os.Build.BRAND);
@@ -61,14 +61,14 @@ public final class ServerUtilities {
         if (App.readUser() != null
                 && App.readUser().getId() > 0
                 && !Utils.isEmpty(token)) {
-            final long userid = App.readUser().getId();
+            final long userId = App.readUser().getId();
             AsyncTask<Void, Void, Void> mRegisterTask;
             mRegisterTask = new AsyncTask<Void, Void, Void>() {
 
                 @Override
                 protected Void doInBackground(Void... params) {
                     String ifPage = "push/openfire_devices.php";
-                    boolean result = register(token, userid, ifPage);
+                    boolean result = register(token, userId, ifPage);
                     if(result){
                         App.mBus.post(new OnlineEvent());
                     }

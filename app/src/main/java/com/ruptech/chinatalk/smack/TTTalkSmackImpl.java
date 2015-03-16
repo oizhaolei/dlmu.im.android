@@ -8,20 +8,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
-import com.ruptech.chinatalk.db.RosterProvider;
 import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.FriendEvent;
-import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.event.PresentEvent;
 import com.ruptech.chinatalk.event.QAEvent;
-import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.event.StoryEvent;
-import com.ruptech.chinatalk.event.TranslatedEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
@@ -35,14 +30,10 @@ import com.ruptech.chinatalk.smack.ext.TTTalkQaExtension;
 import com.ruptech.chinatalk.smack.ext.TTTalkStoryExtension;
 import com.ruptech.chinatalk.smack.ext.TTTalkTranslatedExtension;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
-import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.ServerUtilities;
-import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.Connection;
@@ -50,8 +41,6 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
@@ -62,7 +51,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
-import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.GroupChatInvitation;
@@ -82,7 +70,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -92,8 +79,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	public static final String XMPP_IDENTITY_TYPE = "phone";
 	public static final int PACKET_TIMEOUT = 30000;
 
-	protected final String TAG = Utils.CATEGORY
-			+ TTTalkSmackImpl.class.getSimpleName();
+	protected final String TAG = Utils.CATEGORY + TTTalkSmackImpl.class.getSimpleName();
 
 	final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
 			ChatTable.Columns.ID, ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
@@ -202,7 +188,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			initServiceDiscovery();// 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
 			// SMACK auto-logins if we were authenticated before
 			if (!mXMPPConnection.isAuthenticated()) {
-
 				mXMPPConnection.login(account, password, XMPP_IDENTITY_NAME);
 			}
 			setStatusFromConfig();// 更新在线状态
@@ -226,54 +211,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	 */
 	private void registerRosterListener() {
 		mRoster = mXMPPConnection.getRoster();
-		mRosterListener = new RosterListener() {
-			private boolean isFristRoter;
-
-			@Override
-			public void presenceChanged(Presence presence) {
-				Log.i(TAG, "presenceChanged(" + presence.getFrom() + "): " + presence);
-				String jabberID = XMPPUtils.getJabberID(presence.getFrom());
-				RosterEntry rosterEntry = mRoster.getEntry(jabberID);
-				updateRosterEntryInDB(rosterEntry);
-				App.mBus.post(new RosterChangeEvent());
-			}
-
-			@Override
-			public void entriesUpdated(Collection<String> entries) {
-
-				Log.i(TAG, "entriesUpdated(" + entries + ")");
-				for (String entry : entries) {
-					RosterEntry rosterEntry = mRoster.getEntry(entry);
-					updateRosterEntryInDB(rosterEntry);
-				}
-				App.mBus.post(new RosterChangeEvent());
-			}
-
-			@Override
-			public void entriesDeleted(Collection<String> entries) {
-				Log.i(TAG, "entriesDeleted(" + entries + ")");
-				for (String entry : entries) {
-					deleteRosterEntryFromDB(entry);
-				}
-				App.mBus.post(new RosterChangeEvent());
-			}
-
-			@Override
-			public void entriesAdded(Collection<String> entries) {
-				Log.i(TAG, "entriesAdded(" + entries + ")");
-				ContentValues[] cvs = new ContentValues[entries.size()];
-				int i = 0;
-				for (String entry : entries) {
-					RosterEntry rosterEntry = mRoster.getEntry(entry);
-					cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
-				}
-				mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
-				if (isFristRoter) {
-					isFristRoter = false;
-					App.mBus.post(new RosterChangeEvent());
-				}
-			}
-		};
+		mRosterListener = new TTTalkRosterListener(mRoster, mContentResolver);
 		mRoster.addRosterListener(mRosterListener);
 	}
 
@@ -281,53 +219,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	 * ************** end 发送离线消息 **********************
 	 */
 
-	private void updateRosterEntryInDB(final RosterEntry entry) {
-		final ContentValues values = getContentValuesForRosterEntry(entry);
-
-		if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
-				RosterTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
-			addRosterEntryToDB(entry);
-	}
-
-	private void addRosterEntryToDB(final RosterEntry entry) {
-		ContentValues values = getContentValuesForRosterEntry(entry);
-		Uri uri = mContentResolver.insert(RosterProvider.CONTENT_URI, values);
-		Log.i(TAG, "addRosterEntryToDB: Inserted " + uri);
-	}
-
-	private void deleteRosterEntryFromDB(final String jabberID) {
-		int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
-				RosterTable.Columns.JID + " = ?", new String[]{jabberID});
-		Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
-	}
-
-	private ContentValues getContentValuesForRosterEntry(final RosterEntry entry) {
-		final ContentValues values = new ContentValues();
-
-		values.put(RosterTable.Columns.JID, entry.getUser());
-		values.put(RosterTable.Columns.ALIAS, getName(entry));
-
-		Presence presence = mRoster.getPresence(entry.getUser());
-		values.put(RosterTable.Columns.STATUS_MODE, getStatusInt(presence));
-		values.put(RosterTable.Columns.STATUS_MESSAGE, presence.getStatus());
-		values.put(RosterTable.Columns.GROUP, getGroup(entry.getGroups()));
-
-		return values;
-	}
-
-	private int getStatusInt(final Presence presence) {
-		return getStatus(presence).ordinal();
-	}
-
-	private StatusMode getStatus(Presence presence) {
-		if (presence.getType() == Presence.Type.available) {
-			if (presence.getMode() != null) {
-				return StatusMode.valueOf(presence.getMode().name());
-			}
-			return StatusMode.available;
-		}
-		return StatusMode.offline;
-	}
 
 	private void unRegisterAllListener() {
 		mXMPPConnection.removeConnectionListener(mConnectionListener);
@@ -414,7 +305,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		PacketFilter friendFilter = new PacketExtensionFilter(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 		PacketFilter presentFilter = new PacketExtensionFilter(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 		PacketFilter storyFilter = new PacketExtensionFilter(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter tttalkFilter = new PacketExtensionFilter(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
+		PacketFilter chatFilter = new PacketExtensionFilter(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 
 		//TTTalkQaExtension
 		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkQaExtension>(TTTalkQaExtension.class) {
@@ -459,86 +350,15 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 				App.mBus.post(new StoryEvent(ext.getPhoto_id(), ext.getTitle(), ext.getContent(), ext.getFullname()));
 			}
 		}, storyFilter);
+
 		//TTTalkTranslatedExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkTranslatedExtension>(TTTalkTranslatedExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkTranslatedExtension ext) {
-				String messageId = ext.getMessage_id();
-				String body = msg.getBody();
+		PacketListener translatedListener = new TranslatedListener(TTTalkTranslatedExtension.class, mContentResolver);
+		mXMPPConnection.addPacketListener(translatedListener, translatedFilter);
 
-				setToContent(messageId, body);
-
-				String fromJID = XMPPUtils.getJabberID(msg.getFrom());
-				App.mBus.post(new TranslatedEvent(fromJID, body));
-			}
-		}, translatedFilter);
 		//TTTalkExtension
-		  PacketListener packetTTTalkListener = new PacketExtensionListener<TTTalkExtension>(TTTalkExtension.class) {
-			public void processExtension(Message msg, TTTalkExtension ext) {
+		PacketListener chatListener = new TTTalkChatListener(TTTalkExtension.class, mContentResolver);
+		mXMPPConnection.addPacketListener(chatListener, chatFilter);
 
-				String body = msg.getBody();
-				if (body == null) {
-					return;
-				}
-
-				String fromJID = XMPPUtils.getJabberID(msg.getFrom());
-
-				Log.e(TAG, msg.toXML());
-
-				String type = ext.getType();
-				String file_path = ext.getFilePath();
-				int content_length = ext.getContentLength();
-
-				long ts = System.currentTimeMillis();
-
-				Chat chat = new Chat();
-				chat.setFromJid(App.readUser().getOF_JabberID());
-				chat.setMessage(body);
-				chat.setType(type);
-				chat.setFilePath(file_path);
-				chat.setFromContentLength(content_length);
-				chat.setToJid(fromJID);
-				chat.setPid(msg.getPacketID());
-				chat.setStatus(ChatProvider.DS_NEW);
-				chat.setCreated_date( ts);
-
-				addChatMessageToDB(mContentResolver, chat);
-
-				App.mBus.post(new NewChatEvent(fromJID, body, type));
-			}
-		};
-		mXMPPConnection.addPacketListener(packetTTTalkListener, tttalkFilter);
-
-	}
-
-	private void setToContent(String chatID, String message) {
-		ContentValues cv = new ContentValues();
-		cv.put(ChatTable.Columns.TO_MESSAGE, message);
-
-		mContentResolver.update(ChatProvider.CONTENT_URI, cv, ChatTable.Columns.ID
-				+ " = ?  ", new String[]{chatID});
-	}
-
-	public static void addChatMessageToDB(ContentResolver mContentResolver, Chat chat) {
-		ContentValues values = new ContentValues();
-		String content = chat.getMessage();
-		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
-			content = App.mContext.getString(R.string.notification_picture);
-		} else if (AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {
-			content = App.mContext.getString(R.string.notification_voice);
-		}
-
-		values.put(ChatTable.Columns.FROM_JID, chat.getFromJid());
-		values.put(ChatTable.Columns.TO_JID, chat.getToJid());
-		values.put(ChatTable.Columns.CONTENT, content);
-		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
-		values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
-		values.put(ChatTable.Columns.VOICE_SECOND, chat.getFromContentLength());
-		values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
-		values.put(ChatTable.Columns.CREATED_DATE, chat.getCreated_date());
-		values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
-
-		mContentResolver.insert(ChatProvider.CONTENT_URI, values);
 	}
 
 	/**
@@ -591,26 +411,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 //        mContentResolver.update(rowuri, cv, ChatConstants.PACKET_ID
 //                + " = ? AND " + ChatConstants.FROM_JID + " = "
 //                + ChatConstants.OUTGOING, new String[]{packetID});
-	}
-
-
-	private String getGroup(Collection<RosterGroup> groups) {
-		for (RosterGroup group : groups) {
-			return group.getName();
-		}
-		return "";
-	}
-
-	private String getName(RosterEntry rosterEntry) {
-		String name = rosterEntry.getName();
-		if (name != null && name.length() > 0) {
-			return name;
-		}
-		name = StringUtils.parseName(rosterEntry.getUser());
-		if (name.length() > 0) {
-			return name;
-		}
-		return rosterEntry.getUser();
 	}
 
 
@@ -720,8 +520,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	public void sendMessage(String toJID, Chat chat) {
 		final Message newMessage = new Message(toJID, Message.Type.chat);
 
-		String message = chat.getMessage();
-		newMessage.setBody(message);
+		String content = chat.getContent();
+		newMessage.setBody(content);
 		newMessage.addExtension(new DeliveryReceiptRequest());
 		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
 				AbstractTTTalkExtension.VALUE_VER,
@@ -745,14 +545,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			// send offline -> store to DB
 			chat.setStatus(ChatProvider.DS_NEW);
 		}
-		addChatMessageToDB(mContentResolver, chat);
+		ChatProvider.insertChat(mContentResolver, chat);
 	}
 
 	@Override
-	public void sendGroupMessage(MultiUserChat chatRoom, Chat chat) {
-		final Message newMessage = new Message(chatRoom.getRoom(), Message.Type.groupchat);
+	public void sendGroupMessage(MultiUserChat toMUChat, Chat chat) {
+		final Message newMessage = new Message(toMUChat.getRoom(), Message.Type.groupchat);
 
-		String message = chat.getMessage();
+		String message = chat.getContent();
 		newMessage.setBody(message);
 		newMessage.addExtension(new DeliveryReceiptRequest());
 		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
@@ -766,14 +566,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		Log.e(TAG, newMessage.toXML());
 
 		chat.setFromJid(App.readUser().getOF_JabberID());
-		chat.setToJid(chatRoom.getRoom());
+		chat.setToJid(toMUChat.getRoom());
 		chat.setPid(newMessage.getPacketID());
 		chat.setCreated_date(System.currentTimeMillis());
 
 		if (isAuthenticated()) {
 			chat.setStatus(ChatProvider.DS_SENT_OR_READ);
 			try {
-				chatRoom.sendMessage(newMessage);
+				toMUChat.sendMessage(newMessage);
 			} catch (Exception e) {
 				Log.d(TAG, e.getMessage());
 			}
@@ -781,7 +581,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			// send offline -> store to DB
 			chat.setStatus(ChatProvider.DS_NEW);
 		}
-		addChatMessageToDB(mContentResolver, chat);
+		ChatProvider.insertChat(mContentResolver, chat);
 	}
 
 	public static void sendOfflineMessage(ContentResolver cr, String toJID,
@@ -789,7 +589,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		ContentValues values = new ContentValues();
 		values.put(ChatTable.Columns.FROM_JID, App.readUser().getOF_JabberID());
 		values.put(ChatTable.Columns.TO_JID, toJID);
-		values.put(ChatTable.Columns.CONTENT, chat.getMessage());
+		values.put(ChatTable.Columns.CONTENT, chat.getContent());
 		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
 		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
 		values.put(ChatTable.Columns.CREATED_DATE, System.currentTimeMillis());
@@ -894,7 +694,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
                 room.grantOwnership(user.getOF_JabberID());
 			}
             Chat chat = new Chat();
-            chat.setMessage("Created room by " + App.readUser().getFullname());
+            chat.setContent("Created room by " + App.readUser().getFullname());
 			sendGroupMessage(room, chat);
 
 		} catch (Exception e) {

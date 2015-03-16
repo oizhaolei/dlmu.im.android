@@ -9,21 +9,24 @@ public class Chat implements Serializable {
     protected String fromJid;
     protected int read;
     protected String toJid;
-    protected String message;
+    protected String content;
     protected String type;
     protected String filePath;
     protected String fromLang;
     protected String toLang;
     protected int fromContentLength;
+	@Deprecated
     protected String to_content;
     protected long message_id;
     protected String pid;
     protected int status;
 
+	@Deprecated
     public String getTo_content() {
         return to_content;
     }
 
+	@Deprecated
     public void setTo_content(String to_content) {
         this.to_content = to_content;
     }
@@ -77,15 +80,15 @@ public class Chat implements Serializable {
 		this.message_id = message_id;
 	}
 
-	public String getMessage() {
-        return message;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    public String getPid() {
+	public String getPid() {
         return pid;
     }
 

@@ -1037,9 +1037,9 @@ public class HttpServer extends HttpConnection {
         params.put("to_userid", String.valueOf(0));
         params.put("from_lang", chat.getFromLang());
         params.put("to_lang", chat.getToLang());
-        if (chat.getMessage() == null)
-            chat.setMessage("");
-        params.put("text", chat.getMessage());
+        if (chat.getContent() == null)
+            chat.setContent("");
+        params.put("text", chat.getContent());
         params.put("content_length", String.valueOf(chat.getFromContentLength()));
         params.put("filetype", chat.getType());
         params.put("update_date", DateCommonUtils.getUtcDate(new Date(),
