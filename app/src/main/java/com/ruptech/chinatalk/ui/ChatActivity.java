@@ -55,7 +55,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
- * 
+ *
  * @author
  */
 public class ChatActivity extends AbstractChatActivity {
@@ -185,11 +185,16 @@ public class ChatActivity extends AbstractChatActivity {
 //						toLangName));
 //			}
 //		}
-//		if (null == mFriend || Utils.isEmpty(mFriend.getFriend_nickname())) {
-//			getSupportActionBar().setTitle(mFriendUser.getFullname());
-//		} else {
-//			getSupportActionBar().setTitle(mFriend.getFriend_nickname());
-//		}
+        if (isGroupChat){
+            getSupportActionBar().setTitle(Utils.getGroupChatName(mWithJabberID));
+        }else{
+            if (null == mFriend || Utils.isEmpty(mFriend.getFriend_nickname())) {
+                getSupportActionBar().setTitle(mFriendUser.getFullname());
+            } else {
+                getSupportActionBar().setTitle(mFriend.getFriend_nickname());
+            }
+        }
+
 
 	}
 
@@ -267,8 +272,9 @@ public class ChatActivity extends AbstractChatActivity {
 					Toast.LENGTH_LONG).show();
                 finish();
             }
+        }else {
+            mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(mWithJabberID));
         }
-//        mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(mWithJabberID));
     }
 
 	@Override

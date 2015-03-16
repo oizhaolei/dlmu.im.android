@@ -82,6 +82,10 @@ import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.GuideViewManager;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 
+import org.jivesoftware.smackx.muc.Affiliate;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.Occupant;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1678,5 +1682,27 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static List<User> getGroupChatUserList(MultiUserChat chatRoom) {
+        List<User> list = new ArrayList();
+        try {
+            Iterator<Affiliate> iterator = chatRoom.getOwners().iterator();
+            while (iterator.hasNext()){
+                Affiliate affiliate = iterator.next();
+                list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(affiliate.getJid())));
+            }
+        }catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return list;
+    }
+
+    public static String getGroupChatName(String fromJID) {
+        RoomInfo roomInfo = App.mSmack.getChatRoomInfo(fromJID);
+        if (roomInfo != null)
+            return roomInfo.getDescription();
+        else
+            return "Group Chat";
     }
 }

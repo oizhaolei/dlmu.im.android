@@ -33,11 +33,6 @@ import com.ruptech.chinatalk.widget.ChatUserListAdapter;
 import com.ruptech.chinatalk.widget.MyGridView;
 
 import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.Occupant;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -183,26 +178,7 @@ public class ChatSettingActivity extends ActionBarActivity {
 		return true;
 	}
 
-    private List<User> getGroupChatUserList() {
-        List<User> list = new ArrayList();
-        try {
-            Iterator<Occupant> iterator = chatRoom.getParticipants().iterator();
-            while (iterator.hasNext()){
-                Occupant occupant = iterator.next();
-                list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(occupant.getJid())));
-            }
 
-            iterator = chatRoom.getModerators().iterator();
-            while (iterator.hasNext()){
-                Occupant occupant = iterator.next();
-                list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(occupant.getJid())));
-            }
-
-        }catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-        return list;
-    }
 
 	private void setupComponents() {
         if (!isGroupChat){
@@ -267,7 +243,7 @@ public class ChatSettingActivity extends ActionBarActivity {
 
         chatUserAdapter = new ChatUserListAdapter(this, R.layout.item_chat_user);
         if (isGroupChat) {
-            chatUserAdapter.addAll(getGroupChatUserList());
+            chatUserAdapter.addAll(Utils.getGroupChatUserList(chatRoom));
         }else{
             chatUserAdapter.add(mFriendUser);
         }
