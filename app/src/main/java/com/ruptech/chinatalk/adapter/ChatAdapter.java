@@ -76,7 +76,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
                 .getDefaultDisplay();
         mWidth = display.getWidth();
         CREATE_DATE_INDEX = cursor
-                .getColumnIndexOrThrow(ChatTable.Columns.DATE);
+                .getColumnIndexOrThrow(ChatTable.Columns.CREATED_DATE);
     }
 
 

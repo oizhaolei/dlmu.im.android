@@ -467,7 +467,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
                 Cursor clickCursor = mRecentChatAdapter.getCursor();
                 clickCursor.moveToPosition(position);
                 String jid = clickCursor.getString(clickCursor
-                        .getColumnIndex(TableContent.ChatTable.Columns.JID));
+                        .getColumnIndex(TableContent.ChatTable.Columns.TO_JID));
 
                 startChatActivity(jid, XMPPUtils.splitJidAndServer(jid));
 			}

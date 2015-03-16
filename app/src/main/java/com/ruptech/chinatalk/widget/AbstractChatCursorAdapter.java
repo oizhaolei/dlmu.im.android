@@ -1045,7 +1045,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
             cv.put(TableContent.ChatTable.Columns.TO_MESSAGE, to_content);
 
         mContentResolver.update(ChatProvider.CONTENT_URI, cv, TableContent.ChatTable.Columns.PACKET_ID
-                + " = ? AND " + TableContent.ChatTable.Columns.DIRECTION + " = "
+                + " = ? AND " + TableContent.ChatTable.Columns.FROM_JID + " = "
                 + ChatProvider.INCOMING, new String[]{packetID});
     }
 

@@ -1002,14 +1002,15 @@ public abstract class TableContent {
     public static class ChatTable {
         public static class Columns {
             public final String ID = "_id";
-            public final String DATE = "date";
-            public final String DIRECTION = "from_me";
-            public final String JID = "jid";
-            public final String MESSAGE = "message";
-            public final String TYPE = "type";
+            public final String CREATED_DATE = "created_date";
+            public final String FROM_JID = "from_user";
+            public final String TO_JID = "to_user";
+            public final String CONTENT = "content";
+            public final String CONTENT_TYPE = "content_type";
             public final String FILE_PATH = "file_path";
-            public final String CONTENT_LENGTH = "content_length";
-            public final String TO_MESSAGE = "to_content";
+            public final String VOICE_SECOND = "voice_second";
+	        @Deprecated
+	        public final String TO_MESSAGE = "to_content";
             public final String MESSAGE_ID = "message_id";
             public final String DELIVERY_STATUS = "read";
             public final String PACKET_ID = "pid";
@@ -1029,14 +1030,13 @@ public abstract class TableContent {
             StringBuffer create = new StringBuffer(512);
             create.append("CREATE TABLE ").append(getName()).append("( ");
             create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-            create.append(Columns.DATE + " INTEGER, ");
-            create.append(Columns.DIRECTION + " INTEGER, ");
-            create.append(Columns.JID + " TEXT, ");
-            create.append(Columns.MESSAGE + " TEXT, ");
-            create.append(Columns.TYPE + " TEXT, ");
+            create.append(Columns.CREATED_DATE + " INTEGER, ");
+            create.append(Columns.FROM_JID + " INTEGER, ");
+            create.append(Columns.TO_JID + " TEXT, ");
+            create.append(Columns.CONTENT + " TEXT, ");
+            create.append(Columns.CONTENT_TYPE + " TEXT, ");
             create.append(Columns.FILE_PATH + " TEXT, ");
-            create.append(Columns.CONTENT_LENGTH + " INTEGER, ");
-            create.append(Columns.TO_MESSAGE + " TEXT, ");
+            create.append(Columns.VOICE_SECOND + " INTEGER, ");
             create.append(Columns.DELIVERY_STATUS + " INTEGER, ");
             create.append(Columns.MESSAGE_ID + " TEXT, ");
             create.append(Columns.PACKET_ID + " TEXT ");
@@ -1057,14 +1057,13 @@ public abstract class TableContent {
             long userid = App.readUser().getId();
             StringBuffer bulkInsertSql = new StringBuffer(512);
             bulkInsertSql.append("INSERT INTO ").append(getName()).append("( ");
-            bulkInsertSql.append(Columns.DATE + ", ");
-            bulkInsertSql.append(Columns.DIRECTION + ", ");
-            bulkInsertSql.append(Columns.JID + ", ");
-            bulkInsertSql.append(Columns.MESSAGE + ", ");
-            bulkInsertSql.append(Columns.TYPE + ", ");
+            bulkInsertSql.append(Columns.CREATED_DATE + ", ");
+            bulkInsertSql.append(Columns.FROM_JID + ", ");
+            bulkInsertSql.append(Columns.TO_JID + ", ");
+            bulkInsertSql.append(Columns.CONTENT + ", ");
+            bulkInsertSql.append(Columns.CONTENT_TYPE + ", ");
             bulkInsertSql.append(Columns.FILE_PATH + ", ");
-            bulkInsertSql.append(Columns.CONTENT_LENGTH + ", ");
-            bulkInsertSql.append(Columns.TO_MESSAGE + ", ");
+            bulkInsertSql.append(Columns.VOICE_SECOND + ", ");
             bulkInsertSql.append(Columns.MESSAGE_ID + ", ");
             bulkInsertSql.append(Columns.DELIVERY_STATUS + ", ");
             bulkInsertSql.append(Columns.PACKET_ID);
@@ -1091,8 +1090,8 @@ public abstract class TableContent {
         }
 
         public String[] getIndexColumns() {
-            return new String[] { Columns.ID, Columns.DATE, Columns.DIRECTION, Columns.JID,
-                    Columns.MESSAGE, Columns.TO_MESSAGE, Columns.TYPE,Columns.FILE_PATH,Columns.CONTENT_LENGTH,
+            return new String[] { Columns.ID, Columns.CREATED_DATE, Columns.FROM_JID, Columns.TO_JID,
+                    Columns.CONTENT, Columns.CONTENT_TYPE,Columns.FILE_PATH,Columns.VOICE_SECOND,
                     Columns.DELIVERY_STATUS, Columns.MESSAGE_ID, Columns.PACKET_ID };
         }
 
@@ -1109,25 +1108,23 @@ public abstract class TableContent {
 
             Chat chat = new Chat();
             chat.setDate(cursor.getLong(cursor
-                    .getColumnIndex(Columns.DATE)));
+		            .getColumnIndex(Columns.CREATED_DATE)));
             chat.setMessageId(cursor.getLong(cursor
-                    .getColumnIndex(Columns.MESSAGE_ID)));
+		            .getColumnIndex(Columns.MESSAGE_ID)));
             chat.setId(cursor.getInt(cursor
-                    .getColumnIndex(Columns.ID)));
+		            .getColumnIndex(Columns.ID)));
             chat.setMessage(cursor.getString(cursor
-                    .getColumnIndex(Columns.MESSAGE)));
+		            .getColumnIndex(Columns.CONTENT)));
             chat.setType(cursor.getString(cursor
-                    .getColumnIndex(Columns.TYPE)));
+		            .getColumnIndex(Columns.CONTENT_TYPE)));
             chat.setFilePath(cursor.getString(cursor
-                    .getColumnIndex(Columns.FILE_PATH)));
+		            .getColumnIndex(Columns.FILE_PATH)));
             chat.setFromContentLength(cursor.getInt(cursor
-                    .getColumnIndex(Columns.CONTENT_LENGTH)));
-            chat.setTo_content(cursor.getString(cursor
-                    .getColumnIndex(Columns.TO_MESSAGE)));
+		            .getColumnIndex(Columns.VOICE_SECOND)));
             chat.setFromMe(cursor.getInt(cursor
-                    .getColumnIndex(Columns.DIRECTION)));// 消息来自
+                    .getColumnIndex(Columns.FROM_JID)));// 消息来自
             chat.setJid(cursor.getString(cursor
-                    .getColumnIndex(Columns.JID)));
+                    .getColumnIndex(Columns.TO_JID)));
             chat.setPid(cursor.getString(cursor
                     .getColumnIndex(Columns.PACKET_ID)));
             chat.setRead(cursor.getInt(cursor
@@ -1141,14 +1138,13 @@ public abstract class TableContent {
         public ContentValues toContentValues(Chat chat) {
             final ContentValues v = new ContentValues();
             v.put(Columns.ID, chat.getId());
-            v.put(Columns.DATE, chat.getDate());
-            v.put(Columns.DIRECTION, chat.getFromMe());
-            v.put(Columns.JID, chat.getJid());
-            v.put(Columns.MESSAGE, chat.getMessage());
-            v.put(Columns.TYPE, chat.getType());
+            v.put(Columns.CREATED_DATE, chat.getDate());
+            v.put(Columns.FROM_JID, chat.getFromMe());
+            v.put(Columns.TO_JID, chat.getJid());
+            v.put(Columns.CONTENT, chat.getMessage());
+            v.put(Columns.CONTENT_TYPE, chat.getType());
             v.put(Columns.FILE_PATH, chat.getFilePath());
-            v.put(Columns.CONTENT_LENGTH, chat.getFromContentLength());
-            v.put(Columns.TO_MESSAGE, chat.getTo_content());
+            v.put(Columns.VOICE_SECOND, chat.getFromContentLength());
             v.put(Columns.DELIVERY_STATUS, chat.getRead());
             v.put(Columns.MESSAGE_ID, chat.getMessageId());
             v.put(Columns.PACKET_ID, chat.getPid());
@@ -1157,13 +1153,13 @@ public abstract class TableContent {
 
         public static ArrayList<String> getRequiredColumns() {
             ArrayList<String> tmpList = new ArrayList<>();
-            tmpList.add(Columns.DATE);
-            tmpList.add(Columns.DIRECTION);
-            tmpList.add(Columns.JID);
-            tmpList.add(Columns.MESSAGE);
-            tmpList.add(Columns.TYPE);
+            tmpList.add(Columns.CREATED_DATE);
+            tmpList.add(Columns.FROM_JID);
+            tmpList.add(Columns.TO_JID);
+            tmpList.add(Columns.CONTENT);
+            tmpList.add(Columns.CONTENT_TYPE);
             tmpList.add(Columns.FILE_PATH);
-            tmpList.add(Columns.CONTENT_LENGTH);
+            tmpList.add(Columns.VOICE_SECOND);
             return tmpList;
         }
     }

@@ -21,16 +21,16 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class RecentChatAdapter extends SimpleCursorAdapter {
-    private static final String SELECT = ChatTable.Columns.DATE
-            + " in (select max(" + ChatTable.Columns.DATE + ") from "
-            + ChatProvider.TABLE_NAME + " group by " + ChatTable.Columns.JID
+    private static final String SELECT = ChatTable.Columns.CREATED_DATE
+            + " in (select max(" + ChatTable.Columns.CREATED_DATE + ") from "
+            + ChatProvider.TABLE_NAME + " group by " + ChatTable.Columns.TO_JID
             + " having count(*)>0)";// 查询合并重复jid字段的所有聊天对象
     private static final String[] FROM = new String[]{
-            ChatTable.Columns.ID, ChatTable.Columns.DATE,
-            ChatTable.Columns.DIRECTION,
-            ChatTable.Columns.JID, ChatTable.Columns.MESSAGE,
+            ChatTable.Columns.ID, ChatTable.Columns.CREATED_DATE,
+            ChatTable.Columns.FROM_JID,
+            ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
             ChatTable.Columns.DELIVERY_STATUS};// 查询字段
-    private static final String SORT_ORDER = ChatTable.Columns.DATE + " DESC";
+    private static final String SORT_ORDER = ChatTable.Columns.CREATED_DATE + " DESC";
     private ContentResolver mContentResolver;
     private LayoutInflater mLayoutInflater;
     private Activity mContext;
@@ -55,20 +55,20 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
         Cursor cursor = this.getCursor();
         cursor.moveToPosition(position);
         long dateMilliseconds = cursor.getLong(cursor
-                .getColumnIndex(ChatTable.Columns.DATE));
+                .getColumnIndex(ChatTable.Columns.CREATED_DATE));
         String date = DateCommonUtils.formatDateToString(dateMilliseconds, false, false);
         String message = cursor.getString(cursor
-                .getColumnIndex(ChatTable.Columns.MESSAGE));
+                .getColumnIndex(ChatTable.Columns.CONTENT));
         String jid = cursor.getString(cursor
-                .getColumnIndex(ChatTable.Columns.JID));
+                .getColumnIndex(ChatTable.Columns.TO_JID));
 
-        String selection = ChatTable.Columns.JID + " = '" + jid + "' AND "
-                + ChatTable.Columns.DIRECTION + " = " + ChatProvider.INCOMING
+        String selection = ChatTable.Columns.TO_JID + " = '" + jid + "' AND "
+                + ChatTable.Columns.FROM_JID + " = " + ChatProvider.INCOMING
                 + " AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
                 + ChatProvider.DS_NEW;// 新消息数量字段
         Cursor msgcursor = mContentResolver.query(ChatProvider.CONTENT_URI,
                 new String[]{"count(" + ChatTable.Columns.PACKET_ID + ")",
-                        ChatTable.Columns.DATE, ChatTable.Columns.MESSAGE}, selection,
+                        ChatTable.Columns.CREATED_DATE, ChatTable.Columns.CONTENT}, selection,
                 null, SORT_ORDER);
         msgcursor.moveToFirst();
         int count = msgcursor.getInt(0);
@@ -100,9 +100,9 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 
         if (msgcursor.getInt(0) > 0) {
             viewHolder.msgView.setText(msgcursor.getString(msgcursor
-                    .getColumnIndex(ChatTable.Columns.MESSAGE)));
+                    .getColumnIndex(ChatTable.Columns.CONTENT)));
             viewHolder.dataView.setText(DateCommonUtils.formatDateToString(msgcursor
-                    .getLong(msgcursor.getColumnIndex(ChatTable.Columns.DATE)),false, false));
+                    .getLong(msgcursor.getColumnIndex(ChatTable.Columns.CREATED_DATE)),false, false));
             viewHolder.unReadView.setText(msgcursor.getString(0));
         }
         viewHolder.unReadView.setVisibility(count > 0 ? View.VISIBLE

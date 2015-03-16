@@ -748,7 +748,7 @@ public class ChatActivity extends AbstractChatActivity {
      * 设置聊天的Adapter
      */
     private void setChatWindowAdapter() {
-        String selection = TableContent.ChatTable.Columns.JID + "='" + mWithJabberID + "'";
+        String selection = TableContent.ChatTable.Columns.TO_JID + "='" + mWithJabberID + "'";
         // 异步查询数据库
         new AsyncQueryHandler(getContentResolver()) {
 

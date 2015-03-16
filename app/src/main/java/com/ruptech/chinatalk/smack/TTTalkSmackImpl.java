@@ -96,9 +96,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			+ TTTalkSmackImpl.class.getSimpleName();
 
 	final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
-			ChatTable.Columns.ID, ChatTable.Columns.JID, ChatTable.Columns.MESSAGE,
-			ChatTable.Columns.DATE, ChatTable.Columns.PACKET_ID};
-	final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.DIRECTION
+			ChatTable.Columns.ID, ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
+			ChatTable.Columns.CREATED_DATE, ChatTable.Columns.PACKET_ID};
+	final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.FROM_JID
 			+ " = " + ChatProvider.OUTGOING + " AND "
 			+ ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
 
@@ -528,14 +528,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			content = App.mContext.getString(R.string.notification_voice);
 		}
 
-		values.put(ChatTable.Columns.DIRECTION, chat.getFromMe());
-		values.put(ChatTable.Columns.JID, chat.getJid());
-		values.put(ChatTable.Columns.MESSAGE, content);
-		values.put(ChatTable.Columns.TYPE, chat.getType());
+		values.put(ChatTable.Columns.FROM_JID, chat.getFromMe());
+		values.put(ChatTable.Columns.TO_JID, chat.getJid());
+		values.put(ChatTable.Columns.CONTENT, content);
+		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
 		values.put(ChatTable.Columns.FILE_PATH, chat.getFilePath());
-		values.put(ChatTable.Columns.CONTENT_LENGTH, chat.getFromContentLength());
+		values.put(ChatTable.Columns.VOICE_SECOND, chat.getFromContentLength());
 		values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
-		values.put(ChatTable.Columns.DATE, chat.getDate());
+		values.put(ChatTable.Columns.CREATED_DATE, chat.getDate());
 		values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
 
 		mContentResolver.insert(ChatProvider.CONTENT_URI, values);
@@ -589,7 +589,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 //        Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
 //                + ChatProvider.TABLE_NAME);
 //        mContentResolver.update(rowuri, cv, ChatConstants.PACKET_ID
-//                + " = ? AND " + ChatConstants.DIRECTION + " = "
+//                + " = ? AND " + ChatConstants.FROM_JID + " = "
 //                + ChatConstants.OUTGOING, new String[]{packetID});
 	}
 
@@ -787,12 +787,12 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	public static void sendOfflineMessage(ContentResolver cr, String toJID,
 	                                      Chat chat) {
 		ContentValues values = new ContentValues();
-		values.put(ChatTable.Columns.DIRECTION, ChatProvider.OUTGOING);
-		values.put(ChatTable.Columns.JID, toJID);
-		values.put(ChatTable.Columns.MESSAGE, chat.getMessage());
-		values.put(ChatTable.Columns.TYPE, chat.getType());
+		values.put(ChatTable.Columns.FROM_JID, ChatProvider.OUTGOING);
+		values.put(ChatTable.Columns.TO_JID, toJID);
+		values.put(ChatTable.Columns.CONTENT, chat.getMessage());
+		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
 		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
-		values.put(ChatTable.Columns.DATE, System.currentTimeMillis());
+		values.put(ChatTable.Columns.CREATED_DATE, System.currentTimeMillis());
 
 		cr.insert(ChatProvider.CONTENT_URI, values);
 	}
@@ -815,9 +815,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
 				SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
 		final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
-		final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.JID);
-		final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.MESSAGE);
-		final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.DATE);
+		final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.TO_JID);
+		final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CONTENT);
+		final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CREATED_DATE);
 		final int PACKETID_COL = cursor
 				.getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
 		ContentValues mark_sent = new ContentValues();

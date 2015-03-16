@@ -6,17 +6,13 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQuery;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 
@@ -122,7 +118,7 @@ public class ChatProvider extends ContentProvider {
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-        long rowId = db.insert(TABLE_NAME, ChatTable.Columns.DATE, values);
+        long rowId = db.insert(TABLE_NAME, ChatTable.Columns.CREATED_DATE, values);
 
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);

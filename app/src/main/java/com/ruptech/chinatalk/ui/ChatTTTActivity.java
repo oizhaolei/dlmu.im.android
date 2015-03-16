@@ -527,15 +527,15 @@ public class ChatTTTActivity extends ActionBarActivity {
 
 	protected static final String[] TTT_CHAT_QUERY = new String[]{
 			ChatTable.Columns.ID,
-			ChatTable.Columns.DATE,
-			ChatTable.Columns.DIRECTION,
-			ChatTable.Columns.JID,
-			ChatTable.Columns.MESSAGE,
-			ChatTable.Columns.TYPE,
+			ChatTable.Columns.CREATED_DATE,
+			ChatTable.Columns.FROM_JID,
+			ChatTable.Columns.TO_JID,
+			ChatTable.Columns.CONTENT,
+			ChatTable.Columns.CONTENT_TYPE,
 			ChatTable.Columns.FILE_PATH,
-			ChatTable.Columns.CONTENT_LENGTH,
+			ChatTable.Columns.VOICE_SECOND,
 			ChatTable.Columns.TO_MESSAGE,
-			ChatTable.Columns.DATE,
+			ChatTable.Columns.CREATED_DATE,
 			ChatTable.Columns.MESSAGE_ID,
 			ChatTable.Columns.DELIVERY_STATUS,
 			ChatTable.Columns.PACKET_ID};// 查询字段
