@@ -11,8 +11,10 @@ import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
+import com.ruptech.chinatalk.event.ValidateEmailEvent;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
+import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.dialog.ChangeFullNameActivity;
 import com.ruptech.chinatalk.ui.dialog.ChangeGenderActivity;
@@ -85,6 +87,16 @@ public class ProfileActivity extends ActionBarActivity {
 
 	@InjectView(R.id.activity_profile_volunteer_imageview)
 	ImageView volunteerImageView;
+
+    @InjectView(R.id.activity_profile_user_tel_title_textview)
+    TextView mAccountLabel;
+
+    @OnClick(R.id.activity_profile_user_tel_layout)
+    public void gotoValidateEmalil(View v) {
+        if(App.readUser()!=null && Utils.isMail(App.readUser().getTel()) && App.readUser().getAccount_valid() != 1){
+            App.mBus.post(new ValidateEmailEvent("", TaskResult.OK));
+        }
+    }
 
 	@OnClick(R.id.activity_profile_user_fullname_layout)
 	public void changeUserFullName(View v) {
@@ -170,6 +182,19 @@ public class ProfileActivity extends ActionBarActivity {
 	private void displayUser() {
 		try {
 			if (mUser != null && App.readUser() != null) {
+                if (Utils.isMail(App.readUser().getTel())){
+                    if(App.readUser().getAccount_valid() == 1){
+                        mAccountLabel.setText(this.getString(R.string.email_verified));
+                        profileUserTelView.setClickable(false);
+                    }else{
+                        mAccountLabel.setText(this.getString(R.string.email_not_verified));
+                        profileUserTelView.setClickable(true);
+                    }
+                }else{
+                    mAccountLabel.setText(this.getString(R.string.account));
+                    profileUserTelView.setClickable(false);
+                }
+
 				String thumb = mUser.getPic_url();
 				Utils.setUserPicImage(mThumbImageView, thumb);
 

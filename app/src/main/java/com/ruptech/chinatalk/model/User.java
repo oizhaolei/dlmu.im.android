@@ -70,6 +70,8 @@ public class User extends Item implements Serializable {
 
     public String terminal_type;
 
+    public int account_valid;
+
 	public User() {
 	}
 
@@ -144,6 +146,8 @@ public class User extends Item implements Serializable {
 		if (json.has("lnge6")) {
 			lnge6 = json.optInt("lnge6");
 		}
+
+        account_valid = json.optInt("account_valid", 0);
 	}
 
 	public long getLike_id() {
@@ -320,6 +324,10 @@ public class User extends Item implements Serializable {
 		return wallet_close;
 	}
 
+    public int getAccount_valid() {
+        return account_valid;
+    }
+
 	public boolean isCanTranslate(String langStr) {
 
 		if (!Utils.isEmpty(langStr)) {
@@ -449,7 +457,11 @@ public class User extends Item implements Serializable {
 		this.wallet_close = wallet_close;
 	}
 
-	@Override
+    public void setAccount_valid(int account_valid) {
+        this.account_valid = account_valid;
+    }
+
+    @Override
 	public String toString() {
 		return "User [id=" + id + ", tel=" + tel + "]";
 	}

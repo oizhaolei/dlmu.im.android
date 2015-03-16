@@ -551,4 +551,8 @@
     <string name="invite_message">「%1$s」様が貴方をTTTalkに招待しました。\n翻訳チャットで世界と出会いましょう。\n%2$s</string>
     <string name="channel_is_not_exist">チャットの存在しない。</string>
     <string name="invite_chat">招待</string>
+    <string name="sent_verification_email">検証Eメールを送信しました。</string>
+    <string name="failed_to_send_verification_email">検証Eメール送信失敗</string>
+    <string name="email_verified">Eメール(検証完了)</string>
+    <string name="email_not_verified">Eメール(未検証)</string>
 </resources>

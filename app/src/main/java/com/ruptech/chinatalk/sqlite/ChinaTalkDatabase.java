@@ -163,6 +163,8 @@ public class ChinaTalkDatabase {
         db.execSQL(ChatTable.getBulkInsertSQL());
         db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
                 + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
+        db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
+                + UserTable.Columns.ACCOUNT_VALID + "    INT;");
 	}
 
     private static void udpateTable62to63(SQLiteDatabase db) {
@@ -173,6 +175,8 @@ public class ChinaTalkDatabase {
         db.execSQL(ChatTable.getBulkInsertSQL());
         db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
                 + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
+        db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
+                + UserTable.Columns.ACCOUNT_VALID + "    INT;");
     }
 
 	/**

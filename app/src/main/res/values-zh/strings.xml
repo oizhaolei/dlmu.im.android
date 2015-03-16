@@ -560,4 +560,8 @@
     <string name="invite_message">[%1$s] 邀请您一起使用TT译聊. 一起体验真正的跨语言、跨文化的异国交友。\n请点击下面链接下载 。\n%2$s</string>
     <string name="channel_is_not_exist">频道不存在。</string>
     <string name="invite_chat">邀请</string>
+    <string name="sent_verification_email">验证邮件已经发送到您的邮箱，注意查收。</string>
+    <string name="failed_to_send_verification_email">验证邮件发送出错。</string>
+    <string name="email_verified">邮箱（已验证）</string>
+    <string name="email_not_verified">邮箱（未验证）</string>
 </resources>
