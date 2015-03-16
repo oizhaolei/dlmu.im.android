@@ -546,7 +546,7 @@ public class TTTActivity extends ActionBarActivity {
 		String fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
 		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
 
-		String selection = MessageTable.Columns.TO_USERID + " = ? and " + MessageTable.Columns.FROM_LANG + " = '? and " + MessageTable.Columns.TO_LANG + " = ?";
+		String selection = MessageTable.Columns.TO_USERID + " = ? and " + MessageTable.Columns.FROM_LANG + " = ? and " + MessageTable.Columns.TO_LANG + " = ?";
 
 		Cursor childCursor = getContentResolver().query(MessageProvider.CONTENT_URI,
 				TTT_MESSAGE_QUERY, selection, new String[]{String.valueOf(AppPreferences.TTT_REQUEST_TO_USERID), fromLang, toLang}, null);

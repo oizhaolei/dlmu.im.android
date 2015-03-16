@@ -271,9 +271,6 @@ public class UserDAO {
 	 *
 	 * 若报 SQLiteconstraintexception 异常, 检查是否某not null字段为空
 	 *
-	 * @param user
-	 * @param isUnread
-	 * @return
 	 */
 	public long mergeUser(User user) {
 		SQLiteDatabase db = mSqlTemplate.getDb(true);
