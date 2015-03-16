@@ -1045,12 +1045,11 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
             cv.put(TableContent.ChatTable.Columns.TO_MESSAGE, to_content);
 
         mContentResolver.update(ChatProvider.CONTENT_URI, cv, TableContent.ChatTable.Columns.PACKET_ID
-                + " = ? AND " + TableContent.ChatTable.Columns.FROM_JID + " = "
-                + ChatProvider.INCOMING, new String[]{packetID});
+                + " = ? AND " + TableContent.ChatTable.Columns.FROM_JID + " = ?", new String[]{packetID, App.readUser().getOF_JabberID()});
     }
 
     public boolean isMine(Chat chat){
-        return (chat.getFromMe() == ChatProvider.OUTGOING);
+        return (chat.getFromJid() == App.readUser().getOF_JabberID());
     }
 
 }

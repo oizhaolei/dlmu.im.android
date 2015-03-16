@@ -193,7 +193,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.ruptech.chinatalk.ui.ChatTTTActivity"
+            android:name=".ui.TTTActivity"
             android:configChanges="orientation|keyboardHidden"
             android:icon="@drawable/ic_tttalk_gray_light"
             android:screenOrientation="portrait"
@@ -638,6 +638,10 @@
 			android:name=".sqlite.ChatProvider"
 			android:authorities="com.ruptech.chinatalk.chatprovider" >
 		</provider>
+        <provider
+            android:name=".db.MessageProvider"
+            android:authorities="com.ruptech.chinatalk.provider.Messages" >
+        </provider>
         <provider
             android:name=".db.ChatProvider"
             android:authorities="com.ruptech.chinatalk.provider.Chats" >

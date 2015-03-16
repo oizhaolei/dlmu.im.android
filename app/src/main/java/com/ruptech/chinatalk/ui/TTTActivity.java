@@ -28,12 +28,10 @@ import android.widget.Toast;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.adapter.TTTChatAdapter;
-import com.ruptech.chinatalk.db.ChatProvider;
-import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.adapter.TTTAdapter;
+import com.ruptech.chinatalk.db.MessageProvider;
 import com.ruptech.chinatalk.model.Message;
-import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
-import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
@@ -58,11 +56,11 @@ import butterknife.OnClick;
 /**
  * @author zhao
  */
-public class ChatTTTActivity extends ActionBarActivity {
+public class TTTActivity extends ActionBarActivity {
 
 	static final String TAG = Utils.CATEGORY
-			+ ChatTTTActivity.class.getSimpleName();
-	private TTTChatAdapter untranslatedMessageListAdapter;
+			+ TTTActivity.class.getSimpleName();
+	private TTTAdapter tttAdapter;
 
 	/**
 	 * TTT根据新的lang列表，重新定位之前使用过的lang位置
@@ -78,11 +76,10 @@ public class ChatTTTActivity extends ActionBarActivity {
 		return pos;
 	}
 
-	@InjectView(R.id.activity_ttt_chat_message_edittext)
+	@InjectView(R.id.activity_ttt_message_edittext)
 	EditText mMessageEditText;
-	@InjectView(R.id.activity_ttt_chat_message_listview)
+	@InjectView(R.id.activity_ttt_message_listview)
 	ListView mMessageListView;
-	private String fromLang;
 	@InjectView(R.id.btn_swap)
 	ImageView mBtnSwap;
 
@@ -95,9 +92,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 	@InjectView(R.id.spinner_lang2)
 	Spinner mLang2Spinner;
 
-	private String toLang;
-
-	@InjectView(R.id.item_chatting_balance_remind_textview)
+	@InjectView(R.id.item_balance_remind_textview)
 	TextView remindItemFooterTextView;
 
 	@InjectView(R.id.remind_panel)
@@ -125,7 +120,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 		// 打开界面页码设为第一页
 		onPage = 1;
 
-		setContentView(R.layout.activity_ttt_chat);
+		setContentView(R.layout.activity_ttt);
 		ButterKnife.inject(this);
 
 		getSupportActionBar().setTitle(R.string.translation_secretary);
@@ -173,15 +168,15 @@ public class ChatTTTActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				if (App.readUser().getBalance() < AppPreferences.MINI_BALANCE) {
-					Intent intent = new Intent(ChatTTTActivity.this,
+					Intent intent = new Intent(TTTActivity.this,
 							MyWalletActivity.class);
-					ChatTTTActivity.this.startActivity(intent);
+					TTTActivity.this.startActivity(intent);
 				}
 			}
 		});
 	}
 
-	@OnClick(R.id.activity_ttt_chat_btn_send)
+	@OnClick(R.id.activity_ttt_btn_send)
 	public void send_ttt_text(View v) {
 		send_text();
 	}
@@ -217,7 +212,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 				mLang2Array = Utils
 						.getAvailableLang2ByLang1(mLang1Array[position]);
 				LangSpinnerAdapter lang2Adapter = new LangSpinnerAdapter(
-						ChatTTTActivity.this, mLang2Array);
+						TTTActivity.this, mLang2Array);
 				mLang2Spinner.setAdapter(lang2Adapter);
 				String lastSelectedLang2 = PrefUtils
 						.getPrefTTTLastSelectedLang(2);
@@ -228,7 +223,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 					mLang2Spinner.setSelection(getLangArrayPosition(
 							lastSelectedLang2, mLang2Array));
 				} else {
-					updateUntranslate(reQuery());
+					updateTTT(reQuery());
 				}
 			}
 
@@ -243,8 +238,8 @@ public class ChatTTTActivity extends ActionBarActivity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v,
 			                           int position, long id) {
-				fromLang = mLang1Array[mLang1Spinner.getSelectedItemPosition()];
-				toLang = mLang2Array[position];
+				String fromLang = mLang1Array[mLang1Spinner.getSelectedItemPosition()];
+				String toLang = mLang2Array[position];
 				PrefUtils.savePrefTTTLastSelectedLang(1, fromLang);
 				PrefUtils.savePrefTTTLastSelectedLang(2, toLang);
 
@@ -258,7 +253,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 				if (googleTranslate) {
 					switchTextInputMode();
 				}
-				updateUntranslate(reQuery());
+				updateTTT(reQuery());
 			}
 
 			@Override
@@ -266,9 +261,9 @@ public class ChatTTTActivity extends ActionBarActivity {
 			}
 		});
 
-		untranslatedMessageListAdapter = new TTTChatAdapter(this,
+		tttAdapter = new TTTAdapter(this,
 				reQuery());
-		mMessageListView.setAdapter(untranslatedMessageListAdapter);
+		mMessageListView.setAdapter(tttAdapter);
 		mMessageListView.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScroll(AbsListView arg0, int firstVisibleItem,
@@ -382,8 +377,9 @@ public class ChatTTTActivity extends ActionBarActivity {
 		super.onPause();
 //		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
 		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
+		App.unbindXMPPService();
 
-		getContentResolver().unregisterContentObserver(mUntranslateObserver);
+		getContentResolver().unregisterContentObserver(tttObserver);
 	}
 
 	void onRequestTranslateBegin() {
@@ -405,20 +401,7 @@ public class ChatTTTActivity extends ActionBarActivity {
 
 	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
 		Message message = fsTask.getMessage();
-		//chat
-		Chat chat = new Chat();
-		chat.setMessage(message.getFrom_content());
-		chat.setType(message.getFile_type());
-		chat.setFromContentLength(message.from_content_length);
-		chat.setFilePath(message.getFile_path());
-
-		chat.setFromMe(ChatProvider.OUTGOING);
-		chat.setJid(mWithJabberID);
-		chat.setPid(null);
-		chat.setDate(System.currentTimeMillis());
-
-
-		TTTalkSmackImpl.addChatMessageToDB(getContentResolver(), chat);
+		App.messageDAO.mergeMessage(message);
 
 		if (fsTask.getIsNeedRetrieveUser()) {
 			doRetrieveUser(App.readUser().getId());// 回到Setting画面，能够立刻看到balance变化。
@@ -429,25 +412,25 @@ public class ChatTTTActivity extends ActionBarActivity {
 
 	}
 
-	private ContentObserver mUntranslateObserver = new ttChatObserver();
+	private ContentObserver tttObserver = new TTTObserver();
 	private Handler mainHandler = new Handler();
 
-	private class ttChatObserver extends ContentObserver {
-		public ttChatObserver() {
+	private class TTTObserver extends ContentObserver {
+		public TTTObserver() {
 			super(mainHandler);
 		}
 
 		public void onChange(boolean selfChange) {
 			mainHandler.postDelayed(new Runnable() {
 				public void run() {
-					updateUntranslate(reQuery());
+					updateTTT(reQuery());
 				}
 			}, 100);
 		}
 	}
 
-	public void updateUntranslate(Cursor c) {
-		Cursor oldCursor = untranslatedMessageListAdapter.swapCursor(c);
+	public void updateTTT(Cursor c) {
+		Cursor oldCursor = tttAdapter.swapCursor(c);
 		oldCursor.close();
 	}
 
@@ -455,9 +438,10 @@ public class ChatTTTActivity extends ActionBarActivity {
 	public void onResume() {
 		super.onResume();
 		App.notificationManager.cancel(mWithJabberID.hashCode());
+		App.bindXMPPService();
 
-		getContentResolver().registerContentObserver(ChatProvider.CONTENT_URI,
-				true, mUntranslateObserver);
+		getContentResolver().registerContentObserver(MessageProvider.CONTENT_URI,
+				true, tttObserver);
 	}
 
 
@@ -490,6 +474,8 @@ public class ChatTTTActivity extends ActionBarActivity {
 	private void sendText(String content) {
 		int contentLength = Utils.textLength(content);
 		String fileType = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
+		String 	fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
+		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
 
 		//新版本发给旧版本
 		Message message = new Message();
@@ -497,9 +483,9 @@ public class ChatTTTActivity extends ActionBarActivity {
 		message.setId(localId);
 		message.setMessageid(localId);
 		message.setUserid(App.readUser().getId());
-//            message.setTo_userid(toUserId);
+		message.setTo_userid(AppPreferences.TTT_REQUEST_TO_USERID);
 		message.setFrom_lang(fromLang);
-//            message.setTo_lang(toLang);
+		message.setTo_lang(toLang);
 		message.setFrom_content(content);
 		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
 		message.setStatus_text(getString(R.string.data_sending));
@@ -525,36 +511,47 @@ public class ChatTTTActivity extends ActionBarActivity {
 
 	protected String mWithJabberID = "ttt";// 当前聊天用户的ID
 
-	protected static final String[] TTT_CHAT_QUERY = new String[]{
-			ChatTable.Columns.ID,
-			ChatTable.Columns.CREATED_DATE,
-			ChatTable.Columns.FROM_JID,
-			ChatTable.Columns.TO_JID,
-			ChatTable.Columns.CONTENT,
-			ChatTable.Columns.CONTENT_TYPE,
-			ChatTable.Columns.FILE_PATH,
-			ChatTable.Columns.VOICE_SECOND,
-			ChatTable.Columns.TO_MESSAGE,
-			ChatTable.Columns.CREATED_DATE,
-			ChatTable.Columns.MESSAGE_ID,
-			ChatTable.Columns.DELIVERY_STATUS,
-			ChatTable.Columns.PACKET_ID};// 查询字段
-
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		// 窗口获取到焦点时绑定服务，失去焦点将解绑
-		if (hasFocus)
-			App.bindXMPPService();
-		else
-			App.unbindXMPPService();
-	}
+	protected static final String[] TTT_MESSAGE_QUERY = new String[]{
+			MessageTable.Columns.ID,
+			MessageTable.Columns.MESSAGEID,
+			MessageTable.Columns.USERID,
+			MessageTable.Columns.VIA_TEL,
+			MessageTable.Columns.TO_USERID,
+			MessageTable.Columns.TRANSLATOR_ID,
+			MessageTable.Columns.FROM_LANG,
+			MessageTable.Columns.TO_LANG,
+			MessageTable.Columns.FROM_VOICE_ID,
+			MessageTable.Columns.FROM_CONTENT,
+			MessageTable.Columns.FROM_CONTENT_LENGTH,
+			MessageTable.Columns.TO_CONTENT,
+			MessageTable.Columns.STATUS_TEXT,
+			MessageTable.Columns.FEE,
+			MessageTable.Columns.TRANSLATE_FEE,
+			MessageTable.Columns.AUTO_TRANSLATE,
+			MessageTable.Columns.TO_USER_FEE,
+			MessageTable.Columns.ACQUIRE_DATE,
+			MessageTable.Columns.TRANSLATED_DATE,
+			MessageTable.Columns.VERIFY_STATUS,
+			MessageTable.Columns.MESSAGE_STATUS,
+			MessageTable.Columns.CREATE_ID,
+			MessageTable.Columns.CREATE_DATE,
+			MessageTable.Columns.UPDATE_ID,
+			MessageTable.Columns.UPDATE_DATE,
+			MessageTable.Columns.FILE_PATH,
+			MessageTable.Columns.FILE_TYPE,
+			MessageTable.Columns.DETECT_LANGUAGE
+	};
 
 	private Cursor reQuery() {
-		//TODO
-		Cursor childCursor = getContentResolver().query(ChatProvider.CONTENT_URI,
-				TTT_CHAT_QUERY, null, null, null);
+		String 	fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
+		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
+
+		String selection = MessageTable.Columns.TO_USERID +" = " + AppPreferences.TTT_REQUEST_TO_USERID +
+				" and "+MessageTable.Columns.FROM_LANG +" = '" + fromLang +"'" +
+				" and "+MessageTable.Columns.TO_LANG +" = '" + toLang +"'";
+
+		Cursor childCursor = getContentResolver().query(MessageProvider.CONTENT_URI,
+				TTT_MESSAGE_QUERY, selection, null, null);
 		return childCursor;
 	}
 

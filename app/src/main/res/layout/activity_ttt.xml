@@ -71,13 +71,13 @@
             android:padding="5dp"  >
 
             <EditText
-                android:id="@+id/activity_ttt_chat_message_edittext"
+                android:id="@+id/activity_ttt_message_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/activity_ttt_chat_btn_send"
+                android:layout_toLeftOf="@+id/activity_ttt_btn_send"
                 android:adjustViewBounds="true"
                 android:gravity="left|center_vertical"
                 android:inputType="textMultiLine"
@@ -104,7 +104,7 @@
     </RelativeLayout>
 
     <ListView
-        android:id="@+id/activity_ttt_chat_message_listview"
+        android:id="@+id/activity_ttt_message_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rl_bottom"

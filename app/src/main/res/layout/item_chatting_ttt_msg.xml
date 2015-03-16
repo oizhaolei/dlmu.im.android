@@ -37,7 +37,7 @@
             android:gravity="right" >
 
             <ImageView
-                android:id="@+id/item_chatting_ttt_right_user_thumb_imageview"
+                android:id="@+id/item_ttt_right_user_thumb_imageview"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentRight="true"
@@ -45,29 +45,29 @@
                 android:focusable="false" />
 
             <TextView
-                android:id="@+id/item_chatting_ttt_right_time_textview"
+                android:id="@+id/item_ttt_right_time_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/item_chatting_ttt_right_user_thumb_imageview"
+                android:layout_below="@+id/item_ttt_right_user_thumb_imageview"
                 android:layout_margin="5dp"
                 android:text="@string/empty"
                 android:textColor="#888888"
                 android:textSize="12sp" />
 
             <RelativeLayout
-                android:id="@+id/item_chatting_ttt_right_from_layout"
+                android:id="@+id/item_ttt_right_from_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="2dp"
-                android:layout_toLeftOf="@id/item_chatting_ttt_right_user_thumb_imageview"
+                android:layout_toLeftOf="@id/item_ttt_right_user_thumb_imageview"
                 android:background="@drawable/right_chat_from_bg"
                 android:gravity="right"
                 android:minWidth="75dp"
                 android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+id/item_chatting_ttt_right_content_textview"
+                    android:id="@+id/item_ttt_right_content_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -80,9 +80,9 @@
                 android:id="@+id/item_chatting_ttt_error_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/item_chatting_ttt_right_from_layout"
+                android:layout_below="@+id/item_ttt_right_from_layout"
                 android:layout_marginRight="13dp"
-                android:layout_toLeftOf="@id/item_chatting_ttt_right_user_thumb_imageview"
+                android:layout_toLeftOf="@id/item_ttt_right_user_thumb_imageview"
                 android:background="@drawable/background_auto_translation"
                 android:text="@string/message_action_request_translate_again"
                 android:textColor="#ff6600"
@@ -90,11 +90,11 @@
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/item_chatting_ttt_right_length_textview"
+                android:id="@+id/item_ttt_right_length_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
-                android:layout_alignTop="@+id/item_chatting_ttt_right_from_layout"
-                android:layout_toLeftOf="@+id/item_chatting_ttt_right_from_layout"
+                android:layout_alignTop="@+id/item_ttt_right_from_layout"
+                android:layout_toLeftOf="@+id/item_ttt_right_from_layout"
                 android:textColor="#888888"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -116,7 +116,7 @@
                 android:src="@drawable/translator" />
 
             <LinearLayout
-                android:id="@+id/item_chatting_ttt_left_to_layout"
+                android:id="@+id/item_ttt_left_to_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
@@ -125,7 +125,7 @@
                 android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+id/item_chatting_ttt_left_content_textview"
+                    android:id="@+id/item_ttt_left_content_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/empty"
@@ -134,10 +134,10 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/item_chatting_ttt_msg_send_status_textview"
+                android:id="@+id/item_ttt_msg_send_status_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/item_chatting_ttt_left_to_layout"
+                android:layout_below="@+id/item_ttt_left_to_layout"
                 android:layout_marginLeft="11dp"
                 android:layout_toRightOf="@id/item_chatting_ttt_left_user_thumb_imageview"
                 android:background="@drawable/background_auto_translation"

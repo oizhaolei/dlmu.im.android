@@ -18,7 +18,7 @@ import com.ruptech.chinatalk.task.impl.RetrieveNewMessagesTask;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.ChatTTTActivity;
+import com.ruptech.chinatalk.ui.TTTActivity;
 import com.ruptech.chinatalk.ui.setting.SettingAnnouncementActivity;
 import com.ruptech.chinatalk.ui.setting.SettingQaActivity;
 import com.ruptech.chinatalk.ui.user.MyWalletActivity;
@@ -347,7 +347,7 @@ public class MessageReceiver {
                     PrefUtils.savePrefTTTLastSelectedLang(2, message.getTo_lang());
 
                 }
-                notificationIntent = new Intent(context, ChatTTTActivity.class);
+                notificationIntent = new Intent(context, TTTActivity.class);
                 break;
             default:
                 User user = App.userDAO.fetchUser(Long.valueOf(notiId));

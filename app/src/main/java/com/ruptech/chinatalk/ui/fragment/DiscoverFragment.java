@@ -27,7 +27,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.map.MyLocation;
 import com.ruptech.chinatalk.model.Channel;
-import com.ruptech.chinatalk.ui.ChatTTTActivity;
+import com.ruptech.chinatalk.ui.TTTActivity;
 import com.ruptech.chinatalk.ui.friend.FriendAddRecommendedActivity;
 import com.ruptech.chinatalk.ui.friend.FriendsLbsListActivity;
 import com.ruptech.chinatalk.ui.friend.FriendsLeaderboardListActivity;
@@ -166,7 +166,7 @@ public class DiscoverFragment extends Fragment implements TextWatcher,
 
 	@OnClick(R.id.main_tab_discover_translation_secretary_layout)
 	public void gotoChatTTT() {
-		Intent intent = new Intent(getActivity(), ChatTTTActivity.class);
+		Intent intent = new Intent(getActivity(), TTTActivity.class);
 		getActivity().startActivity(intent);
 	}
 

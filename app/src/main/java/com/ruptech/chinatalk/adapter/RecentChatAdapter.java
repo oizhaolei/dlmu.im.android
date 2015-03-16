@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
@@ -63,7 +64,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
                 .getColumnIndex(ChatTable.Columns.TO_JID));
 
         String selection = ChatTable.Columns.TO_JID + " = '" + jid + "' AND "
-                + ChatTable.Columns.FROM_JID + " = " + ChatProvider.INCOMING
+                + ChatTable.Columns.FROM_JID + " = " + App.readUser().getOF_JabberID()
                 + " AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
                 + ChatProvider.DS_NEW;// 新消息数量字段
         Cursor msgcursor = mContentResolver.query(ChatProvider.CONTENT_URI,

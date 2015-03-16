@@ -108,7 +108,7 @@ public class ChatActivity extends AbstractChatActivity {
 	@InjectView(R.id.add_face_tool_layout)
 	View mAddFaceToolView;
 
-	@InjectView(R.id.item_chatting_balance_remind_textview)
+	@InjectView(R.id.item_balance_remind_textview)
 	TextView remindItemFooterTextView;
 
 	@InjectView(R.id.text_layout)

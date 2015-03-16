@@ -15,7 +15,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.ChatTTTActivity;
+import com.ruptech.chinatalk.ui.TTTActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.FriendListCursorAdapter;
 
@@ -41,7 +41,7 @@ public class TextShareActivity extends ActionBarActivity {
 	View mTTTItemView;
 
 	public void gotoTTTChatActivity() {
-		Intent intent = new Intent(this, ChatTTTActivity.class);
+		Intent intent = new Intent(this, TTTActivity.class);
 		if (sharedText != null)
 			intent.putExtra(SEND_TEXT, sharedText);
 		startActivity(intent);

@@ -5,10 +5,10 @@ import java.io.Serializable;
 public class Chat implements Serializable {
     private static final long serialVersionUID = -850853231465927885L;
     protected int id;
-    protected long date;
-    protected int fromMe;
+    protected long created_date;
+    protected String fromJid;
     protected int read;
-    protected String jid;
+    protected String toJid;
     protected String message;
     protected String type;
     protected String filePath;
@@ -37,20 +37,16 @@ public class Chat implements Serializable {
         this.id = id;
     }
 
-    public long getDate() {
-        return date;
+    public long getCreated_date() {
+        return created_date;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setCreated_date(long created_date) {
+        this.created_date = created_date;
     }
 
-    public int getFromMe() {
-        return fromMe;
-    }
-
-    public void setFromMe(int fromMe) {
-        this.fromMe = fromMe;
+    public String getFromJid() {
+        return fromJid;
     }
 
     public int getRead() {
@@ -61,15 +57,27 @@ public class Chat implements Serializable {
         this.read = read;
     }
 
-    public String getJid() {
-        return jid;
-    }
+	public void setFromJid(String fromJid) {
+		this.fromJid = fromJid;
+	}
 
-    public void setJid(String jid) {
-        this.jid = jid;
-    }
+	public String getToJid() {
+		return toJid;
+	}
 
-    public String getMessage() {
+	public void setToJid(String toJid) {
+		this.toJid = toJid;
+	}
+
+	public long getMessage_id() {
+		return message_id;
+	}
+
+	public void setMessage_id(long message_id) {
+		this.message_id = message_id;
+	}
+
+	public String getMessage() {
         return message;
     }
 

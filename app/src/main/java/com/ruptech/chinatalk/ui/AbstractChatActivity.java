@@ -596,10 +596,10 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             doRequestTranslate(message);
 
             //chat
-            chat.setFromMe(ChatProvider.OUTGOING);
-            chat.setJid(mWithJabberID);
+            chat.setFromJid(App.readUser().getOF_JabberID());
+            chat.setToJid(mWithJabberID);
             chat.setPid(null);
-            chat.setDate(System.currentTimeMillis());
+            chat.setCreated_date(System.currentTimeMillis());
 
 
             TTTalkSmackImpl.addChatMessageToDB(getContentResolver(), chat);

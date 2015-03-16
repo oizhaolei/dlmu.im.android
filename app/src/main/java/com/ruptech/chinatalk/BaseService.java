@@ -20,7 +20,7 @@ import com.ruptech.chinatalk.event.QAEvent;
 import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.ChatTTTActivity;
+import com.ruptech.chinatalk.ui.TTTActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
@@ -110,7 +110,7 @@ public abstract class BaseService extends Service {
             notificationIntent = new Intent(this, ChatActivity.class);
             notificationIntent.putExtra(ChatActivity.EXTRA_JID, fromJid);
         } else {
-            notificationIntent = new Intent(this, ChatTTTActivity.class);
+            notificationIntent = new Intent(this, TTTActivity.class);
         }
 
         PendingIntent contentIntent = PendingIntent.getActivity(this,

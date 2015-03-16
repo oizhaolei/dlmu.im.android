@@ -93,7 +93,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
     }
 
     public ChatType getChatType(Chat chat) {
-        boolean mine = (chat.getFromMe() == ChatProvider.OUTGOING);
+        boolean mine = (chat.getFromJid() == App.readUser().getOF_JabberID());
         ChatType type;
         if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())) {
             type = mine ? ChatType.MY_PHOTO : ChatType.FRIEND_PHOTO;
@@ -114,7 +114,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
         boolean mine = isMine(chat);
 
         User user, mFriendUser;
-        mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(chat.getJid()));
+        mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(chat.getToJid()));
         if (mFriendUser == null ){
             mFriendUser = new User();
             mFriendUser.setLang("CN");
@@ -161,7 +161,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
             holder.photoProgressBar.setVisibility(View.GONE);
 
         // time
-        String datetimeStr = TimeUtil.getHourAndMin(chat.getDate());
+        String datetimeStr = TimeUtil.getHourAndMin(chat.getCreated_date());
         holder.timeTextView.setText(datetimeStr);
 
 

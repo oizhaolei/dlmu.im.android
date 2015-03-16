@@ -35,8 +35,6 @@ public class ChatProvider extends ContentProvider {
     public static final String DEFAULT_SORT_ORDER = "_id ASC"; // sort by
     public static final String PACKET_ID = "pid";
     // boolean mappings
-    public static final int INCOMING = 0;
-    public static final int OUTGOING = 1;
     public static final int DS_NEW = 0; // < this message has not been
     // sent/displayed yet
     public static final int DS_SENT_OR_READ = 1; // < this message was sent

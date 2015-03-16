@@ -397,7 +397,7 @@ public abstract class TableContent {
 			public final String DETECT_LANGUAGE = "detect_language";
 		}
 
-		public final Columns Columns = new Columns();
+		public static final Columns Columns = new Columns();
 
 		public String getCreateIndexSQL() {
 			String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
@@ -470,7 +470,7 @@ public abstract class TableContent {
 					Columns.DETECT_LANGUAGE };
 		}
 
-		public String getName() {
+		public static String getName() {
 			return "tbl_message";
 		}
 
@@ -1076,7 +1076,6 @@ public abstract class TableContent {
             bulkInsertSql.append(MessageTable.Columns.FILE_TYPE + ", ");
             bulkInsertSql.append(MessageTable.Columns.FILE_PATH + ", ");
             bulkInsertSql.append(MessageTable.Columns.FROM_CONTENT_LENGTH + ", ");
-            bulkInsertSql.append(MessageTable.Columns.TO_CONTENT + ", ");
             bulkInsertSql.append(MessageTable.Columns.MESSAGEID + ", ");
             bulkInsertSql.append(ChatProvider.DS_SENT_OR_READ + ", ");
             bulkInsertSql.append("'' ");
@@ -1107,7 +1106,7 @@ public abstract class TableContent {
             }
 
             Chat chat = new Chat();
-            chat.setDate(cursor.getLong(cursor
+            chat.setCreated_date(cursor.getLong(cursor
 		            .getColumnIndex(Columns.CREATED_DATE)));
             chat.setMessageId(cursor.getLong(cursor
 		            .getColumnIndex(Columns.MESSAGE_ID)));
@@ -1121,9 +1120,9 @@ public abstract class TableContent {
 		            .getColumnIndex(Columns.FILE_PATH)));
             chat.setFromContentLength(cursor.getInt(cursor
 		            .getColumnIndex(Columns.VOICE_SECOND)));
-            chat.setFromMe(cursor.getInt(cursor
+            chat.setFromJid(cursor.getString(cursor
                     .getColumnIndex(Columns.FROM_JID)));// 消息来自
-            chat.setJid(cursor.getString(cursor
+            chat.setToJid(cursor.getString(cursor
                     .getColumnIndex(Columns.TO_JID)));
             chat.setPid(cursor.getString(cursor
                     .getColumnIndex(Columns.PACKET_ID)));
@@ -1138,9 +1137,9 @@ public abstract class TableContent {
         public ContentValues toContentValues(Chat chat) {
             final ContentValues v = new ContentValues();
             v.put(Columns.ID, chat.getId());
-            v.put(Columns.CREATED_DATE, chat.getDate());
-            v.put(Columns.FROM_JID, chat.getFromMe());
-            v.put(Columns.TO_JID, chat.getJid());
+            v.put(Columns.CREATED_DATE, chat.getCreated_date());
+            v.put(Columns.FROM_JID, chat.getFromJid());
+            v.put(Columns.TO_JID, chat.getToJid());
             v.put(Columns.CONTENT, chat.getMessage());
             v.put(Columns.CONTENT_TYPE, chat.getType());
             v.put(Columns.FILE_PATH, chat.getFilePath());
