@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ruptech.chinatalk">
 
-    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -14,7 +13,6 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
     <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -635,19 +633,19 @@
             android:value="MYWoBG9XA2AXKe4ofVfO1Pld" />
         
 		<provider
-			android:name=".sqlite.ChatProvider"
-			android:authorities="com.ruptech.chinatalk.chatprovider" >
+			android:name=".sqlite.UserProvider"
+			android:authorities="com.ruptech.chinatalk.userprovider" >
 		</provider>
         <provider
-            android:name=".db.MessageProvider"
+            android:name=".sqlite.MessageProvider"
             android:authorities="com.ruptech.chinatalk.provider.Messages" >
         </provider>
         <provider
-            android:name=".db.ChatProvider"
+            android:name=".sqlite.ChatProvider"
             android:authorities="com.ruptech.chinatalk.provider.Chats" >
         </provider>
         <provider
-            android:name=".db.RosterProvider"
+            android:name=".sqlite.RosterProvider"
             android:authorities="com.ruptech.chinatalk.provider.Roster" >
         </provider>
     </application>

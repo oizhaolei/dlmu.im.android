@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.db.RosterProvider;
+import com.ruptech.chinatalk.sqlite.RosterProvider;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.utils.StatusMode;

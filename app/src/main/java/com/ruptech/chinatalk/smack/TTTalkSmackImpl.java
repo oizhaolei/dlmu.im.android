@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.FriendEvent;

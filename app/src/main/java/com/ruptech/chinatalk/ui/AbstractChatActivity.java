@@ -28,12 +28,12 @@ import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.db.RosterProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.sqlite.RosterProvider;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.smack.TTTalkChatListener;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -601,7 +601,7 @@ public abstract class AbstractChatActivity extends ActionBarActivity {
             chat.setCreated_date(System.currentTimeMillis());
 
 
-	        TTTalkChatListener.insertChat(getContentResolver(), chat);
+	        ChatProvider.insertChat(getContentResolver(), chat);
             getMessageEditText().setText(null);
         }else{
             //新版本发给新版本

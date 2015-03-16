@@ -1,4 +1,4 @@
-package com.ruptech.chinatalk.db;
+package com.ruptech.chinatalk.sqlite;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -14,8 +14,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
-import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public class MessageProvider extends ContentProvider {

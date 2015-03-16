@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.CommentNews;
@@ -1126,9 +1125,9 @@ public abstract class TableContent {
             chat.setFromContentLength(cursor.getInt(cursor
 		            .getColumnIndex(Columns.VOICE_SECOND)));
             chat.setFromJid(cursor.getString(cursor
-                    .getColumnIndex(Columns.FROM_JID)));// 消息来自
+		            .getColumnIndex(Columns.FROM_JID)));// 消息来自
             chat.setToJid(cursor.getString(cursor
-                    .getColumnIndex(Columns.TO_JID)));
+		            .getColumnIndex(Columns.TO_JID)));
             chat.setPid(cursor.getString(cursor
                     .getColumnIndex(Columns.PACKET_ID)));
             chat.setRead(cursor.getInt(cursor

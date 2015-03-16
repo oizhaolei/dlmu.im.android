@@ -4,7 +4,7 @@ import android.content.ContentResolver;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.smack.ext.TTTalkExtension;

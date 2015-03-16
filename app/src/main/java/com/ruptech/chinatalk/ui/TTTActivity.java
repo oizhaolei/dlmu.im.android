@@ -29,7 +29,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.TTTAdapter;
-import com.ruptech.chinatalk.db.MessageProvider;
+import com.ruptech.chinatalk.sqlite.MessageProvider;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 import com.ruptech.chinatalk.task.GenericTask;

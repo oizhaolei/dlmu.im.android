@@ -1,13 +1,11 @@
 package com.ruptech.chinatalk.smack;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.db.MessageProvider;
+import com.ruptech.chinatalk.sqlite.MessageProvider;
 import com.ruptech.chinatalk.event.TranslatedEvent;
 import com.ruptech.chinatalk.smack.ext.TTTalkTranslatedExtension;
-import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import org.jivesoftware.smack.packet.Message;

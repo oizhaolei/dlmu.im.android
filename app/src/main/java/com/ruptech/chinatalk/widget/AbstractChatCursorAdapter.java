@@ -30,7 +30,7 @@ import com.baidu.baidutranslate.openapi.entity.TransResult;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Message;

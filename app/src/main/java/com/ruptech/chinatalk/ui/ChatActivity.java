@@ -38,7 +38,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.ChatAdapter;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.ui.setting.ChatSettingActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
