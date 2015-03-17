@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;

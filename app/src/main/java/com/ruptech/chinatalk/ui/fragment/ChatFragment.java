@@ -35,6 +35,7 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
 import com.ruptech.chinatalk.model.CommentNews;
 import com.ruptech.chinatalk.model.UserPhoto;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -305,7 +306,7 @@ public class ChatFragment extends Fragment implements OnRefreshListener,
 		if (currentCheckId == R.string.main_sub_tab_chat) {
 //			refreshChatPage();
             mRecentChatAdapter.requery();
-            mContentResolver.registerContentObserver(com.ruptech.chinatalk.db.ChatProvider.CONTENT_URI,
+            mContentResolver.registerContentObserver(ChatProvider.CONTENT_URI,
                     true, mChatObserver);
 		}
 

@@ -30,7 +30,7 @@ import com.baidu.baidutranslate.openapi.entity.TransResult;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.Message;
@@ -331,13 +331,13 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
         rightFromContentTextView.setMovementMethod(LinkMovementMethod
                 .getInstance());
         String unicode = EmojiParser.getInstance(getContext()).parseEmoji(
-                chat.getMessage());
+                chat.getContent());
         SpannableString spannableString = ParseEmojiMsgUtil
                 .getExpressionString(getContext(), unicode);
         if (spannableString != null) {
             rightFromContentTextView.setText(spannableString);
         } else {
-            rightFromContentTextView.setText(chat.getMessage());
+            rightFromContentTextView.setText(chat.getContent());
         }
     }
 	protected void bindFromPhotoView(final Chat chat,
@@ -678,7 +678,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 	private void doCopy(Chat chat) {
         android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getContext()
                 .getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.setText(chat.getMessage());
+        clipboard.setText(chat.getContent());
         Toast.makeText(getContext(),
                 getContext().getString(R.string.already_copy_to_clipboard),
                 Toast.LENGTH_SHORT).show();
@@ -686,7 +686,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 
 	private void doFullscreen(Chat chat) {
         Intent intent = new Intent(getContext(), FullScreenActivity.class);
-        intent.putExtra(FullScreenActivity.EXTRA_MESSAGE, chat.getMessage());
+        intent.putExtra(FullScreenActivity.EXTRA_MESSAGE, chat.getContent());
         getContext().startActivity(intent);
 	}
 
@@ -722,7 +722,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 		shareIntent.putExtra(Intent.EXTRA_SUBJECT, "");
 
 		// add the message
-		shareIntent.putExtra(Intent.EXTRA_TEXT, chat.getMessage());
+		shareIntent.putExtra(Intent.EXTRA_TEXT, chat.getContent());
 
 		// start the chooser for sharing
 		getContext().startActivity(
@@ -731,7 +731,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 	}
 
 	private void doTTS(Chat chat) {
-        if (!Utils.tts(getContext(), chat.getFromLang(), chat.getToLang(), chat.getMessage())) {
+        if (!Utils.tts(getContext(), chat.getFromLang(), chat.getToLang(), chat.getContent())) {
             Toast.makeText(getContext(),
                     getContext().getString(R.string.tts_no_supported_language),
                     Toast.LENGTH_SHORT).show();
@@ -800,7 +800,7 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
                 .getType())) {
             content = getContext().getString(R.string.notification_voice);
         } else {
-            content = chat.getMessage();
+            content = chat.getContent();
         }
 
         return content;
@@ -993,11 +993,11 @@ public abstract class AbstractChatCursorAdapter extends CursorAdapter {
 
     public void doBaiduTranslate(final Chat chat) {
 
-        if (TextUtils.isEmpty(chat.getMessage()))
+        if (TextUtils.isEmpty(chat.getContent()))
             return;
 
         if (mClient != null){
-            mClient.translate(chat.getMessage(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
+            mClient.translate(chat.getContent(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
 
                 @Override
                 public void onResult(TransResult result) {// 翻译结果回调

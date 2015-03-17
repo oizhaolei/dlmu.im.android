@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.baidu.baidutranslate.openapi.TranslateClient;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.db.ChatProvider;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.TableContent;

@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.sqlite.UserProvider;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.ChatListCursorAdapter;
 
@@ -121,7 +121,7 @@ public class UserStoryReplyActivity extends ActionBarActivity implements
 				}
 			}
 
-		}.startQuery(0, null, ChatProvider.CONTENT_URI, null, null, args, null);
+		}.startQuery(0, null, UserProvider.CONTENT_URI, null, null, args, null);
 	}
 
 	private void saveReply(String replyName, long replyId) {

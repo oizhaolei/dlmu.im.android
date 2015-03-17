@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.db.ChatProvider;
 import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.CommentNews;
@@ -1117,7 +1116,7 @@ public abstract class TableContent {
 		            .getColumnIndex(Columns.MESSAGE_ID)));
             chat.setId(cursor.getInt(cursor
 		            .getColumnIndex(Columns.ID)));
-            chat.setMessage(cursor.getString(cursor
+            chat.setContent(cursor.getString(cursor
 		            .getColumnIndex(Columns.CONTENT)));
             chat.setType(cursor.getString(cursor
 		            .getColumnIndex(Columns.CONTENT_TYPE)));
@@ -1126,9 +1125,9 @@ public abstract class TableContent {
             chat.setFromContentLength(cursor.getInt(cursor
 		            .getColumnIndex(Columns.VOICE_SECOND)));
             chat.setFromJid(cursor.getString(cursor
-                    .getColumnIndex(Columns.FROM_JID)));// 消息来自
+		            .getColumnIndex(Columns.FROM_JID)));// 消息来自
             chat.setToJid(cursor.getString(cursor
-                    .getColumnIndex(Columns.TO_JID)));
+		            .getColumnIndex(Columns.TO_JID)));
             chat.setPid(cursor.getString(cursor
                     .getColumnIndex(Columns.PACKET_ID)));
             chat.setRead(cursor.getInt(cursor
@@ -1145,7 +1144,7 @@ public abstract class TableContent {
             v.put(Columns.CREATED_DATE, chat.getCreated_date());
             v.put(Columns.FROM_JID, chat.getFromJid());
             v.put(Columns.TO_JID, chat.getToJid());
-            v.put(Columns.CONTENT, chat.getMessage());
+            v.put(Columns.CONTENT, chat.getContent());
             v.put(Columns.CONTENT_TYPE, chat.getType());
             v.put(Columns.FILE_PATH, chat.getFilePath());
             v.put(Columns.VOICE_SECOND, chat.getFromContentLength());

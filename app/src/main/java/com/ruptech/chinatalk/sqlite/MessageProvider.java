@@ -1,6 +1,7 @@
-package com.ruptech.chinatalk.db;
+package com.ruptech.chinatalk.sqlite;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -13,7 +14,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 
 public class MessageProvider extends ContentProvider {
@@ -183,4 +183,11 @@ public class MessageProvider extends ContentProvider {
 
 	}
 
+	public static void saveTranslatedContent(ContentResolver contentResolver,String messageId, String to_content) {
+		ContentValues cv = new ContentValues();
+		cv.put(TableContent.MessageTable.Columns.TO_CONTENT, to_content);
+
+		contentResolver.update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
+				+ " = ?  ", new String[]{messageId});
+	}
 }

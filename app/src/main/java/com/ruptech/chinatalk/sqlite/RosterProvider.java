@@ -1,4 +1,4 @@
-package com.ruptech.chinatalk.db;
+package com.ruptech.chinatalk.sqlite;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -6,52 +6,69 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteCursor;
+import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQuery;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
-import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
 
-public class ChatProvider extends ContentProvider {
+public class RosterProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Chats";
-    public static final String TABLE_NAME = ChatTable.getName();
-    public static final String QUERY_URI = "chats";
+    public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Roster";
+    public static final String TABLE_ROSTER = RosterTable.getName();
+    public static final String QUERY_URI = "roster";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
             + "/" + QUERY_URI);
+    public static final String TABLE_GROUPS = "groups";
+    public static final Uri GROUPS_URI = Uri.parse("content://" + AUTHORITY
+            + "/" + TABLE_GROUPS);
+    public static final String QUERY_ALIAS = "main_result";
+    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.yaxim.roster";
+    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.yaxim.roster";
+    public static final String DEFAULT_SORT_ORDER = RosterTable.Columns.STATUS_MODE + " DESC, "
+            + RosterTable.Columns.ALIAS + " COLLATE NOCASE";
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(
             UriMatcher.NO_MATCH);
-
-    private static final int MESSAGES = 1;
-    private static final int MESSAGE_ID = 2;
-
-    public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.yaxim.chat";
-    public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.yaxim.chat";
-    public static final String DEFAULT_SORT_ORDER = "_id ASC"; // sort by
-    public static final String PACKET_ID = "pid";
-    // boolean mappings
-    public static final int DS_NEW = 0; // < this message has not been
-    // sent/displayed yet
-    public static final int DS_SENT_OR_READ = 1; // < this message was sent
-    // but not yet acked, or
-    // it was received and
-    // read
-    public static final int DS_ACKED = 2; // < this message was XEP-0184
+    private static final int CONTACTS = 1;
+    private static final int CONTACT_ID = 2;
+    private static final int GROUPS = 3;
+    private static final int GROUP_MEMBERS = 4;
 
     static {
-        URI_MATCHER.addURI(AUTHORITY, QUERY_URI, MESSAGES);
-        URI_MATCHER.addURI(AUTHORITY, QUERY_URI + "/#", MESSAGE_ID);
+        URI_MATCHER.addURI(AUTHORITY, "roster", CONTACTS);
+        URI_MATCHER.addURI(AUTHORITY, "roster/#", CONTACT_ID);
+        URI_MATCHER.addURI(AUTHORITY, "groups", GROUPS);
+        URI_MATCHER.addURI(AUTHORITY, "groups/*", GROUP_MEMBERS);
     }
 
-    private static final String TAG = "ChatProvider";
-	private SQLiteOpenHelper mOpenHelper;
+    private static final String TAG = "RosterProvider";
 
-    public ChatProvider() {
+    private Runnable mNotifyChange = new Runnable() {
+        public void run() {
+            Log.d(TAG, "notifying change");
+            getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+            getContext().getContentResolver().notifyChange(GROUPS_URI, null);
+        }
+    };
+	/*
+	 * delay change notification, cancel previous attempts. this implements rate
+	 * throttling on fast update sequences
+	 */
+    long last_notify = 0;
+    private Handler mNotifyHandler = new Handler();
+    private SQLiteOpenHelper mOpenHelper;
+
+    public RosterProvider() {
     }
 
     private static void infoLog(String data) {
@@ -64,10 +81,11 @@ public class ChatProvider extends ContentProvider {
         int count;
         switch (URI_MATCHER.match(url)) {
 
-            case MESSAGES:
-                count = db.delete(TABLE_NAME, where, whereArgs);
+            case CONTACTS:
+                count = db.delete(TABLE_ROSTER, where, whereArgs);
                 break;
-            case MESSAGE_ID:
+
+            case CONTACT_ID:
                 String segment = url.getPathSegments().get(1);
 
                 if (TextUtils.isEmpty(where)) {
@@ -76,13 +94,16 @@ public class ChatProvider extends ContentProvider {
                     where = "_id=" + segment + " AND (" + where + ")";
                 }
 
-                count = db.delete(TABLE_NAME, where, whereArgs);
+                count = db.delete(TABLE_ROSTER, where, whereArgs);
                 break;
+
             default:
                 throw new IllegalArgumentException("Cannot delete from URL: " + url);
         }
 
-        getContext().getContentResolver().notifyChange(url, null);
+        getContext().getContentResolver().notifyChange(GROUPS_URI, null);
+        notifyChange();
+
         return count;
     }
 
@@ -90,9 +111,9 @@ public class ChatProvider extends ContentProvider {
     public String getType(Uri url) {
         int match = URI_MATCHER.match(url);
         switch (match) {
-            case MESSAGES:
+            case CONTACTS:
                 return CONTENT_TYPE;
-            case MESSAGE_ID:
+            case CONTACT_ID:
                 return CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URL");
@@ -101,14 +122,14 @@ public class ChatProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri url, ContentValues initialValues) {
-        if (URI_MATCHER.match(url) != MESSAGES) {
+        if (URI_MATCHER.match(url) != CONTACTS) {
             throw new IllegalArgumentException("Cannot insert into URL: " + url);
         }
 
         ContentValues values = (initialValues != null) ? new ContentValues(
                 initialValues) : new ContentValues();
 
-        for (String colName : ChatTable.getRequiredColumns()) {
+        for (String colName : RosterTable.getRequiredColumns()) {
             if (values.containsKey(colName) == false) {
                 throw new IllegalArgumentException("Missing column: " + colName);
             }
@@ -116,14 +137,16 @@ public class ChatProvider extends ContentProvider {
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-        long rowId = db.insert(TABLE_NAME, ChatTable.Columns.CREATED_DATE, values);
+        long rowId = db.insert(TABLE_ROSTER, RosterTable.Columns.JID, values);
 
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);
         }
 
         Uri noteUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
-        getContext().getContentResolver().notifyChange(noteUri, null);
+
+        notifyChange();
+
         return noteUri;
     }
 
@@ -140,33 +163,48 @@ public class ChatProvider extends ContentProvider {
 
         SQLiteQueryBuilder qBuilder = new SQLiteQueryBuilder();
         int match = URI_MATCHER.match(url);
+        String groupBy = null;
 
         switch (match) {
-            case MESSAGES:
-                qBuilder.setTables(TABLE_NAME);
+
+            case GROUPS:
+                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
+                groupBy = RosterTable.Columns.GROUP;
                 break;
-            case MESSAGE_ID:
-                qBuilder.setTables(TABLE_NAME);
+
+            case GROUP_MEMBERS:
+                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
+                qBuilder.appendWhere(RosterTable.Columns.GROUP + "=");
+                qBuilder.appendWhere(url.getPathSegments().get(1));
+                break;
+
+            case CONTACTS:
+                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
+                break;
+
+            case CONTACT_ID:
+                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
                 qBuilder.appendWhere("_id=");
                 qBuilder.appendWhere(url.getPathSegments().get(1));
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URL " + url);
         }
 
         String orderBy;
-        if (TextUtils.isEmpty(sortOrder)) {
-            orderBy = DEFAULT_SORT_ORDER;
+        if (TextUtils.isEmpty(sortOrder) && match == CONTACTS) {
+            orderBy = DEFAULT_SORT_ORDER;//默认按在线状态排序
         } else {
             orderBy = sortOrder;
         }
 
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor ret = qBuilder.query(db, projectionIn, selection, selectionArgs,
-                null, null, orderBy);
+                groupBy, null, orderBy);
 
         if (ret == null) {
-            infoLog("ChatProvider.query: failed");
+            infoLog("RosterProvider.query: failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), url);
         }
@@ -183,23 +221,36 @@ public class ChatProvider extends ContentProvider {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         switch (match) {
-            case MESSAGES:
-                count = db.update(TABLE_NAME, values, where, whereArgs);
+            case CONTACTS:
+                count = db.update(TABLE_ROSTER, values, where, whereArgs);
                 break;
-            case MESSAGE_ID:
+            case CONTACT_ID:
                 String segment = url.getPathSegments().get(1);
                 rowId = Long.parseLong(segment);
-                count = db.update(TABLE_NAME, values, "_id=" + rowId, null);
+                count = db.update(TABLE_ROSTER, values, "_id=" + rowId, whereArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Cannot update URL: " + url);
         }
 
-        infoLog("*** notifyChange() rowId: " + rowId + " url " + url);
+        notifyChange();
 
-        getContext().getContentResolver().notifyChange(url, null);
         return count;
 
     }
+
+    private void notifyChange() {
+        mNotifyHandler.removeCallbacks(mNotifyChange);
+        long ts = System.currentTimeMillis();
+        if (ts > last_notify + 500)
+            mNotifyChange.run();
+        else
+            mNotifyHandler.postDelayed(mNotifyChange, 200);
+        last_notify = ts;
+    }
+
+
+
+
 
 }
