@@ -164,7 +164,6 @@ public class FriendOperate {
 
 		FriendProfileActivity.close();
 		ProfileActivity.close();
-		ChatActivity.close();
 		ChatSettingActivity.close();
 		CommonUtilities.broadcastChatList(mActivity);
 	}
@@ -241,7 +240,6 @@ public class FriendOperate {
 				Toast.LENGTH_LONG).show();
 		ProfileActivity.close();
 		FriendProfileActivity.close();
-		ChatActivity.close();
 		CommonUtilities.broadcastChatList(mActivity);
 		CommonUtilities.broadcastRemoveFriend(App.mContext);
 	}

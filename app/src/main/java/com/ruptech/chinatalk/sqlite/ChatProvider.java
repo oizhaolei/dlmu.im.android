@@ -112,12 +112,6 @@ public class ChatProvider extends ContentProvider {
         ContentValues values = (initialValues != null) ? new ContentValues(
                 initialValues) : new ContentValues();
 
-        for (String colName : ChatTable.getRequiredColumns()) {
-            if (values.containsKey(colName) == false) {
-                throw new IllegalArgumentException("Missing column: " + colName);
-            }
-        }
-
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         long rowId = db.insert(TABLE_NAME, ChatTable.Columns.CREATED_DATE, values);

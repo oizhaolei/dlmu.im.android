@@ -36,7 +36,6 @@ import com.ruptech.chinatalk.task.impl.RetrieveStoryTranslateListTask;
 import com.ruptech.chinatalk.task.impl.RetrieveUserPhotoTask;
 import com.ruptech.chinatalk.task.impl.StoryTranslateLikeTask;
 import com.ruptech.chinatalk.task.impl.StoryTranslateNewTask;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.LanguageActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
@@ -64,7 +63,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 	public static final String EXTRA_USER_PHOTO = "USER_PHOTO";
 
 	public static void gotoTranslateLikePhoto(StoryTranslate translate,
-			TaskListener likeListener) {
+	                                          TaskListener likeListener) {
 		StoryTranslateLikeTask photoLikeTask = new StoryTranslateLikeTask(
 				translate.getUser_photo_id(), translate.getLang(),
 				translate.getId(), translate.getFavorite() == 0);
@@ -74,7 +73,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 	}
 
 	public static void gotoUserStoryCommentActivity(UserPhoto userPhoto,
-			Context context) {
+	                                                Context context) {
 		Intent intent = new Intent(context, UserStoryCommentActivity.class);
 		intent.putExtra(UserStoryCommentActivity.EXTRA_USER_PHOTO, userPhoto);
 		context.startActivity(intent);
@@ -301,7 +300,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 				retrieveUserPhotoTask.setListener(new TaskAdapter() {
 					@Override
 					public void onPostExecute(GenericTask task,
-							TaskResult result) {
+					                          TaskResult result) {
 						RetrieveUserPhotoTask retrieveUserPhotoTask = (RetrieveUserPhotoTask) task;
 						if (result == TaskResult.OK) {
 							UserPhoto userPhoto = retrieveUserPhotoTask
@@ -320,7 +319,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 	private void doRetrieveStoryTranslateList(boolean top) {
 		if ((notMoreDataFound && !top)
 				|| (mRetrieveStoryTranslateListTask != null && mRetrieveStoryTranslateListTask
-						.getStatus() == GenericTask.Status.RUNNING)) {
+				.getStatus() == GenericTask.Status.RUNNING)) {
 			return;
 		}
 		long sinceId;
@@ -524,7 +523,7 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 		if (isEverSelected)
 			return;
 
-		int firstTranslateIndex[] = { -1, -1, -1, -1 };
+		int firstTranslateIndex[] = {-1, -1, -1, -1};
 		for (int i = 0; i < mStoryTranslateListArrayAdapter.getCount(); i++) {
 			StoryTranslate temp = mStoryTranslateListArrayAdapter.getItem(i);
 
@@ -569,14 +568,14 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
+					                        int position, long id) {
 						onSelectItem(position);
 					}
 
 				});
 		mTranslateEditText.setHintContent(R.string.please_enter_translation,
 				mUserPhoto.getLang());
-		InputFilter[] filters = { new Utils.TranslateLengthFilter() };
+		InputFilter[] filters = {new Utils.TranslateLengthFilter()};
 		mTranslateEditText.setFilters(filters);
 		mTranslateEditText.addTextChangedListener(new TextWatcher() {
 
@@ -591,13 +590,13 @@ public class UserStoryTranslateActivity extends ActionBarActivity implements
 
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			                              int after) {
 
 			}
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			                          int count) {
 			}
 		});
 		mInputMethodManager = (InputMethodManager) this.getApplicationContext()

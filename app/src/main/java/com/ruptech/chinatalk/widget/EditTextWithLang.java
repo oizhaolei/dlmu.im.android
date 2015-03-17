@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.user.LanguageActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
@@ -66,14 +65,14 @@ public class EditTextWithLang extends EditText {
 		init();
 	}
 
-	public void changeLang(String langStr){
+	public void changeLang(String langStr) {
 		lang = langStr;
 		PrefUtils.savePrefPreferLang(lang);
 		if (!Utils.isEmpty(otherLangCode)
 				&& otherLangCode.equals(lang)) {
-			if (AbstractChatActivity.instance != null) {// 刷新聊天画面footer
-				AbstractChatActivity.refreshFooterBySelectLang();
-			}
+//			if (AbstractChatActivity.instance != null) {// 刷新聊天画面footer
+//				AbstractChatActivity.refreshFooterBySelectLang();
+//			}
 			isShowHintContent = false;
 		} else {
 			isShowHintContent = true;
@@ -102,9 +101,9 @@ public class EditTextWithLang extends EditText {
 					setHint(mContext.getString(hintContentStringId,
 							userLangName));
 				} else {// 聊天画面
-					if (AbstractChatActivity.instance != null) {
-						AbstractChatActivity.refreshFooterBySelectLang();
-					}
+//					if (AbstractChatActivity.instance != null) {
+//						AbstractChatActivity.refreshFooterBySelectLang();
+//					}
 					setHint(mContext.getString(hintContentStringId,
 							userLangName,
 							Utils.getLangDisplayName(otherLangCode)));
@@ -181,11 +180,11 @@ public class EditTextWithLang extends EditText {
 
 				CustomDialog alertDialog = new CustomDialog(mContext).setTitle(
 						mContext.getString(R.string.language)).setItems(menus,
-								new DialogInterface.OnClickListener() {
+						new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which) {
+							                    int which) {
 								if (which == menus.length - 1) {
 									gotoChangeLangActivity();
 								} else {

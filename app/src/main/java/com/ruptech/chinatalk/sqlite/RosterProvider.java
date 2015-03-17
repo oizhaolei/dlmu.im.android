@@ -6,25 +6,20 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteCursor;
-import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQuery;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.sqlite.ChinaTalkDatabase;
-import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
 
 public class RosterProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Roster";
-    public static final String TABLE_ROSTER = RosterTable.getName();
+    public static final String TABLE_ROSTER = ChatRoomTable.getName();
     public static final String QUERY_URI = "roster";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
             + "/" + QUERY_URI);
@@ -34,8 +29,7 @@ public class RosterProvider extends ContentProvider {
     public static final String QUERY_ALIAS = "main_result";
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.yaxim.roster";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.yaxim.roster";
-    public static final String DEFAULT_SORT_ORDER = RosterTable.Columns.STATUS_MODE + " DESC, "
-            + RosterTable.Columns.ALIAS + " COLLATE NOCASE";
+    public static final String DEFAULT_SORT_ORDER = ChatRoomTable.Columns.TITLE + " COLLATE NOCASE";
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(
             UriMatcher.NO_MATCH);
@@ -129,15 +123,9 @@ public class RosterProvider extends ContentProvider {
         ContentValues values = (initialValues != null) ? new ContentValues(
                 initialValues) : new ContentValues();
 
-        for (String colName : RosterTable.getRequiredColumns()) {
-            if (values.containsKey(colName) == false) {
-                throw new IllegalArgumentException("Missing column: " + colName);
-            }
-        }
-
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-        long rowId = db.insert(TABLE_ROSTER, RosterTable.Columns.JID, values);
+        long rowId = db.insert(TABLE_ROSTER, ChatRoomTable.Columns.JID, values);
 
         if (rowId < 0) {
             throw new SQLException("Failed to insert row into " + url);
@@ -167,16 +155,16 @@ public class RosterProvider extends ContentProvider {
 
         switch (match) {
 
-            case GROUPS:
-                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
-                groupBy = RosterTable.Columns.GROUP;
-                break;
-
-            case GROUP_MEMBERS:
-                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
-                qBuilder.appendWhere(RosterTable.Columns.GROUP + "=");
-                qBuilder.appendWhere(url.getPathSegments().get(1));
-                break;
+//            case GROUPS:
+//                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
+//                groupBy = ChatRoomTable.Columns.GROUP;
+//                break;
+//
+//            case GROUP_MEMBERS:
+//                qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);
+//                qBuilder.appendWhere(ChatRoomTable.Columns.GROUP + "=");
+//                qBuilder.appendWhere(url.getPathSegments().get(1));
+//                break;
 
             case CONTACTS:
                 qBuilder.setTables(TABLE_ROSTER + " " + QUERY_ALIAS);

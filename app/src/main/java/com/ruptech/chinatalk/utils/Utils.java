@@ -73,7 +73,6 @@ import com.ruptech.chinatalk.model.StoryTranslate;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.LoginLoadingActivity;
 import com.ruptech.chinatalk.ui.UpdateVersionServiceActivity;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
@@ -350,7 +349,6 @@ public class Utils {
     public static void doLogout(Context context) {
         // 关闭所有可能打开的activity
         UserStoryCommentActivity.close();
-        AbstractChatActivity.close();
         MainActivity.close();
         ProfileActivity.close();
         SettingSystemInfoActivity.close();
@@ -977,15 +975,6 @@ public class Utils {
         guideViewManager.showGuideView();
     }
 
-    private static boolean hasParent(Activity activity) {
-        ActivityManager am = (ActivityManager) activity
-                .getSystemService(Context.ACTIVITY_SERVICE);
-
-        int activityCountInStack = am.getRunningTasks(1).get(0).numActivities;
-
-        return activityCountInStack > 1;
-
-    }
 
     public static String highlightTag(String content) {
         String result = content;
@@ -1269,16 +1258,9 @@ public class Utils {
 
     }
 
-    public static void onBackPressed(Activity activity) {
-
-        if (!hasParent(activity)) {
-//            App.registePush(activity);
-            LoginLoadingActivity.gotoMainActivity(activity);
-            activity.finish();
-        } else {
-            activity.finish();
-        }
-    }
+	public static void onBackPressed(Activity activity) {
+		activity.finish();
+	}
 
     private static double rad(double d) {
         return d * Math.PI / 180.0;

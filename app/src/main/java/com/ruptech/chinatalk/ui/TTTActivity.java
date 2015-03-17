@@ -261,8 +261,7 @@ public class TTTActivity extends ActionBarActivity {
 			}
 		});
 
-		tttAdapter = new TTTAdapter(this,
-				reQuery());
+		tttAdapter = new TTTAdapter(this, reQuery());
 		mMessageListView.setAdapter(tttAdapter);
 		mMessageListView.setOnScrollListener(new OnScrollListener() {
 			@Override
