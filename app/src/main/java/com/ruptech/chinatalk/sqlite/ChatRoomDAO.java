@@ -5,16 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.ruptech.chinatalk.model.ChatRoom;
-import com.ruptech.chinatalk.model.UserProp;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomUserTable;
 import com.ruptech.chinatalk.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import   com.ruptech.chinatalk.sqlite.TableContent.ChatRoomUserTable;
-import   com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
 
 public class ChatRoomDAO {
 	private static final String TAG = Utils.CATEGORY + ChatRoomDAO.class.getSimpleName();
@@ -47,10 +44,12 @@ public class ChatRoomDAO {
 	 * @return
 	 */
 	public ChatRoom fetchChatRoomByJid(String jid) {
-		ChatRoom chatRoom =  mSqlTemplate.queryForObject(mRowMapper, ChatRoomTable.getName(), null, ChatRoomTable.Columns.JID
+		ChatRoom chatRoom = mSqlTemplate.queryForObject(mRowMapper, ChatRoomTable.getName(), null, ChatRoomTable.Columns.JID
 				+ " = ?", new String[]{jid}, null, null, null, "1");
-		Long[] participantIds = fetchParticipantIdsFromChatRoom(chatRoom.getId());
-		chatRoom.setParticipantIds(participantIds);
+		if (chatRoom!=null) {
+			Long[] participantIds = fetchParticipantIdsFromChatRoom(chatRoom.getId());
+			chatRoom.setParticipantIds(participantIds);
+		}
 		return chatRoom;
 	}
 
@@ -70,7 +69,7 @@ public class ChatRoomDAO {
 			c.close();
 		}
 		Long[] participantIds = new Long[list.size()];
-		 list.toArray(participantIds);
+		list.toArray(participantIds);
 		return participantIds;
 	}
 

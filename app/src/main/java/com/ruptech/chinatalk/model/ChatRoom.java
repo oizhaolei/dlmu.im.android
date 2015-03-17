@@ -9,6 +9,8 @@ public class ChatRoom implements Serializable {
 	public String title;
 	public Long[] participantIds;
 
+	public String create_date;
+
 	public String getCreate_date() {
 		return create_date;
 	}
@@ -16,8 +18,6 @@ public class ChatRoom implements Serializable {
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
-
-	public String create_date;
 
 
 	public int getId() {

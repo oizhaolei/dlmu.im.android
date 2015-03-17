@@ -920,7 +920,7 @@ public class HttpServer extends HttpConnection {
 		if (App.readUser() != null) {
 			params.put("tel", App.readUser().getTel());
 		}
-		Response res = _get("utils/logging_client_message.php", params);
+		Response res = _post("utils/logging_client_message.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");

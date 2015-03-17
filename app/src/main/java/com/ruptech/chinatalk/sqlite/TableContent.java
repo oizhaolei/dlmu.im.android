@@ -265,7 +265,7 @@ public abstract class TableContent {
 			public final String IS_TOP = "is_top";
 		}
 
-		public final Columns Columns = new Columns();
+		public static final Columns Columns = new Columns();
 
 		public String getCreateIndexSQL() {
 			String sql = "CREATE UNIQUE INDEX " + getName() + "_idx ON "
@@ -312,7 +312,7 @@ public abstract class TableContent {
 			return "tbl_friend";
 		}
 
-		public Friend parseCursor(Cursor cursor) {
+		public static Friend parseCursor(Cursor cursor) {
 			if (null == cursor || 0 == cursor.getCount()) {
 				return null;
 			} else if (-1 == cursor.getPosition()) {
@@ -341,7 +341,7 @@ public abstract class TableContent {
 		}
 
 		/** * Friend -> ContentValues * * @param friend * @return */
-		public ContentValues toContentValues(Friend friend) {
+		public static ContentValues toContentValues(Friend friend) {
 			final ContentValues v = new ContentValues();
 			v.put(Columns.ID, friend.getId());
 			v.put(Columns.USER_ID, friend.user_id);

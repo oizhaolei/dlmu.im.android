@@ -273,6 +273,7 @@ public class App extends Application implements
         userPhotoDAO = new UserPhotoDAO(getApplicationContext());
         friendDAO = new FriendDAO(getApplicationContext());
         hotUserPhotoDAO = new HotUserPhotoDAO(getApplicationContext());
+	    chatRoomDAO = new ChatRoomDAO(getApplicationContext());
 
         mImageManager = new ImageManager(App.mContext);
         initImageLoader(getApplicationContext());

@@ -15,11 +15,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-import com.ruptech.chinatalk.utils.AppPreferences;
 
 public class MessageProvider extends ContentProvider {
 
@@ -188,7 +185,7 @@ public class MessageProvider extends ContentProvider {
 
 	}
 
-	public static void saveTranslatedContent(ContentResolver contentResolver,String messageId, String to_content) {
+	public static void saveTranslatedContent(ContentResolver contentResolver, String messageId, String to_content) {
 		ContentValues cv = new ContentValues();
 		cv.put(MessageTable.Columns.TO_CONTENT, to_content);
 
@@ -197,55 +194,55 @@ public class MessageProvider extends ContentProvider {
 		contentResolver.notifyChange(MessageProvider.CONTENT_URI, null);
 	}
 
-    public static void mergeMessage(ContentResolver contentResolver, Message message){
-        ContentValues cv = new ContentValues();
-        cv.put(TableContent.MessageTable.Columns.MESSAGEID, message.getMessageid());
-        cv.put(TableContent.MessageTable.Columns.FROM_VOICE_ID, message.getFrom_voice_id());
-        cv.put(TableContent.MessageTable.Columns.TO_CONTENT, message.getTo_content());
-        cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-        cv.put(TableContent.MessageTable.Columns.FEE, message.getFee());
-        cv.put(TableContent.MessageTable.Columns.AUTO_TRANSLATE, message.getAuto_translate());
-        cv.put(TableContent.MessageTable.Columns.TO_USER_FEE, message.getTo_user_fee());
-        cv.put(TableContent.MessageTable.Columns.ACQUIRE_DATE, message.getAcquire_date());
-        cv.put(TableContent.MessageTable.Columns.TRANSLATED_DATE, message.getTranslated_date());
-        cv.put(TableContent.MessageTable.Columns.VERIFY_STATUS, message.getVerify_status());
-        cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-        cv.put(TableContent.MessageTable.Columns.CREATE_ID, message.getCreate_id());
-        cv.put(TableContent.MessageTable.Columns.CREATE_DATE, message.getCreate_date());
-        cv.put(TableContent.MessageTable.Columns.UPDATE_ID, message.getUpdate_id());
-        cv.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
-        cv.put(TableContent.MessageTable.Columns.FILE_PATH, message.getFile_path());
-        cv.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
+	public static void mergeMessage(ContentResolver contentResolver, Message message) {
+		ContentValues cv = new ContentValues();
+		cv.put(MessageTable.Columns.MESSAGEID, message.getMessageid());
+		cv.put(MessageTable.Columns.FROM_VOICE_ID, message.getFrom_voice_id());
+		cv.put(MessageTable.Columns.TO_CONTENT, message.getTo_content());
+		cv.put(MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+		cv.put(MessageTable.Columns.FEE, message.getFee());
+		cv.put(MessageTable.Columns.AUTO_TRANSLATE, message.getAuto_translate());
+		cv.put(MessageTable.Columns.TO_USER_FEE, message.getTo_user_fee());
+		cv.put(MessageTable.Columns.ACQUIRE_DATE, message.getAcquire_date());
+		cv.put(MessageTable.Columns.TRANSLATED_DATE, message.getTranslated_date());
+		cv.put(MessageTable.Columns.VERIFY_STATUS, message.getVerify_status());
+		cv.put(MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+		cv.put(MessageTable.Columns.CREATE_ID, message.getCreate_id());
+		cv.put(MessageTable.Columns.CREATE_DATE, message.getCreate_date());
+		cv.put(MessageTable.Columns.UPDATE_ID, message.getUpdate_id());
+		cv.put(MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
+		cv.put(MessageTable.Columns.FILE_PATH, message.getFile_path());
+		cv.put(MessageTable.Columns.FILE_TYPE, message.getFile_type());
 
-        contentResolver.update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
-                + " = ?  ", new String[]{String.valueOf(message.getId())});
-    }
+		contentResolver.update(MessageProvider.CONTENT_URI, cv, MessageTable.Columns.ID
+				+ " = ?  ", new String[]{String.valueOf(message.getId())});
+	}
 
-    public static void insertMessage(ContentResolver contentResolver, Message message){
-        ContentValues values = new ContentValues();
-        values.put(TableContent.MessageTable.Columns.ID, message.getId());
-        values.put(TableContent.MessageTable.Columns.MESSAGEID, message.getMessageid());
-        values.put(TableContent.MessageTable.Columns.USERID, message.getUserid());
-        values.put(TableContent.MessageTable.Columns.TO_USERID, message.getTo_userid());
-        values.put(TableContent.MessageTable.Columns.FROM_LANG, message.from_lang);
-        values.put(TableContent.MessageTable.Columns.TO_LANG, message.to_lang);
-        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.from_content);
-        values.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-        values.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-        values.put(TableContent.MessageTable.Columns.FILE_PATH, message.getFile_path());
-        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.getFrom_content());
-        values.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
-        values.put(TableContent.MessageTable.Columns.CREATE_DATE, message.getCreate_date());
-        values.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
+	public static void insertMessage(ContentResolver contentResolver, Message message) {
+		ContentValues values = new ContentValues();
+		values.put(MessageTable.Columns.ID, message.getId());
+		values.put(MessageTable.Columns.MESSAGEID, message.getMessageid());
+		values.put(MessageTable.Columns.USERID, message.getUserid());
+		values.put(MessageTable.Columns.TO_USERID, message.getTo_userid());
+		values.put(MessageTable.Columns.FROM_LANG, message.from_lang);
+		values.put(MessageTable.Columns.TO_LANG, message.to_lang);
+		values.put(MessageTable.Columns.FROM_CONTENT, message.from_content);
+		values.put(MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+		values.put(MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+		values.put(MessageTable.Columns.FILE_PATH, message.getFile_path());
+		values.put(MessageTable.Columns.FROM_CONTENT, message.getFrom_content());
+		values.put(MessageTable.Columns.FILE_TYPE, message.getFile_type());
+		values.put(MessageTable.Columns.CREATE_DATE, message.getCreate_date());
+		values.put(MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
 
-        contentResolver.insert(MessageProvider.CONTENT_URI, values);
-    }
+		contentResolver.insert(MessageProvider.CONTENT_URI, values);
+	}
 
-    public static void changeMessageStatus(Context context,Message message){
-        ContentValues cv = new ContentValues();
-        cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-        cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-        context.getContentResolver().update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
-                + " = ?  " , new String[]{String.valueOf(message.getId())});
-    }
+	public static void changeMessageStatus(Context context, Message message) {
+		ContentValues cv = new ContentValues();
+		cv.put(MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+		cv.put(MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+		context.getContentResolver().update(MessageProvider.CONTENT_URI, cv, MessageTable.Columns.ID
+				+ " = ?  ", new String[]{String.valueOf(message.getId())});
+	}
 }

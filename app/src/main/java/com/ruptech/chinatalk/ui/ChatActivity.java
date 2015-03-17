@@ -1,6 +1,5 @@
 package com.ruptech.chinatalk.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -99,7 +97,7 @@ public class ChatActivity extends ActionBarActivity {
 	static final String TAG = Utils.CATEGORY
 			+ ChatActivity.class.getSimpleName();
 
-	private String mChatRoomJid;//可以是friend的JID，也可以是muc的JID
+	private String mToJid;//可以是friend的JID，也可以是muc的JID
 	private ChatRoom mChatRoom;
 	private Map<Long, User> mFriendUsers;
 	private Map<Long, Friend> mFriendsToMe;
@@ -214,12 +212,17 @@ public class ChatActivity extends ActionBarActivity {
 	}
 
 	protected void displayTitle() {
-		getSupportActionBar().setTitle(mChatRoom.getTitle());
+		String title = mChatRoom.getTitle();
+		if (title ==null) {
+			User friendUser = mFriendUsers.get(mChatRoom.getParticipantIds()[0]);
+			title = friendUser.getFullname();
+		}
+		getSupportActionBar().setTitle(title);
 	}
 
 	public void doSetting(MenuItem item) {
 		Intent intent = new Intent(this, ChatSettingActivity.class);
-		intent.putExtra(ChatActivity.EXTRA_JID, mChatRoomJid);
+		intent.putExtra(ChatActivity.EXTRA_JID, mToJid);
 		this.startActivity(intent);
 	}
 
@@ -343,10 +346,11 @@ public class ChatActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_chat);
 		ButterKnife.inject(this);
 
-		mChatRoomJid = (String) getIntent().getExtras().get(EXTRA_JID);
-		mChatRoom = App.chatRoomDAO.fetchChatRoomByJid(mChatRoomJid);
+		mToJid = (String) getIntent().getExtras().get(EXTRA_JID);
 
+		mChatRoom = genChatRoom();
 		mFriendUsers = retrieveFriendUsers(mChatRoom.getParticipantIds());
+
 		initTransClient();
 
 		// 检查每一个用户active
@@ -369,7 +373,7 @@ public class ChatActivity extends ActionBarActivity {
 			if (friend.getDone() == AppPreferences.FRIEND_BLOCK_STATUS) {
 				Toast.makeText(this, R.string.friend_block_msg, Toast.LENGTH_LONG)
 						.show();
-				App.notificationManager.cancel(mChatRoomJid.hashCode());
+				App.notificationManager.cancel(mToJid.hashCode());
 				finish();
 				return;
 			}
@@ -390,6 +394,19 @@ public class ChatActivity extends ActionBarActivity {
 
 		handleSharedText(getIntent());
 		initInputPanel();
+	}
+
+	private ChatRoom genChatRoom() {
+		ChatRoom chatRoom = App.chatRoomDAO.fetchChatRoomByJid(mToJid);
+		if (chatRoom ==null) {
+			//gen a model
+			chatRoom = new ChatRoom();
+			chatRoom.setJid(mToJid);
+			chatRoom.setAccountUserId(App.readUser().getLike_id());
+			long friendUserId = Utils.getTTTalkIDFromOF_JID(mToJid);
+			chatRoom.setParticipantIds(new Long[]{friendUserId});
+		}
+		return chatRoom;
 	}
 
 	@Override
@@ -789,7 +806,7 @@ public class ChatActivity extends ActionBarActivity {
 	}
 
 	private void doRetrieveUser(long userId) {
-		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask( userId);
+		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(userId);
 		mRetrieveUserTask.setListener(mRetrieveUserListener);
 		mRetrieveUserTask.execute();
 	}
@@ -891,8 +908,8 @@ public class ChatActivity extends ActionBarActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		App.mBadgeCount.removeNewChatCount(mChatRoomJid);
-		//PrefUtils.removePrefNewMessageCount(mChatRoomJid);//TODO 按 Home ||
+		App.mBadgeCount.removeNewChatCount(mToJid);
+		//PrefUtils.removePrefNewMessageCount(mToJid);//TODO 按 Home ||
 		App.unbindXMPPService();
 
 		getContentResolver().unregisterContentObserver(mUserObserver);
@@ -900,6 +917,7 @@ public class ChatActivity extends ActionBarActivity {
 		getContentResolver().unregisterContentObserver(mMessageObserver);
 		getContentResolver().unregisterContentObserver(mFriendObserver);
 	}
+
 	void onRequestTranslateBegin() {
 		mMessageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 		mMessageEditText.selectAll();
@@ -931,7 +949,7 @@ public class ChatActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		App.notificationManager.cancel(mChatRoomJid.hashCode());
+		App.notificationManager.cancel(mToJid.hashCode());
 		App.bindXMPPService();
 
 		getContentResolver().registerContentObserver(
@@ -1000,16 +1018,16 @@ public class ChatActivity extends ActionBarActivity {
 
 		//新旧版本比较
 		User oldVersionFriendUser = existsOldVersionFriends();
-		if (oldVersionFriendUser!=null) {
+		if (oldVersionFriendUser != null) {
 			//新版本发给旧版本
 			Message message = new Message();
 			long localId = System.currentTimeMillis();
 			message.setId(localId);
 			message.setMessageid(localId);
 			message.setUserid(App.readUser().getId());
-            message.setTo_userid(oldVersionFriendUser.getId());
+			message.setTo_userid(oldVersionFriendUser.getId());
 			message.setFrom_lang(fromLang);
-            message.setTo_lang(oldVersionFriendUser.getLang());
+			message.setTo_lang(oldVersionFriendUser.getLang());
 			message.setFrom_content(content);
 			message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
 			message.setStatus_text(getString(R.string.data_sending));
@@ -1024,7 +1042,7 @@ public class ChatActivity extends ActionBarActivity {
 
 			//chat
 			chat.setFromJid(App.readUser().getOF_JabberID());
-			chat.setToJid(mChatRoomJid);
+			chat.setToJid(mToJid);
 			chat.setCreated_date(System.currentTimeMillis());
 
 
@@ -1166,10 +1184,10 @@ public class ChatActivity extends ActionBarActivity {
 
 	private Cursor reQuery() {
 
-		String selection = ChatTable.Columns.FROM_JID + " = ? and " +  ChatTable.Columns.TO_JID + " = ?";
+		String selection = ChatTable.Columns.FROM_JID + " = ? and " + ChatTable.Columns.TO_JID + " = ?";
 
 		Cursor childCursor = getContentResolver().query(ChatProvider.CONTENT_URI,
-				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mChatRoomJid}, null);
+				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mToJid}, null);
 		return childCursor;
 	}
 
@@ -1199,7 +1217,7 @@ public class ChatActivity extends ActionBarActivity {
 		String content = chat.getContent();
 		if (content.length() >= 1) {
 			if (App.mService != null) {
-				App.mService.sendMessage(mChatRoomJid, chat);
+				App.mService.sendMessage(mToJid, chat);
 			}
 			mMessageEditText.setText(null);
 		}

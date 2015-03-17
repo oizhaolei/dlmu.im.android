@@ -12,7 +12,7 @@ import com.ruptech.chinatalk.utils.Utils;
 
 import java.util.List;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
+import com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 
 public class FriendDAO {
 	private static final String TAG = Utils.CATEGORY
@@ -106,8 +106,6 @@ public class FriendDAO {
 	 *
 	 * 若报 SQLiteconstraintexception 异常, 检查是否某not null字段为空
 	 *
-	 * @param user
-	 * @param isUnread
 	 * @return
 	 */
 	public long mergeFriend(Friend friend) {
