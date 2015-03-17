@@ -114,7 +114,7 @@ public class TTTAdapter extends CursorAdapter {
 		if (!MessageReceiver.isMessageStatusEnd(message_status)) {
 			holder.sendStatusView.setVisibility(View.VISIBLE);
 			holder.sendStatusView
-					.setText(R.string.message_status_text_requesting);
+					.setText(message.getStatus_text());
 		} else {
 			if (AppPreferences.MESSAGE_STATUS_NO_TRANSLATE == message_status
 					&& message.getFrom_voice_id() > 0) {
