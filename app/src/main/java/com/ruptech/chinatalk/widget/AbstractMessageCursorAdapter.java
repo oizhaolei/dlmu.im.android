@@ -450,7 +450,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 													.getString(
 															R.string.message_action_request_translate_again)
 													.equals(selectedItem)) {
-//												doReRequestTranslate(message
+//												doRequestTranslate(message
 //														.getId());
 											}
 										}
@@ -507,7 +507,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 		sendErrorView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				doReRequestTranslate(message.getId());
+//				doRequestTranslate(message.getId());
 			}
 		});
 	}
@@ -739,7 +739,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 		getContext().startActivity(intent);
 	}
 
-//	protected void doReRequestTranslate(Long localId) {
+//	protected void doRequestTranslate(Long localId) {
 //		Toast.makeText(getContext(),
 //				getContext().getString(R.string.status_sending),
 //				Toast.LENGTH_SHORT).show();
@@ -937,7 +937,7 @@ public abstract class AbstractMessageCursorAdapter extends CursorAdapter {
 								.getString(
 										R.string.message_action_request_translate_again)
 								.equals(selectedItem)) {
-//							doReRequestTranslate(message.getId());
+//							doRequestTranslate(message.getId());
 						} else if (getContext().getString(
 								R.string.message_action_accept_translate)
 								.equals(selectedItem)) {

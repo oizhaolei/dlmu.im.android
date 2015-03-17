@@ -563,7 +563,7 @@ public class ChatActivity extends ActionBarActivity {
 
 		Point screenSize = new Point();
 		getWindowManager().getDefaultDisplay().getSize(screenSize);
-		cursorAdapter = new ChatAdapter(this, reQuery(), screenSize);
+		cursorAdapter = new ChatAdapter(this, reQuery(), screenSize, translateClient);
 		mMessageListView.setAdapter(cursorAdapter);
 		mMessageListView.setSelection(cursorAdapter.getCount() - 1);
 

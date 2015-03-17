@@ -59,7 +59,7 @@ public class OldVersionTranslatedListener extends PacketExtensionListener<TTTalk
         chat.setCreated_date(ts);
 
         String messageId = ext.getMessage_id();
-        chat.setMessage_id(Long.valueOf(messageId));
+        chat.setMessageId(Long.valueOf(messageId));
 
         ChatProvider.insertChat(mContentResolver, chat);
 

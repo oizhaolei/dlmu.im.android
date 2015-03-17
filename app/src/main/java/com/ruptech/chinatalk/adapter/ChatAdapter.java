@@ -45,7 +45,6 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RequestVerifyTask;
 import com.ruptech.chinatalk.task.impl.RetrieveMessageTask;
 import com.ruptech.chinatalk.task.impl.TranslateAcceptTask;
-import com.ruptech.chinatalk.task.impl.XmppRequestTranslateTask;
 import com.ruptech.chinatalk.ui.FullScreenActivity;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.setting.WebViewActivity;
@@ -98,17 +97,18 @@ public class ChatAdapter extends CursorAdapter {
 
 	}
 
-	private static final int DELAY_NEWMSG = 2000;
+	private static final int DELAY_NEW_MSG = 2000;
 	private Context mContext;
 	int CREATE_DATE_INDEX;
 
-	public ChatAdapter(Context context, Cursor cursor, Point displaySize) {
+	public ChatAdapter(Context context, Cursor cursor, Point displaySize, TranslateClient translateClient) {
 		super(context, cursor, false);
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mContentResolver = context.getContentResolver();
-
+		mTranslateClient =translateClient;
 		mWidth = displaySize.x;
+
 		CREATE_DATE_INDEX = cursor
 				.getColumnIndexOrThrow(ChatTable.Columns.CREATED_DATE);
 	}
@@ -163,7 +163,7 @@ public class ChatAdapter extends CursorAdapter {
 		}
 
 		if (!mine && chat.getRead() == ChatProvider.DS_NEW) {
-			markAsReadDelayed(chat.getId(), DELAY_NEWMSG);
+			markAsReadDelayed(chat.getId(), DELAY_NEW_MSG);
 		}
 
 		bindProfileThumb(user, holder.userThumbImageView, holder.smsImageView,
@@ -324,11 +324,11 @@ public class ChatAdapter extends CursorAdapter {
 		return view;
 	}
 
-	static class MyHandler extends Handler {
+	static class PlayVoiceHandler extends Handler {
 		private final ImageView mVoiceImageView;
 		private final ProgressBar mPlayProcessBar;
 
-		MyHandler(ImageView voiceImageView, ProgressBar playProcessBar) {
+		PlayVoiceHandler(ImageView voiceImageView, ProgressBar playProcessBar) {
 			mVoiceImageView = voiceImageView;
 			mPlayProcessBar = playProcessBar;
 		}
@@ -394,9 +394,7 @@ public class ChatAdapter extends CursorAdapter {
 
 	public int voice_playing_width;
 
-	private Message mMessage;// upload 图片时使用
-
-	public TranslateClient mClient;
+	public TranslateClient mTranslateClient;
 
 	private final TaskListener mRequestVerifyListener = new TaskAdapter() {
 
@@ -423,59 +421,9 @@ public class ChatAdapter extends CursorAdapter {
 		}
 
 	};
-
-	private final TaskListener mAcceptTranslateListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			TranslateAcceptTask fsTask = (TranslateAcceptTask) task;
-			if (result == TaskResult.OK) {
-				boolean existTranslatedMessage = fsTask.getIsNeedRetrieveUser();
-				onAcceptTranslateSuccess(existTranslatedMessage);
-
-				Toast.makeText(getContext(), R.string.send_request_success,
-						Toast.LENGTH_SHORT).show();
-
-			} else {
-				String msg = fsTask.getMsg();
-				if (!Utils.isEmpty(msg)) {
-					Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT)
-							.show();
-				}
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-			Toast.makeText(getContext(), R.string.message_sending,
-					Toast.LENGTH_SHORT).show();
-		}
-
-	};
 	private Context context;
 	public ContentResolver mContentResolver;
 
-	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			XmppRequestTranslateTask fsTask = (XmppRequestTranslateTask) task;
-			if (result == TaskResult.OK) {
-				Message message = fsTask.getMessage();
-				setMessageID(fsTask.getChat().getPid(), message.getMessageid(), message.getTo_content());
-				Log.d(TAG, "Request translate Success");
-			} else {
-				String msg = fsTask.getMsg();
-				Log.d(TAG, "Request translate fail:" + msg);
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-
-		}
-
-	};
 	private final TaskListener retrieveMessageByIdTaskListener = new TaskAdapter() {
 
 		@Override
@@ -498,31 +446,10 @@ public class ChatAdapter extends CursorAdapter {
 
 	};
 
-	private final TaskListener mUploadTaskListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-//			FileUploadTask photoTask = (FileUploadTask) task;
-//			if (result == TaskResult.OK) {
-//				Message message = mMessage;
-//				message.setFile_path(photoTask.getFileInfo().fileName);
-//				AbstractChatActivity.doRequestTranslate(message,
-//						mRequestTranslateListener);
-//			} else if (result == TaskResult.FAILED) {
-//				String msg = photoTask.getMsg();
-//				Message message = mMessage;
-//				onRequestTranslateFailure(message, msg);
-//			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-		}
-	};
-
 	public int mWidth;
 
 
+	//为什么是自动翻译
 	protected void bindAutoTranslationClick(final Chat chat,
 	                                        final View autoTranslationLayout, final Context mContext) {
 		autoTranslationLayout.setOnClickListener(new View.OnClickListener() {
@@ -565,15 +492,6 @@ public class ChatAdapter extends CursorAdapter {
 					pubDate, true, true));
 			dateTextView.setVisibility(View.VISIBLE);
 		}
-	}
-
-	protected void bindFromClickEvent(final Chat chat, View fromTextView) {
-		if (fromTextView == null)
-			return;
-
-		fromTextView.setOnLongClickListener(null);
-		fromTextView
-				.setOnLongClickListener(getFromContentLongClickListener(chat));
 	}
 
 	protected void bindFromContentView(final Chat chat,
@@ -708,17 +626,9 @@ public class ChatAdapter extends CursorAdapter {
 			@Override
 			public void onClick(View v) {
 				//TODO
-//				doReRequestTranslate(message.getId());
+//				doRequestTranslate(message.getId());
 			}
 		});
-	}
-
-	protected void bindToClickEvent(final Chat chat, View toTextView) {
-		if (toTextView != null) {
-			toTextView.setOnLongClickListener(null);
-			toTextView
-					.setOnLongClickListener(getToContentLongClickListener(chat));
-		}
 	}
 
 	protected void bindToView(final Chat chat,
@@ -801,10 +711,10 @@ public class ChatAdapter extends CursorAdapter {
 								playProcessBar);
 					} else {
 						if (!Utils.isEmpty(file_path)) {
-							final MyHandler myHandler = new MyHandler(
+							final PlayVoiceHandler playVoiceHandler = new PlayVoiceHandler(
 									voiceImageView, playProcessBar);
 							Utils.uploadVoiceFile(context, file_path,
-									myHandler);
+									playVoiceHandler);
 						} else {
 							Toast.makeText(context,
 									R.string.play_voice_failure,
@@ -820,6 +730,10 @@ public class ChatAdapter extends CursorAdapter {
 	// 原文文本菜单
 	void createFromContentPopMenus(final Chat chat, View v,
 	                               final String content) {
+		Message message = null;
+		if (chat.getMessageId() > 0 ) {
+			message = App.messageDAO.fetchMessage(chat.getMessageId());
+		}
 		List<String> menuList = new ArrayList<>();
 		if (!AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat
 				.getType())
@@ -836,49 +750,54 @@ public class ChatAdapter extends CursorAdapter {
 						.getString(R.string.message_action_tts));
 			}
 			// 正在请求中的可以请求自动翻译
-//            if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_REQUEST_TRANS)
-//            {
-//                menuList.add(mContext.getString(
-//                        R.string.message_action_auto_translation));
-//            }
+            if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_REQUEST_TRANS)
+            {
+                menuList.add(mContext.getString(
+                        R.string.message_action_auto_translation));
+            }
 		}
 		menuList.add(getContext().getString(R.string.delete_message));
 		// 请求失败可以再请求一次
-//        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_SEND_FAILED) {
-//            menuList.add(getContext().getString(
-//                    R.string.message_action_request_translate_again));
-//        } else if (message.getTo_userid() == App.readUser().getId()
-//                && message.getMessage_status() == AppPreferences.MESSAGE_STATUS_NO_TRANSLATE
-//                && (!message.getFrom_lang().equals(message.getTo_lang())
-//                && !AppPreferences.MESSAGE_TYPE_NAME_PHOTO
-//                .equals(message.file_type) && Utils
-//                .isEmpty(message.getTo_content()))) {
-//            // 只有接收者才能点击接受翻译；
-//            // 缺钱的话，发送者也不能点击接受翻译。
-//            menuList.add(getContext().getString(
-//                    R.string.message_action_accept_translate));
-//        }
-//        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_REQUEST_TRANS
-//                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATING
-//                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_ACCEPT_TRANSLATE
-//                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_ACCEPT_TRANSLATING) {
-//            menuList.add(getContext().getString(
-//                    R.string.message_action_retrieve_message));
-//        }
-//        // 翻译过的，并且未验证，出钱的人可以点击验证
-//        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATED
-//                && message.getVerify_status() < AppPreferences.VERIFY_STATUS_REQUEST
-//                && ((App.readUser().getId() == message.getUserid() && message
-//                .getFee() > 0) || (App.readUser().getId() == message
-//                .getTo_userid() && message.getTo_user_fee() > 0))) {
-//            menuList.add(getContext().getString(R.string.message_action_verify));
-//        }
+        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_SEND_FAILED) {
+            menuList.add(getContext().getString(
+                    R.string.message_action_request_translate_again));
+        } else if (message.getTo_userid() == App.readUser().getId()
+                && message.getMessage_status() == AppPreferences.MESSAGE_STATUS_NO_TRANSLATE
+                && (!message.getFrom_lang().equals(message.getTo_lang())
+                && !AppPreferences.MESSAGE_TYPE_NAME_PHOTO
+                .equals(message.file_type) && Utils
+                .isEmpty(message.getTo_content()))) {
+            // 只有接收者才能点击接受翻译；
+            // 缺钱的话，发送者也不能点击接受翻译。
+            menuList.add(getContext().getString(
+                    R.string.message_action_accept_translate));
+        }
+        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_REQUEST_TRANS
+                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATING
+                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_ACCEPT_TRANSLATE
+                || message.getMessage_status() == AppPreferences.MESSAGE_STATUS_ACCEPT_TRANSLATING) {
+            menuList.add(getContext().getString(
+                    R.string.message_action_retrieve_message));
+        }
+        // 翻译过的，并且未验证，出钱的人可以点击验证
+        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATED
+                && message.getVerify_status() < AppPreferences.VERIFY_STATUS_REQUEST
+                && ((App.readUser().getId() == message.getUserid() && message
+                .getFee() > 0) || (App.readUser().getId() == message
+                .getTo_userid() && message.getTo_user_fee() > 0))) {
+            menuList.add(getContext().getString(R.string.message_action_verify));
+        }
 		menuOnClickListener(menuList, chat, content);
 	}
 
 	// 译文文本菜单
 	void createToContentPopMenus(final Chat chat, View v,
 	                             final String content) {
+		Message message = null;
+		if (chat.getMessageId() > 0 ) {
+			message = App.messageDAO.fetchMessage(chat.getMessageId());
+		}
+
 		List<String> menuList = new ArrayList<>();
 		menuList.add(context.getString(R.string.message_action_copy));
 		menuList.add(context.getString(R.string.message_action_share));
@@ -893,13 +812,13 @@ public class ChatAdapter extends CursorAdapter {
 				R.string.message_action_accept_translate));
 		menuList.add(context.getString(R.string.delete_message));
 		// 翻译过的，并且未验证，出钱的人可以点击验证
-//        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATED
-//                && message.getVerify_status() < AppPreferences.VERIFY_STATUS_REQUEST
-//                && ((App.readUser().getId() == message.getUserid() && message
-//                .getFee() > 0) || (App.readUser().getId() == message
-//                .getTo_userid() && message.getTo_user_fee() > 0))) {
-//            menuList.add(mContext.getString(R.string.message_action_verify));
-//        }
+        if (message.getMessage_status() == AppPreferences.MESSAGE_STATUS_TRANSLATED
+                && message.getVerify_status() < AppPreferences.VERIFY_STATUS_REQUEST
+                && ((App.readUser().getId() == message.getUserid() && message
+                .getFee() > 0) || (App.readUser().getId() == message
+                .getTo_userid() && message.getTo_user_fee() > 0))) {
+            menuList.add(mContext.getString(R.string.message_action_verify));
+        }
 
 		menuOnClickListener(menuList, chat, content);
 	}
@@ -910,24 +829,6 @@ public class ChatAdapter extends CursorAdapter {
 				Toast.LENGTH_SHORT).show();
 		getCursor().requery();
 		return;
-	}
-
-	private void doAcceptTranslate(final Long id) {
-		Toast.makeText(
-				getContext(),
-				getContext()
-						.getString(R.string.message_action_accept_translate),
-				Toast.LENGTH_SHORT).show();
-
-		if (mAcceptTranslateTask != null
-				&& mAcceptTranslateTask.getStatus() == GenericTask.Status.RUNNING) {
-			return;
-		}
-
-		mAcceptTranslateTask = new TranslateAcceptTask(id);
-		mAcceptTranslateTask.setListener(mAcceptTranslateListener);
-		mAcceptTranslateTask.execute();
-
 	}
 
 	private void doCopy(Chat chat) {
@@ -945,10 +846,10 @@ public class ChatAdapter extends CursorAdapter {
 		getContext().startActivity(intent);
 	}
 
-//	protected void doReRequestTranslate(Long localId) {
-//		Toast.makeText(getContext(),
-//				getContext().getString(R.string.status_sending),
-//				Toast.LENGTH_SHORT).show();
+	protected void doRequestTranslate(Chat chat) {
+		Toast.makeText(getContext(),
+				getContext().getString(R.string.status_sending),
+				Toast.LENGTH_SHORT).show();
 //
 //		Message message = App.messageDAO.fetchMessage(localId);
 //		message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
@@ -964,7 +865,7 @@ public class ChatAdapter extends CursorAdapter {
 //			AbstractChatActivity.doRequestTranslate(message,
 //					mRequestTranslateListener);
 //		}
-//	}
+	}
 
 	private void doShare(Chat chat) {
 		// create the send intent
@@ -1151,16 +1052,11 @@ public class ChatAdapter extends CursorAdapter {
 						} else if (context.getString(
 								R.string.message_action_request_translate_again)
 								.equals(selectedItem)) {
-//                            doReRequestTranslate(message.getId());
+                            doRequestTranslate(chat);
 						} else if (context.getString(
 								R.string.message_action_auto_translation)
 								.equals(selectedItem)) {
-//                            doAcceptTranslate(message.messageid);
 							doBaiduTranslate(chat);
-						} else if (context.getString(
-								R.string.message_action_accept_translate)
-								.equals(selectedItem)) {
-							doTTTalkTranslate(chat);
 						} else if (context.getString(
 								R.string.message_action_retrieve_message)
 								.equals(selectedItem)) {
@@ -1251,8 +1147,8 @@ public class ChatAdapter extends CursorAdapter {
 		if (TextUtils.isEmpty(chat.getContent()))
 			return;
 
-		if (mClient != null) {
-			mClient.translate(chat.getContent(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
+		if (mTranslateClient != null) {
+			mTranslateClient.translate(chat.getContent(), Utils.convert2BaiduLang(chat.getFromLang()), Utils.convert2BaiduLang(chat.getToLang()), new ITransResultCallback() {
 
 				@Override
 				public void onResult(TransResult result) {// 翻译结果回调
@@ -1283,12 +1179,6 @@ public class ChatAdapter extends CursorAdapter {
 
 		mContentResolver.update(ChatProvider.CONTENT_URI, cv, TableContent.ChatTable.Columns.ID
 				+ " = ?  ", new String[]{String.valueOf(chatID)});
-	}
-
-	private void doTTTalkTranslate(Chat chat) {
-		XmppRequestTranslateTask mRequestTranslateTask = new XmppRequestTranslateTask(chat);
-		mRequestTranslateTask.setListener(mRequestTranslateListener);
-		mRequestTranslateTask.execute();
 	}
 
 	public void setMessageID(String packetID, long messageID, String to_content) {

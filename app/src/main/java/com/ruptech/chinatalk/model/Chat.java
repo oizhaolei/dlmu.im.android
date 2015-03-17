@@ -22,11 +22,11 @@ public class Chat implements Serializable {
     protected int status;
 
 	@Deprecated
+
     public String getTo_content() {
         return to_content;
     }
 
-	@Deprecated
     public void setTo_content(String to_content) {
         this.to_content = to_content;
     }
@@ -70,14 +70,6 @@ public class Chat implements Serializable {
 
 	public void setToJid(String toJid) {
 		this.toJid = toJid;
-	}
-
-	public long getMessage_id() {
-		return message_id;
-	}
-
-	public void setMessage_id(long message_id) {
-		this.message_id = message_id;
 	}
 
 	public String getContent() {
