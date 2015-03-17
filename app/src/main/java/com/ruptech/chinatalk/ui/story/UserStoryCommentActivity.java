@@ -418,8 +418,8 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 		@Override
 		public void onPostExecute(GenericTask task, TaskResult result) {
 			RetrieveUserPhotoTask retrieveUserPhotoTask = (RetrieveUserPhotoTask) task;
-			if (result == TaskResult.OK) {
-				mUserPhoto = retrieveUserPhotoTask.getUserPhoto();
+            mUserPhoto = retrieveUserPhotoTask.getUserPhoto();
+			if (result == TaskResult.FAILED) {
 				isRealUserPhoto = true;
 
 				// 清空与当前story相关的通知栏通知
@@ -437,7 +437,10 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 				String msg = task.getMsg();
 				Toast.makeText(UserStoryCommentActivity.this, msg,
 						Toast.LENGTH_SHORT).show();
-				finish();
+                App.hotUserPhotoDAO.deleteHotUserPhotosById(mUserPhoto.getId());
+                App.userPhotoDAO.deleteUserPhotosById(mUserPhoto.getId());
+                CommonUtilities.broadcastStoryMessage(App.mContext, mUserPhoto);
+                finish();
 			}
 		}
 	};

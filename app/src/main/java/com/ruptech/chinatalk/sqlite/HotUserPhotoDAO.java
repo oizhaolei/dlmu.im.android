@@ -11,6 +11,7 @@ import com.ruptech.chinatalk.model.UserPhoto;
 import com.ruptech.chinatalk.utils.Utils;
 
 import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 
 public class HotUserPhotoDAO {
 
@@ -111,4 +112,9 @@ public class HotUserPhotoDAO {
 		}
 		return -1;
 	}
+
+    public int deleteHotUserPhotosById(Long id) {
+        return mSqlTemplate.deleteByField(HotUserPhotoTable.getName(),
+                HotUserPhotoTable.Columns.ID, String.valueOf(id));
+    }
 }
