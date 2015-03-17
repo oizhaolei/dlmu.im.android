@@ -295,27 +295,7 @@ public class MessageReceiver {
 			return false;
 		} else {
 //            App.messageDAO.mergeMessage(message);
-            ContentValues cv = new ContentValues();
-            cv.put(TableContent.MessageTable.Columns.MESSAGEID, message.getMessageid());
-            cv.put(TableContent.MessageTable.Columns.FROM_VOICE_ID, message.getFrom_voice_id());
-            cv.put(TableContent.MessageTable.Columns.TO_CONTENT, message.getTo_content());
-            cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-            cv.put(TableContent.MessageTable.Columns.FEE, message.getFee());
-            cv.put(TableContent.MessageTable.Columns.AUTO_TRANSLATE, message.getAuto_translate());
-            cv.put(TableContent.MessageTable.Columns.TO_USER_FEE, message.getTo_user_fee());
-            cv.put(TableContent.MessageTable.Columns.ACQUIRE_DATE, message.getAcquire_date());
-            cv.put(TableContent.MessageTable.Columns.TRANSLATED_DATE, message.getTranslated_date());
-            cv.put(TableContent.MessageTable.Columns.VERIFY_STATUS, message.getVerify_status());
-            cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-            cv.put(TableContent.MessageTable.Columns.CREATE_ID, message.getCreate_id());
-            cv.put(TableContent.MessageTable.Columns.CREATE_DATE, message.getCreate_date());
-            cv.put(TableContent.MessageTable.Columns.UPDATE_ID, message.getUpdate_id());
-            cv.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
-            cv.put(TableContent.MessageTable.Columns.FILE_PATH, message.getFile_path());
-            cv.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
-
-            App.mContext.getContentResolver().update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
-                    + " = ?  " , new String[]{String.valueOf(message.getId())});
+            MessageProvider.mergeMessage(App.mContext.getContentResolver(),message);
 
             // 推送的TTT message lang与当前TTT画面语言不一致也需要提醒。
             int message_status = message.getMessage_status();

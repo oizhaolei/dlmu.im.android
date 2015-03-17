@@ -512,23 +512,7 @@ public class TTTActivity extends ActionBarActivity {
 	}
 
     void doSaveLocalAndRequestTranslate(Message message){
-        ContentValues values = new ContentValues();
-        values.put(TableContent.MessageTable.Columns.ID, message.getId());
-        values.put(TableContent.MessageTable.Columns.MESSAGEID, message.getMessageid());
-        values.put(TableContent.MessageTable.Columns.USERID, message.getUserid());
-        values.put(TableContent.MessageTable.Columns.TO_USERID, message.getTo_userid());
-        values.put(TableContent.MessageTable.Columns.FROM_LANG, message.from_lang);
-        values.put(TableContent.MessageTable.Columns.TO_LANG, message.to_lang);
-        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.from_content);
-        values.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-        values.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-        values.put(TableContent.MessageTable.Columns.FILE_PATH, message.getFile_path());
-        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.getFrom_content());
-        values.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
-        values.put(TableContent.MessageTable.Columns.CREATE_DATE, message.getCreate_date());
-        values.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
-
-        getContentResolver().insert(MessageProvider.CONTENT_URI, values);
+        MessageProvider.insertMessage(getContentResolver(), message);
 
         if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
                 .getFile_type())
