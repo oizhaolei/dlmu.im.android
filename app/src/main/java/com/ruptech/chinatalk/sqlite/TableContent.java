@@ -1201,7 +1201,7 @@ public abstract class TableContent {
     public static class ChatRoomUserTable {
         public static class Columns {
             public final String ID = "_id";
-            public final String CHATROOM_JID = "chatroom_jid";
+            public final String CHATROOM_ID = "chatroom_id";
             public final String PARTICIPANT_ID = "participant_id";
         }
 
@@ -1209,7 +1209,7 @@ public abstract class TableContent {
 
         public static String getCreateIndexSQL() {
             String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
-                    + " ( " + Columns.CHATROOM_JID + " );";
+                    + " ( " + Columns.CHATROOM_ID + " );";
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + sql.toString());
             return sql;
@@ -1219,7 +1219,7 @@ public abstract class TableContent {
             StringBuffer create = new StringBuffer(512);
             create.append("CREATE TABLE ").append(getName()).append("( ");
             create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
-            create.append(Columns.CHATROOM_JID + " TEXT UNIQUE ON CONFLICT REPLACE, ");
+            create.append(Columns.CHATROOM_ID + " INTEGER, ");
             create.append(Columns.PARTICIPANT_ID + " LONG ");
             create.append(");");
             if (BuildConfig.DEBUG)
@@ -1235,7 +1235,7 @@ public abstract class TableContent {
         }
 
         public String[] getIndexColumns() {
-            return new String[] { Columns.ID, Columns.CHATROOM_JID,
+            return new String[] { Columns.ID, Columns.CHATROOM_ID,
 		            Columns.PARTICIPANT_ID  };
         }
 
