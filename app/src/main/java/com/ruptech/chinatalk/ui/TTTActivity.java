@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -60,7 +61,7 @@ public class TTTActivity extends ActionBarActivity {
 
 	static final String TAG = Utils.CATEGORY
 			+ TTTActivity.class.getSimpleName();
-	private TTTAdapter tttAdapter;
+	private CursorAdapter cursorAdapter;
 
 	/**
 	 * TTT根据新的lang列表，重新定位之前使用过的lang位置
@@ -223,7 +224,7 @@ public class TTTActivity extends ActionBarActivity {
 					mLang2Spinner.setSelection(getLangArrayPosition(
 							lastSelectedLang2, mLang2Array));
 				} else {
-					updateTTT(reQuery());
+					updateAdapterCursor(reQuery());
 				}
 			}
 
@@ -253,7 +254,7 @@ public class TTTActivity extends ActionBarActivity {
 				if (googleTranslate) {
 					switchTextInputMode();
 				}
-				updateTTT(reQuery());
+				updateAdapterCursor(reQuery());
 			}
 
 			@Override
@@ -261,8 +262,8 @@ public class TTTActivity extends ActionBarActivity {
 			}
 		});
 
-		tttAdapter = new TTTAdapter(this, reQuery());
-		mMessageListView.setAdapter(tttAdapter);
+		cursorAdapter = new TTTAdapter(this, reQuery());
+		mMessageListView.setAdapter(cursorAdapter);
 		mMessageListView.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScroll(AbsListView arg0, int firstVisibleItem,
@@ -422,14 +423,14 @@ public class TTTActivity extends ActionBarActivity {
 		public void onChange(boolean selfChange) {
 			mainHandler.postDelayed(new Runnable() {
 				public void run() {
-					updateTTT(reQuery());
+					updateAdapterCursor(reQuery());
 				}
 			}, 100);
 		}
 	}
 
-	public void updateTTT(Cursor c) {
-		Cursor oldCursor = tttAdapter.swapCursor(c);
+	public void updateAdapterCursor(Cursor c) {
+		Cursor oldCursor = cursorAdapter.swapCursor(c);
 		oldCursor.close();
 	}
 

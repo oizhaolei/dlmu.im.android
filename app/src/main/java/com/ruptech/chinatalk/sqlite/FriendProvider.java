@@ -1,7 +1,6 @@
 package com.ruptech.chinatalk.sqlite;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -14,35 +13,35 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
+import com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 
-public class MessageProvider extends ContentProvider {
+public class FriendProvider extends ContentProvider {
 
-	public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Messages";
-	public static final String TABLE_NAME = MessageTable.getName();
-	public static final String QUERY_URI = "messages";
+	public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Friends";
+	public static final String TABLE_NAME = FriendTable.getName();
+	public static final String QUERY_URI = "friend";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + QUERY_URI);
 
 	private static final UriMatcher URI_MATCHER = new UriMatcher(
 			UriMatcher.NO_MATCH);
 
-	private static final int MESSAGES = 1;
-	private static final int MESSAGE_ID = 2;
+	private static final int FRIENDS = 1;
+	private static final int FRIEND_ID = 2;
 
-	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.yaxim.message";
-	public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.yaxim.message";
+	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.yaxim.friend";
+	public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.yaxim.friend";
 	public static final String DEFAULT_SORT_ORDER = "_id ASC"; // sort by
 
 	static {
-		URI_MATCHER.addURI(AUTHORITY, QUERY_URI, MESSAGES);
-		URI_MATCHER.addURI(AUTHORITY, QUERY_URI + "/#", MESSAGE_ID);
+		URI_MATCHER.addURI(AUTHORITY, QUERY_URI, FRIENDS);
+		URI_MATCHER.addURI(AUTHORITY, QUERY_URI + "/#", FRIEND_ID);
 	}
 
-	private static final String TAG = MessageProvider.class.getName();
+	private static final String TAG = FriendProvider.class.getName();
 	private SQLiteOpenHelper mOpenHelper;
 
-	public MessageProvider() {
+	public FriendProvider() {
 	}
 
 	@Override
@@ -51,10 +50,10 @@ public class MessageProvider extends ContentProvider {
 		int count;
 		switch (URI_MATCHER.match(url)) {
 
-			case MESSAGES:
+			case FRIENDS:
 				count = db.delete(TABLE_NAME, where, whereArgs);
 				break;
-			case MESSAGE_ID:
+			case FRIEND_ID:
 				String segment = url.getPathSegments().get(1);
 
 				if (TextUtils.isEmpty(where)) {
@@ -77,9 +76,9 @@ public class MessageProvider extends ContentProvider {
 	public String getType(Uri url) {
 		int match = URI_MATCHER.match(url);
 		switch (match) {
-			case MESSAGES:
+			case FRIENDS:
 				return CONTENT_TYPE;
-			case MESSAGE_ID:
+			case FRIEND_ID:
 				return CONTENT_ITEM_TYPE;
 			default:
 				throw new IllegalArgumentException("Unknown URL");
@@ -88,7 +87,7 @@ public class MessageProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri url, ContentValues initialValues) {
-		if (URI_MATCHER.match(url) != MESSAGES) {
+		if (URI_MATCHER.match(url) != FRIENDS) {
 			throw new IllegalArgumentException("Cannot insert into URL: " + url);
 		}
 
@@ -123,10 +122,10 @@ public class MessageProvider extends ContentProvider {
 		int match = URI_MATCHER.match(url);
 
 		switch (match) {
-			case MESSAGES:
+			case FRIENDS:
 				qBuilder.setTables(TABLE_NAME);
 				break;
-			case MESSAGE_ID:
+			case FRIEND_ID:
 				qBuilder.setTables(TABLE_NAME);
 				qBuilder.appendWhere("_id=");
 				qBuilder.appendWhere(url.getPathSegments().get(1));
@@ -164,10 +163,10 @@ public class MessageProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
 		switch (match) {
-			case MESSAGES:
+			case FRIENDS:
 				count = db.update(TABLE_NAME, values, where, whereArgs);
 				break;
-			case MESSAGE_ID:
+			case FRIEND_ID:
 				String segment = url.getPathSegments().get(1);
 				rowId = Long.parseLong(segment);
 				count = db.update(TABLE_NAME, values, "_id=" + rowId, null);
@@ -181,14 +180,5 @@ public class MessageProvider extends ContentProvider {
 		getContext().getContentResolver().notifyChange(url, null);
 		return count;
 
-	}
-
-	public static void saveTranslatedContent(ContentResolver contentResolver,String messageId, String to_content) {
-		ContentValues cv = new ContentValues();
-		cv.put(MessageTable.Columns.TO_CONTENT, to_content);
-
-		contentResolver.update(MessageProvider.CONTENT_URI, cv, MessageTable.Columns.ID
-				+ " = ?  ", new String[]{messageId});
-		contentResolver.notifyChange(MessageProvider.CONTENT_URI, null);
 	}
 }

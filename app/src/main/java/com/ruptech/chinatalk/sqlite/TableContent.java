@@ -308,7 +308,7 @@ public abstract class TableContent {
 					Columns.CREATE_DATE };
 		}
 
-		public String getName() {
+		public static String getName() {
 			return "tbl_friend";
 		}
 
