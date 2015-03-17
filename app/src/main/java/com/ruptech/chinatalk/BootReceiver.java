@@ -22,24 +22,26 @@ public class BootReceiver extends BroadcastReceiver {
         Log.i(TAG, "action = " + action);
 
         App.cancelPeriodTaskReceiver();
-        if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
-            int connectivity = NetUtil.getNetworkState(context);
-            App.mBus.post(new NetChangeEvent(connectivity));
+        if(App.readUser()!=null) {
+            if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
+                int connectivity = NetUtil.getNetworkState(context);
+                App.mBus.post(new NetChangeEvent(connectivity));
 
-            if (connectivity != NetUtil.NETWORK_NONE) {
-                //version check
+                if (connectivity != NetUtil.NETWORK_NONE) {
+                    //version check
+                    App.startPeriodTaskReceiver();
+                }
+            } else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
+                Log.d(TAG, "System shutdown, stopping service.");
+                Intent xmppServiceIntent = new Intent(context, XMPPService.class);
+                context.stopService(xmppServiceIntent);
+
+            } else {
+                Intent i = new Intent(context, XMPPService.class);
+                i.setAction(BOOT_COMPLETED_ACTION);
+                context.startService(i);
                 App.startPeriodTaskReceiver();
             }
-        } else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-            Log.d(TAG, "System shutdown, stopping service.");
-            Intent xmppServiceIntent = new Intent(context, XMPPService.class);
-            context.stopService(xmppServiceIntent);
-
-        } else {
-            Intent i = new Intent(context, XMPPService.class);
-            i.setAction(BOOT_COMPLETED_ACTION);
-            context.startService(i);
-            App.startPeriodTaskReceiver();
         }
     }
 }
