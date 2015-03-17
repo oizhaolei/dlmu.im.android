@@ -19,7 +19,8 @@ import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomUserTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
@@ -49,7 +50,7 @@ public class ChinaTalkDatabase {
 				Log.d(TAG, "Upgrade Database.");
 			if (oldVersion == 57) {
                 try {
-                    udpateTable57to65(db);
+                    udpateTable57to66(db);
                 } catch (Exception e) {
                     Utils.sendClientException(e);
                 }
@@ -73,7 +74,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 65;
+	public static final int DATABASE_VERSION = 66;
 
 	/**
 	 * self instance
@@ -94,7 +95,8 @@ public class ChinaTalkDatabase {
 		db.execSQL(HotUserPhotoTable.getCreateIndexSQL());
 		db.execSQL(CommentNewsTable.getCreateIndexSQL());
         db.execSQL(ChatTable.getCreateIndexSQL());
-        db.execSQL(RosterTable.getCreateIndexSQL());
+        db.execSQL(ChatRoomTable.getCreateIndexSQL());
+        db.execSQL(ChatRoomUserTable.getCreateIndexSQL());
 	}
 
 	// Create All tables
@@ -112,7 +114,8 @@ public class ChinaTalkDatabase {
 
 		db.execSQL(CommentNewsTable.getCreateSQL());
         db.execSQL(ChatTable.getCreateSQL());
-        db.execSQL(RosterTable.getCreateSQL());
+        db.execSQL(ChatRoomTable.getCreateSQL());
+        db.execSQL(ChatRoomUserTable.getCreateSQL());
 	}
 
 	private static void dropAllTables(SQLiteDatabase db) {
@@ -129,7 +132,8 @@ public class ChinaTalkDatabase {
 
 		db.execSQL(CommentNewsTable.getDropSQL());
         db.execSQL(ChatTable.getDropSQL());
-        db.execSQL(RosterTable.getDropSQL());
+        db.execSQL(ChatRoomTable.getDropSQL());
+        db.execSQL(ChatRoomUserTable.getDropSQL());
 	}
 
 	/**
@@ -145,14 +149,14 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable57to65(SQLiteDatabase db) {
+	private static void udpateTable57to66(SQLiteDatabase db) {
         db.execSQL(ChatTable.getCreateSQL());
-        db.execSQL(RosterTable.getCreateSQL());
+        db.execSQL(ChatRoomTable.getCreateSQL());
+        db.execSQL(ChatRoomUserTable.getCreateSQL());
         db.execSQL(ChatTable.getBulkInsertSQL());
         db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
                 + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
-		db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
-				+ UserTable.Columns.ACCOUNT_VALID + "    INT;");
+
 	}
 
 	/**

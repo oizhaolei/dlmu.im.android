@@ -8,7 +8,7 @@ import android.util.Log;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.sqlite.RosterProvider;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
-import com.ruptech.chinatalk.sqlite.TableContent.RosterTable;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
 import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
@@ -84,7 +84,7 @@ public class TTTalkRosterListener implements RosterListener {
 		final ContentValues values = getContentValuesForRosterEntry(entry);
 
 		if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
-				RosterTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
+				ChatRoomTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
 			addRosterEntryToDB(entry);
 	}
 
@@ -92,13 +92,13 @@ public class TTTalkRosterListener implements RosterListener {
 	private ContentValues getContentValuesForRosterEntry(final RosterEntry entry) {
 		final ContentValues values = new ContentValues();
 
-		values.put(RosterTable.Columns.JID, entry.getUser());
-		values.put(RosterTable.Columns.ALIAS, getName(entry));
+		values.put(ChatRoomTable.Columns.JID, entry.getUser());
+		values.put(ChatRoomTable.Columns.TITLE, getName(entry));
 
 		Presence presence = mRoster.getPresence(entry.getUser());
-		values.put(RosterTable.Columns.STATUS_MODE, getStatusInt(presence));
-		values.put(RosterTable.Columns.STATUS_MESSAGE, presence.getStatus());
-		values.put(RosterTable.Columns.GROUP, getGroup());
+//		values.put(ChatRoomTable.Columns.STATUS_MODE, getStatusInt(presence));
+//		values.put(ChatRoomTable.Columns.STATUS_MESSAGE, presence.getStatus());
+//		values.put(ChatRoomTable.Columns.GROUP, getGroup());
 
 		return values;
 	}
@@ -128,7 +128,7 @@ public class TTTalkRosterListener implements RosterListener {
 
 	private void deleteRosterEntryFromDB(final String jabberID) {
 		int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
-				RosterTable.Columns.JID + " = ?", new String[]{jabberID});
+				ChatRoomTable.Columns.JID + " = ?", new String[]{jabberID});
 		Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
 	}
 

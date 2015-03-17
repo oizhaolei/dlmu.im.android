@@ -22,7 +22,6 @@ import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.TimeUtil;
@@ -84,7 +83,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
     @Override
     public int getItemViewType(int position) {
         Cursor cursor = (Cursor) getItem(position);
-        Chat chat = TableContent.ChatTable.parseCursor(cursor);
+        Chat chat = ChatTable.parseCursor(cursor);
         return intValue(getChatType(chat));
     }
 
@@ -110,7 +109,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder holder = (ViewHolder) view.getTag();
-        Chat chat = TableContent.ChatTable.parseCursor(cursor);
+        Chat chat = ChatTable.parseCursor(cursor);
         boolean mine = isMine(chat);
 
         User user, mFriendUser;
@@ -216,7 +215,7 @@ public class ChatAdapter extends AbstractChatCursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        Chat chat = TableContent.ChatTable.parseCursor(cursor);
+        Chat chat = ChatTable.parseCursor(cursor);
 
         ViewHolder holder = new ViewHolder();
         View view;

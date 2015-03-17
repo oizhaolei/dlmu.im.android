@@ -71,7 +71,6 @@ import com.ruptech.chinatalk.task.impl.RetrieveUserPhotoListTask;
 import com.ruptech.chinatalk.task.impl.RetrieveUserPhotoTask;
 import com.ruptech.chinatalk.task.impl.UserPhotoRemoveTask;
 import com.ruptech.chinatalk.task.impl.UserStoryNewTask;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.ui.gift.GiftDonateActivity;
 import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
@@ -153,7 +152,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	}
 
 	protected static TextView createContactTextView(String text,
-			Context context, EditText editText) {
+	                                                Context context, EditText editText) {
 		// creating textview dynamically
 		TextView tv = new TextView(context);
 		tv.setText(text);
@@ -166,7 +165,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	}
 
 	public static void gotoDeletePhoto(final UserPhoto userPhoto,
-			Context context, final TaskListener deleteListener) {
+	                                   Context context, final TaskListener deleteListener) {
 		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
@@ -189,7 +188,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	}
 
 	public static void gotoLikePhoto(UserPhoto userPhoto,
-			TaskListener likeListener) {
+	                                 TaskListener likeListener) {
 		PhotoLikeTask photoLikeTask = new PhotoLikeTask(userPhoto.getId(),
 				userPhoto.getFavorite() == 0);
 		photoLikeTask.setListener(likeListener);
@@ -221,8 +220,8 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	}
 
 	protected static void requestAutotranslate(UserPhoto userPhoto,
-			String lang,
-			final TaskListener requestAutoTranslatePhotoTaskListener) {
+	                                           String lang,
+	                                           final TaskListener requestAutoTranslatePhotoTaskListener) {
 		RequestAutoTranslatePhotoTask requestAutoTranslatePhotoTask = new RequestAutoTranslatePhotoTask(
 				userPhoto.getId(), lang);
 		requestAutoTranslatePhotoTask
@@ -637,7 +636,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	LinearLayout commentreplyLayout;
 
 	private void addAllStoryListArrayAdapter(List<UserPhoto> userPhotoList,
-			boolean up) {
+	                                         boolean up) {
 		Boolean isAdd = true;
 		int insertId = 0;
 		if (mUserStoryCommentListArrayAdapter.getCount() == 0) {
@@ -660,7 +659,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 			if (!Utils.isEmpty(userPhoto.getLang())
 					&& !Utils.isEmpty(userPhoto.getContent())
 					&& (!lang.equals(userPhoto.getLang()) || (lang1 != null && !lang1
-							.equals(userPhoto.getLang())))
+					.equals(userPhoto.getLang())))
 					&& Utils.isEmpty(userPhoto.getTo_content())
 					&& !UserPhoto.isAutoTranslated(userPhoto)
 					&& !storyAutoRequestTransKeyList.contains(requestKey)) {
@@ -959,7 +958,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 						new TaskAdapter() {
 							@Override
 							public void onPostExecute(GenericTask task,
-									TaskResult result) {
+							                          TaskResult result) {
 								PhotoLikeTask photoLikeTask = (PhotoLikeTask) task;
 								if (result == TaskResult.FAILED) {
 									Toast.makeText(
@@ -1092,7 +1091,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	private void doRetrieveUserStoryCommentList(boolean top) {
 		if ((notMoreDataFound && !top)
 				|| (mRetrieveUserStoryCommentListTask != null && mRetrieveUserStoryCommentListTask
-						.getStatus() == GenericTask.Status.RUNNING)) {
+				.getStatus() == GenericTask.Status.RUNNING)) {
 			return;
 		}
 		long sinceId;
@@ -1231,7 +1230,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 		try {
 			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
 					.hideSoftInputFromWindow(((Activity) ct).getCurrentFocus()
-							.getWindowToken(),
+									.getWindowToken(),
 							InputMethodManager.HIDE_NOT_ALWAYS);
 		} catch (Exception e) {
 			Log.e(TAG, "hideInputManager Catch error,skip it!", e);
@@ -1394,7 +1393,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 		isRealUserPhoto = extras.getBoolean(EXTRA_IS_REAL_USERPHOTO, true);
 		if (!isRealUserPhoto
 				|| (mUserPhoto != null && Utils.isEmpty(mUserPhoto
-						.getUser_pic()))) {// 传值是ID，不是UserPhoto，是需要刷新头像
+				.getUser_pic()))) {// 传值是ID，不是UserPhoto，是需要刷新头像
 			isNeedRefleshHeaderView = true;
 		}
 		isRealCommentUserPhoto = extras.getBoolean(
@@ -1495,7 +1494,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
+			                     int visibleItemCount, int totalItemCount) {
 				// View topChild = view.getChildAt(0);
 				//
 				// if (topChild == null) {
@@ -1522,7 +1521,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			                        long arg3) {
 				try {
 					if (arg2 == 1) {
 						gotoLikeListActivity();
@@ -1576,7 +1575,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 			}
 		});
 
-		InputFilter[] filters = { new Utils.LengthFilter() };
+		InputFilter[] filters = {new Utils.LengthFilter()};
 		mCommentEditText.setFilters(filters);
 		mInputMethodManager = (InputMethodManager) this.getApplicationContext()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1592,7 +1591,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 				if (edit.length() == 0
 						|| !UserStoryCommentActivity.hasSpan(bgSpan,
-								mCommentEditText)) {
+						mCommentEditText)) {
 					replyId = "";
 					mUserName = "";
 					// 隐藏描述页面
@@ -1602,12 +1601,12 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 			@Override
 			public void beforeTextChanged(CharSequence text, int start,
-					int count, int after) {
+			                              int count, int after) {
 			}
 
 			@Override
 			public void onTextChanged(CharSequence text, int start, int before,
-					int count) {
+			                          int count) {
 
 			}
 

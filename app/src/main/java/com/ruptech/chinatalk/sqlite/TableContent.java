@@ -17,8 +17,6 @@ import com.ruptech.chinatalk.model.UserProp;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
 
-import java.util.ArrayList;
-
 public abstract class TableContent {
 	public static class ChannelTable {
 		public static class Columns {
@@ -881,7 +879,6 @@ public abstract class TableContent {
 			public final String UPDATE_ID = "update_id";
 			public final String UPDATE_DATE = "update_date";
             public final String TERMINAL_TYPE = "terminal_type";
-            public final String ACCOUNT_VALID = "account_valid";
 		}
 
 		public final Columns Columns = new Columns();
@@ -909,7 +906,6 @@ public abstract class TableContent {
 			create.append(Columns.POINT + " INT, ");
 			create.append(Columns.PIC_URL + " TEXT, ");
             create.append(Columns.TERMINAL_TYPE + " TEXT, ");
-            create.append(Columns.ACCOUNT_VALID + " INT, ");
 			create.append(Columns.CREATE_ID + " TEXT, ");
 			create.append(Columns.CREATE_DATE + " date, ");
 			create.append(Columns.UPDATE_ID + " TEXT, ");
@@ -931,7 +927,7 @@ public abstract class TableContent {
 			return new String[] { Columns.ID, Columns.PASSWORD, Columns.TEL,
 					Columns.FULLNAME, Columns.LANG, Columns.ACTIVE,
 					Columns.GENDER, Columns.USER_MEMO, Columns.BALANCE,
-					Columns.POINT, Columns.PIC_URL, Columns.TERMINAL_TYPE, Columns.ACCOUNT_VALID,
+					Columns.POINT, Columns.PIC_URL, Columns.TERMINAL_TYPE,
                     Columns.CREATE_ID,
 					Columns.CREATE_DATE, Columns.UPDATE_ID, Columns.UPDATE_DATE };
 		}
@@ -964,8 +960,7 @@ public abstract class TableContent {
 			user.pic_url = cursor.getString(cursor
 					.getColumnIndex(Columns.PIC_URL));
             user.terminal_type = cursor.getString(cursor
-                    .getColumnIndex(Columns.TERMINAL_TYPE));
-            user.account_valid = cursor.getInt(cursor.getColumnIndex(Columns.ACCOUNT_VALID));
+		            .getColumnIndex(Columns.TERMINAL_TYPE));
 			user.create_id = cursor.getString(cursor
 					.getColumnIndex(Columns.CREATE_ID));
 			user.create_date = DateCommonUtils.parseToDateFromString(cursor
@@ -992,7 +987,6 @@ public abstract class TableContent {
 			v.put(Columns.POINT, user.point);
 			v.put(Columns.PIC_URL, user.pic_url);
             v.put(Columns.TERMINAL_TYPE, user.terminal_type);
-            v.put(Columns.ACCOUNT_VALID, user.account_valid);
 			v.put(Columns.CREATE_ID, user.create_id);
 			v.put(Columns.CREATE_DATE, DateCommonUtils.dateFormat(
 					user.create_date, DateCommonUtils.DF_yyyyMMddHHmmssSSS));
@@ -1154,36 +1148,21 @@ public abstract class TableContent {
             return v;
         }
 
-        public static ArrayList<String> getRequiredColumns() {
-            ArrayList<String> tmpList = new ArrayList<>();
-            tmpList.add(Columns.CREATED_DATE);
-            tmpList.add(Columns.FROM_JID);
-            tmpList.add(Columns.TO_JID);
-            tmpList.add(Columns.CONTENT);
-            tmpList.add(Columns.CONTENT_TYPE);
-            tmpList.add(Columns.FILE_PATH);
-            tmpList.add(Columns.VOICE_SECOND);
-            return tmpList;
-        }
     }
 
-    public static class RosterTable {
+    public static class ChatRoomTable {
         public static class Columns {
             public final String ID = "_id";
-            public final String COUNT = "_count";
             public final String JID = "jid";
-            public final String ALIAS = "alias";
-            public final String STATUS_MODE = "status_mode";
-            public final String STATUS_MESSAGE = "status_message";
-            public final String GROUP = "roster_group";
-            public final String DELIVERY_STATUS = "read";
+            public final String ACCOUNT_USERID = "account_userid";
+            public final String TITLE = "title";
         }
 
         public static final Columns Columns = new Columns();
 
         public String getCreateIndexSQL() {
             String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
-                    + " ( " + Columns.GROUP + " );";
+                    + " ( " + Columns.ACCOUNT_USERID + " );";
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + sql.toString());
             return sql;
@@ -1194,10 +1173,8 @@ public abstract class TableContent {
             create.append("CREATE TABLE ").append(getName()).append("( ");
             create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
             create.append(Columns.JID + " TEXT UNIQUE ON CONFLICT REPLACE, ");
-            create.append(Columns.ALIAS + " TEXT, ");
-            create.append(Columns.STATUS_MODE + " INTEGER, ");
-            create.append(Columns.STATUS_MESSAGE + " TEXT, ");
-            create.append(Columns.GROUP + " TEXT ");
+            create.append(Columns.ACCOUNT_USERID + " LONG, ");
+            create.append(Columns.TITLE + " TEXT ");
             create.append(");");
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + create.toString());
@@ -1213,25 +1190,59 @@ public abstract class TableContent {
 
         public String[] getIndexColumns() {
             return new String[] { Columns.ID, Columns.JID,
-                    Columns.ALIAS, Columns.STATUS_MODE,
-                    Columns.STATUS_MESSAGE, Columns.GROUP };
+		            Columns.ACCOUNT_USERID,  Columns.TITLE  };
         }
 
         public static String getName() {
-            return "tbl_roster";
+            return "tbl_chatroom";
         }
 
-
-
-        public static ArrayList<String> getRequiredColumns() {
-            ArrayList<String> tmpList = new ArrayList<>();
-            tmpList.add(Columns.JID);
-            tmpList.add(Columns.ALIAS);
-            tmpList.add(Columns.JID);
-            tmpList.add(Columns.STATUS_MODE);
-            tmpList.add(Columns.GROUP);
-            return tmpList;
+    }
+    public static class ChatRoomUserTable {
+        public static class Columns {
+            public final String ID = "_id";
+            public final String CHATROOM_ID = "chatroom_id";
+            public final String PARTICIPANT_ID = "participant_id";
         }
+
+        public static final Columns Columns = new Columns();
+
+        public static String getCreateIndexSQL() {
+            String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
+                    + " ( " + Columns.CHATROOM_ID + " );";
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql.toString());
+            return sql;
+        }
+
+        public String getCreateSQL() {
+            StringBuffer create = new StringBuffer(512);
+            create.append("CREATE TABLE ").append(getName()).append("( ");
+            create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
+            create.append(Columns.CHATROOM_ID + " INTEGER, ");
+            create.append(Columns.PARTICIPANT_ID + " LONG ");
+            create.append(");");
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + create.toString());
+            return create.toString();
+        }
+
+        public String getDropSQL() {
+            String sql = "DROP TABLE IF EXISTS " + getName();
+            if (BuildConfig.DEBUG)
+                Log.w(TAG, "sql:" + sql);
+            return sql;
+        }
+
+        public String[] getIndexColumns() {
+            return new String[] { Columns.ID, Columns.CHATROOM_ID,
+		            Columns.PARTICIPANT_ID  };
+        }
+
+        public static String getName() {
+            return "tbl_chatroom_user";
+        }
+
     }
 
 	private static final String TAG = Utils.CATEGORY
@@ -1245,5 +1256,6 @@ public abstract class TableContent {
 	public static UserPropTable UserPropTable = new UserPropTable();
 	public static CommentNewsTable CommentNewsTable = new CommentNewsTable();
     public static ChatTable ChatTable = new ChatTable();
-    public static RosterTable RosterTable = new RosterTable();
+    public static ChatRoomTable ChatRoomTable = new ChatRoomTable();
+    public static ChatRoomUserTable ChatRoomUserTable = new ChatRoomUserTable();
 }

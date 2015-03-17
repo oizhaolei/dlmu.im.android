@@ -1,15 +1,23 @@
 package com.ruptech.chinatalk.ui;
 
-import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.speech.RecognizerIntent;
+import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -24,7 +32,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,21 +41,49 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.baidutranslate.openapi.TranslateClient;
+import com.github.kevinsawicki.http.HttpRequest;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.ChatAdapter;
+import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.Friend;
+import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
-import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
+import com.ruptech.chinatalk.sqlite.UserProvider;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskAdapter;
+import com.ruptech.chinatalk.task.TaskListener;
+import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.FileUploadTask;
+import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
+import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.setting.ChatSettingActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
+import com.ruptech.chinatalk.utils.AppPreferences;
+import com.ruptech.chinatalk.utils.DateCommonUtils;
+import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
+import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.RecordButton;
+
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,13 +93,13 @@ import butterknife.OnClick;
  *
  * @author
  */
-public class ChatActivity extends AbstractChatActivity {
+public class ChatActivity extends ActionBarActivity {
 
 	static final String TAG = Utils.CATEGORY
 			+ ChatActivity.class.getSimpleName();
 
-    public static final String GROUP_CHAT_SUFFIX = "@conference.tttalk.org";
-//	private User mFriendUser;
+	private RosterEntry mRosterEntry;
+	private Map<Long, User> mFriendUsers;
 	private boolean isExpandedState = false;
 
 
@@ -82,24 +117,26 @@ public class ChatActivity extends AbstractChatActivity {
 	@InjectView(R.id.activity_select_message_type)
 	View mSelectMessageTypeView;
 
-//	private final TaskListener mRetrieveUserListener = new TaskAdapter() {
-//
-//		@Override
-//		public void onPostExecute(GenericTask task, TaskResult result) {
-//			RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
-//			if (result == TaskResult.OK) {
-//				if (retrieveUserTask.getUser() != null) {
-//					mFriendUser = retrieveUserTask.getUser();
-//					displayFriend();
-//					remindFooter();
-//				}
-//			} else {
-//				String msg = retrieveUserTask.getMsg();
-//				onRetrieveUserTaskFailure(msg);
-//			}
-//		}
-//
-//	};
+	private final TaskListener mRetrieveUserListener = new TaskAdapter() {
+
+		@Override
+		public void onPostExecute(GenericTask task, TaskResult result) {
+			RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
+			if (result == TaskResult.OK) {
+				if (retrieveUserTask.getUser() != null) {
+					User friend = retrieveUserTask.getUser();
+					mFriendUsers.put(friend.getLike_id(), friend);
+
+					displayTitle();
+					remindFooter();
+				}
+			} else {
+				String msg = retrieveUserTask.getMsg();
+				onRetrieveUserTaskFailure(msg);
+			}
+		}
+
+	};
 
 	private SelectFaceHelper mFaceHelper;
 
@@ -171,38 +208,8 @@ public class ChatActivity extends AbstractChatActivity {
 		footTextCount++;
 	}
 
-	@Override
-	protected void displayFriend() {
-//		if (App.readUser().getLang().equals(mFriendUser.getLang())) {
-//			mMessageEditText.setHint("");
-//		} else {
-//			String fromLangName = Utils.getLangDisplayName(App.readUser()
-//					.getLang());
-//			String toLangName = Utils.getLangDisplayName(mFriendUser.getLang());
-//			if (fromLangName != null && toLangName != null) {
-//				mMessageEditText.setHint(getString(
-//						R.string.chat_language_from_to, fromLangName,
-//						toLangName));
-//			}
-//		}
-        if (isGroupChat){
-            getSupportActionBar().setTitle(Utils.getGroupChatName(mWithJabberID));
-        }else{
-            if (null == mFriend || Utils.isEmpty(mFriend.getFriend_nickname())) {
-                getSupportActionBar().setTitle(mFriendUser.getFullname());
-            } else {
-                getSupportActionBar().setTitle(mFriend.getFriend_nickname());
-            }
-        }
-
-
-	}
-
-	@Override
-	public void doRefleshFooterBySelectLang() {
-		getInitData();
-		initInputPanel();
-		remindFooter();
+	protected void displayTitle() {
+            getSupportActionBar().setTitle(mRosterEntry.getName());
 	}
 
 	public void doSetting(MenuItem item) {
@@ -232,60 +239,23 @@ public class ChatActivity extends AbstractChatActivity {
 //				.getLang(), mFriendUser.getLang());
 	}
 
-	@Override
-	View getKeyboardButton() {
-		return keyboardTypeButton;
-	}
 
-	@Override
-	EditText getMessageEditText() {
-		return mMessageEditText;
-	}
-
-	@Override
-	ListView getMessageListView() {
-		return mMessageListView;
-	}
-
-	@Override
-	View getMessageTypeButton() {
-		return mMessageTypeButton;
-	}
-
-	@Override
 	String getMyLang() {
 		return App.readUser().getLang();
 	}
 
-	@Override
-	View getSendButton() {
-		return mSendButton;
-	}
-
     private void parseExtras(){
         mWithJabberID = (String) getIntent().getExtras().get(EXTRA_JID);
-        isGroupChat = Utils.isGroupChat(mWithJabberID);
-        if (isGroupChat){
+        if (Utils.isGroupChat(mWithJabberID)){
             chatRoom = App.mSmack.createChatRoomByRoomName(mWithJabberID);
             if (chatRoom == null){
                 Toast.makeText(this, "Can not join to chat room",
 					Toast.LENGTH_LONG).show();
                 finish();
             }
-        }else {
-            mFriendUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(mWithJabberID));
         }
+	    mFriendUsers =  retrieveFriendUsers(mWithJabberID);
     }
-
-	@Override
-	View getVoiceButton() {
-		return voiceTypeButton;
-	}
-
-	@Override
-	TextView getVoiceRecordButton() {
-		return mVoiceRecordButton;
-	}
 
 	private void handleSendText(Intent intent) {
 		String sharedText = intent.getStringExtra(TextShareActivity.SEND_TEXT);
@@ -296,37 +266,34 @@ public class ChatActivity extends AbstractChatActivity {
 	}
 
 	// 隐藏软键盘
-	private void hideInputManager(Context ct) {
-		try {
-			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
-					.hideSoftInputFromWindow(((Activity) ct).getCurrentFocus()
-							.getWindowToken(),
-							InputMethodManager.HIDE_NOT_ALWAYS);
-		} catch (Exception e) {
-			Log.e(TAG, "hideInputManager Catch error,skip it!", e);
-		}
+	private void hideInputManager() {
+		mInputMethodManager.hideSoftInputFromWindow(mMessageEditText.getWindowToken(),
+				InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	private void initInputPanel() {
-//		isFriend = false;// 对方加我为好友后,我才可以给他发图片\语音
-//		if (mFriendUser != null) {
-//			Friend friendUserInfo = App.friendDAO.fetchFriend(
-//					mFriendUser.getId(), App.readUser().getId());
-//			if (friendUserInfo != null
-//					&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
-//				isFriend = true;
-//			}
-//		}
-//
-//		boolean enableVoice = !googleTranslate && isFriend;
-//		voiceTypeButton.setVisibility(enableVoice ? View.VISIBLE : View.GONE);
-//
-//		boolean isFromTTTChat = false;
-//		boolean enablePicture = !isFromTTTChat && (mFriendUser.active == 1)
-//				&& isFriend;
-//		pictureTypeButton.setVisibility(enablePicture ? View.VISIBLE
-//				: View.GONE);
+		amIFriend = amIFriend(mFriendUsers);
 
+		boolean enableVoice =  amIFriend;
+		voiceTypeButton.setVisibility(enableVoice ? View.VISIBLE : View.GONE);
+
+		boolean enablePicture = amIFriend;
+		pictureTypeButton.setVisibility(enablePicture ? View.VISIBLE
+				: View.GONE);
+	}
+
+	private boolean amIFriend(Map<Long, User> friendUsers) {
+		for(User friendUser :  friendUsers.values()) {
+			if (friendUser != null) {
+				Friend friendUserInfo = App.friendDAO.fetchFriend(
+						friendUser.getId(), App.readUser().getId());
+				if (friendUserInfo != null
+						&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -345,20 +312,33 @@ public class ChatActivity extends AbstractChatActivity {
 		Utils.onBackPressed(this);
 	}
 
-    // 【重要】 onCreate时候初始化翻译相关功能
+    //
     private void initTransClient() {
         String baidu_api_key = App.properties.getProperty("baidu_api_key");
 
-        client = new TranslateClient(this, baidu_api_key);
+        translateClient = new TranslateClient(this, baidu_api_key);
 
         // 这里可以设置为在线优先、离线优先、 只在线、只离线 4种模式，默认为在线优先。
-        client.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
+        translateClient.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
     }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		long start = System.currentTimeMillis();
 		super.onCreate(savedInstanceState);
+		if (App.readUser() == null) {
+			gotoSplashActivity();
+			finish();
+			return;
+		}
+		// 打开界面页码设为第一页
+		onPage = 1;
+
+		getContentResolver().registerContentObserver(
+				UserProvider.CONTENT_URI, true, mFriendUserObserver);// 开始监听联系人数据库
+		getContentResolver().registerContentObserver(
+				ChatProvider.CONTENT_URI, true, mChatObserver);// 开始监听联系人数据库
+
+
 		setContentView(R.layout.activity_chat);
 		ButterKnife.inject(this);
 
@@ -406,8 +386,6 @@ public class ChatActivity extends AbstractChatActivity {
 		ProfileActivity.close();
 		setupComponents();
 		switchTextInputMode();
-		if (BuildConfig.DEBUG)
-			Log.i(TAG, "onCreate:" + (System.currentTimeMillis() - start));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		handleSendText(getIntent());
@@ -444,7 +422,7 @@ public class ChatActivity extends AbstractChatActivity {
 			isExpandedState = false;
 		}
 
-        updateContactStatus();
+        updateFriendUserStatus();
 	}
 
 	@Override
@@ -488,7 +466,6 @@ public class ChatActivity extends AbstractChatActivity {
 		voiceRecognition(null);
 	}
 
-	@Override
 	protected void remindFooter() {
 //		remindItemFooterLayout.removeAllViews();
 //		footTextCount = 0;
@@ -623,7 +600,10 @@ public class ChatActivity extends AbstractChatActivity {
 //		}
 	}
 
-	private void retrieveFriendUser() {
+	private Map<Long, User> retrieveFriendUsers(String jid) {
+		//TODO:
+		App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(jid));
+
 //		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(
 //				mFriendUser.getId());
 //		mRetrieveUserTask.setListener(mRetrieveUserListener);
@@ -631,6 +611,7 @@ public class ChatActivity extends AbstractChatActivity {
 //
 //		RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
 //		mRetrieveServerVersionTask.execute();
+		return null;
 	}
 
 	private void selectMessageFace() {
@@ -645,7 +626,7 @@ public class ChatActivity extends AbstractChatActivity {
 			isVisbilityFace = true;
 			mAddFaceToolView.setVisibility(View.VISIBLE);
 			mSelectMessageTypeView.setVisibility(View.GONE);
-			hideInputManager(this);
+			hideInputManager();
 		}
 	}
 
@@ -654,7 +635,7 @@ public class ChatActivity extends AbstractChatActivity {
 		if (mSelectMessageTypeView.getVisibility() == View.GONE) {
 			this.mSelectMessageTypeView.setVisibility(View.VISIBLE);
 			mAddFaceToolView.setVisibility(View.GONE);
-			hideInputManager(this);
+			hideInputManager();
 		} else if (mSelectMessageTypeView.getVisibility() == View.VISIBLE)
 			this.mSelectMessageTypeView.setVisibility(View.GONE);
 
@@ -668,9 +649,9 @@ public class ChatActivity extends AbstractChatActivity {
 		send_text();
 	}
 
-	@Override
 	public void setupComponents() {
-		super.setupComponents();
+		mInputMethodManager = (InputMethodManager) this.getApplicationContext()
+				.getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		mSelectMessageTypeView.setVisibility(View.GONE);
 
@@ -741,14 +722,14 @@ public class ChatActivity extends AbstractChatActivity {
 
 		mMessageEditText.addTextChangedListener(mTextWatcher);
 
-		displayFriend();
+		displayTitle();
 	}
 
     /**
      * 设置聊天的Adapter
      */
     private void setChatWindowAdapter() {
-        String selection = TableContent.ChatTable.Columns.TO_JID + "='" + mWithJabberID + "'";
+        String selection = ChatTable.Columns.TO_JID + "='" + mWithJabberID + "'";
         // 异步查询数据库
         new AsyncQueryHandler(getContentResolver()) {
 
@@ -758,14 +739,609 @@ public class ChatActivity extends AbstractChatActivity {
                 // ListAdapter adapter = new ChatWindowAdapter(cursor,
                 // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
                 ListAdapter adapter = new ChatAdapter(ChatActivity.this,
-                        cursor, PROJECTION_FROM, client);
-                getMessageListView().setAdapter(adapter);
-                getMessageListView().setSelection(adapter.getCount() - 1);
+                        cursor, PROJECTION_FROM, translateClient);
+                mMessageListView.setAdapter(adapter);
+                mMessageListView.setSelection(adapter.getCount() - 1);
             }
 
         }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
                 selection, null, null);
     }
 
+
+	static final int CHANGE_NICKNAME = 5678;
+
+	static final int CHAT_RETURN_PHOTO = 4321;
+
+	public static final String EXTRA_JID = "EXTRA_JID";
+
+	static final int FRIEND_BLACK = 7856;
+
+
+	private static GenericTask mUploadTask;
+
+	static int onPage;
+
+	static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
+
+	public void doRequestTranslate(Message message) {
+		if (BuildConfig.DEBUG)
+			Log.v(TAG, "doRequestTranslate");
+
+		GenericTask mRequestTranslateTask = new RequestTranslateTask(message);
+		mRequestTranslateTask.execute();
+	}
+
+	public static void doUploadFile(Chat chat,
+	                                TaskListener mUploadTaskListener) {
+		if (BuildConfig.DEBUG)
+			Log.v(TAG, "doUploadFile");
+		if (mUploadTask != null
+				&& mUploadTask.getStatus() == GenericTask.Status.RUNNING) {
+			return;
+		}
+
+		File fFile = null;
+		if (!Utils.isEmpty(chat.getFilePath())) {
+			if (chat.getType()
+					.equals(AppPreferences.MESSAGE_TYPE_NAME_VOICE)) {
+				fFile = new File(Utils.getVoiceFolder(App.mContext),
+						chat.getFilePath());
+			} else {
+				fFile = new File(chat.getFilePath());
+			}
+		}
+		mUploadTask = new FileUploadTask(fFile, chat.getType(),
+				new HttpRequest.UploadProgress() {
+					@Override
+					public void onUpload(long uploaded, long total) {
+						Log.d(TAG, uploaded + " - " + total);
+					}
+				});
+		mUploadTask.setListener(mUploadTaskListener);
+		mUploadTask.execute();
+	}
+
+	protected boolean existStore;
+
+
+	// view是否显示的标识
+	boolean loadMoreFlag = true;
+
+	protected boolean amIFriend = true;
+	protected MultiUserChat chatRoom;
+
+
+	InputMethodManager mInputMethodManager;
+	protected Chat mChat;// upload 图片时使用
+
+	File mPhotoFile;
+
+//	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+//
+//		@Override
+//		public void onPostExecute(GenericTask task, TaskResult result) {
+//			RequestTranslateTask fsTask = (RequestTranslateTask) task;
+//			if (result == TaskResult.OK) {
+//				onRequestTranslateSuccess(fsTask);
+//			} else {
+//				String msg = fsTask.getMsg();
+//				Message message = fsTask.getMessage();
+//				onRequestTranslateFailure(message, msg);
+//			}
+//		}
+//
+//		@Override
+//		public void onPreExecute(GenericTask task) {
+//			onRequestTranslateBegin();
+//		}
+//
+//	};
+
+	protected final TaskListener mUploadTaskListener = new TaskAdapter() {
+
+		@Override
+		public void onPostExecute(GenericTask task, TaskResult result) {
+			FileUploadTask photoTask = (FileUploadTask) task;
+			if (result == TaskResult.OK) {
+				if (mChat != null) {
+					mChat.setFilePath(photoTask.getFileInfo().fileName);
+					if (AppPreferences.MESSAGE_TYPE_NAME_VOICE
+							.equals(mChat.getType()))
+						mChat.setContent(getString(R.string.notification_voice));
+					else
+						mChat.setContent(getString(R.string.notification_picture));
+
+					sendMessageIfNotNull(mChat);
+				}
+			} else if (result == TaskResult.FAILED) {
+				String msg = photoTask.getMsg();
+//				onRequestTranslateFailure(mChat, msg);
+				if (!Utils.isEmpty(msg)) {
+					Toast.makeText(ChatActivity.this, msg, Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+
+		@Override
+		public void onPreExecute(GenericTask task) {
+		}
+	};
+
+	File mVoiceFile;
+
+	protected int translatorCount = 0;
+
+	RecordButton.OnFinishedRecordListener voiceRecordListener = new RecordButton.OnFinishedRecordListener() {
+		@Override
+		public void onFinishedRecord(File audioFile) {
+			if (BuildConfig.DEBUG)
+				Log.v(TAG, "onFinishedRecord");
+			if (audioFile.exists()) {
+				mVoiceFile = audioFile;
+
+				sendVoice();
+			} else {
+				mVoiceRecordButton.setText(R.string.press_to_record);
+				mVoiceFile = null;
+			}
+		}
+
+	};
+
+	TextWatcher mTextWatcher = new TextWatcher() {
+		@Override
+		public void afterTextChanged(Editable arg0) {
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+		                              int arg3) {
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+		                          int count) {
+			if (s.length() > 0) {
+				mSendButton.setVisibility(View.VISIBLE);
+				mMessageTypeButton.setVisibility(View.INVISIBLE);
+			} else {
+				mMessageTypeButton.setVisibility(View.VISIBLE);
+				mSendButton.setVisibility(View.GONE);
+			}
+		}
+
+	};
+
+
+	protected void doClearContent() {
+		mMessageEditText.setText("");
+		mVoiceFile = null;
+		mPhotoFile = null;
+	}
+
+
+	private void doRefresh() {
+		updateFriendUserStatus();// 更新联系人状态
+
+		displayTitle();
+		remindFooter();
+	}
+
+	private void doRetrieveUser(long userId) {
+
+		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(userId);
+		mRetrieveUserTask.execute();
+	}
+
+	protected void doUpload(String content, String file_path, int contentLength,
+	                        String filetype) {
+		Chat chat = new Chat();
+		chat.setType(filetype);
+		chat.setFromContentLength(contentLength);
+		chat.setFilePath(file_path);
+
+		mChat = chat;
+		if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(chat.getType())
+				|| AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(chat.getType())) {// 先上传图片或者voice,然后发送请求
+			doUploadFile(chat, mUploadTaskListener);
+		}
+	}
+
+	@Override
+	public void finish() {
+		super.finish();
+	}
+
+
+	private int getVoiceLength(Context context, File voiceFile) {
+		try {
+
+			MediaPlayer player = MediaPlayer.create(context,
+					Uri.parse(voiceFile.getAbsolutePath()));
+			int voiceLength = player.getDuration() / 1000;
+			player.release();
+			return voiceLength;
+
+		} catch (Exception e) {
+			return 3;
+		}
+	}
+
+
+	private void gotoSplashActivity() {
+		Intent intent = new Intent(this, SplashActivity.class);
+		startActivity(intent);
+	}
+
+	/**
+	 * Handle the results from the recognition activity.
+	 */
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			if (requestCode == VOICE_RECOGNITION_REQUEST_CODE) {
+				ArrayList<String> matches = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				final String[] contents = new String[matches.size()];
+				new CustomDialog(this)
+						.setTitle(getString(R.string.voice_recognition))
+						.setItems(matches.toArray(contents),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+									                    int which) {
+										mMessageEditText.setText(
+												contents[which]);
+									}
+								}).show();
+			} else if (requestCode == CHAT_RETURN_PHOTO) {
+				Bundle extras = data.getExtras();
+				if (extras != null) {
+					Uri mImageUri = (Uri) extras
+							.get(PhotoAlbumActivity.RETURN_IMAGE_URI);
+					if (mImageUri != null) {
+						if ("content".equals(mImageUri.getScheme())) {
+							String file_path = ImageManager.getRealPathFromURI(
+									this, mImageUri);
+							if (Utils.isEmpty(file_path)) {
+								Utils.sendClientException(new Exception(),
+										"getRealPathFromURI is null");
+								this.finish();
+							} else {
+								mPhotoFile = new File(file_path);
+							}
+						} else {
+							mPhotoFile = new File(mImageUri.getPath());
+						}
+						sendPhoto();
+					}
+				}
+			} else if (requestCode == FRIEND_BLACK) {
+				this.finish();
+			}
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		long start = System.currentTimeMillis();
+		if (translateClient != null) {
+			translateClient.onDestroy();
+		}
+		super.onDestroy();
+		if (BuildConfig.DEBUG)
+			Log.i(TAG, "onDestroy:" + (System.currentTimeMillis() - start));
+	}
+
+	@Override
+	public void onPause() {
+		long start = System.currentTimeMillis();
+		super.onPause();
+//		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
+		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
+		// Back
+		if (BuildConfig.DEBUG)
+			Log.i(TAG, "onPause:" + (System.currentTimeMillis() - start));
+	}
+
+	void onRequestTranslateBegin() {
+		mMessageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+		mMessageEditText.selectAll();
+		switchTextInputMode();
+	}
+
+//	void onRequestTranslateFailure(Message message, String msg) {
+//		// save message
+//		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
+//		message.setStatus_text(getString(R.string.message_action_click_resend));
+//		App.messageDAO.mergeMessage(message);
+//		doRefresh();
+//		if (!Utils.isEmpty(msg)) {
+//			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+//		}
+//	}
+
+	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
+		doRefresh();
+
+		if (fsTask.getIsNeedRetrieveUser()) {
+			doRetrieveUser(App.readUser().getId());// 回到Setting画面，能够立刻看到balance变化。
+		}
+
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, "send Success");
+
+	}
+
+	@Override
+	public void onResume() {
+		long start = System.currentTimeMillis();
+		super.onResume();
+		App.notificationManager.cancel(mWithJabberID.hashCode());
+		doRefresh();
+		if (BuildConfig.DEBUG)
+			Log.i(TAG, "onResume:" + (System.currentTimeMillis() - start));
+	}
+
+
+	void send_text() {
+		boolean noTranslate = true;
+		String content = mMessageEditText.getText().toString().trim();
+		// reform
+		if (content.replaceAll("\n", "").length() == 0) {
+			Toast.makeText(this, R.string.content_cannot_be_empty,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		// check
+		if (content.length() == 0 && mVoiceFile == null && mPhotoFile == null) {
+			Toast.makeText(this, R.string.content_cannot_be_empty,
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		String[] msgArray = content.split("]");
+		for (String msg : msgArray) {
+			if (!ParseEmojiMsgUtil.checkMsgFace(msg + "]")) {
+				noTranslate = false;
+				break;
+			}
+		}
+		content = ParseEmojiMsgUtil.convertToMsg(
+				mMessageEditText.getText(), this);
+		sendText(content, noTranslate);
+
+	}
+
+	private void sendPhoto() {
+		if (mPhotoFile != null) {
+			try {
+				boolean wifiAvailible = Utils.isWifiAvailible(this);
+				mPhotoFile = ImageManager.compressImage(mPhotoFile, 75, this,
+						wifiAvailible);
+			} catch (IOException e) {
+				if (BuildConfig.DEBUG)
+					Log.e(TAG, e.getMessage(), e);
+				Utils.sendClientException(e);
+			}
+			String fromLang = getMyLang();
+			String content = null;
+
+			String file_path = mPhotoFile.getAbsolutePath();
+			int contentLength = 0;
+			String filetype = AppPreferences.MESSAGE_TYPE_NAME_PHOTO;
+
+			doUpload(content, file_path, contentLength, filetype);
+
+		}
+	}
+
+	private void sendText(String content, boolean noTranslate) {
+		String fromLang = getMyLang();
+		String file_path = null;
+		int contentLength = Utils.textLength(content);
+		String filetype = AppPreferences.MESSAGE_TYPE_NAME_TEXT;
+
+		Chat chat = new Chat();
+		chat.setContent(content);
+		chat.setType(filetype);
+		chat.setFromContentLength(contentLength);
+		chat.setFilePath(file_path);
+
+		//新旧版本比较
+		if(mFriendUser!=null &&
+				(Utils.isEmpty(mFriendUser.getTerminal_type()) || mFriendUser.getTerminal_type() != App.readUser().getTerminal_type())){
+			//新版本发给旧版本
+			Message message = new Message();
+			long localId = System.currentTimeMillis();
+			message.setId(localId);
+			message.setMessageid(localId);
+			message.setUserid(App.readUser().getId());
+//            message.setTo_userid(toUserId);
+			message.setFrom_lang(fromLang);
+//            message.setTo_lang(toLang);
+			message.setFrom_content(content);
+			message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
+			message.setStatus_text(getString(R.string.data_sending));
+			message.setFile_path(file_path);
+			message.setFrom_content_length(contentLength);
+			message.setFile_type(filetype);
+			String createDateStr = DateCommonUtils.getUtcDate(new Date(),
+					DateCommonUtils.DF_yyyyMMddHHmmssSSS);
+			message.create_date = createDateStr;
+			message.update_date = createDateStr;
+			doRequestTranslate(message);
+
+			//chat
+			chat.setFromJid(App.readUser().getOF_JabberID());
+			chat.setToJid(mWithJabberID);
+			chat.setPid(null);
+			chat.setCreated_date(System.currentTimeMillis());
+
+
+			ChatProvider.insertChat(getContentResolver(), chat);
+			mMessageEditText.setText(null);
+		}else{
+			//新版本发给新版本
+			sendMessageIfNotNull(chat);
+		}
+
+	}
+
+	private void sendVoice() {
+
+		String content = null;
+		String file_path = mVoiceFile.getName();
+		int contentLength = getVoiceLength(this, mVoiceFile);
+		String filetype = AppPreferences.MESSAGE_TYPE_NAME_VOICE;
+
+		doUpload(content, file_path, contentLength, filetype);
+	}
+
+
+	/**
+	 * Fire an intent to start the speech recognition activity.
+	 *
+	 * @param language
+	 */
+	private void startVoiceRecognitionActivity(String language) {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass()
+				.getPackage().getName());
+
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+				getString(R.string.voice_recognition));
+
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
+		startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
+	}
+
+	protected void switchTextInputMode() {
+		mVoiceRecordButton.setVisibility(View.GONE);
+		mMessageEditText.setVisibility(View.VISIBLE);
+		mSendButton.setVisibility(View.GONE);
+		mMessageEditText.requestFocus();
+		keyboardTypeButton.setVisibility(View.GONE);
+		if (!googleTranslate && amIFriend) {
+			voiceTypeButton.setVisibility(View.VISIBLE);
+		}
+		doClearContent();
+	}
+
+	protected void switchVoiceMode() {
+		mVoiceRecordButton.setVisibility(View.VISIBLE);
+		mVoiceRecordButton.setEnabled(true);
+		mVoiceRecordButton.setText(R.string.press_to_record);
+		mMessageEditText.setVisibility(View.GONE);
+		mSendButton.setVisibility(View.GONE);
+		keyboardTypeButton.setVisibility(View.VISIBLE);
+		voiceTypeButton.setVisibility(View.INVISIBLE);
+
+		doClearContent();
+		mInputMethodManager.hideSoftInputFromWindow(mMessageEditText
+				.getWindowToken(), 0);
+	}
+
+	protected void voiceRecognition(String selectLang) {
+		try {
+			String language = Utils.getAccentLanguageFromAbbr(getMyLang());
+			if (!Utils.isEmpty(selectLang))
+				language = Utils.getAccentLanguageFromAbbr(selectLang);
+			startVoiceRecognitionActivity(language);
+		} catch (Exception e) {
+			Toast.makeText( this, 	getString(R.string.not_support_function,
+							getString(R.string.voice_recognition)),
+					Toast.LENGTH_SHORT).show();
+		}
+	}
+
+
+	public static final String INTENT_EXTRA_USERNAME = ChatActivity.class
+			.getName() + ".username";// 昵称对应的key
+	protected String mWithJabberID = null;// 当前聊天用户的ID
+	protected TranslateClient translateClient;
+
+	protected static final String[] PROJECTION_FROM = new String[]{
+			ChatTable.Columns.ID,
+			ChatTable.Columns.CREATED_DATE,
+			ChatTable.Columns.FROM_JID,
+			ChatTable.Columns.TO_JID,
+			ChatTable.Columns.CONTENT,
+			ChatTable.Columns.CONTENT_TYPE,
+			ChatTable.Columns.FILE_PATH,
+			ChatTable.Columns.VOICE_SECOND,
+			ChatTable.Columns.CREATED_DATE,
+			ChatTable.Columns.MESSAGE_ID,
+			ChatTable.Columns.DELIVERY_STATUS,
+			ChatTable.Columns.PACKET_ID};// 查询字段
+	// 查询联系人数据库字段
+	private static final String[] STATUS_QUERY = new String[]{
+			ChatRoomTable.Columns.STATUS_MODE,
+			ChatRoomTable.Columns.STATUS_MESSAGE,};
+	private ContentObserver mFriendUserObserver = new FriendUserObserver();
+	private ContentObserver mChatObserver = new ChatObserver();
+	private class FriendUserObserver extends ContentObserver {
+		public FriendUserObserver() {
+			super(new Handler());
+		}
+
+		public void onChange(boolean selfChange) {
+			Log.d(TAG, "ContactObserver.onChange: " + selfChange);
+			updateFriendUserStatus();// 联系人状态变化时，刷新界面
+		}
+	}
+	private class ChatObserver extends ContentObserver {
+		public ChatObserver() {
+			super(new Handler());
+		}
+
+		public void onChange(boolean selfChange) {
+			Log.d(TAG, "ContactObserver.onChange: " + selfChange);
+			updateChat(reQuery());
+		}
+	}
+
+	public void updateChat(Cursor c) {
+		Cursor oldCursor = tttAdapter.swapCursor(c);
+		oldCursor.close();
+	}
+
+	protected void updateFriendUserStatus() {
+//TODO
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		// 窗口获取到焦点时绑定服务，失去焦点将解绑
+		if (hasFocus)
+			App.bindXMPPService();
+		else
+			App.unbindXMPPService();
+	}
+
+	protected void sendMessageIfNotNull(Chat chat) {
+		String content = chat.getContent();
+		if (content.length() >= 1) {
+			if (App.mService != null) {
+				if (isGroupChat){
+					App.mService.sendGroupMessage(chatRoom, chat);
+				}else{
+					App.mService.sendMessage(mWithJabberID, chat);
+					if (!App.mService.isAuthenticated())
+						Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
+
+				}
+			}
+			mMessageEditText.setText(null);
+		}
+		mVoiceRecordButton.setEnabled(true);
+	}
 
 }

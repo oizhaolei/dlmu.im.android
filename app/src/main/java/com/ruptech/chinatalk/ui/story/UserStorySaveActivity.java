@@ -47,7 +47,6 @@ import com.ruptech.chinatalk.task.impl.FileUploadTask;
 import com.ruptech.chinatalk.task.impl.FileUploadTask.FileUploadInfo;
 import com.ruptech.chinatalk.task.impl.UrlUploadTask;
 import com.ruptech.chinatalk.task.impl.UserStoryNewTask;
-import com.ruptech.chinatalk.ui.AbstractChatActivity;
 import com.ruptech.chinatalk.ui.user.LanguageActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -372,7 +371,7 @@ public class UserStorySaveActivity extends ActionBarActivity {
 		try {
 			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
 					.hideSoftInputFromWindow(((Activity) ct).getCurrentFocus()
-							.getWindowToken(),
+									.getWindowToken(),
 							InputMethodManager.HIDE_NOT_ALWAYS);
 		} catch (Exception e) {
 			Log.e(TAG, "hideInputManager Catch error,skip it!", e);
@@ -662,7 +661,7 @@ public class UserStorySaveActivity extends ActionBarActivity {
 				}
 			}
 		});
-		InputFilter[] filters = { new Utils.LengthFilter() };
+		InputFilter[] filters = {new Utils.LengthFilter()};
 		mContentEditText.setFilters(filters);
 
 		mInputMethodManager = (InputMethodManager) this.getApplicationContext()
