@@ -1002,8 +1002,8 @@ public abstract class TableContent {
         public static class Columns {
             public final String ID = "_id";
             public final String CREATED_DATE = "created_date";
-            public final String FROM_JID = "from_user";
-            public final String TO_JID = "to_user";
+            public final String FROM_JID = "from_jid";
+            public final String TO_JID = "to_jid";
             public final String CONTENT = "content";
             public final String CONTENT_TYPE = "content_type";
             public final String FILE_PATH = "file_path";
