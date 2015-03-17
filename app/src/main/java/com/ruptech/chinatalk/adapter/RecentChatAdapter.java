@@ -64,8 +64,8 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
                 .getColumnIndex(ChatTable.Columns.TO_JID));
 
         String selection = ChatTable.Columns.TO_JID + " = '" + jid + "' AND "
-                + ChatTable.Columns.FROM_JID + " = " + App.readUser().getOF_JabberID()
-                + " AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
+                + ChatTable.Columns.FROM_JID + " = '" + App.readUser().getOF_JabberID()
+                + "' AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
                 + ChatProvider.DS_NEW;// 新消息数量字段
         Cursor msgcursor = mContentResolver.query(ChatProvider.CONTENT_URI,
                 new String[]{"count(" + ChatTable.Columns.PACKET_ID + ")",

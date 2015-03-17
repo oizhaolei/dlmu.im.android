@@ -953,13 +953,13 @@ public class ChatActivity extends ActionBarActivity {
 		App.bindXMPPService();
 
 		getContentResolver().registerContentObserver(
-				UserProvider.CONTENT_URI, true, mUserObserver);// 开始监听friend数据库
+				UserProvider.CONTENT_URI, true, mUserObserver);// 开始监听friend user数据库
 		getContentResolver().registerContentObserver(
 				ChatProvider.CONTENT_URI, true, mChatObserver);// 开始监听chat数据库
 		getContentResolver().registerContentObserver(
 				MessageProvider.CONTENT_URI, true, mMessageObserver);// 开始监听message数据库
 		getContentResolver().registerContentObserver(
-				FriendProvider.CONTENT_URI, true, mFriendObserver);// 开始监听message数据库
+				FriendProvider.CONTENT_URI, true, mFriendObserver);// 开始监听friend数据库
 	}
 
 	@OnClick(R.id.activity_chat_btn_send)
