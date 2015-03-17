@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk.ui;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -30,8 +31,10 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.TTTAdapter;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.MessageProvider;
 import com.ruptech.chinatalk.model.Message;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -392,7 +395,14 @@ public class TTTActivity extends ActionBarActivity {
 		// save message
 		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
 		message.setStatus_text(getString(R.string.message_action_click_resend));
-		App.messageDAO.mergeMessage(message);
+//		App.messageDAO.mergeMessage(message);
+
+        ContentValues cv = new ContentValues();
+        cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+        cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+
+        getContentResolver().update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
+                + " = ?  " , new String[]{String.valueOf(message.getId())});
 
 		if (!Utils.isEmpty(msg)) {
 			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
@@ -400,8 +410,7 @@ public class TTTActivity extends ActionBarActivity {
 	}
 
 	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
-		Message message = fsTask.getMessage();
-		App.messageDAO.mergeMessage(message);
+//		App.messageDAO.mergeMessage(message);
 
 		if (fsTask.getIsNeedRetrieveUser()) {
 			doRetrieveUser(App.readUser().getId());// 回到Setting画面，能够立刻看到balance变化。
@@ -496,11 +505,41 @@ public class TTTActivity extends ActionBarActivity {
 				DateCommonUtils.DF_yyyyMMddHHmmssSSS);
 		message.create_date = createDateStr;
 		message.update_date = createDateStr;
-		doRequestTranslate(message);
+
+        doSaveLocalAndRequestTranslate(message);
 
 		mMessageEditText.setText(null);
-
 	}
+
+    void doSaveLocalAndRequestTranslate(Message message){
+        ContentValues values = new ContentValues();
+        values.put(TableContent.MessageTable.Columns.ID, message.getId());
+        values.put(TableContent.MessageTable.Columns.MESSAGEID, message.getMessageid());
+        values.put(TableContent.MessageTable.Columns.USERID, message.getUserid());
+        values.put(TableContent.MessageTable.Columns.TO_USERID, message.getTo_userid());
+        values.put(TableContent.MessageTable.Columns.FROM_LANG, message.from_lang);
+        values.put(TableContent.MessageTable.Columns.TO_LANG, message.to_lang);
+        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.from_content);
+        values.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+        values.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+        values.put(TableContent.MessageTable.Columns.FILE_PATH, message.getFile_path());
+        values.put(TableContent.MessageTable.Columns.FROM_CONTENT, message.getFrom_content());
+        values.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
+        values.put(TableContent.MessageTable.Columns.CREATE_DATE, message.getCreate_date());
+        values.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
+
+        getContentResolver().insert(MessageProvider.CONTENT_URI, values);
+
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
+                .getFile_type())
+                || AppPreferences.MESSAGE_TYPE_NAME_VOICE.equals(message
+                .getFile_type())) {// 先上传图片或者voice,然后发送请求
+            //mMessage = message;
+            //doUploadFile(message, mUploadTaskListener);
+        } else {
+            doRequestTranslate(message);
+        }
+    }
 
 
 	protected void switchTextInputMode() {
@@ -546,10 +585,11 @@ public class TTTActivity extends ActionBarActivity {
 		String fromLang = PrefUtils.getPrefTTTLastSelectedLang(1);
 		String toLang = PrefUtils.getPrefTTTLastSelectedLang(2);
 
-		String selection = MessageTable.Columns.TO_USERID + " = ? and " + MessageTable.Columns.FROM_LANG + " = ? and " + MessageTable.Columns.TO_LANG + " = ?";
+		String selection = MessageTable.Columns.TO_USERID + " = ? and ((" + MessageTable.Columns.FROM_LANG + " = ? and " + MessageTable.Columns.TO_LANG + " = ?)" +
+                " or (" + MessageTable.Columns.TO_LANG + " = ? and " + MessageTable.Columns.FROM_LANG + " = ?))";
 
 		Cursor childCursor = getContentResolver().query(MessageProvider.CONTENT_URI,
-				TTT_MESSAGE_QUERY, selection, new String[]{String.valueOf(AppPreferences.TTT_REQUEST_TO_USERID), fromLang, toLang}, null);
+				TTT_MESSAGE_QUERY, selection, new String[]{String.valueOf(AppPreferences.TTT_REQUEST_TO_USERID), fromLang, toLang, fromLang, toLang}, null);
 		return childCursor;
 	}
 

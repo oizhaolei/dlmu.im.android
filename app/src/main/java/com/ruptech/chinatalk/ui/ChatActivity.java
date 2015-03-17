@@ -1,10 +1,12 @@
 package com.ruptech.chinatalk.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -19,6 +21,7 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -558,7 +561,9 @@ public class ChatActivity extends ActionBarActivity {
 
 		});
 
-		cursorAdapter = new ChatAdapter(this, reQuery());
+		Point screenSize = new Point();
+		getWindowManager().getDefaultDisplay().getSize(screenSize);
+		cursorAdapter = new ChatAdapter(this, reQuery(), screenSize);
 		mMessageListView.setAdapter(cursorAdapter);
 		mMessageListView.setSelection(cursorAdapter.getCount() - 1);
 
