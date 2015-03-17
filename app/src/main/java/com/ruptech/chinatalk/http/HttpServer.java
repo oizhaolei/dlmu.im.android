@@ -538,7 +538,7 @@ public class HttpServer extends HttpConnection {
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "params:" + params);
 
-		Response res = _post("friend_recommended_list.php", params);
+		Response res = _post("friend/friend_recommended_list.php", params);
 
 		JSONObject result = res.asJSONObject();
 		boolean success = result.getBoolean("success");
