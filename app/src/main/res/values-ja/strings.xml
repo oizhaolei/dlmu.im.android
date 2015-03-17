@@ -555,4 +555,5 @@
     <string name="failed_to_send_verification_email">検証Eメール送信失敗</string>
     <string name="email_verified">Eメール(検証完了)</string>
     <string name="email_not_verified">Eメール(未検証)</string>
+    <string name="send_failure">送信に失敗しました</string>
 </resources>
