@@ -419,7 +419,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 		public void onPostExecute(GenericTask task, TaskResult result) {
 			RetrieveUserPhotoTask retrieveUserPhotoTask = (RetrieveUserPhotoTask) task;
             mUserPhoto = retrieveUserPhotoTask.getUserPhoto();
-			if (result == TaskResult.FAILED) {
+			if (result == TaskResult.OK) {
 				isRealUserPhoto = true;
 
 				// 清空与当前story相关的通知栏通知
