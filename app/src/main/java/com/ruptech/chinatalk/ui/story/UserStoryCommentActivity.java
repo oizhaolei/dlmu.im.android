@@ -82,7 +82,7 @@ import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper;
-import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
+import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOperateListener;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.Gallery;
 import com.ruptech.chinatalk.widget.Gallery.OnGalleryItemClickListener;
@@ -236,7 +236,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 
 	public static final String TAG_PATTERN = "@";
 
-	OnFaceOprateListener mOnFaceOprateListener = new OnFaceOprateListener() {
+	OnFaceOperateListener mOnFaceOperateListener = new OnFaceOperateListener() {
 		@Override
 		public void onFaceDeleted() {
 			int selection = mCommentEditText.getSelectionStart();
@@ -1403,7 +1403,7 @@ public class UserStoryCommentActivity extends ActionBarActivity implements
 	private void selectMessageFace() {
 		if (null == mFaceHelper) {
 			mFaceHelper = new SelectFaceHelper(this, mAddFaceToolView);
-			mFaceHelper.setFaceOpreateListener(mOnFaceOprateListener);
+			mFaceHelper.setFaceOpreateListener(mOnFaceOperateListener);
 		}
 		if (mAddFaceToolView.getVisibility() == View.VISIBLE) {
 			mAddFaceToolView.setVisibility(View.GONE);

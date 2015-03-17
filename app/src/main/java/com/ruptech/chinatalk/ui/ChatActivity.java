@@ -47,12 +47,13 @@ import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.adapter.ChatAdapter;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.ChatRoom;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
-import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.sqlite.UserProvider;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -60,29 +61,30 @@ import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.FileUploadTask;
 import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
+import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.ui.setting.ChatSettingActivity;
 import com.ruptech.chinatalk.ui.story.PhotoAlbumActivity;
 import com.ruptech.chinatalk.ui.story.TextShareActivity;
+import com.ruptech.chinatalk.ui.user.MyWalletActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.ImageManager;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper;
-import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
+import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOperateListener;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.RecordButton;
-
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -90,7 +92,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
- *
  * @author
  */
 public class ChatActivity extends ActionBarActivity {
@@ -98,8 +99,10 @@ public class ChatActivity extends ActionBarActivity {
 	static final String TAG = Utils.CATEGORY
 			+ ChatActivity.class.getSimpleName();
 
-	private RosterEntry mRosterEntry;
+	private String mChatRoomJid;//可以是friend的JID，也可以是muc的JID
+	private ChatRoom mChatRoom;
 	private Map<Long, User> mFriendUsers;
+
 	private boolean isExpandedState = false;
 
 
@@ -125,7 +128,7 @@ public class ChatActivity extends ActionBarActivity {
 			if (result == TaskResult.OK) {
 				if (retrieveUserTask.getUser() != null) {
 					User friend = retrieveUserTask.getUser();
-					mFriendUsers.put(friend.getLike_id(), friend);
+					mFriendUsers.put(friend.getId(), friend);
 
 					displayTitle();
 					remindFooter();
@@ -157,7 +160,7 @@ public class ChatActivity extends ActionBarActivity {
 	@InjectView(R.id.remind_panel)
 	View remindItemFooterView;
 
-	OnFaceOprateListener mOnFaceOprateListener = new OnFaceOprateListener() {
+	OnFaceOperateListener mOnFaceOperateListener = new OnFaceOperateListener() {
 		@Override
 		public void onFaceDeleted() {
 			int selection = mMessageEditText.getSelectionStart();
@@ -209,34 +212,23 @@ public class ChatActivity extends ActionBarActivity {
 	}
 
 	protected void displayTitle() {
-            getSupportActionBar().setTitle(mRosterEntry.getName());
+		getSupportActionBar().setTitle(mChatRoom.getTitle());
 	}
 
 	public void doSetting(MenuItem item) {
 		Intent intent = new Intent(this, ChatSettingActivity.class);
-		intent.putExtra(ChatActivity.EXTRA_JID, mWithJabberID);
+		intent.putExtra(ChatActivity.EXTRA_JID, mChatRoomJid);
 		this.startActivity(intent);
 	}
 
-//	@Override
-//	String getFriendLang() {
-//		return mFriendUser.getLang();
-//	}
-//
-//	@Override
-//	public long getFriendUserId() {
-//		return mFriendUser.getId();
-//	}
 
-	public void getInitData() {
-//		googleTranslate = Utils.isGoogleTranslate(App.readUser().getLang(),
-//				mFriendUser.getLang());
-//
-//		existStore = Utils.isExistStore(App.readUser().getLang(),
-//				mFriendUser.getLang());
-//
-//		translatorCount = Utils.getStoreTranslatorCount(App.readUser()
-//				.getLang(), mFriendUser.getLang());
+	private int getTranslatorCount() {
+		int count = 0;
+		for (User friendUser : mFriendUsers.values()) {
+			count += Utils.getStoreTranslatorCount(App.readUser()
+					.getLang(), friendUser.getLang());
+		}
+		return count;
 	}
 
 
@@ -244,20 +236,14 @@ public class ChatActivity extends ActionBarActivity {
 		return App.readUser().getLang();
 	}
 
-    private void parseExtras(){
-        mWithJabberID = (String) getIntent().getExtras().get(EXTRA_JID);
-        if (Utils.isGroupChat(mWithJabberID)){
-            chatRoom = App.mSmack.createChatRoomByRoomName(mWithJabberID);
-            if (chatRoom == null){
-                Toast.makeText(this, "Can not join to chat room",
-					Toast.LENGTH_LONG).show();
-                finish();
-            }
-        }
-	    mFriendUsers =  retrieveFriendUsers(mWithJabberID);
-    }
+	private void parseExtras() {
+		mChatRoomJid = (String) getIntent().getExtras().get(EXTRA_JID);
+		mChatRoom = App.chatRoomDAO.fetchChatRoomByJid(mChatRoomJid);
 
-	private void handleSendText(Intent intent) {
+		mFriendUsers = retrieveFriendUsers(mChatRoom);
+	}
+
+	private void handleSharedText(Intent intent) {
 		String sharedText = intent.getStringExtra(TextShareActivity.SEND_TEXT);
 		if (sharedText != null) {
 			switchTextInputMode();
@@ -274,7 +260,7 @@ public class ChatActivity extends ActionBarActivity {
 	private void initInputPanel() {
 		amIFriend = amIFriend(mFriendUsers);
 
-		boolean enableVoice =  amIFriend;
+		boolean enableVoice = amIFriend;
 		voiceTypeButton.setVisibility(enableVoice ? View.VISIBLE : View.GONE);
 
 		boolean enablePicture = amIFriend;
@@ -282,8 +268,9 @@ public class ChatActivity extends ActionBarActivity {
 				: View.GONE);
 	}
 
+	//检查我是不是任何一个friend的朋友
 	private boolean amIFriend(Map<Long, User> friendUsers) {
-		for(User friendUser :  friendUsers.values()) {
+		for (User friendUser : friendUsers.values()) {
 			if (friendUser != null) {
 				Friend friendUserInfo = App.friendDAO.fetchFriend(
 						friendUser.getId(), App.readUser().getId());
@@ -312,15 +299,15 @@ public class ChatActivity extends ActionBarActivity {
 		Utils.onBackPressed(this);
 	}
 
-    //
-    private void initTransClient() {
-        String baidu_api_key = App.properties.getProperty("baidu_api_key");
+	//
+	private void initTransClient() {
+		String baidu_api_key = App.properties.getProperty("baidu_api_key");
 
-        translateClient = new TranslateClient(this, baidu_api_key);
+		translateClient = new TranslateClient(this, baidu_api_key);
 
-        // 这里可以设置为在线优先、离线优先、 只在线、只离线 4种模式，默认为在线优先。
-        translateClient.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
-    }
+		// 这里可以设置为在线优先、离线优先、 只在线、只离线 4种模式，默认为在线优先。
+		translateClient.setPriority(TranslateClient.Priority.OFFLINE_FIRST);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -342,53 +329,53 @@ public class ChatActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_chat);
 		ButterKnife.inject(this);
 
-        parseExtras();
-        initTransClient();
+		parseExtras();
+		initTransClient();
 
-//		if (mFriendUser == null) {
-//			Toast.makeText(this, R.string.user_infomation_is_invalidate,
-//					Toast.LENGTH_LONG).show();
-//			finish();
-//			return;
-//		}
-//		if (mFriendUser.getActive() != AppPreferences.USER_ACTIVE_STATUS) {
-//			if (Utils.isMail(mFriendUser.getTel())) {
-//				Toast.makeText(this, R.string.already_email_friend_msg,
-//						Toast.LENGTH_LONG).show();
-//			} else {
-//				Toast.makeText(this, R.string.already_sms_friend_msg,
-//						Toast.LENGTH_LONG).show();
-//			}
-//		}
-//		// 检索好友与我的关系
-//		Friend friendUserInfo = App.friendDAO.fetchFriend(mFriendUser.getId(),
-//				App.readUser().getId());
-//
-//		if (friendUserInfo != null
-//				&& friendUserInfo.getDone() == AppPreferences.FRIEND_BLOCK_STATUS) {
-//			Toast.makeText(this, R.string.friend_block_msg, Toast.LENGTH_LONG)
-//					.show();
-//			App.notificationManager.cancel(mWithJabberID.hashCode());
-//			finish();
-//			return;
-//		}
-//		retrieveFriendUser();
-//		mFriend = App.friendDAO.fetchFriend(App.readUser().getId(),
-//				mFriendUser.getId());
-//
-//		if (mFriend == null) {
-//			Toast.makeText(this, R.string.no_follow_other, Toast.LENGTH_LONG)
-//					.show();
-//		}
+		if (mFriendUser == null) {
+			Toast.makeText(this, R.string.user_infomation_is_invalidate,
+					Toast.LENGTH_LONG).show();
+			finish();
+			return;
+		}
+		if (mFriendUser.getActive() != AppPreferences.USER_ACTIVE_STATUS) {
+			if (Utils.isMail(mFriendUser.getTel())) {
+				Toast.makeText(this, R.string.already_email_friend_msg,
+						Toast.LENGTH_LONG).show();
+			} else {
+				Toast.makeText(this, R.string.already_sms_friend_msg,
+						Toast.LENGTH_LONG).show();
+			}
+		}
+		// 检索好友与我的关系
+		Friend friendUserInfo = App.friendDAO.fetchFriend(mFriendUser.getId(),
+				App.readUser().getId());
 
-		getInitData();
+		if (friendUserInfo != null
+				&& friendUserInfo.getDone() == AppPreferences.FRIEND_BLOCK_STATUS) {
+			Toast.makeText(this, R.string.friend_block_msg, Toast.LENGTH_LONG)
+					.show();
+			App.notificationManager.cancel(mChatRoomJid.hashCode());
+			finish();
+			return;
+		}
+		retrieveFriendUser();
+		mFriend = App.friendDAO.fetchFriend(App.readUser().getId(),
+				mFriendUser.getId());
+
+		if (mFriend == null) {
+			Toast.makeText(this, R.string.no_follow_other, Toast.LENGTH_LONG)
+					.show();
+		}
+
+		translatorCount = getTranslatorCount();
 
 		ProfileActivity.close();
 		setupComponents();
 		switchTextInputMode();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		handleSendText(getIntent());
+		handleSharedText(getIntent());
 		initInputPanel();
 	}
 
@@ -422,7 +409,7 @@ public class ChatActivity extends ActionBarActivity {
 			isExpandedState = false;
 		}
 
-        updateFriendUserStatus();
+		updateFriendUserStatus();
 	}
 
 	@Override
@@ -467,157 +454,164 @@ public class ChatActivity extends ActionBarActivity {
 	}
 
 	protected void remindFooter() {
-//		remindItemFooterLayout.removeAllViews();
-//		footTextCount = 0;
-//
-//		// 检索好友与我的关系
-//		final Friend friendUserInfo = App.friendDAO.fetchFriend(
-//				mFriendUser.getId(), App.readUser().getId());
-//		// 检索我与好友的关系
-//		mFriend = App.friendDAO.fetchFriend(App.readUser().getId(),
-//				mFriendUser.getId());
-//		remindItemFooterView.setVisibility(View.VISIBLE);
-//		mSendButton.setEnabled(true);
-//
-//		if (mFriend == null
-//				|| (mFriend != null && mFriend.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
-//			if (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE) {
-//				addFooterText(getString(
-//						R.string.no_follow_user_balance_is_not_enough,
-//						mFriendUser.getFullname()));
-//			}
-//			addFooterText(getString(R.string.no_follow_user,
-//					mFriendUser.getFullname()));
-//		} else if (friendUserInfo == null
-//				|| (friendUserInfo != null && friendUserInfo.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
-//			addFooterText(getString(R.string.user_no_follow_me,
-//					mFriendUser.getFullname()));
-//		}
-//
-//		if (App.readUser().getLang().equals(mFriendUser.getLang())) {
-//			if (mFriendUser.getActive() == 0) {
-//				addFooterText(getString(
-//						R.string.same_language_no_active_please_change,
-//						Utils.getLangDisplayName(App.readUser().getLang())));
-//			}
-//		} else {
-//			if (!existStore) {
-//				addFooterText(getString(R.string.translate_is_free,
-//						Utils.getLangDisplayName(App.readUser().getLang())));
-//			} else {
-//				if (translatorCount == 0) {
-//					addFooterText(getString(R.string.no_translator_online));
-//				} else {
-//					if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE
-//							&& mFriend != null
-//							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
-//							&& (friendUserInfo == null || (friendUserInfo != null && friendUserInfo
-//									.getDone() != AppPreferences.FRIEND_ADDED_STATUS))) {
-//						addFooterText(getString(R.string.normal_translation));
-//					} else if (mFriend != null
-//							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
-//							&& friendUserInfo != null
-//							&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
-//						if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
-//							addFooterText(getString(R.string.normal_translation));
-//						} else if (mFriendUser.getBalance() > AppPreferences.MINI_BALANCE
-//								&& friendUserInfo.getWallet_priority() == 1) {
-//							addFooterText(getString(R.string.normal_translation));
-//						}
-//					}
-//				}
-//
-//				// 如果双方互为好友
-//				if (mFriend != null
-//						&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
-//						&& friendUserInfo != null
-//						&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
-//
-//					// 好友余额不足并且我没为他分享钱包我还有钱的情况下提示为好友付费
-//					if (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE
-//							&& mFriend.getWallet_priority() == 0
-//							&& App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
-//						addFooterText(getString(R.string.your_friend_balance_is_not_enough));
-//					}
-//
-//					// 如果好友的分享了钱包，并且对方有钱的情况下，显示对方为你承担费用
-//					if (friendUserInfo.getWallet_priority() == 1
-//							&& mFriend.getWallet_priority() == 0
-//							&& mFriendUser.getBalance() > AppPreferences.MINI_BALANCE) {
-//						addFooterText(getString(R.string.friend_share_wallet,
-//								mFriend.getFriend_nickname()));
-//					} else if ((friendUserInfo.getWallet_priority() == 0 && App
-//							.readUser().getBalance() < AppPreferences.MINI_BALANCE)
-//							|| (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE && App
-//									.readUser().getBalance() < AppPreferences.MINI_BALANCE)) {
-//						// 好友没有分析钱包，或者双方余额都不足的时候并且我余额不足显示充值
-//						addFooterText(getString(R.string.your_balance_is_not_enough));
-//					}
-//				}
-//			}
-//		}
-//
-//		if (footTextCount <= 1)
-//			expandBtn.setVisibility(View.GONE);
-//		else
-//			expandBtn.setVisibility(View.VISIBLE);
-//
-//		if (footTextCount == 0) {
-//			remindItemFooterView.setVisibility(View.GONE);
-//		} else if (footTextCount > 0) {
-//			remindItemFooterView.setVisibility(View.VISIBLE);
-//			if (isExpandedState) {
-//				expandBtn.setTag(String.valueOf(R.drawable.ic_action_arrow_up));
-//				onExpandFooter(expandBtn);
-//			}
-//
-//			remindItemFooterLayout.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					if (mFriend == null
-//							|| (mFriend != null && mFriend.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
-//						Intent intent = new Intent(ChatActivity.this,
-//								FriendProfileActivity.class);
-//						intent.putExtra(ProfileActivity.EXTRA_USER, mFriendUser);
-//						ChatActivity.this.startActivity(intent);
-//					} else if (App.readUser().getBalance() < AppPreferences.MINI_BALANCE
-//							&& friendUserInfo != null
-//							&& friendUserInfo.getWallet_priority() == 0) {
-//						Intent intent = new Intent(ChatActivity.this,
-//								MyWalletActivity.class);
-//						ChatActivity.this.startActivity(intent);
-//					} else if (existStore
-//							&& mFriend != null
-//							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
-//							&& friendUserInfo != null
-//							&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS
-//							&& mFriendUser.getBalance() < AppPreferences.MINI_BALANCE
-//							&& mFriend.getWallet_priority() == 0) {
-//						doSetting(null);
-//					}
-//				}
-//			});
-//		}
+		remindItemFooterLayout.removeAllViews();
+		footTextCount = 0;
+
+		// 检索好友与我的关系
+		final Friend friendUserInfo = App.friendDAO.fetchFriend(
+				mFriendUser.getId(), App.readUser().getId());
+		// 检索我与好友的关系
+		mFriend = App.friendDAO.fetchFriend(App.readUser().getId(),
+				mFriendUser.getId());
+		remindItemFooterView.setVisibility(View.VISIBLE);
+		mSendButton.setEnabled(true);
+
+		if (mFriend == null
+				|| (mFriend != null && mFriend.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
+			if (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE) {
+				addFooterText(getString(
+						R.string.no_follow_user_balance_is_not_enough,
+						mFriendUser.getFullname()));
+			}
+			addFooterText(getString(R.string.no_follow_user,
+					mFriendUser.getFullname()));
+		} else if (friendUserInfo == null
+				|| (friendUserInfo != null && friendUserInfo.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
+			addFooterText(getString(R.string.user_no_follow_me,
+					mFriendUser.getFullname()));
+		}
+
+		if (App.readUser().getLang().equals(mFriendUser.getLang())) {
+			if (mFriendUser.getActive() == 0) {
+				addFooterText(getString(
+						R.string.same_language_no_active_please_change,
+						Utils.getLangDisplayName(App.readUser().getLang())));
+			}
+		} else {
+			if (!existStore) {
+				addFooterText(getString(R.string.translate_is_free,
+						Utils.getLangDisplayName(App.readUser().getLang())));
+			} else {
+				if (translatorCount == 0) {
+					addFooterText(getString(R.string.no_translator_online));
+				} else {
+					if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE
+							&& mFriend != null
+							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
+							&& (friendUserInfo == null || (friendUserInfo != null && friendUserInfo
+							.getDone() != AppPreferences.FRIEND_ADDED_STATUS))) {
+						addFooterText(getString(R.string.normal_translation));
+					} else if (mFriend != null
+							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
+							&& friendUserInfo != null
+							&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
+						if (App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
+							addFooterText(getString(R.string.normal_translation));
+						} else if (mFriendUser.getBalance() > AppPreferences.MINI_BALANCE
+								&& friendUserInfo.getWallet_priority() == 1) {
+							addFooterText(getString(R.string.normal_translation));
+						}
+					}
+				}
+
+				// 如果双方互为好友
+				if (mFriend != null
+						&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
+						&& friendUserInfo != null
+						&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS) {
+
+					// 好友余额不足并且我没为他分享钱包我还有钱的情况下提示为好友付费
+					if (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE
+							&& mFriend.getWallet_priority() == 0
+							&& App.readUser().getBalance() > AppPreferences.MINI_BALANCE) {
+						addFooterText(getString(R.string.your_friend_balance_is_not_enough));
+					}
+
+					// 如果好友的分享了钱包，并且对方有钱的情况下，显示对方为你承担费用
+					if (friendUserInfo.getWallet_priority() == 1
+							&& mFriend.getWallet_priority() == 0
+							&& mFriendUser.getBalance() > AppPreferences.MINI_BALANCE) {
+						addFooterText(getString(R.string.friend_share_wallet,
+								mFriend.getFriend_nickname()));
+					} else if ((friendUserInfo.getWallet_priority() == 0 && App
+							.readUser().getBalance() < AppPreferences.MINI_BALANCE)
+							|| (mFriendUser.getBalance() < AppPreferences.MINI_BALANCE && App
+							.readUser().getBalance() < AppPreferences.MINI_BALANCE)) {
+						// 好友没有分析钱包，或者双方余额都不足的时候并且我余额不足显示充值
+						addFooterText(getString(R.string.your_balance_is_not_enough));
+					}
+				}
+			}
+		}
+
+		if (footTextCount <= 1)
+			expandBtn.setVisibility(View.GONE);
+		else
+			expandBtn.setVisibility(View.VISIBLE);
+
+		if (footTextCount == 0) {
+			remindItemFooterView.setVisibility(View.GONE);
+		} else if (footTextCount > 0) {
+			remindItemFooterView.setVisibility(View.VISIBLE);
+			if (isExpandedState) {
+				expandBtn.setTag(String.valueOf(R.drawable.ic_action_arrow_up));
+				onExpandFooter(expandBtn);
+			}
+
+			remindItemFooterLayout.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (mFriend == null
+							|| (mFriend != null && mFriend.getDone() != AppPreferences.FRIEND_ADDED_STATUS)) {
+						Intent intent = new Intent(ChatActivity.this,
+								FriendProfileActivity.class);
+						intent.putExtra(ProfileActivity.EXTRA_USER, mFriendUser);
+						ChatActivity.this.startActivity(intent);
+					} else if (App.readUser().getBalance() < AppPreferences.MINI_BALANCE
+							&& friendUserInfo != null
+							&& friendUserInfo.getWallet_priority() == 0) {
+						Intent intent = new Intent(ChatActivity.this,
+								MyWalletActivity.class);
+						ChatActivity.this.startActivity(intent);
+					} else if (existStore
+							&& mFriend != null
+							&& mFriend.getDone() == AppPreferences.FRIEND_ADDED_STATUS
+							&& friendUserInfo != null
+							&& friendUserInfo.getDone() == AppPreferences.FRIEND_ADDED_STATUS
+							&& mFriendUser.getBalance() < AppPreferences.MINI_BALANCE
+							&& mFriend.getWallet_priority() == 0) {
+						doSetting(null);
+					}
+				}
+			});
+		}
 	}
 
-	private Map<Long, User> retrieveFriendUsers(String jid) {
-		//TODO:
-		App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(jid));
+	private Map<Long, User> retrieveFriendUsers(ChatRoom chatRoom) {
+		Map<Long, User> friendUsers = new HashMap<>();
+		//mFriendUsers
+		for (long friendUserId : chatRoom.getParticipantIds()) {
+			User friendUser = App.userDAO.fetchUser(friendUserId);
+			if (friendUser == null) {
+				RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(
+						friendUserId);
+				mRetrieveUserTask.setListener(mRetrieveUserListener);
+				mRetrieveUserTask.execute();
 
-//		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(
-//				mFriendUser.getId());
-//		mRetrieveUserTask.setListener(mRetrieveUserListener);
-//		mRetrieveUserTask.execute();
-//
-//		RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
-//		mRetrieveServerVersionTask.execute();
-		return null;
+				RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
+				mRetrieveServerVersionTask.execute();
+
+			} else {
+				friendUsers.put(friendUserId, friendUser);
+			}
+		}
+		return friendUsers;
 	}
 
 	private void selectMessageFace() {
 		if (null == mFaceHelper) {
 			mFaceHelper = new SelectFaceHelper(this, mAddFaceToolView);
-			mFaceHelper.setFaceOpreateListener(mOnFaceOprateListener);
+			mFaceHelper.setFaceOpreateListener(mOnFaceOperateListener);
 		}
 		if (isVisbilityFace) {
 			isVisbilityFace = false;
@@ -666,13 +660,13 @@ public class ChatActivity extends ActionBarActivity {
 
 		});
 
-        setChatWindowAdapter();
+		setChatWindowAdapter();
 
 		mMessageListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			                        long arg3) {
 				mSelectMessageTypeView.setVisibility(View.GONE);
 			}
 
@@ -717,7 +711,7 @@ public class ChatActivity extends ActionBarActivity {
 			}
 		});
 
-		InputFilter[] filters = { new Utils.LengthFilter() };
+		InputFilter[] filters = {new Utils.LengthFilter()};
 		mMessageEditText.setFilters(filters);
 
 		mMessageEditText.addTextChangedListener(mTextWatcher);
@@ -725,28 +719,28 @@ public class ChatActivity extends ActionBarActivity {
 		displayTitle();
 	}
 
-    /**
-     * 设置聊天的Adapter
-     */
-    private void setChatWindowAdapter() {
-        String selection = ChatTable.Columns.TO_JID + "='" + mWithJabberID + "'";
-        // 异步查询数据库
-        new AsyncQueryHandler(getContentResolver()) {
+	/**
+	 * 设置聊天的Adapter
+	 */
+	private void setChatWindowAdapter() {
+		String selection = ChatTable.Columns.TO_JID + "='" + mChatRoomJid + "'";
+		// 异步查询数据库
+		new AsyncQueryHandler(getContentResolver()) {
 
-            @Override
-            protected void onQueryComplete(int token, Object cookie,
-                                           Cursor cursor) {
-                // ListAdapter adapter = new ChatWindowAdapter(cursor,
-                // PROJECTION_FROM, PROJECTION_TO, mWithJabberID);
-                ListAdapter adapter = new ChatAdapter(ChatActivity.this,
-                        cursor, PROJECTION_FROM, translateClient);
-                mMessageListView.setAdapter(adapter);
-                mMessageListView.setSelection(adapter.getCount() - 1);
-            }
+			@Override
+			protected void onQueryComplete(int token, Object cookie,
+			                               Cursor cursor) {
+				// ListAdapter adapter = new ChatWindowAdapter(cursor,
+				// PROJECTION_FROM, PROJECTION_TO, mChatRoomJid);
+				ListAdapter adapter = new ChatAdapter(ChatActivity.this,
+						cursor, PROJECTION_FROM, translateClient);
+				mMessageListView.setAdapter(adapter);
+				mMessageListView.setSelection(adapter.getCount() - 1);
+			}
 
-        }.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
-                selection, null, null);
-    }
+		}.startQuery(0, null, ChatProvider.CONTENT_URI, PROJECTION_FROM,
+				selection, null, null);
+	}
 
 
 	static final int CHANGE_NICKNAME = 5678;
@@ -802,14 +796,11 @@ public class ChatActivity extends ActionBarActivity {
 		mUploadTask.execute();
 	}
 
-	protected boolean existStore;
-
 
 	// view是否显示的标识
 	boolean loadMoreFlag = true;
 
 	protected boolean amIFriend = true;
-	protected MultiUserChat chatRoom;
 
 
 	InputMethodManager mInputMethodManager;
@@ -817,26 +808,26 @@ public class ChatActivity extends ActionBarActivity {
 
 	File mPhotoFile;
 
-//	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
-//
-//		@Override
-//		public void onPostExecute(GenericTask task, TaskResult result) {
-//			RequestTranslateTask fsTask = (RequestTranslateTask) task;
-//			if (result == TaskResult.OK) {
-//				onRequestTranslateSuccess(fsTask);
-//			} else {
-//				String msg = fsTask.getMsg();
-//				Message message = fsTask.getMessage();
-//				onRequestTranslateFailure(message, msg);
-//			}
-//		}
-//
-//		@Override
-//		public void onPreExecute(GenericTask task) {
-//			onRequestTranslateBegin();
-//		}
-//
-//	};
+	private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+
+		@Override
+		public void onPostExecute(GenericTask task, TaskResult result) {
+			RequestTranslateTask fsTask = (RequestTranslateTask) task;
+			if (result == TaskResult.OK) {
+				onRequestTranslateSuccess(fsTask);
+			} else {
+				String msg = fsTask.getMsg();
+				Message message = fsTask.getMessage();
+				onRequestTranslateFailure(message, msg);
+			}
+		}
+
+		@Override
+		public void onPreExecute(GenericTask task) {
+			onRequestTranslateBegin();
+		}
+
+	};
 
 	protected final TaskListener mUploadTaskListener = new TaskAdapter() {
 
@@ -1039,8 +1030,8 @@ public class ChatActivity extends ActionBarActivity {
 	public void onPause() {
 		long start = System.currentTimeMillis();
 		super.onPause();
-//		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
-		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
+		App.mBadgeCount.removeNewChatCount(mChatRoomJid);
+		PrefUtils.removePrefNewMessageCount(mChatRoomJid);// 按 Home ||
 		// Back
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "onPause:" + (System.currentTimeMillis() - start));
@@ -1052,16 +1043,16 @@ public class ChatActivity extends ActionBarActivity {
 		switchTextInputMode();
 	}
 
-//	void onRequestTranslateFailure(Message message, String msg) {
-//		// save message
-//		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
-//		message.setStatus_text(getString(R.string.message_action_click_resend));
-//		App.messageDAO.mergeMessage(message);
-//		doRefresh();
-//		if (!Utils.isEmpty(msg)) {
-//			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-//		}
-//	}
+	void onRequestTranslateFailure(Message message, String msg) {
+		// save message
+		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
+		message.setStatus_text(getString(R.string.message_action_click_resend));
+		App.messageDAO.mergeMessage(message);
+		doRefresh();
+		if (!Utils.isEmpty(msg)) {
+			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		}
+	}
 
 	void onRequestTranslateSuccess(RequestTranslateTask fsTask) {
 		doRefresh();
@@ -1079,7 +1070,7 @@ public class ChatActivity extends ActionBarActivity {
 	public void onResume() {
 		long start = System.currentTimeMillis();
 		super.onResume();
-		App.notificationManager.cancel(mWithJabberID.hashCode());
+		App.notificationManager.cancel(mChatRoomJid.hashCode());
 		doRefresh();
 		if (BuildConfig.DEBUG)
 			Log.i(TAG, "onResume:" + (System.currentTimeMillis() - start));
@@ -1150,8 +1141,8 @@ public class ChatActivity extends ActionBarActivity {
 		chat.setFilePath(file_path);
 
 		//新旧版本比较
-		if(mFriendUser!=null &&
-				(Utils.isEmpty(mFriendUser.getTerminal_type()) || mFriendUser.getTerminal_type() != App.readUser().getTerminal_type())){
+		if (mFriendUser != null &&
+				(Utils.isEmpty(mFriendUser.getTerminal_type()) || mFriendUser.getTerminal_type() != App.readUser().getTerminal_type())) {
 			//新版本发给旧版本
 			Message message = new Message();
 			long localId = System.currentTimeMillis();
@@ -1175,14 +1166,14 @@ public class ChatActivity extends ActionBarActivity {
 
 			//chat
 			chat.setFromJid(App.readUser().getOF_JabberID());
-			chat.setToJid(mWithJabberID);
+			chat.setToJid(mChatRoomJid);
 			chat.setPid(null);
 			chat.setCreated_date(System.currentTimeMillis());
 
 
 			ChatProvider.insertChat(getContentResolver(), chat);
 			mMessageEditText.setText(null);
-		}else{
+		} else {
 			//新版本发给新版本
 			sendMessageIfNotNull(chat);
 		}
@@ -1228,7 +1219,7 @@ public class ChatActivity extends ActionBarActivity {
 		mSendButton.setVisibility(View.GONE);
 		mMessageEditText.requestFocus();
 		keyboardTypeButton.setVisibility(View.GONE);
-		if (!googleTranslate && amIFriend) {
+		if (amIFriend) {
 			voiceTypeButton.setVisibility(View.VISIBLE);
 		}
 		doClearContent();
@@ -1255,7 +1246,7 @@ public class ChatActivity extends ActionBarActivity {
 				language = Utils.getAccentLanguageFromAbbr(selectLang);
 			startVoiceRecognitionActivity(language);
 		} catch (Exception e) {
-			Toast.makeText( this, 	getString(R.string.not_support_function,
+			Toast.makeText(this, getString(R.string.not_support_function,
 							getString(R.string.voice_recognition)),
 					Toast.LENGTH_SHORT).show();
 		}
@@ -1264,7 +1255,6 @@ public class ChatActivity extends ActionBarActivity {
 
 	public static final String INTENT_EXTRA_USERNAME = ChatActivity.class
 			.getName() + ".username";// 昵称对应的key
-	protected String mWithJabberID = null;// 当前聊天用户的ID
 	protected TranslateClient translateClient;
 
 	protected static final String[] PROJECTION_FROM = new String[]{
@@ -1286,6 +1276,7 @@ public class ChatActivity extends ActionBarActivity {
 			ChatRoomTable.Columns.STATUS_MESSAGE,};
 	private ContentObserver mFriendUserObserver = new FriendUserObserver();
 	private ContentObserver mChatObserver = new ChatObserver();
+
 	private class FriendUserObserver extends ContentObserver {
 		public FriendUserObserver() {
 			super(new Handler());
@@ -1296,6 +1287,7 @@ public class ChatActivity extends ActionBarActivity {
 			updateFriendUserStatus();// 联系人状态变化时，刷新界面
 		}
 	}
+
 	private class ChatObserver extends ContentObserver {
 		public ChatObserver() {
 			super(new Handler());
@@ -1330,14 +1322,7 @@ public class ChatActivity extends ActionBarActivity {
 		String content = chat.getContent();
 		if (content.length() >= 1) {
 			if (App.mService != null) {
-				if (isGroupChat){
-					App.mService.sendGroupMessage(chatRoom, chat);
-				}else{
-					App.mService.sendMessage(mWithJabberID, chat);
-					if (!App.mService.isAuthenticated())
-						Toast.makeText(this, "消息已经保存随后发送", Toast.LENGTH_SHORT).show();
-
-				}
+				App.mService.sendMessage(mChatRoomJid, chat);
 			}
 			mMessageEditText.setText(null);
 		}

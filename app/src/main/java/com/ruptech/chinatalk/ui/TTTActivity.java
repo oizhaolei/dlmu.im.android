@@ -377,7 +377,7 @@ public class TTTActivity extends ActionBarActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-//		App.mBadgeCount.removeNewMessageCount(getFriendUserId());
+//		App.mBadgeCount.removeNewChatCount(getFriendUserId());
 		// PrefUtils.removePrefNewMessageCount(getFriendUserId());// 按 Home ||
 		App.unbindXMPPService();
 

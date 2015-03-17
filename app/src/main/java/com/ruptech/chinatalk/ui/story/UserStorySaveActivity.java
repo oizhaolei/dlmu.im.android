@@ -56,7 +56,7 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.face.ParseEmojiMsgUtil;
 import com.ruptech.chinatalk.utils.face.SelectFaceHelper;
-import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOprateListener;
+import com.ruptech.chinatalk.utils.face.SelectFaceHelper.OnFaceOperateListener;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.chinatalk.widget.EditTextWithFace;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
@@ -189,7 +189,7 @@ public class UserStorySaveActivity extends ActionBarActivity {
 	@InjectView(R.id.activity_location_view)
 	View mAddressView;
 
-	OnFaceOprateListener mOnFaceOprateListener = new OnFaceOprateListener() {
+	OnFaceOperateListener mOnFaceOperateListener = new OnFaceOperateListener() {
 		@Override
 		public void onFaceDeleted() {
 			int selection = mContentEditText.getSelectionStart();
@@ -593,7 +593,7 @@ public class UserStorySaveActivity extends ActionBarActivity {
 	private void selectMessageFace() {
 		if (null == mFaceHelper) {
 			mFaceHelper = new SelectFaceHelper(this, mAddFaceToolView);
-			mFaceHelper.setFaceOpreateListener(mOnFaceOprateListener);
+			mFaceHelper.setFaceOpreateListener(mOnFaceOperateListener);
 		}
 		if (isVisbilityFace) {
 			isVisbilityFace = false;

@@ -50,13 +50,13 @@ public class BadgeCount {
         addNewMessageCount(Utils.getOF_JIDFromTTTalkId(friendID));
     }
 
-	public void removeNewMessageCount(String fromJID) {
+	public void removeNewChatCount(String fromJID) {
 		newMessageCountJson.remove(fromJID);
 		saveToPref();
 	}
 
     public void removeNewMessageCount(Long friendID) {
-        removeNewMessageCount(Utils.getOF_JIDFromTTTalkId(friendID));
+        removeNewChatCount(Utils.getOF_JIDFromTTTalkId(friendID));
     }
 
 	public int getNewMessageCount(String fromJID) {

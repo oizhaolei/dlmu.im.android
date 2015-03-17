@@ -3,11 +3,21 @@ package com.ruptech.chinatalk.model;
 import java.io.Serializable;
 
 public class ChatRoom implements Serializable {
-    protected int id;
-    protected String jid;
-    protected long accountUserId;
-    protected String title;
-	protected long[] participantIds;
+	public int id;
+	public String jid;
+	public long accountUserId;
+	public String title;
+	public Long[] participantIds;
+
+	public String getCreate_date() {
+		return create_date;
+	}
+
+	public void setCreate_date(String create_date) {
+		this.create_date = create_date;
+	}
+
+	public String create_date;
 
 
 	public int getId() {
@@ -42,11 +52,11 @@ public class ChatRoom implements Serializable {
 		this.title = title;
 	}
 
-	public long[] getParticipantIds() {
+	public Long[] getParticipantIds() {
 		return participantIds;
 	}
 
-	public void setParticipantIds(long[] participantIds) {
+	public void setParticipantIds(Long[] participantIds) {
 		this.participantIds = participantIds;
 	}
 }

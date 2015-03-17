@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectFaceHelper implements OnItemClickListener {
-	public interface OnFaceOprateListener {
+	public interface OnFaceOperateListener {
 		void onFaceDeleted();
 		void onFaceSelected(SpannableString spanEmojiStr);
 	}
@@ -52,7 +52,7 @@ public class SelectFaceHelper implements OnItemClickListener {
 	/** 游标点集合 */
 	private ArrayList<ImageView> pointViews;
 
-	private OnFaceOprateListener mOnFaceOprateListener;
+	private OnFaceOperateListener mOnFaceOperateListener;
 
 	public SelectFaceHelper(Context context, View toolView) {
 		this.context = context;
@@ -223,8 +223,8 @@ public class SelectFaceHelper implements OnItemClickListener {
 		MsgEmojiModle msgEmoji = (MsgEmojiModle) faceAdapters.get(current)
 				.getItem(position);
 		if (msgEmoji.getId() == R.drawable.icon_emotion_del) {
-			if (null != mOnFaceOprateListener) {
-				mOnFaceOprateListener.onFaceDeleted();
+			if (null != mOnFaceOperateListener) {
+				mOnFaceOperateListener.onFaceDeleted();
 			}
 		}
 		if (msgEmoji.getCharacter() != null) {
@@ -233,8 +233,8 @@ public class SelectFaceHelper implements OnItemClickListener {
 			SpannableString spannableString = EmojiParser.getInstance(context)
 					.addFace(context, msgEmoji.getId(), emojiStr);
 			Log.d(TAG, spannableString.toString());
-			if (null != mOnFaceOprateListener) {
-				mOnFaceOprateListener.onFaceSelected(spannableString);
+			if (null != mOnFaceOperateListener) {
+				mOnFaceOperateListener.onFaceSelected(spannableString);
 			}
 		}
 	}
@@ -268,7 +268,7 @@ public class SelectFaceHelper implements OnItemClickListener {
 	}
 
 	public void setFaceOpreateListener(
-			OnFaceOprateListener mOnFaceOprateListener) {
-		this.mOnFaceOprateListener = mOnFaceOprateListener;
+			OnFaceOperateListener mOnFaceOperateListener) {
+		this.mOnFaceOperateListener = mOnFaceOperateListener;
 	}
 }
