@@ -1003,6 +1003,7 @@ public class HttpServer extends HttpConnection {
 		params.put("file_path", file_path);
 		params.put("gender", gender);
 		params.put("lang", lang);
+        params.put("account_valid", "0");
         params.put("serial", String.valueOf(android.os.Build.SERIAL));
 
 		Response res = _get("user/user_signup.php", params);
