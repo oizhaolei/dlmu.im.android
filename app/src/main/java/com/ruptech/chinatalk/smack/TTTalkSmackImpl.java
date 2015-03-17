@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.smack.ext.TTTalkOldVersionTranslatedExtension;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
@@ -160,6 +161,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		pm.addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
 		pm.addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
 		pm.addExtensionProvider(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkStoryExtension.Provider());
+        pm.addExtensionProvider(TTTalkOldVersionTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkOldVersionTranslatedExtension.Provider());
 
 
 		ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
@@ -306,6 +308,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		PacketFilter presentFilter = new PacketExtensionFilter(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 		PacketFilter storyFilter = new PacketExtensionFilter(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 		PacketFilter chatFilter = new PacketExtensionFilter(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
+        PacketFilter oldVersionTranslatedFilter = new PacketExtensionFilter(TTTalkOldVersionTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
 
 		//TTTalkQaExtension
 		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkQaExtension>(TTTalkQaExtension.class) {
@@ -358,6 +361,10 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		//TTTalkExtension
 		PacketListener chatListener = new TTTalkChatListener(TTTalkExtension.class, mContentResolver);
 		mXMPPConnection.addPacketListener(chatListener, chatFilter);
+
+        //OldVersionTTTalkTranslatedExtension
+        PacketListener oldVersionTranslatedListener = new OldVersionTranslatedListener(TTTalkOldVersionTranslatedExtension.class, mContentResolver);
+        mXMPPConnection.addPacketListener(oldVersionTranslatedListener, oldVersionTranslatedFilter);
 
 	}
 
