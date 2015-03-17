@@ -555,4 +555,5 @@
     <string name="failed_to_send_verification_email">검증이메일발송에 실패했습니다.</string>
     <string name="email_verified">이메일(검증완료)</string>
     <string name="email_not_verified">이메일(미검증)</string>
+    <string name="send_failure">보내기 실패</string>
 </resources>

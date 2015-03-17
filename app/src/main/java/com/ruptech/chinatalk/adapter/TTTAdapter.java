@@ -59,32 +59,38 @@ public class TTTAdapter extends CursorAdapter {
 
 		private TextView sendStatusView;
 
+        private TextView createDateTextView;
+
 	}
 
 	private Context mContext;
+    private int CREATE_DATE_INDEX;
 
 	public TTTAdapter(Context context, Cursor cursor) {
 		super(context, cursor, false);
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mContentResolver = context.getContentResolver();
+        CREATE_DATE_INDEX = cursor
+                .getColumnIndexOrThrow(TableContent.MessageTable.Columns.CREATE_DATE);
 	}
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		Message chat = TableContent.MessageTable.parseCursor(cursor);
+		Message message = TableContent.MessageTable.parseCursor(cursor);
 		ViewHolder holder = (ViewHolder) view.getTag();
 
-		bindFromClickEvent(chat, holder.fromBubbleLayout);
-		bindToClickEvent(chat, holder.toBubbleLayout);
+		bindFromClickEvent(message, holder.fromBubbleLayout);
+		bindToClickEvent(message, holder.toBubbleLayout);
 
 		// profile thumb
 		User user = App.readUser();
 		bindProfileThumb(user, holder.userThumb);
 
-		bindRightFromView(chat, holder);
-		bindLeftToView(chat, holder);
-
+		bindRightFromView(message, holder);
+		bindLeftToView(message, holder);
+        // timegroup
+        bindDateTimeView(cursor, holder.createDateTextView);
 	}
 
 	private void bindRightFromView(final Message message, ViewHolder holder) {
@@ -113,8 +119,16 @@ public class TTTAdapter extends CursorAdapter {
 		int message_status = message.getMessage_status();
 		if (!MessageReceiver.isMessageStatusEnd(message_status)) {
 			holder.sendStatusView.setVisibility(View.VISIBLE);
-			holder.sendStatusView
-					.setText(R.string.message_status_text_requesting);
+            if(AppPreferences.MESSAGE_STATUS_SEND_FAILED == message_status){
+                holder.sendStatusView
+                        .setText(R.string.send_failure);
+            }else if(AppPreferences.MESSAGE_STATUS_REQUEST_TRANS == message_status){
+                holder.sendStatusView
+                        .setText(R.string.message_status_text_requesting);
+            }else{
+                holder.sendStatusView
+                        .setText(message.getStatus_text());
+            }
 		} else {
 			if (AppPreferences.MESSAGE_STATUS_NO_TRANSLATE == message_status
 					&& message.getFrom_voice_id() > 0) {
@@ -145,6 +159,8 @@ public class TTTAdapter extends CursorAdapter {
 
 		ViewHolder holder = new ViewHolder();
 
+        holder.createDateTextView = (TextView) view
+                .findViewById(R.id.item_chatting_ttt_createdtime_textview);
 		holder.fromBubbleLayout = view
 				.findViewById(R.id.item_ttt_right_from_layout);
 		holder.toBubbleLayout = view
@@ -585,4 +601,34 @@ public class TTTAdapter extends CursorAdapter {
 		mAcceptTranslateTask.execute();
 
 	}
+
+    protected void bindDateTimeView(Cursor cursor, final TextView dateTextView) {
+        String pubDate = cursor.getString(CREATE_DATE_INDEX);
+        String prevPubDate;
+        if (cursor.moveToPrevious()) {
+            prevPubDate = cursor.getString(CREATE_DATE_INDEX);
+            cursor.moveToNext();
+        } else {
+            prevPubDate = null;
+        }
+
+        dateTextView.setVisibility(View.GONE);
+        if (prevPubDate != null && pubDate != null) {
+            boolean isDiff = DateCommonUtils.chatDiffTime(prevPubDate, pubDate);
+            if (isDiff) {
+                String text = pubDate;
+
+                if (text != null) {
+                    dateTextView.setText(DateCommonUtils
+                            .formatConvUtcDateString(text, true, false));
+                }
+
+                dateTextView.setVisibility(View.VISIBLE);
+            }
+        } else if (Utils.isEmpty(prevPubDate) && !Utils.isEmpty(pubDate)) {
+            dateTextView.setText(DateCommonUtils.formatConvUtcDateString(
+                    pubDate, true, true));
+            dateTextView.setVisibility(View.VISIBLE);
+        }
+    }
 }

@@ -20,7 +20,7 @@ public class MessageProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Messages";
 	public static final String TABLE_NAME = MessageTable.getName();
-	public static final String QUERY_URI = "chats";
+	public static final String QUERY_URI = "msgs";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + QUERY_URI);
 
