@@ -8,6 +8,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.BuildConfig;
 import com.ruptech.chinatalk.model.Channel;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.ChatRoom;
 import com.ruptech.chinatalk.model.CommentNews;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.Message;
@@ -1156,6 +1157,7 @@ public abstract class TableContent {
             public final String JID = "jid";
             public final String ACCOUNT_USERID = "account_userid";
             public final String TITLE = "title";
+	        public final String CREATE_DATE = "create_date";
         }
 
         public static final Columns Columns = new Columns();
@@ -1163,8 +1165,6 @@ public abstract class TableContent {
         public String getCreateIndexSQL() {
             String sql = "CREATE INDEX " + getName() + "_idx ON " + getName()
                     + " ( " + Columns.ACCOUNT_USERID + " );";
-            if (BuildConfig.DEBUG)
-                Log.w(TAG, "sql:" + sql.toString());
             return sql;
         }
 
@@ -1174,7 +1174,8 @@ public abstract class TableContent {
             create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
             create.append(Columns.JID + " TEXT UNIQUE ON CONFLICT REPLACE, ");
             create.append(Columns.ACCOUNT_USERID + " LONG, ");
-            create.append(Columns.TITLE + " TEXT ");
+            create.append(Columns.TITLE + " TEXT, ");
+	        create.append(Columns.CREATE_DATE + " TEXT ");
             create.append(");");
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + create.toString());
@@ -1190,13 +1191,40 @@ public abstract class TableContent {
 
         public String[] getIndexColumns() {
             return new String[] { Columns.ID, Columns.JID,
-		            Columns.ACCOUNT_USERID,  Columns.TITLE  };
+		            Columns.ACCOUNT_USERID,  Columns.TITLE, Columns.CREATE_DATE  };
         }
 
         public static String getName() {
             return "tbl_chatroom";
         }
 
+	    public static ChatRoom parseCursor(Cursor cursor) {
+		    if (null == cursor || 0 == cursor.getCount()) {
+			    return null;
+		    } else if (-1 == cursor.getPosition()) {
+			    cursor.moveToFirst();
+		    }
+		    ChatRoom chatRoom = new ChatRoom();
+		    chatRoom.setId(cursor.getInt(cursor.getColumnIndex(Columns.ID)));
+		    chatRoom.jid = cursor.getString(cursor
+				    .getColumnIndex(Columns.JID));
+		    chatRoom.accountUserId = cursor.getLong(cursor
+				    .getColumnIndex(Columns.ACCOUNT_USERID));
+		    chatRoom.title = cursor.getString(cursor
+				    .getColumnIndex(Columns.TITLE));
+		    chatRoom.create_date = cursor.getString(cursor
+				    .getColumnIndex(Columns.CREATE_DATE));
+		    return chatRoom;
+	    }
+	    public static ContentValues toContentValues(ChatRoom chatRoom) {
+		    final ContentValues v = new ContentValues();
+		    v.put(Columns.ID, chatRoom.getId());
+		    v.put(Columns.JID, chatRoom.jid);
+		    v.put(Columns.ACCOUNT_USERID, chatRoom.accountUserId);
+		    v.put(Columns.TITLE, chatRoom.title);
+		    v.put(Columns.CREATE_DATE, chatRoom.create_date);
+		    return v;
+	    }
     }
     public static class ChatRoomUserTable {
         public static class Columns {
@@ -1242,7 +1270,6 @@ public abstract class TableContent {
         public static String getName() {
             return "tbl_chatroom_user";
         }
-
     }
 
 	private static final String TAG = Utils.CATEGORY

@@ -1,17 +1,13 @@
 package com.ruptech.chinatalk;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -261,11 +257,11 @@ public class XMPPService extends BaseService {
     }
 
     // 发送消息
-    public void sendMessage(String user, Chat chat) {
+    public void sendMessage(String toJID, Chat chat) {
         if (App.mSmack != null)
-            App.mSmack.sendMessage(user, chat);
+            App.mSmack.sendMessage(toJID, chat);
         else
-            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), user, chat);
+            TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), toJID, chat);
     }
 
     // 发送消息

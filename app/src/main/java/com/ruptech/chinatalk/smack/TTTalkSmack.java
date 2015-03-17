@@ -20,7 +20,7 @@ public interface TTTalkSmack {
 	String getUser();
 
     public boolean createAccount(String username, String password);
-    public void sendMessage(String user,Chat chat);
+    public void sendMessage(String toJid,Chat chat);
     public void sendGroupMessage(MultiUserChat chatRoom,Chat chat);
     public String getNameForJID(String jid);
 

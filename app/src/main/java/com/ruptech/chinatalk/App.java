@@ -36,6 +36,7 @@ import com.ruptech.chinatalk.map.MyLocation;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.smack.TTTalkSmack;
 import com.ruptech.chinatalk.sqlite.ChannelDAO;
+import com.ruptech.chinatalk.sqlite.ChatRoomDAO;
 import com.ruptech.chinatalk.sqlite.CommentNewsDAO;
 import com.ruptech.chinatalk.sqlite.FriendDAO;
 import com.ruptech.chinatalk.sqlite.HotUserPhotoDAO;
@@ -158,18 +159,13 @@ public class App extends Application implements
     private static ServerAppInfo mServerAppInfo;
 
     public static MessageDAO messageDAO;
-
     public static UserDAO userDAO;
-
     public static ChannelDAO channelDAO;
-
     public static CommentNewsDAO commentNewsDAO;
-
     public static UserPhotoDAO userPhotoDAO;
-
     public static FriendDAO friendDAO;
-
     public static HotUserPhotoDAO hotUserPhotoDAO;
+    public static ChatRoomDAO chatRoomDAO;
 
     public final static String TAG = Utils.CATEGORY + App.class.getSimpleName();
 
