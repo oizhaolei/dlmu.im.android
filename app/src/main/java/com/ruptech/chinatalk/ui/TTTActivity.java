@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk.ui;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -306,7 +307,7 @@ public class TTTActivity extends ActionBarActivity {
 
 	static int onPage;
 
-	public void doRequestTranslate(Message message) {
+	public static void doRequestTranslate(Message message, TaskListener mRequestTranslateListener) {
 		if (BuildConfig.DEBUG)
 			Log.v(TAG, "doRequestTranslate");
 
@@ -330,7 +331,7 @@ public class TTTActivity extends ActionBarActivity {
 			} else {
 				String msg = fsTask.getMsg();
 				Message message = fsTask.getMessage();
-				onRequestTranslateFailure(message, msg);
+				onRequestTranslateFailure(TTTActivity.this, getContentResolver(), message, msg);
 			}
 		}
 
@@ -391,21 +392,13 @@ public class TTTActivity extends ActionBarActivity {
 		switchTextInputMode();
 	}
 
-	void onRequestTranslateFailure(Message message, String msg) {
-		// save message
-		message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
-		message.setStatus_text(getString(R.string.message_action_click_resend));
-//		App.messageDAO.mergeMessage(message);
-
-        ContentValues cv = new ContentValues();
-        cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
-        cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
-
-        getContentResolver().update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
-                + " = ?  " , new String[]{String.valueOf(message.getId())});
+	public static void onRequestTranslateFailure(Context context, ContentResolver contentResolver, Message message, String msg) {
+        message.setMessage_status(AppPreferences.MESSAGE_STATUS_SEND_FAILED);
+        message.setStatus_text(context.getString(R.string.message_action_click_resend));
+        MessageProvider.changeMessageStatus(context, message);
 
 		if (!Utils.isEmpty(msg)) {
-			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+			Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -521,7 +514,7 @@ public class TTTActivity extends ActionBarActivity {
             //mMessage = message;
             //doUploadFile(message, mUploadTaskListener);
         } else {
-            doRequestTranslate(message);
+            doRequestTranslate(message, mRequestTranslateListener);
         }
     }
 

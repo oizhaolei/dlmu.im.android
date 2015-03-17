@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -14,8 +15,11 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
+import com.ruptech.chinatalk.utils.AppPreferences;
 
 public class MessageProvider extends ContentProvider {
 
@@ -214,7 +218,7 @@ public class MessageProvider extends ContentProvider {
         cv.put(TableContent.MessageTable.Columns.FILE_TYPE, message.getFile_type());
 
         contentResolver.update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
-                + " = ?  " , new String[]{String.valueOf(message.getId())});
+                + " = ?  ", new String[]{String.valueOf(message.getId())});
     }
 
     public static void insertMessage(ContentResolver contentResolver, Message message){
@@ -235,5 +239,13 @@ public class MessageProvider extends ContentProvider {
         values.put(TableContent.MessageTable.Columns.UPDATE_DATE, message.getUpdate_date());
 
         contentResolver.insert(MessageProvider.CONTENT_URI, values);
+    }
+
+    public static void changeMessageStatus(Context context,Message message){
+        ContentValues cv = new ContentValues();
+        cv.put(TableContent.MessageTable.Columns.MESSAGE_STATUS, message.getMessage_status());
+        cv.put(TableContent.MessageTable.Columns.STATUS_TEXT, message.getStatus_text());
+        context.getContentResolver().update(MessageProvider.CONTENT_URI, cv, TableContent.MessageTable.Columns.ID
+                + " = ?  " , new String[]{String.valueOf(message.getId())});
     }
 }
