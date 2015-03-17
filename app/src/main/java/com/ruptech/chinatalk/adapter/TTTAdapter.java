@@ -1,6 +1,7 @@
 package com.ruptech.chinatalk.adapter;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,15 +23,18 @@ import com.ruptech.chinatalk.MessageReceiver;
 import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.sqlite.MessageProvider;
 import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.RequestTranslateTask;
 import com.ruptech.chinatalk.task.impl.RequestVerifyTask;
 import com.ruptech.chinatalk.task.impl.RetrieveMessageTask;
 import com.ruptech.chinatalk.task.impl.TranslateAcceptTask;
 import com.ruptech.chinatalk.ui.FullScreenActivity;
+import com.ruptech.chinatalk.ui.TTTActivity;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
@@ -58,7 +62,7 @@ public class TTTAdapter extends CursorAdapter {
 		private View toBubbleLayout;
 
 		private TextView sendStatusView;
-
+        private TextView sendErrorView;
         private TextView createDateTextView;
 
 	}
@@ -103,6 +107,11 @@ public class TTTAdapter extends CursorAdapter {
 		holder.timeTextView.setText(DateCommonUtils.dateFormat(
 				DateCommonUtils.parseToDateFromString(messageUtcDatetimeStr),
 				DateCommonUtils.DF_HHmm));
+
+        bindSendErrorView(
+                AppPreferences.MESSAGE_STATUS_SEND_FAILED == message
+                        .getMessage_status(),
+                holder.sendErrorView, message);
 
 		// from content
 		// text
@@ -176,7 +185,8 @@ public class TTTAdapter extends CursorAdapter {
 
 		holder.toContentTextView = (TextView) view
 				.findViewById(R.id.item_ttt_left_content_textview);
-
+        holder.sendErrorView = (TextView) view
+                .findViewById(R.id.item_chatting_ttt_error_textview);
 		holder.sendStatusView = (TextView) view
 				.findViewById(R.id.item_ttt_msg_send_status_textview);
 		view.setTag(holder);
@@ -631,4 +641,50 @@ public class TTTAdapter extends CursorAdapter {
             dateTextView.setVisibility(View.VISIBLE);
         }
     }
+
+    protected void bindSendErrorView(final boolean error,
+                                     final TextView sendErrorView, final Message message) {
+        if (error) {
+            sendErrorView.setVisibility(View.VISIBLE);
+        } else {
+            sendErrorView.setVisibility(View.GONE);
+        }
+        sendErrorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doReRequestTranslate(message.getId(), mRequestTranslateListener);
+            }
+        });
+    }
+
+    protected void doReRequestTranslate(Long localId, TaskListener mRequestTranslateListener) {
+        Message message = App.messageDAO.fetchMessage(localId);
+        message.setMessage_status(AppPreferences.MESSAGE_STATUS_BEFORE_SEND);
+        message.setStatus_text(getContext().getString(R.string.data_sending));
+        MessageProvider.changeMessageStatus(getContext(), message);
+
+        if (AppPreferences.MESSAGE_TYPE_NAME_PHOTO.equals(message
+                .getFile_type())) {// js 先上传图片然后发送请求
+//            mMessage = message;
+//            AbstractChatActivity.doUploadFile(message, mUploadTaskListener);
+        } else {
+            TTTActivity.doRequestTranslate(message, mRequestTranslateListener);
+        }
+    }
+
+    private final TaskListener mRequestTranslateListener = new TaskAdapter() {
+
+        @Override
+        public void onPostExecute(GenericTask task, TaskResult result) {
+            if (result == TaskResult.OK) {
+//                onRequestTranslateSuccess();
+            } else {
+                RequestTranslateTask fsTask = (RequestTranslateTask) task;
+                String msg = fsTask.getMsg();
+                Message message = fsTask.getMessage();
+                TTTActivity.onRequestTranslateFailure(getContext(), getContext().getContentResolver(), message, msg);
+            }
+        }
+
+    };
 }
