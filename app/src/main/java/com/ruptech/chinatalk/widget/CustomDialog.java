@@ -13,11 +13,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 
 public class CustomDialog extends AlertDialog {
 
-	public static CustomDialog Builder(Context context){
+	public static CustomDialog Builder(Context context) {
 		return new CustomDialog(context);
 	}
 
@@ -60,7 +60,7 @@ public class CustomDialog extends AlertDialog {
 	}
 
 	public CustomDialog setItems(CharSequence[] items,
-			final DialogInterface.OnClickListener listener) {
+	                             final DialogInterface.OnClickListener listener) {
 		View modeList = mInflater.inflate(R.layout.dialog_menu, null, false);
 		ListView menuView = (ListView) modeList.findViewById(android.R.id.list);
 		modeList.setBackgroundResource(R.drawable.list_selector);
@@ -77,7 +77,7 @@ public class CustomDialog extends AlertDialog {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			                        long arg3) {
 				listener.onClick(CustomDialog.this, arg2);
 				CustomDialog.this.cancel();
 			}
@@ -88,7 +88,7 @@ public class CustomDialog extends AlertDialog {
 		return this;
 	}
 
-	public CustomDialog setMessage(String message){
+	public CustomDialog setMessage(String message) {
 		super.setMessage(message);
 		return this;
 	}
@@ -120,7 +120,7 @@ public class CustomDialog extends AlertDialog {
 	}
 
 	public CustomDialog setPositiveButton(String label,
-			OnClickListener mListener) {
+	                                      OnClickListener mListener) {
 
 		setButton(android.app.AlertDialog.BUTTON_POSITIVE, label, mListener);
 		return this;

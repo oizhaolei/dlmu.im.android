@@ -8,10 +8,10 @@ final class BakedBezierInterpolator implements Interpolator {
 	/**
 	 * Lookup table values. Generated using a Bezier curve from (0,0) to (1,1)
 	 * with control points: P0 (0,0) P1 (0.4, 0) P2 (0.2, 1.0) P3 (1.0, 1.0)
-	 * 
+	 * <p/>
 	 * Values sampled with x at regular intervals between 0 and 1.
 	 */
-	private static final float[] VALUES = new float[] { 0.0f, 0.0002f, 0.0009f,
+	private static final float[] VALUES = new float[]{0.0f, 0.0002f, 0.0009f,
 			0.0019f, 0.0036f, 0.0059f, 0.0086f, 0.0119f, 0.0157f, 0.0209f,
 			0.0257f, 0.0321f, 0.0392f, 0.0469f, 0.0566f, 0.0656f, 0.0768f,
 			0.0887f, 0.1033f, 0.1186f, 0.1349f, 0.1519f, 0.1696f, 0.1928f,
@@ -25,7 +25,7 @@ final class BakedBezierInterpolator implements Interpolator {
 			0.9557f, 0.9596f, 0.9632f, 0.9662f, 0.9695f, 0.9722f, 0.9753f,
 			0.9777f, 0.9805f, 0.9826f, 0.9847f, 0.9866f, 0.9884f, 0.9901f,
 			0.9917f, 0.9931f, 0.9944f, 0.9955f, 0.9964f, 0.9973f, 0.9981f,
-			0.9986f, 0.9992f, 0.9995f, 0.9998f, 1.0f, 1.0f };
+			0.9986f, 0.9992f, 0.9995f, 0.9998f, 1.0f, 1.0f};
 
 	private static final float STEP_SIZE = 1.0f / (VALUES.length - 1);
 

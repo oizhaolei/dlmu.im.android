@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
@@ -15,6 +14,7 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,11 +58,10 @@ public class SplashActivity extends Activity {
 	TextView footerTextView;
 
 
-
 	private void checkVersion() {
 		if (App.readServerAppInfo() != null
 				&& App.readServerAppInfo().verCode > App.mApkVersionOfClient.verCode) {
-			Utils.doNotifyVersionUpdate(this);
+			App.getApkUpgrade(this).checkApkUpdate(false);
 		}
 	}
 
@@ -107,7 +106,7 @@ public class SplashActivity extends Activity {
 
 		if (App.isAvailableShowMain()
 				&& PrefUtils.getPrefLastApkVersion() == Utils
-						.getAppVersionCode()
+				.getAppVersionCode()
 				&& App.readServerAppInfo().verCode == Utils.getAppVersionCode()) {
 
 			this.directlyToMain = true;
@@ -121,16 +120,16 @@ public class SplashActivity extends Activity {
 		instance = this;
 		App.taskManager.cancelAll();
 
-		if (Utils.checkNetwork(this)) {
-			doCheckServerInfo();
-		} else {
-			gotoDispatchActivity();
-		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (Utils.checkNetwork(this)) {
+			doCheckServerInfo();
+		} else {
+			gotoDispatchActivity();
+		}
 	}
 
 	private void setupComponents() {

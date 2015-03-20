@@ -36,6 +36,7 @@ public class ImageProgressBar extends ProgressBar {
 	}
 
 	Rect rect = new Rect();
+
 	@Override
 	protected synchronized void onDraw(Canvas canvas) {
 		super.onDraw(canvas);

@@ -6,7 +6,7 @@ import java.util.Date;
 public abstract class Item implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2394068598151253815L;
 	protected long id;

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -40,7 +40,7 @@ public class Gallery extends LinearLayout {
 	}
 
 	ImageView getImageView(String picUrl, int width, int height, int margin,
-			boolean isFirst) {
+	                       boolean isFirst) {
 		ImageView imageView = new ImageView(mContext);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,
 				height);
@@ -59,7 +59,7 @@ public class Gallery extends LinearLayout {
 	}
 
 	public void setImageList(ArrayList<String> mImageUrlList, int width,
-			int height, int margin) {
+	                         int height, int margin) {
 		removeAllViews();
 		LayoutInflater mInflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

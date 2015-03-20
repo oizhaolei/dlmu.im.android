@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -26,10 +26,6 @@ public class FriendListArrayAdapter extends ArrayAdapter<User> {
 		TextView friendTel;
 		@InjectView(R.id.item_main_tab_friend_fullname_textview)
 		TextView friendFullName;
-		@InjectView(R.id.item_main_tab_friend_sms_imageview)
-		ImageView smsImageView;
-		@InjectView(R.id.item_main_tab_friend_lang_imageview)
-		ImageView langImageView;
 
 		public ViewHolder(View view) {
 			ButterKnife.inject(this, view);
@@ -64,7 +60,7 @@ public class FriendListArrayAdapter extends ArrayAdapter<User> {
 
 		User user = getItem(position);
 
-		holder.friendTel.setText(Utils.abbrString(user.getTel(), 20));
+		holder.friendTel.setText(Utils.abbrString(user.getUsername(), 20));
 		String fullName = user.getFullname();
 		if (Utils.isEmpty(fullName)) {
 			holder.friendFullName.setText("");
@@ -72,16 +68,7 @@ public class FriendListArrayAdapter extends ArrayAdapter<User> {
 			holder.friendFullName.setText(Utils.abbrString(fullName, 8));
 		}
 
-		Utils.setUserPicImage(holder.friendThumb, user.getPic_url());
 
-		// sms user
-		if (user.active == 1) {
-			holder.smsImageView.setVisibility(View.GONE);
-		} else {
-			holder.smsImageView.setVisibility(View.VISIBLE);
-		}
-
-		holder.langImageView.setImageResource(Utils.getLanguageFlag(user.lang));
 		return view;
 	}
 

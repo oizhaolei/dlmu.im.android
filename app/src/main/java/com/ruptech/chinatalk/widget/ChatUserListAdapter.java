@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -38,10 +38,10 @@ public class ChatUserListAdapter extends ArrayAdapter<User> {
 		viewInflater = LayoutInflater.from(getContext());
 	}
 
-    @Override
-    public int getCount() {
-        return super.getCount() + 1;
-    }
+	@Override
+	public int getCount() {
+		return super.getCount() + 1;
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -56,25 +56,24 @@ public class ChatUserListAdapter extends ArrayAdapter<User> {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-        if (position == getCount()-1){
-            holder.userThumbView.setImageResource(R.drawable.invite_btn);
-            holder.userThumbView.setTag(null);
-            holder.userNameView.setText(R.string.invite_chat);
-        }else{
-            User user = this.getItem(position);
-            Utils.setUserPicImage(holder.userThumbView, user.getPic_url());
-            holder.userNameView.setText(user.getFullname());
-        }
+		if (position == getCount() - 1) {
+			holder.userThumbView.setImageResource(R.drawable.invite_btn);
+			holder.userThumbView.setTag(null);
+			holder.userNameView.setText(R.string.invite_chat);
+		} else {
+			User user = this.getItem(position);
+			holder.userNameView.setText(user.getFullname());
+		}
 
 		return convertView;
 	}
 
-    public List<User> getUserList(){
-        List<User> list = new ArrayList<>();
-        for(int i=0;i<super.getCount();i++){
-            list.add(getItem(i));
-        }
-        return list;
-    }
+	public List<User> getUserList() {
+		List<User> list = new ArrayList<>();
+		for (int i = 0; i < super.getCount(); i++) {
+			list.add(getItem(i));
+		}
+		return list;
+	}
 
 }

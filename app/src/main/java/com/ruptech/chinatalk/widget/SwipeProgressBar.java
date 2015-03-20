@@ -170,19 +170,14 @@ final class SwipeProgressBar {
 	/**
 	 * Draws a circle centered in the view.
 	 *
-	 * @param canvas
-	 *            the canvas to draw on
-	 * @param cx
-	 *            the center x coordinate
-	 * @param cy
-	 *            the center y coordinate
-	 * @param color
-	 *            the color to draw
-	 * @param pct
-	 *            the percentage of the view that the circle should cover
+	 * @param canvas the canvas to draw on
+	 * @param cx     the center x coordinate
+	 * @param cy     the center y coordinate
+	 * @param color  the color to draw
+	 * @param pct    the percentage of the view that the circle should cover
 	 */
 	private void drawCircle(Canvas canvas, float cx, float cy, int color,
-			float pct) {
+	                        float pct) {
 		mPaint.setColor(color);
 		canvas.save();
 		canvas.translate(cx, cy);
@@ -219,14 +214,10 @@ final class SwipeProgressBar {
 	 * also be the color of the bar that grows in response to a user swipe
 	 * gesture.
 	 *
-	 * @param color1
-	 *            Integer representation of a color.
-	 * @param color2
-	 *            Integer representation of a color.
-	 * @param color3
-	 *            Integer representation of a color.
-	 * @param color4
-	 *            Integer representation of a color.
+	 * @param color1 Integer representation of a color.
+	 * @param color2 Integer representation of a color.
+	 * @param color3 Integer representation of a color.
+	 * @param color4 Integer representation of a color.
 	 */
 	void setColorScheme(int color1, int color2, int color3, int color4) {
 		mColor1 = color1;

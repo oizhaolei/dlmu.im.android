@@ -30,6 +30,6 @@ public class UserMemoChangeTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] {friendid, memo};
+		return new Object[]{friendid, memo};
 	}
 }

@@ -31,7 +31,7 @@ public class RetrieveBlockedFriendsTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] {sinceId};
+		return new Object[]{sinceId};
 	}
 
 	public long getSinceId() {

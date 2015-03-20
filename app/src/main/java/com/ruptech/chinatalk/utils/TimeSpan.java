@@ -31,7 +31,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t0
 	 * @param tn
 	 */
@@ -40,7 +39,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 */
 	public TimeSpan(TimeSpan ts) {
@@ -50,7 +48,6 @@ public class TimeSpan {
 	// ~ Methods ---------------------------------------------------------------
 
 	/**
-	 * 
 	 * @param dt
 	 * @return
 	 */
@@ -62,7 +59,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param startTime
 	 * @param endTime
 	 * @return
@@ -75,7 +71,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 * @return
 	 */
@@ -84,7 +79,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public long getCenter() {
@@ -95,7 +89,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public long getDuration() {
@@ -106,7 +99,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public long getEnd() {
@@ -114,7 +106,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public long getStart() {
@@ -122,7 +113,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t0
 	 */
 	public void include(long t0) {
@@ -131,7 +121,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t0
 	 * @param tn
 	 */
@@ -141,7 +130,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 */
 	public void include(TimeSpan ts) {
@@ -150,7 +138,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param dt
 	 * @return
 	 */
@@ -159,7 +146,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param dt
 	 * @return
 	 */
@@ -168,7 +154,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public boolean isNull() {
@@ -179,7 +164,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public boolean isValid() {
@@ -190,7 +174,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param secs
 	 */
 	public void move(long secs) {
@@ -198,7 +181,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param newStart
 	 */
 	public void moveStart(long newStart) {
@@ -208,7 +190,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 * @return
 	 */
@@ -221,7 +202,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param startTime
 	 * @param endTime
 	 * @return
@@ -234,7 +214,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 * @return
 	 */
@@ -243,7 +222,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t0
 	 * @param tn
 	 */
@@ -253,7 +231,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param centerTime
 	 */
 	public void setCenter(long centerTime) {
@@ -261,7 +238,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param centerTime
 	 * @param duration
 	 */
@@ -272,7 +248,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t
 	 */
 	public void setEarliest(long t) {
@@ -280,7 +255,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t
 	 */
 	public void setEnd(long t) {
@@ -288,7 +262,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param t
 	 */
 	public void setLatest(long t) {
@@ -313,7 +286,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public long size() {
@@ -324,7 +296,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @param ts
 	 * @return
 	 */
@@ -336,7 +307,6 @@ public class TimeSpan {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public String timeToString() {

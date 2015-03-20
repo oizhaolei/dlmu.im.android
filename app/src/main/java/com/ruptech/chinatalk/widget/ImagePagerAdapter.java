@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
@@ -78,8 +78,8 @@ public class ImagePagerAdapter extends PagerAdapter {
 		String url = imageUrlList.get(position);
 		if (!Utils.isEmpty(url)) {
 			ImageManager.imageLoader.displayImage(url, imageView, ImageManager
-					.getImageOptionsPortrait(), ImageViewActivity
-					.createImageLoadingListener(imageProgressBar),
+							.getImageOptionsPortrait(), ImageViewActivity
+							.createImageLoadingListener(imageProgressBar),
 					ImageViewActivity
 							.createLoadingProgresListener(imageProgressBar));
 		}

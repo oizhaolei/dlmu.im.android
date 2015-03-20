@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.http.NetworkException;
 import com.ruptech.chinatalk.http.ServerSideException;
 import com.ruptech.chinatalk.utils.Utils;

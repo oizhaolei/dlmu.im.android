@@ -3,28 +3,20 @@ package com.ruptech.chinatalk.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.FriendAddTask;
-import com.ruptech.chinatalk.task.impl.FriendBlockTask;
-import com.ruptech.chinatalk.task.impl.FriendRemoveTask;
-import com.ruptech.chinatalk.task.impl.FriendReportTask;
-import com.ruptech.chinatalk.task.impl.RetrieveMessageHistoryTask;
-import com.ruptech.chinatalk.ui.setting.ChatSettingActivity;
 import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.CommonUtilities;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
-import com.ruptech.chinatalk.widget.CustomDialog;
+import com.ruptech.dlmu.im.R;
 
 public class FriendOperate {
 
@@ -35,25 +27,6 @@ public class FriendOperate {
 	Activity mActivity;
 	private ProgressDialog progressDialog;
 	private GenericTask mFriendAddTask;
-
-	private final TaskListener mFriendAddListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			FriendAddTask friendAddTask = (FriendAddTask) task;
-			if (result == TaskResult.OK) {
-				addFriendSuccess(friendAddTask.getFriendId());
-			} else {
-				String msg = task.getMsg();
-				addFriendFailure(msg);
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-			addFriendBegin();
-		}
-	};
 
 	private final TaskListener mFriendBlockListener = new TaskAdapter() {
 
@@ -116,25 +89,6 @@ public class FriendOperate {
 		}
 	};
 
-	private final TaskListener mRetrieveMessageHistoryListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			if (result == TaskResult.OK) {
-				getMessageHistorySuccess();
-			} else {
-				String msg = task.getMsg();
-				getMessageHistoryFailure(msg);
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-			getMessageHistoryBegin();
-		}
-	};
-
-	private GenericTask mRetrieveMessageHistoryTask;
 
 	private final User mUser;
 
@@ -164,7 +118,6 @@ public class FriendOperate {
 
 		FriendProfileActivity.close();
 		ProfileActivity.close();
-		ChatSettingActivity.close();
 		CommonUtilities.broadcastChatList(mActivity);
 	}
 
@@ -207,23 +160,6 @@ public class FriendOperate {
 		}
 	}
 
-	private void getMessageHistoryBegin() {
-		startProgress();
-	}
-
-	private void getMessageHistoryFailure(String msg) {
-		stopProgress();
-		Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
-	}
-
-	private void getMessageHistorySuccess() {
-		stopProgress();
-		CommonUtilities.broadcastChatList(mActivity);
-		// AbstractChatActivity.doRefresh();
-		CommonUtilities.broadcastMessage(mActivity, null);
-		Toast.makeText(mActivity, R.string.send_request_success,
-				Toast.LENGTH_SHORT).show();
-	}
 
 	private void onFriendRemoveBegin() {
 		startProgress();
@@ -244,36 +180,11 @@ public class FriendOperate {
 		CommonUtilities.broadcastRemoveFriend(App.mContext);
 	}
 
-	public void settingBlockFriend() {
-		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-				mFriendBlockTask = new FriendBlockTask(mUser.getId());
-				mFriendBlockTask.setListener(mFriendBlockListener);
-				mFriendBlockTask.execute();
-			}
-		};
-		DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-			}
-		};
-		Utils.AlertDialog(mActivity, positiveListener, negativeListener,
-				mActivity.getString(R.string.friend_menu_block),
-				mActivity.getString(R.string.be_sure_to_block_friend));
-	}
 
 	public void settingCleanMessage() {
 		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
-				if (mUser == null) {
-					App.messageDAO.deleteAll();
-				} else {
-					App.messageDAO.deleteByUserId(mUser.getId());
-					App.mBadgeCount.removeNewMessageCount(mUser.getId());
-					// PrefUtils.removePrefNewMessageCount(mUser.getId());
-				}
 
 				CommonUtilities.broadcastMessage(mActivity, null);
 				CommonUtilities.broadcastChatList(mActivity);
@@ -292,100 +203,6 @@ public class FriendOperate {
 						.getString(R.string.be_sure_to_delete_all_the_messages));
 	}
 
-	public void settingFriendAdd(TaskListener pFriendAddListener) {
-		if (mFriendAddTask != null
-				&& mFriendAddTask.getStatus() == GenericTask.Status.RUNNING) {
-			return;
-		}
-		mFriendAddTask = new FriendAddTask(mUser.getTel(), String.valueOf(mUser
-				.getId()), mUser.getFullname(), "", "", false);
-		if (pFriendAddListener != null) {
-			mFriendAddTask.setListener(pFriendAddListener);
-		} else {
-			mFriendAddTask.setListener(mFriendAddListener);
-		}
-		mFriendAddTask.execute();
-
-	}
-
-	public void settingGetHistoryFriend() {
-		settingGetHistoryFriend(mUser.getId(),
-				App.messageDAO.getMinMessageId(mUser.getId()));
-	}
-
-	public void settingGetHistoryFriend(long friendId, long minMessageId) {// 获取历史聊天记录的方法
-		if (mRetrieveMessageHistoryTask != null
-				&& mRetrieveMessageHistoryTask.getStatus() == GenericTask.Status.RUNNING) {
-			return;
-		}
-		mRetrieveMessageHistoryTask = new RetrieveMessageHistoryTask(friendId,
-				minMessageId);
-		mRetrieveMessageHistoryTask
-				.setListener(mRetrieveMessageHistoryListener);
-		mRetrieveMessageHistoryTask.execute();
-	}
-
-	public void settingRemoveFriend() {
-
-		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-				mFriendRemoveTask = new FriendRemoveTask(mUser.getId());
-				mFriendRemoveTask.setListener(mFriendRemoveListener);
-				mFriendRemoveTask.execute();
-			}
-		};
-		DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-			}
-		};
-		Utils.AlertDialog(mActivity, positiveListener, negativeListener,
-				mActivity.getString(R.string.friend_menu_delete),
-				mActivity.getString(R.string.be_sure_to_remove_friend));
-	}
-
-	public void settingReportFriend() {
-		final EditText inputServer = new EditText(mActivity);
-		inputServer.setFocusable(true);
-		inputServer.setHint(R.string.please_input_reason_for_report);
-		int colorResId = mActivity.getResources().getColor(R.color.text_gray);
-		inputServer.setHintTextColor(colorResId);
-		inputServer.setTextColor(colorResId);
-		inputServer.setBackgroundDrawable(mActivity.getResources().getDrawable(
-				R.drawable.yellow_light_edit_text_holo_light));
-
-		CustomDialog builder = new CustomDialog(mActivity);
-		builder.setTitle(R.string.friend_menu_report);
-		builder.setMessage(mActivity
-				.getString(R.string.be_sure_to_report_friend));
-		builder.setView(inputServer);
-		builder.setNegativeButton(R.string.alert_dialog_cancel, null);
-		builder.setPositiveButton(R.string.alert_dialog_ok,
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String inputContent = inputServer.getText().toString();
-						if (Utils.isEmpty(inputContent)) {
-							Toast.makeText(mActivity,
-									R.string.please_input_reason_for_report,
-									Toast.LENGTH_SHORT).show();
-						} else {
-							if (mFriendReportTask != null
-									&& mFriendReportTask.getStatus() == GenericTask.Status.RUNNING) {
-								return;
-							}
-							mFriendReportTask = new FriendReportTask(mUser
-									.getId(), inputContent);
-							mFriendReportTask
-									.setListener(mFriendReportTaskListener);
-							mFriendReportTask.execute();
-						}
-					}
-				});
-		builder.show();
-	}
 
 	private void startProgress() {
 		progressDialog = Utils.showDialog(mActivity,

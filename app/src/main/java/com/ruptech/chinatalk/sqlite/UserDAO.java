@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.Utils;
@@ -49,14 +49,14 @@ public class UserDAO {
 		String sql = "DELETE FROM " + UserTable.getName() + " where "
 				+ UserTable.Columns.ID + " = ?";
 
-		db.execSQL(sql, new String[] { String.valueOf(userId) });
+		db.execSQL(sql, new String[]{String.valueOf(userId)});
 	}
 
 	// 根据messageId进行排序
 	public Cursor fetchChats(Long userId) {
-		String[] args = new String[] { userId.toString(), userId.toString(),
+		String[] args = new String[]{userId.toString(), userId.toString(),
 				userId.toString(), userId.toString(), userId.toString(),
-				userId.toString() };
+				userId.toString()};
 		StringBuilder sqlB = new StringBuilder();
 
 		sqlB.append("select messageid, ifnull(friend.is_top, 0) is_top, ");
@@ -124,14 +124,14 @@ public class UserDAO {
 
 		if (keyword != null && keyword.length() > 0) {
 			keyword = "%" + keyword + "%";
-			args = new String[] { userId.toString(), userId.toString(),
+			args = new String[]{userId.toString(), userId.toString(),
 					userId.toString(), userId.toString(), userId.toString(),
-					userId.toString(), keyword, keyword };
+					userId.toString(), keyword, keyword};
 			sqlB.append("where friend.friend_nickname like ? or user.fullname like ? ");
 		} else {
-			args = new String[] { userId.toString(), userId.toString(),
+			args = new String[]{userId.toString(), userId.toString(),
 					userId.toString(), userId.toString(), userId.toString(),
-					userId.toString() };
+					userId.toString()};
 		}
 
 		sqlB.append("order by is_top desc, messageid desc, friend_name; ");
@@ -143,11 +143,11 @@ public class UserDAO {
 	}
 
 	public Cursor fetchFriends(Long userId) {
-		String[] args = new String[] { userId.toString() };
+		String[] args = new String[]{userId.toString()};
 		Cursor cursor = mSqlTemplate
 				.getDb(false)
 				.rawQuery(
-						"select u._id, f.friend_nickname, f.friend_memo, f.friend_method, password, tel, fullname, lang, user_memo, balance, "
+						"select u._id, f.friend_nickname, f.friend_memo, f.friend_method, password, username, fullname, lang, user_memo, balance, "
 								+ "terminal_type, create_id, u.create_date, update_id, update_date, active, gender, pic_url, point "
 								+ "from tbl_user u, tbl_friend f "
 								+ "where u._id=f.friend_id and f.done =1 and f.user_id=? "
@@ -158,11 +158,11 @@ public class UserDAO {
 
 	public Cursor fetchFriends(Long userId, String keyword) {
 		keyword = "%" + keyword + "%";
-		String[] args = new String[] { userId.toString(), keyword, keyword };
+		String[] args = new String[]{userId.toString(), keyword, keyword};
 		Cursor cursor = mSqlTemplate
 				.getDb(false)
 				.rawQuery(
-						"select u._id, f.friend_nickname, f.friend_memo, f.friend_method, password, tel, fullname, lang, user_memo, balance, "
+						"select u._id, f.friend_nickname, f.friend_memo, f.friend_method, password, username, fullname, lang, user_memo, balance, "
 								+ "create_id, u.create_date, update_id, update_date, active, gender, pic_url, point "
 								+ "from tbl_user u, tbl_friend f "
 								+ "where u._id=f.friend_id and f.done =1 and f.user_id=? and (f.friend_nickname like ? or u.fullname like ?) "
@@ -173,15 +173,15 @@ public class UserDAO {
 
 	// 检索新的好友加入done = 2的条件 +时间排序
 	public Cursor fetchRequestingFriends(Long userId) {
-		String[] args = new String[] { userId.toString(), userId.toString(),
-				userId.toString() };
-		String sql = "select _id, password, tel, fullname, lang, user_memo, balance, create_id, create_date, update_id, update_date, active, gender, pic_url, point   "
-				+ " from (select a.* from (select u._id, f.create_date f_create_date, password, tel, fullname, lang, user_memo, balance, create_id, u.create_date, update_id, update_date, active, gender, pic_url, point  "
+		String[] args = new String[]{userId.toString(), userId.toString(),
+				userId.toString()};
+		String sql = "select _id, password, username, fullname, lang, user_memo, balance, create_id, create_date, update_id, update_date, active, gender, pic_url, point   "
+				+ " from (select a.* from (select u._id, f.create_date f_create_date, password, username, fullname, lang, user_memo, balance, create_id, u.create_date, update_id, update_date, active, gender, pic_url, point  "
 				+ " from tbl_user u"
 				+ " inner join tbl_friend f on u._id=f.user_id and f.friend_id=? and f.done=1"
 				+ " where not exists (select * from tbl_friend f2 where u._id=f2.friend_id and f2.user_id=?) "
 				+ " union "
-				+ " select u2._id, f2.create_date f_create_date, password, tel, fullname, lang, user_memo, balance, create_id, u2.create_date, update_id, update_date, active, gender, pic_url, point  "
+				+ " select u2._id, f2.create_date f_create_date, password, username, fullname, lang, user_memo, balance, create_id, u2.create_date, update_id, update_date, active, gender, pic_url, point  "
 				+ " from tbl_user u2"
 				+ " inner join tbl_friend f2 on u2._id=f2.user_id and f2.friend_id=? and f2.done=2) a  order by f_create_date)";
 
@@ -194,8 +194,8 @@ public class UserDAO {
 	 * 添加新朋友个数
 	 */
 	public int fetchRequestingFriendsCount(Long userId, String clickDate) {
-		String[] args = new String[] { userId.toString(), userId.toString(),
-				clickDate };
+		String[] args = new String[]{userId.toString(), userId.toString(),
+				clickDate};
 		String sql = "select *"
 				+ " from tbl_user u"
 				+ " inner join tbl_friend f on u._id=f.user_id and f.friend_id=? and f.done=1"
@@ -222,19 +222,19 @@ public class UserDAO {
 	public User fetchUser(Long userId) {
 		return mSqlTemplate.queryForObject(mRowMapper, UserTable.getName(),
 				null, UserTable.Columns.ID + " = ?",
-				new String[] { String.valueOf(userId) }, null, null,
+				new String[]{String.valueOf(userId)}, null, null,
 				"_id DESC", "1");
 	}
 
 	/**
-	 * Find a user by user tel
+	 * Find a user by user username
 	 *
 	 * @param tel
 	 * @return
 	 */
 	public User fetchUserByTel(String tel) {
 		return mSqlTemplate.queryForObject(mRowMapper, UserTable.getName(),
-				null, UserTable.Columns.TEL + " = ?", new String[] { tel },
+				null, UserTable.Columns.USERNAME + " = ?", new String[]{tel},
 				null, null, "_id DESC", "1");
 	}
 
@@ -268,9 +268,8 @@ public class UserDAO {
 
 	/**
 	 * Insert a user
-	 *
+	 * <p/>
 	 * 若报 SQLiteconstraintexception 异常, 检查是否某not null字段为空
-	 *
 	 */
 	public long mergeUser(User user) {
 		SQLiteDatabase db = mSqlTemplate.getDb(true);

@@ -1,338 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <include
-        android:id="@+id/main_tab_discover_search_bar"
-        layout="@layout/search_bar" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/main_tab_discover_search_bar"
-        android:background="@color/main_background" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_user_photo_new_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_user_photo_new_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_new_image" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_user_photo_new_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_user_photo_new_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/user_photo_new" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_user_photo_lbs_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_user_photo_lbs_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_near_image" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_user_photo_lbs_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_user_photo_lbs_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/user_photo_lbs" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-            
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_friend_leaderboard_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_friend_leaderboard_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_ranking" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_friend_leaderboard_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_friend_leaderboard_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/leaderboard" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_friend_online_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_friend_online_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_online" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_friend_online_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_friend_online_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/friend_online" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_friend_lbs_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_friend_lbs_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_nearby" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_friend_lbs_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_friend_lbs_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/friend_lbs" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_friend_recommended_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_friend_recommended_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_rmd" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_friend_recommended_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_friend_recommended_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/friend_recommended" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/main_tab_discover_translation_secretary_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical" >
-
-                <ImageView
-                    android:id="@+id/main_tab_discover_friend_translation_imageview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="20dp"
-                    android:src="@drawable/discover_translator" />
-
-                <TextView
-                    android:id="@+id/main_tab_discover_translation_secretary_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/main_tab_discover_friend_translation_imageview"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:text="@string/translation_secretary" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-        </LinearLayout>
-    </ScrollView>
+    android:layout_height="match_parent"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/main_tab_discover_keyword_layout"
-        android:layout_width="fill_parent"
+        android:id="@+id/main_tab_organize_muc_testroom1_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/main_tab_discover_search_bar"
-        android:background="#FFFFFF"
-        android:gravity="center_vertical" >
-
-        <ListView
-            android:id="@+id/main_tab_discover_listView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-        </ListView>
+        android:layout_marginTop="8dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp" >
 
         <TextView
-            android:id="@+id/emptyTextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/no_data_found"
-            android:visibility="gone" />
+            android:id="@+id/main_tab_organize_muc_testroom1_title_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:text="testroom1" />
+
+
+        <ImageView
+            android:id="@+id/main_tab_organize_muc_testroom1_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="20dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/main_tab_discover_result_layout"
+    <RelativeLayout
+        android:id="@+id/main_tab_organize_user_zhao_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/main_tab_discover_search_bar"
-        android:background="@color/main_background"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/preference_item"
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp" >
 
-        <com.ruptech.chinatalk.ui.fragment.SlidingTabLayout
-            android:id="@+id/sliding_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/tab_bar_height" />
+        <TextView
+            android:id="@+id/main_tab_organize_user_cai_title_textview"
+            style="@style/importance_contents_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:text="user_48389" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1" />
-    </LinearLayout>
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/main_tab_organize_user_cai_submenu_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="20dp"
+            android:scaleType="matrix"
+            android:src="@drawable/submenu" />
+    </RelativeLayout>
+</LinearLayout>

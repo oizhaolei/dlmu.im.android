@@ -8,6 +8,7 @@ import com.ruptech.chinatalk.task.TaskResult;
 public class RetrieveUserTask extends GenericTask {
 	private User user;
 	private final long userid;
+
 	public RetrieveUserTask(long userid) {
 		this.userid = userid;
 	}
@@ -31,7 +32,7 @@ public class RetrieveUserTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] { userid };
+		return new Object[]{userid};
 	}
 
 	public User getUser() {

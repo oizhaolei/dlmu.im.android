@@ -16,7 +16,7 @@ import java.util.Locale;
 public class LangListViewAdapter extends AbstractLangListViewAdapter {
 
 	public LangListViewAdapter(Context context, String[] langArray,
-			int clickPosition, User mUser) {
+	                           int clickPosition, User mUser) {
 		this.mContext = context;
 		this.langArray = langArray;
 		this.clickPosition = clickPosition;

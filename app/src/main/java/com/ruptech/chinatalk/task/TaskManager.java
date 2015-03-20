@@ -2,7 +2,7 @@ package com.ruptech.chinatalk.task;
 
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.dlmu.im.BuildConfig;
 
 import java.util.Observable;
 import java.util.Observer;

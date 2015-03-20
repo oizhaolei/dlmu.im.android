@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
 
 import butterknife.ButterKnife;

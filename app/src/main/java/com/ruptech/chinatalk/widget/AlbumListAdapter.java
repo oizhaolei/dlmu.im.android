@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.ImageManager;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class AlbumListAdapter extends ArrayAdapter<Map<String, String>> {
 
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,
-				int height) {
+		                           int height) {
 
 			if (mCamera != null) {
 				try {

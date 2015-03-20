@@ -13,8 +13,8 @@ import java.util.List;
 public class RetrieveFriendsTask extends GenericTask {
 
 	private static void retrieveFriends(List<User> users, List<Friend> friends,
-			int[] followFriendCountArray,
-			long userId, boolean isNeedNotify) throws Exception {
+	                                    int[] followFriendCountArray,
+	                                    long userId, boolean isNeedNotify) throws Exception {
 
 		String lastUpdatedate = Utils.getFriendLastUpdatedate();
 		App.getHttpServer().retrieveNewFriends(lastUpdatedate, users, friends,
@@ -40,7 +40,7 @@ public class RetrieveFriendsTask extends GenericTask {
 	// newfollowCount + alreadyFollowCount - unfollowCount
 	private final int[] followFriendCountArray = new int[3];
 
-	public RetrieveFriendsTask(long userId,boolean isNeedNotify){
+	public RetrieveFriendsTask(long userId, boolean isNeedNotify) {
 		this.userId = userId;
 		this.isNeedNotify = isNeedNotify;
 	}
@@ -58,7 +58,7 @@ public class RetrieveFriendsTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] {users, friends, followFriendCountArray,
+		return new Object[]{users, friends, followFriendCountArray,
 				userId, isNeedNotify};
 	}
 }

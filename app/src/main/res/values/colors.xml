@@ -15,8 +15,8 @@
     <color name="yellow">#f9a64d</color>
     <color name="reply_name">#FF08708F</color>
     <color name="orange_softlight">#88fde4c9</color>
-    <color name="orange_highlight">#FFf9a64d</color>
-    <color name="action_bar_background">#f9a64d</color>
+    <color name="orange_highlight">#FF0099CC</color>
+    <color name="action_bar_background">#0099CC</color>
     <color name="action_bar_background_comment">#FAFAFA</color>
     <color name="chat_stranger_background">#FFCCCCCC</color>
 

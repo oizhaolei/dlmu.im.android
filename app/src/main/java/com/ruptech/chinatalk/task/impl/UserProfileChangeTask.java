@@ -24,8 +24,6 @@ public class UserProfileChangeTask extends GenericTask {
 		App.userDAO.mergeUser(user);
 		if (user.getId() == App.readUser().getId()) {
 			App.writeUser(user);
-			// 变换语言清理频道数据
-			App.channelDAO.deleteAll();
 		}
 
 		return TaskResult.OK;
@@ -33,7 +31,7 @@ public class UserProfileChangeTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] { mFunc, mKey, mValue };
+		return new Object[]{mFunc, mKey, mValue};
 	}
 
 	public User getUser() {

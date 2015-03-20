@@ -15,7 +15,7 @@ import java.util.Locale;
 public class CountryListViewAdapter extends AbstractLangListViewAdapter {
 
 	public CountryListViewAdapter(Context context, String[] langArray,
-			int clickPosition) {
+	                              int clickPosition) {
 		this.mContext = context;
 		this.langArray = langArray;
 		this.clickPosition = clickPosition;

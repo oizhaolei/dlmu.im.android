@@ -5,14 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
+import com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import com.ruptech.chinatalk.utils.Utils;
 
 import java.util.List;
-
-import com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 
 public class FriendDAO {
 	private static final String TAG = Utils.CATEGORY
@@ -79,7 +78,7 @@ public class FriendDAO {
 	}
 
 	public synchronized int insertFriends(List<Friend> friends,
-			boolean deleteAll) {
+	                                      boolean deleteAll) {
 		int result = 0;
 		SQLiteDatabase db = mSqlTemplate.getDb(true);
 
@@ -103,7 +102,7 @@ public class FriendDAO {
 
 	/**
 	 * Insert a user
-	 *
+	 * <p/>
 	 * 若报 SQLiteconstraintexception 异常, 检查是否某not null字段为空
 	 *
 	 * @return

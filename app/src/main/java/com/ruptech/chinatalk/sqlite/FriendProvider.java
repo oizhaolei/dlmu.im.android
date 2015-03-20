@@ -17,7 +17,7 @@ import com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 
 public class FriendProvider extends ContentProvider {
 
-	public static final String AUTHORITY = "com.ruptech.chinatalk.provider.Friends";
+	public static final String AUTHORITY = "com.ruptech.dlmu.im.provider.Friends";
 	public static final String TABLE_NAME = FriendTable.getName();
 	public static final String QUERY_URI = "friend";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY

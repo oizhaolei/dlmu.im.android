@@ -7,25 +7,25 @@ import com.ruptech.chinatalk.utils.ServerAppInfo;
 
 public class RetrieveServerVersionTask extends GenericTask {
 
-    private String error;
-    private ServerAppInfo serverAppInfo;
+	private String error;
+	private ServerAppInfo serverAppInfo;
 
-    public ServerAppInfo getServerAppInfo() {
-        return serverAppInfo;
-    }
+	public ServerAppInfo getServerAppInfo() {
+		return serverAppInfo;
+	}
 
-    @Override
-    protected TaskResult _doInBackground() throws Exception {
-        // check version
-        serverAppInfo = App.getHttpServer().ver();
-        if (serverAppInfo != null) {
-            App.writeServerAppInfo(serverAppInfo);
-        }
-        return TaskResult.OK;
-    }
+	@Override
+	protected TaskResult _doInBackground() throws Exception {
+		// check version
+		serverAppInfo = App.getHttpServer().ver();
+		if (serverAppInfo != null) {
+			App.writeServerAppInfo(serverAppInfo);
+		}
+		return TaskResult.OK;
+	}
 
-    public String getError() {
-        return error;
-    }
+	public String getError() {
+		return error;
+	}
 
 }

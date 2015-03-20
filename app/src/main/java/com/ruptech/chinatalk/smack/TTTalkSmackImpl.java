@@ -8,28 +8,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.smack.ext.TTTalkOldVersionTranslatedExtension;
-import com.ruptech.chinatalk.sqlite.ChatProvider;
-import com.ruptech.chinatalk.event.AnnouncementEvent;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
-import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
-import com.ruptech.chinatalk.event.PresentEvent;
-import com.ruptech.chinatalk.event.QAEvent;
-import com.ruptech.chinatalk.event.StoryEvent;
 import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.smack.ext.AbstractTTTalkExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkAnnouncementExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkBalanceExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkFriendExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkPresentExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkQaExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkStoryExtension;
-import com.ruptech.chinatalk.smack.ext.TTTalkTranslatedExtension;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
@@ -45,7 +30,6 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.filter.PacketExtensionFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.Message;
@@ -152,17 +136,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 //        pm.addExtensionProvider("x", "http://jabber.org/protocol/muc#user", new MUCUserProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#admin", new MUCAdminProvider());
 //        pm.addIQProvider("query", "http://jabber.org/protocol/muc#owner", new MUCOwnerProvider());
-
-		pm.addExtensionProvider(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkTranslatedExtension.Provider());
-		pm.addExtensionProvider(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkQaExtension.Provider());
-		pm.addExtensionProvider(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkAnnouncementExtension.Provider());
-		pm.addExtensionProvider(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkExtension.Provider());
-		pm.addExtensionProvider(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkBalanceExtension.Provider());
-		pm.addExtensionProvider(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkFriendExtension.Provider());
-		pm.addExtensionProvider(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkPresentExtension.Provider());
-		pm.addExtensionProvider(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkStoryExtension.Provider());
-        pm.addExtensionProvider(TTTalkOldVersionTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE, new TTTalkOldVersionTranslatedExtension.Provider());
-
 
 		ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
 		ServiceDiscoveryManager.setIdentityType(XMPP_IDENTITY_TYPE);
@@ -300,71 +273,12 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	 * ********* start 新消息处理 *******************
 	 */
 	private void registerMessageListener() {
-		PacketFilter translatedFilter = new PacketExtensionFilter(TTTalkTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter qaFilter = new PacketExtensionFilter(TTTalkQaExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter announceFilter = new PacketExtensionFilter(TTTalkAnnouncementExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter balanceFilter = new PacketExtensionFilter(TTTalkBalanceExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter friendFilter = new PacketExtensionFilter(TTTalkFriendExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter presentFilter = new PacketExtensionFilter(TTTalkPresentExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter storyFilter = new PacketExtensionFilter(TTTalkStoryExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-		PacketFilter chatFilter = new PacketExtensionFilter(TTTalkExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-        PacketFilter oldVersionTranslatedFilter = new PacketExtensionFilter(TTTalkOldVersionTranslatedExtension.ELEMENT_NAME, AbstractTTTalkExtension.NAMESPACE);
-
-		//TTTalkQaExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkQaExtension>(TTTalkQaExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkQaExtension ext) {
-				App.mBus.post(new QAEvent(msg.getBody(), Integer.valueOf(ext.getqa_id())));
-			}
-		}, qaFilter);
-		//TTTalkAnnouncementExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkAnnouncementExtension>(TTTalkAnnouncementExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkAnnouncementExtension ext) {
-				App.mBus.post(new AnnouncementEvent(msg.getBody(), Integer.valueOf(ext.get_announcement_id())));
-			}
-		}, announceFilter);
-		//TTTalkBalanceExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkBalanceExtension>(TTTalkBalanceExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkBalanceExtension ext) {
-				App.readUser().setBalance(Double.valueOf(ext.getBalance()));
-			}
-		}, balanceFilter);
-		//TTTalkFriendExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkFriendExtension>(TTTalkFriendExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkFriendExtension ext) {
-				App.mBus.post(new FriendEvent(ext.getFullname(), Integer.valueOf(ext.getFriend_id())));
-			}
-		}, friendFilter);
-		//TTTalkPresentExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkPresentExtension>(TTTalkPresentExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkPresentExtension ext) {
-				App.mBus.post(new PresentEvent(Long.valueOf(ext.getPresent_id()), Long.valueOf(ext.getTo_user_photo_id()),
-						ext.getFullname(), ext.getTo_user_photo_id(), ext.getPic_url()));
-			}
-		}, presentFilter);
-		//TTTalkStoryExtension
-		mXMPPConnection.addPacketListener(new PacketExtensionListener<TTTalkStoryExtension>(TTTalkStoryExtension.class) {
-			@Override
-			public void processExtension(Message msg, TTTalkStoryExtension ext) {
-				App.mBus.post(new StoryEvent(ext.getPhoto_id(), ext.getTitle(), ext.getContent(), ext.getFullname()));
-			}
-		}, storyFilter);
-
-		//TTTalkTranslatedExtension
-		PacketListener translatedListener = new TranslatedListener(TTTalkTranslatedExtension.class, mContentResolver);
-		mXMPPConnection.addPacketListener(translatedListener, translatedFilter);
 
 		//TTTalkExtension
-		PacketListener chatListener = new TTTalkChatListener(TTTalkExtension.class, mContentResolver);
+		PacketListener chatListener = new TTTalkChatListener(mContentResolver);
+		PacketFilter chatFilter = new PacketTypeFilter(Message.class);
 		mXMPPConnection.addPacketListener(chatListener, chatFilter);
 
-        //OldVersionTTTalkTranslatedExtension
-        PacketListener oldVersionTranslatedListener = new OldVersionTranslatedListener(TTTalkOldVersionTranslatedExtension.class, mContentResolver);
-        mXMPPConnection.addPacketListener(oldVersionTranslatedListener, oldVersionTranslatedFilter);
 
 	}
 
@@ -530,13 +444,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		String content = chat.getContent();
 		newMessage.setBody(content);
 		newMessage.addExtension(new DeliveryReceiptRequest());
-		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
-				AbstractTTTalkExtension.VALUE_VER,
-				AbstractTTTalkExtension.VALUE_TITLE,
-				chat.getType(),
-				chat.getFilePath(),
-				String.valueOf(chat.getFromContentLength())
-		));
 
 		Log.e(TAG, newMessage.toXML());
 
@@ -562,13 +469,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		String message = chat.getContent();
 		newMessage.setBody(message);
 		newMessage.addExtension(new DeliveryReceiptRequest());
-		newMessage.addExtension(new TTTalkExtension(AbstractTTTalkExtension.VALUE_TEST,
-				AbstractTTTalkExtension.VALUE_VER,
-				AbstractTTTalkExtension.VALUE_TITLE,
-				chat.getType(),
-				chat.getFilePath(),
-				String.valueOf(chat.getFromContentLength())
-		));
 
 		Log.e(TAG, newMessage.toXML());
 
@@ -597,7 +497,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		values.put(ChatTable.Columns.FROM_JID, App.readUser().getOF_JabberID());
 		values.put(ChatTable.Columns.TO_JID, toJID);
 		values.put(ChatTable.Columns.CONTENT, chat.getContent());
-		values.put(ChatTable.Columns.CONTENT_TYPE, chat.getType());
 		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
 		values.put(ChatTable.Columns.CREATED_DATE, System.currentTimeMillis());
 
@@ -665,14 +564,14 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		MultiUserChat room = null;
 		try {
 			String roomName = String.valueOf(App.readUser().getId());
-            String nickName = App.readUser().getFullname();
+			String nickName = App.readUser().getFullname();
 			for (User user : inviteUserList) {
 				roomName = String.format("%s_%d", roomName, user.getId());
-                nickName = String.format("%s, %s", nickName, user.getFullname());
+				nickName = String.format("%s, %s", nickName, user.getFullname());
 			}
 			roomName = String.format("%s@conference.tttalk.org", roomName);
 			room = new MultiUserChat(mXMPPConnection, roomName);
-            room.addInvitationRejectionListener(new InvitationRejectionListener() {
+			room.addInvitationRejectionListener(new InvitationRejectionListener() {
 				public void invitationDeclined(String invitee, String reason) {
 					//TODO:
 					Toast.makeText(App.mContext, "invitationDeclined", Toast.LENGTH_SHORT).show();
@@ -690,18 +589,18 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 				}
 			}
 			submitForm.setAnswer("muc#roomconfig_publicroom", true);
-            submitForm.setAnswer("muc#roomconfig_roomname", nickName);
-            submitForm.setAnswer("muc#roomconfig_roomdesc", nickName);
-            submitForm.setAnswer("muc#roomconfig_allowinvites", true);
+			submitForm.setAnswer("muc#roomconfig_roomname", nickName);
+			submitForm.setAnswer("muc#roomconfig_roomdesc", nickName);
+			submitForm.setAnswer("muc#roomconfig_allowinvites", true);
 
-            room.sendConfigurationForm(submitForm);
+			room.sendConfigurationForm(submitForm);
 
 			for (User user : inviteUserList) {
 				room.invite(user.getOF_JabberID(), "Meet me in this excellent room");
-                room.grantOwnership(user.getOF_JabberID());
+				room.grantOwnership(user.getOF_JabberID());
 			}
-            Chat chat = new Chat();
-            chat.setContent("Created room by " + App.readUser().getFullname());
+			Chat chat = new Chat();
+			chat.setContent("Created room by " + App.readUser().getFullname());
 			sendGroupMessage(room, chat);
 
 		} catch (Exception e) {
@@ -730,10 +629,10 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			RoomInfo info = MultiUserChat.getRoomInfo(mXMPPConnection, roomName);
 			Log.e(TAG, "Number of occupants:" + info.getOccupantsCount());
 			Log.e(TAG, "Room Subject:" + info.getSubject());
-            return info;
+			return info;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        return null;
+		return null;
 	}
 }

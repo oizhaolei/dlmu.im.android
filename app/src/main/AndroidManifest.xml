@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ruptech.chinatalk">
+    package="com.ruptech.dlmu.im">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,39 +30,23 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
 
-    <!--<permission-->
-        <!--android:name="com.ruptech.chinatalk.permission.C2D_MESSAGE"-->
-        <!--android:protectionLevel="signature" />-->
-
-    <!--<uses-permission android:name="com.ruptech.chinatalk.permission.C2D_MESSAGE" />-->
-
-    <!--&lt;!&ndash; This app has permission to register and receive data message. &ndash;&gt;-->
-    <!--<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />-->
 
     <application
-        android:name="App"
+        android:name="com.ruptech.chinatalk.App"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/tt_logo2"
         android:label="@string/app_name"
         android:theme="@style/Theme.Yellow_light" >
-        <receiver android:name="BootReceiver" >
+        <receiver android:name="com.ruptech.chinatalk.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name="NotificationSettingReceiver" >
-        </receiver>
         <receiver
-            android:name=".VersionCheckReceiver"
-            android:enabled="true" />
-        <receiver
-            android:name=".InfoPeriodReceiver"
-            android:enabled="true" />
-        <receiver
-            android:name=".UserLocationReceiver"
+            android:name="com.ruptech.chinatalk.VersionCheckReceiver"
             android:enabled="true" />
 
         <meta-data android:value="54f93f50fd98c519d0000b79" android:name="UMENG_APPKEY"/>
@@ -79,18 +63,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ruptech.chinatalk.ui.LoginSignupActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:name="com.ruptech.chinatalk.ui.LoginActivity"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.ruptech.chinatalk.ui.LoginGateActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" />
         <activity
-            android:name="MainActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:name="com.ruptech.chinatalk.MainActivity"
+            android:icon="@drawable/tt_logo2"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait" >
@@ -104,549 +88,64 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ruptech.chinatalk.ui.setting.AgreementActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.FindPasswordActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
-        <activity
             android:name="com.ruptech.chinatalk.ui.FullScreenActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name="com.ruptech.chinatalk.ui.setting.IntroduceActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.user.SignupProfileActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingBalanceActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name="com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.AboutTTTalkActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.RechargeWebpayActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.RechargeRmbBankTransferActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingVerifyActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingGeneralActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingGeneralTimeActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingFeeIntroduceActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.TranslatorRankListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.ApplyTranslatorActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.ChatActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.TTTActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.TextShareActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:icon="@drawable/ic_launcher"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/*" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="com.ruptech.chinatalk.ui.ImageViewActivity"
-            android:icon="@drawable/ic_tttalk_gray_dark" />
+            android:icon="@drawable/tt_logo2" />
         <activity
             android:name="com.ruptech.chinatalk.ui.user.ProfileActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.PhotoAlbumActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryTagActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryReplyActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryLikeListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStorySaveActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustPan"/>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.PhotoShareActivity"
-            android:icon="@drawable/ic_launcher"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="image/*" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryCommentActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryTranslateActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryImageViewActivity"
-            android:icon="@drawable/ic_tttalk_gray_light" />
         <activity
             android:name="com.ruptech.chinatalk.ui.LoginLoadingActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyle" />
         <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingQaActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.SettingAnnouncementActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeFullNameActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeLanguageActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.user.LanguageActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeNickNameActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangePasswordActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangePhotoActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:theme="@style/activityDialog" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeFriendMemoActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.WebViewActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.UpdateVersionServiceActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyDialogStyle" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.RechargeAlipayActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.RechargeWeChatActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendAddRecommendedActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
             android:name="com.ruptech.chinatalk.ui.friend.FriendListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <!--<activity-->
-            <!--android:name="com.ruptech.chinatalk.ui.friend.FriendsPopularListActivity"-->
-            <!--android:icon="@drawable/ic_tttalk_gray_light"-->
-            <!--android:screenOrientation="portrait"-->
-            <!--android:windowSoftInputMode="stateHidden|adjustResize" />-->
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendsOnlineListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendsLbsListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendsFollowerListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeGenderActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.MyCommentListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.MyChannelListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.MyTranslateListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.setting.ChatSettingActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryImageFilterActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryImageCropActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.user.MyWalletActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryNewListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendsBlockedListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.ChannelPopularListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.alipay.sdk.app.H5PayActivity"
-            android:configChanges="orientation|keyboardHidden|navigation"
-            android:exported="false"
-            android:screenOrientation="behind"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.ui.dialog.ChangeSignupPhotoActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.gift.GiftListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.gift.GiftDonateActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.UserStoryGiftListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendsLeaderboardListActivity"
-            android:icon="@drawable/ic_tttalk_gray_light"
+            android:name="com.ruptech.chinatalk.ui.ChatSettingActivity"
+            android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait" />
 
-        <service android:name="com.ruptech.chinatalk.ui.UpdateVersionService" />
+        <service android:name="com.ruptech.chinatalk.XMPPService" />
 
-        <!--<receiver-->
-            <!--android:name="com.google.android.gcm.GCMBroadcastReceiver"-->
-            <!--android:permission="com.google.android.c2dm.permission.SEND" >-->
-            <!--<intent-filter>-->
-
-                <!--&lt;!&ndash; Receives the actual messages. &ndash;&gt;-->
-                <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
-                <!--&lt;!&ndash; Receives the registration id. &ndash;&gt;-->
-                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
-
-                <!--<category android:name="com.ruptech.chinatalk" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
-        <!--<service android:name=".GCMIntentService" />-->
-        <!-- </>值来自开发者平台取得的AppKey -->
-
-
-        <!-- 腾讯QQ登录 -->
-        <meta-data
-            android:name="TA_APPKEY"
-            android:value="Aqc1150006347" />
-        <meta-data
-            android:name="InstallChannel"
-            android:value="play" />
-
-        <activity
-            android:name="com.tencent.tauth.AuthActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="tencent1150006347" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.tencent.connect.common.AssistActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-        <!--<meta-data-->
-            <!--android:name="com.google.android.gms.version"-->
-            <!--android:value="@integer/google_play_services_version" />-->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/app_id" />
-
-        <activity android:name="com.facebook.LoginActivity" />
-
-        <!--&lt;!&ndash; 百度推送 &ndash;&gt;-->
-        <!--&lt;!&ndash; push应用定义消息receiver声明 &ndash;&gt;-->
-        <!--<receiver android:name="com.ruptech.chinatalk.BaiduPushMessageReceiver" >-->
-            <!--<intent-filter>-->
-
-                <!--&lt;!&ndash; 接收push消息 &ndash;&gt;-->
-                <!--<action android:name="com.baidu.android.pushservice.action.MESSAGE" />-->
-                <!--&lt;!&ndash; 接收bind,unbind,fetch,delete等反馈消息 &ndash;&gt;-->
-                <!--<action android:name="com.baidu.android.pushservice.action.RECEIVE" />-->
-                <!--<action android:name="com.baidu.android.pushservice.action.notification.CLICK" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
-        <!--&lt;!&ndash; push必须的receviver和service声明 &ndash;&gt;-->
-        <!--<receiver-->
-            <!--android:name="com.baidu.android.pushservice.PushServiceReceiver"-->
-            <!--android:process=":bdservice_v1" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
-                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
-                <!--<action android:name="com.baidu.android.pushservice.action.notification.SHOW" />-->
-                <!--<action android:name="com.baidu.android.pushservice.action.media.CLICK" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-        <!--<receiver-->
-            <!--android:name="com.baidu.android.pushservice.RegistrationReceiver"-->
-            <!--android:process=":bdservice_v1" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.baidu.android.pushservice.action.METHOD" />-->
-                <!--<action android:name="com.baidu.android.pushservice.action.BIND_SYNC" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.PACKAGE_REMOVED" />-->
-
-                <!--<data android:scheme="package" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
-        <!--<service-->
-            <!--android:name="com.baidu.android.pushservice.PushService"-->
-            <!--android:exported="true"-->
-            <!--android:process=":bdservice_v1" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />-->
-            <!--</intent-filter>-->
-        <!--</service>-->
-        <!--&lt;!&ndash; push结束 &ndash;&gt;-->
-        <activity
-            android:name="com.ruptech.chinatalk.ui.story.ShareStoryDialogActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/activityDialog"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" >
-        </activity>
-        <activity
-            android:name="com.ruptech.chinatalk.thirdparty.sina.SinaWeiboShareResponseActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/activityDialog" >
-            <intent-filter>
-                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <!-- 微信分享响应Activity -->
-        <activity
-            android:name="com.ruptech.chinatalk.wxapi.WXEntryActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/activityDialog" >
-        </activity>
-        <!-- 微信支付响应Activity -->
-        <activity
-            android:name="com.ruptech.chinatalk.wxapi.WXPayEntryActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/activityDialog" >
-        </activity>
-
-        <!--&lt;!&ndash; GOOGLE PLUS监听深度链接Activity &ndash;&gt;-->
-        <!--<activity android:name="com.ruptech.chinatalk.thirdparty.google.GoogleParseDeepLinkActivity" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.google.android.apps.plus.VIEW_DEEP_LINK" />-->
-
-                <!--<data android:scheme="vnd.google.deeplink" />-->
-
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<category android:name="android.intent.category.BROWSABLE" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
-        <!-- Facebook分享响应Activity -->
-        <activity
-            android:name="com.ruptech.chinatalk.thirdparty.facebook.FacebookParseDeepLinkActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/activityDialog" >
-
-            <!--
-            <intent-filter>
-		        <action android:name="android.intent.action.VIEW" />
-		        <category android:name="android.intent.category.DEFAULT" />
-		        <data android:host="fb.me" android:scheme="https" />
-		        <data android:scheme="http" />
-		    </intent-filter>
-
-
-
-            -->
-        </activity>
-
-        <!-- 百度定位 -->
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
-            <intent-filter>
-                <action android:name="com.baidu.location.service_v2.2" >
-                </action>
-            </intent-filter>
-        </service>
-
-        <service android:name=".XMPPService" />
-
-        <!-- http://lbsyun.baidu.com/apiconsole/key -->
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="MYWoBG9XA2AXKe4ofVfO1Pld" />
-        
 		<provider
-			android:name=".sqlite.UserProvider"
-			android:authorities="com.ruptech.chinatalk.userprovider" >
+			android:name="com.ruptech.chinatalk.sqlite.UserProvider"
+			android:authorities="com.ruptech.dlmu.im.provider.User" >
 		</provider>
         <provider
-            android:name=".sqlite.MessageProvider"
-            android:authorities="com.ruptech.chinatalk.provider.Messages" >
+            android:name="com.ruptech.chinatalk.sqlite.ChatProvider"
+            android:authorities="com.ruptech.dlmu.im.provider.Chats" >
         </provider>
         <provider
-            android:name=".sqlite.ChatProvider"
-            android:authorities="com.ruptech.chinatalk.provider.Chats" >
+            android:name="com.ruptech.chinatalk.sqlite.ChatRoomProvider"
+            android:authorities="com.ruptech.dlmu.im.provider.ChatRoom" >
         </provider>
         <provider
-            android:name=".sqlite.RosterProvider"
-            android:authorities="com.ruptech.chinatalk.provider.Roster" >
+            android:name="com.ruptech.chinatalk.sqlite.FriendProvider"
+            android:authorities="com.ruptech.dlmu.im.provider.Friend" >
         </provider>
     </application>
 

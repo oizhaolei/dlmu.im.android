@@ -8,7 +8,7 @@ import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 
 
 public class PageIndicator extends View {
@@ -114,11 +114,11 @@ public class PageIndicator extends View {
 		for (int i = 0; i < count; i++) {
 			if (i == index) {
 				canvas.drawCircle(leftPadding + mRadius + (i * spacing)
-						+ centeringOffset, getPaddingTop() + mRadius, mRadius,
+								+ centeringOffset, getPaddingTop() + mRadius, mRadius,
 						mPaintActive);
 			} else {
 				canvas.drawCircle(leftPadding + mRadius + (i * spacing)
-						+ centeringOffset, getPaddingTop() + mRadius, mRadius,
+								+ centeringOffset, getPaddingTop() + mRadius, mRadius,
 						mPaintInactive);
 			}
 		}

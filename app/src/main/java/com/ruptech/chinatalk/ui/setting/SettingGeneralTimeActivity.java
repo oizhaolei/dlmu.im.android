@@ -7,7 +7,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -71,7 +71,7 @@ public class SettingGeneralTimeActivity extends ActionBarActivity {
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
+			                              boolean fromUser) {
 				update();
 			}
 

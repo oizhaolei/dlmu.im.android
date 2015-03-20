@@ -45,7 +45,9 @@ public class HeaderGridView extends GridView {
 	 * the top or a footer at the bottom.
 	 */
 	private static class FixedViewInfo {
-		/** The view to add to the grid */
+		/**
+		 * The view to add to the grid
+		 */
 		public View view;
 		public ViewGroup viewContainer;
 		/**
@@ -53,7 +55,9 @@ public class HeaderGridView extends GridView {
 		 * {@link ListAdapter#getItem(int)}.
 		 */
 		public Object data;
-		/** <code>true</code> if the fixed view should be selectable in the grid */
+		/**
+		 * <code>true</code> if the fixed view should be selectable in the grid
+		 */
 		public boolean isSelectable;
 	}
 
@@ -96,17 +100,14 @@ public class HeaderGridView extends GridView {
 	 * Add a fixed view to appear at the top of the grid. If addHeaderView is
 	 * called more than once, the views will appear in the order they were
 	 * added. Views added using this call can take focus if they want.
-	 * <p>
+	 * <p/>
 	 * NOTE: Call this before calling setAdapter. This is so HeaderGridView can
 	 * wrap the supplied cursor with one that will also account for header
 	 * views.
-	 * 
-	 * @param v
-	 *            The view to add.
-	 * @param data
-	 *            Data to associate with this view
-	 * @param isSelectable
-	 *            whether the item is selectable
+	 *
+	 * @param v            The view to add.
+	 * @param data         Data to associate with this view
+	 * @param isSelectable whether the item is selectable
 	 */
 	public void addHeaderView(View v, Object data, boolean isSelectable) {
 		ListAdapter adapter = getAdapter();
@@ -133,13 +134,12 @@ public class HeaderGridView extends GridView {
 	 * Add a fixed view to appear at the top of the grid. If addHeaderView is
 	 * called more than once, the views will appear in the order they were
 	 * added. Views added using this call can take focus if they want.
-	 * <p>
+	 * <p/>
 	 * NOTE: Call this before calling setAdapter. This is so HeaderGridView can
 	 * wrap the supplied cursor with one that will also account for header
 	 * views.
-	 * 
-	 * @param v
-	 *            The view to add.
+	 *
+	 * @param v The view to add.
 	 */
 	public void addHeaderView(View v) {
 		addHeaderView(v, null, true);
@@ -151,11 +151,10 @@ public class HeaderGridView extends GridView {
 
 	/**
 	 * Removes a previously-added header view.
-	 * 
-	 * @param v
-	 *            The view to remove
+	 *
+	 * @param v The view to remove
 	 * @return true if the view was removed, false if the view was not a header
-	 *         view
+	 * view
 	 */
 	public boolean removeHeaderView(View v) {
 		if (mHeaderViewInfos.size() > 0) {
@@ -217,7 +216,7 @@ public class HeaderGridView extends GridView {
 	 * ListAdapter used when a HeaderGridView has header views. This ListAdapter
 	 * wraps another one and also keeps track of the header views and their
 	 * associated data objects.
-	 * <p>
+	 * <p/>
 	 * This is intended as a base class; you will probably not need to use this
 	 * class directly in your own code.
 	 */
@@ -235,7 +234,7 @@ public class HeaderGridView extends GridView {
 		private final boolean mIsFilterable;
 
 		public HeaderViewGridAdapter(ArrayList<FixedViewInfo> headerViewInfos,
-				ListAdapter adapter) {
+		                             ListAdapter adapter) {
 			mAdapter = adapter;
 			mIsFilterable = adapter instanceof Filterable;
 			if (headerViewInfos == null) {

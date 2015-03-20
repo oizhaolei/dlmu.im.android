@@ -25,7 +25,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.FileHelper;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.Gallery;
@@ -44,7 +44,7 @@ public class ImageViewActivity extends ActionBarActivity {
 
 		@Override
 		public void onPageScrolled(int position, float positionOffset,
-				int positionOffsetPixels) {
+		                           int positionOffsetPixels) {
 
 		}
 
@@ -71,24 +71,24 @@ public class ImageViewActivity extends ActionBarActivity {
 		return new SimpleImageLoadingListener() {
 			@Override
 			public void onLoadingComplete(String imageUri, View view,
-					Bitmap loadedImage) {
+			                              Bitmap loadedImage) {
 				imageProgressBar.setVisibility(View.GONE);
 			}
 
 			@Override
 			public void onLoadingFailed(String imageUri, View view,
-					FailReason failReason) {
+			                            FailReason failReason) {
 				switch (failReason.getType()) {
-				case IO_ERROR:
-					break;
-				case DECODING_ERROR:
-					break;
-				case NETWORK_DENIED:
-					break;
-				case OUT_OF_MEMORY:
-					break;
-				case UNKNOWN:
-					break;
+					case IO_ERROR:
+						break;
+					case DECODING_ERROR:
+						break;
+					case NETWORK_DENIED:
+						break;
+					case OUT_OF_MEMORY:
+						break;
+					case UNKNOWN:
+						break;
 				}
 				imageProgressBar.setVisibility(View.GONE);
 				view.setTag(null);
@@ -123,7 +123,7 @@ public class ImageViewActivity extends ActionBarActivity {
 
 			@Override
 			public void onLoadingComplete(String imageUri, final View view,
-					final Bitmap loadedImage) {
+			                              final Bitmap loadedImage) {
 				imageProgressBar.setVisibility(View.GONE);
 
 				int imageViewWidth = view.getMeasuredWidth();
@@ -144,18 +144,18 @@ public class ImageViewActivity extends ActionBarActivity {
 
 			@Override
 			public void onLoadingFailed(String imageUri, View view,
-					FailReason failReason) {
+			                            FailReason failReason) {
 				switch (failReason.getType()) {
-				case IO_ERROR:
-					break;
-				case DECODING_ERROR:
-					break;
-				case NETWORK_DENIED:
-					break;
-				case OUT_OF_MEMORY:
-					break;
-				case UNKNOWN:
-					break;
+					case IO_ERROR:
+						break;
+					case DECODING_ERROR:
+						break;
+					case NETWORK_DENIED:
+						break;
+					case OUT_OF_MEMORY:
+						break;
+					case UNKNOWN:
+						break;
 				}
 				imageProgressBar.setVisibility(View.GONE);
 				initLayout(view);
@@ -197,7 +197,7 @@ public class ImageViewActivity extends ActionBarActivity {
 		return new ImageLoadingProgressListener() {
 			@Override
 			public void onProgressUpdate(String imageUri, View view,
-					int current, int total) {
+			                             int current, int total) {
 				int round = Math.round(100.0f * current / total);
 				if (0 <= round && round < 100) {
 					imageProgressBar.setVisibility(View.VISIBLE);
@@ -211,18 +211,17 @@ public class ImageViewActivity extends ActionBarActivity {
 
 	private static void sendSavePhotoNotice(Context context, String filePath) {
 
-		final int iconRes = R.drawable.ic_tttalk_gray_light;
+		final int iconRes = R.drawable.tt_logo2;
 		long when = System.currentTimeMillis();
 		NotificationCompat.Builder mBuilder = new MyNotificationBuilder(context)
 				.setSmallIcon(iconRes)
 				.setLargeIcon(
 						BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.ic_launcher))
+								R.drawable.tt_logo2))
 				.setContentTitle(context.getString(R.string.app_name))
 				.setContentText(
 						context.getString(R.string.photo_save_path)
-								+ FileHelper.getPublicPath(context))
-				.setShowSetting(false);
+								+ FileHelper.getPublicPath(context));
 		Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
 		notificationIntent.setDataAndType(Uri.parse("file://" + filePath),
 				"image/*");
@@ -267,7 +266,9 @@ public class ImageViewActivity extends ActionBarActivity {
 				Toast.makeText(ImageViewActivity.this, R.string.save_failure,
 						Toast.LENGTH_SHORT).show();
 			}
-		};
+		}
+
+		;
 	};
 
 	private int pagerPosition;

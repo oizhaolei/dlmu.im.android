@@ -3,16 +3,13 @@ package com.ruptech.chinatalk.widget;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.ruptech.chinatalk.MessageReceiver;
-import com.ruptech.chinatalk.NotificationSettingReceiver;
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -33,7 +30,7 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 	}
 
 	public MyNotificationBuilder(Context context, boolean isSound,
-			String title, String content, Bitmap icon) {
+	                             String title, String content, Bitmap icon) {
 		super(context);
 		mContext = context;
 		int defaults = Notification.DEFAULT_LIGHTS;
@@ -52,19 +49,19 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 
 		setContent(contentView);
 		setDefaults(defaults);
-		setSmallIcon(R.drawable.ic_tttalk_gray_light);
+		setSmallIcon(R.drawable.tt_logo2);
 		setAutoCancel(true);
 
 		if (icon == null) {
 			setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-					R.drawable.ic_launcher));
+					R.drawable.tt_logo2));
 		} else {
 			setLargeIcon(icon);
 		}
 	}
 
 	private RemoteViews createRemoteViews(Context context, String title,
-			String text) {
+	                                      String text) {
 		contentView = new RemoteViews(context.getPackageName(),
 				R.layout.item_notification);
 		contentView.setTextViewText(R.id.item_notification_title, title);
@@ -74,7 +71,6 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 				new java.util.Date(System.currentTimeMillis()));
 		contentView.setTextViewText(R.id.item_notification_time, time);
 
-		setShowSetting(true);
 		return contentView;
 	}
 
@@ -112,8 +108,7 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 
 	@Override
 	public MyNotificationBuilder setDefaults(int defaults) {
-		if (!MessageReceiver.isNowAvailableNotifiy())
-			defaults &= ~Notification.DEFAULT_SOUND;
+		defaults &= ~Notification.DEFAULT_SOUND;
 
 		super.setDefaults(defaults);
 		return this;
@@ -127,7 +122,7 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 
 	@Override
 	public MyNotificationBuilder setProgress(int max, int progress,
-			boolean indeterminate) {
+	                                         boolean indeterminate) {
 		if (max == 0) {
 			contentView.setViewVisibility(R.id.item_notification_progressBar,
 					View.GONE);
@@ -136,26 +131,6 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 					View.VISIBLE);
 			contentView.setProgressBar(R.id.item_notification_progressBar, max,
 					progress, indeterminate);
-		}
-		return this;
-	}
-
-	public MyNotificationBuilder setShowSetting(boolean isShow) {
-		if (pendingIntent == null) {
-			Intent intent = new Intent(mContext,
-					NotificationSettingReceiver.class);
-
-			pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent,
-					PendingIntent.FLAG_CANCEL_CURRENT);
-		}
-		if (isShow) {
-			contentView.setViewVisibility(R.id.item_notification_setting,
-					View.VISIBLE);
-			contentView.setOnClickPendingIntent(R.id.item_notification_setting,
-					pendingIntent);
-		} else {
-			contentView.setViewVisibility(R.id.item_notification_setting,
-					View.INVISIBLE);
 		}
 		return this;
 	}
@@ -169,17 +144,6 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
 	@Override
 	public MyNotificationBuilder setTicker(CharSequence ticker) {
 		super.setTicker(ticker);
-		return this;
-	}
-
-	@Override
-	public MyNotificationBuilder setVibrate(long[] pattern) {
-		if (MessageReceiver.isNowAvailableNotifiy() && pattern != null
-				&& soundTimeDiff() > MIN_SOUND_INTERVAL) {
-			super.setVibrate(pattern);
-			lastSoundTime = System.currentTimeMillis();
-		} else
-			super.setVibrate(null);
 		return this;
 	}
 

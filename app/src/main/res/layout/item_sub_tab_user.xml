@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:layout_centerVertical="true"
         android:layout_margin="5dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/tt_logo2" />
 
     <TextView
         android:id="@+id/fullname"

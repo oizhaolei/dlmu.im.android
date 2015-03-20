@@ -46,131 +46,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/activity_setting_cleanup_rl"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/cleanup_cache" />
-
-                <TextView
-                    android:id="@+id/main_tab_setting_cache_title_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/main_tab_setting_cache_imageview" />
-
-                <ImageView
-                    android:id="@+id/main_tab_setting_cache_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:visibility="invisible" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/activity_setting_verify_rl"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    android:id="@+id/main_tab_myself_verify_message_title_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/validate" />
-
-                <ImageView
-                    android:id="@+id/main_tab_myself_verify_message_submenu_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/activity_setting_apply_translator_rl"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    android:id="@+id/main_tab_myself_translator_title_textview"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/about_translator" />
-
-                <ImageView
-                    android:id="@+id/main_tab_myself_translator_submenu_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/activity_setting_qa_rl"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/qa" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:id="@+id/activity_setting_view_blocklist_rl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -199,7 +74,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/activity_setting_about_rl"
+                android:id="@+id/main_tab_setting_check_version_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -209,25 +84,37 @@
                 android:paddingTop="15dp" >
 
                 <TextView
+                    android:id="@+id/main_tab_setting_version_title_textview"
                     style="@style/importance_contents_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
-                    android:text="@string/about" />
+                    android:text="@string/version_check" />
 
-                <ImageView
-                    android:id="@+id/setting_about_submenu_new_mark"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                <TextView
+                    android:id="@+id/main_tab_setting_version_new_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="2dp"
-                    android:layout_toLeftOf="@+id/setting_about_submenu_imageview"
-                    android:background="@drawable/new_mark"
-                    android:minWidth="10.0dip"
-                    android:textSize="10.0dip" />
+                    android:layout_toLeftOf="@+id/main_tab_setting_version_version"
+                    android:background="@drawable/item_remind_orange_bg"
+                    android:gravity="center"
+                    android:minWidth="20.0dip"
+                    android:paddingLeft="7.0dip"
+                    android:paddingRight="7.0dip"
+                    android:textColor="#fff"
+                    android:textSize="10.0dip"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/main_tab_setting_version_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/version_imageView1" />
 
                 <ImageView
-                    android:id="@+id/setting_about_submenu_imageview"
+                    android:id="@+id/version_imageView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -237,6 +124,17 @@
                     android:scaleType="matrix"
                     android:src="@drawable/submenu" />
             </RelativeLayout>
+
+            <TextView
+                android:id="@+id/main_tab_setting_show_system_url_textview"
+                style="@style/unimportance_contents_text_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:text="@string/copyright"
+                android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>
 

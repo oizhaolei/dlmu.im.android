@@ -1,13 +1,18 @@
 package com.ruptech.chinatalk.model;
 
+import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.utils.AppPreferences;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChatRoom implements Serializable {
-	public int id;
+	public int id = -1;
 	public String jid;
 	public long accountUserId;
 	public String title;
-	public Long[] participantIds;
+	public List<Long> participantIds = new ArrayList<>();
 
 	public String create_date;
 
@@ -52,11 +57,36 @@ public class ChatRoom implements Serializable {
 		this.title = title;
 	}
 
-	public Long[] getParticipantIds() {
+	public List<Long> getParticipantIds() {
 		return participantIds;
 	}
 
-	public void setParticipantIds(Long[] participantIds) {
+	public List<User> getParticipantUsers() {
+		List<User> users = new ArrayList<>();
+		for (Long id : participantIds) {
+			users.add(App.userDAO.fetchUser(id));
+		}
+		return users;
+	}
+
+	public void setParticipantIds(List<Long> participantIds) {
 		this.participantIds = participantIds;
+	}
+
+	public boolean isGroupChat() {
+		boolean flag = participantIds.size() > 1 || jid.contains(AppPreferences.GROUP_CHAT_SUFFIX);
+		return flag;
+	}
+
+	public User getFirstPaticipantUser() {
+		User user = null;
+		if (participantIds.size() > 0)
+			user = App.userDAO.fetchUser(participantIds.get(0));
+
+		return user;
+	}
+
+	public void addPaticipant(Long userid) {
+		participantIds.add(userid);
 	}
 }

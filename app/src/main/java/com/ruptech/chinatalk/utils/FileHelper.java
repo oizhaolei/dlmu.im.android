@@ -13,7 +13,6 @@ import java.text.DecimalFormat;
  * 对SD卡文件的管理
  *
  * @author ch.linghu
- *
  */
 public class FileHelper {
 	private static final String BASE_PATH = "tttalk";
@@ -24,7 +23,9 @@ public class FileHelper {
 		return file;
 	}
 
-	/** 清除本应用所有的数据 */
+	/**
+	 * 清除本应用所有的数据
+	 */
 	public static void cleanApplicationData(Context context) {
 		// 清理应用文件下文件
 		File basePath = new File(Environment.getExternalStorageDirectory(),
@@ -37,7 +38,9 @@ public class FileHelper {
 		}
 	}
 
-	/** 删除某个文件夹下的所有文件 */
+	/**
+	 * 删除某个文件夹下的所有文件
+	 */
 	private static void deleteFilesByDirectory(File directory) {
 		if (directory != null && directory.exists() && directory.isDirectory()) {
 			for (File item : directory.listFiles()) {
@@ -50,7 +53,9 @@ public class FileHelper {
 		}
 	}
 
-	/** 获取缓存大小 */
+	/**
+	 * 获取缓存大小
+	 */
 	public static String getApplicationDataSize(Context context) {
 		long size = 0;
 		if (Environment.getExternalStorageState().equals(

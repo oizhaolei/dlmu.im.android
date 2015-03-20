@@ -18,13 +18,13 @@ public class LoginTask extends GenericTask {
 
 	@Override
 	protected TaskResult _doInBackground() throws Exception {
-		User me = App.getHttpServer().userLogin(username, password, encrypt);
+		User me = App.getHttpServer().login(username, password, encrypt);
 		App.writeUser(me);
 		return TaskResult.OK;
 	}
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] { username, password, encrypt };
+		return new Object[]{username, password, encrypt};
 	}
 }

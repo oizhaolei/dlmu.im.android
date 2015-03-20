@@ -9,7 +9,7 @@ import com.ruptech.chinatalk.App;
 
 public class UserProvider extends ContentProvider {
 
-	private static final String AUTHORITY = "com.ruptech.chinatalk.userprovider";
+	private static final String AUTHORITY = "com.ruptech.dlmu.im.userprovider";
 
 	private static final String BASE_PATH = "users";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
@@ -41,7 +41,7 @@ public class UserProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
+	                    String[] selectionArgs, String sortOrder) {
 
 		if (selectionArgs.length >= 2) {
 			long id = Long.parseLong(selectionArgs[0]);
@@ -54,7 +54,7 @@ public class UserProvider extends ContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
-			String[] selectionArgs) {
+	                  String[] selectionArgs) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

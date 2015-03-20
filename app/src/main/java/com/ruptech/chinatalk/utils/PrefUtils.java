@@ -8,20 +8,14 @@ import android.util.Base64OutputStream;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.model.Message;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.thirdparty.model.Share;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,13 +23,9 @@ public class PrefUtils {
 
 	private static final String TAG = PrefUtils.class.getSimpleName();
 
-	final public static String PREF_TOP_ALREADY_REMINDER_WINDOW = "pref_top_already_reminder_window";
-
 	final public static String PREF_USERINFO = "USER_INFO";
 
 	final public static String PREF_SERVERAPP_INFO = "SERVER_APP_INFO";
-
-	final public static String PREF_USERINFO_PASS = "USER_INFO_PASSWORD";
 
 	final public static String PREF_NOTIFICATION_EXTRAS = "NOTIFICATION_EXTRAS";
 
@@ -58,8 +48,6 @@ public class PrefUtils {
 
 	final public static String PREF_MESSAGE_LIST = "pref_message_list";
 
-	public static final String PREF_SHARED_PREF_NAME = "com.ruptech.chinatalk.share";
-
 	final public static String PREF_USER_STORY_PHOTO_TAG = "USER_STORY_PHOTO_TAG";
 
 	final public static String PREF_USER_STORY_CHANNEL_LIST = "USER_STORY_CHANNEL_LIST";
@@ -70,8 +58,6 @@ public class PrefUtils {
 	final public static String PREF_THIRD_PARTY_SHARE = "THIRD_PARTY_SHARE";
 
 	final public static String PREF_OPEN_QA = "OPEN_QA";
-
-	final public static String PREF_NETWORK_IMAGE = "NETWORK_IMAGE";
 
 	final public static String PREF_TRANSLATED_NOTICE_TTS = "pref_translated_notice_tts";
 
@@ -116,118 +102,85 @@ public class PrefUtils {
 	final public static String PREF_INIT_DELETED_HOT_PHOTOS = "PREF_INIT_DELETED_HOT_PHOTOS";
 
 
-    public final static String TICKER = "ticker";
-    public final static String LEDNOTIFY = "led";
-    public final static String VIBRATIONNOTIFY = "vibration_list";
-    public final static String AUTO_START = "auto_start";
-    public final static String AUTO_RECONNECT = "reconnect";
-    public final static String SCLIENTNOTIFY = "ringtone";
-    public final static String FOREGROUND = "foregroundService";
-    public final static String DEFAULT_PORT = "5222";
-    public final static int DEFAULT_PORT_INT = 5222;
-    public static final String GMAIL_SERVER = "talk.google.com";
-    public final static String ISNEEDLOG = "isneedlog";
-    public final static String SMACKDEBUG = "smackdebug";
-    public final static String REQUIRE_TLS = "require_tls";
-    public final static String Server = "server";
-    public final static String PORT = "account_port";
-    public final static String RESSOURCE = "account_resource";
-    public final static String MESSAGE_CARBONS = "carbons";
-    public final static String OFFLINE = "offline";
-    public final static String DND = "dnd";
-    public final static String XA = "xa";
-    public final static String AWAY = "away";
-    public final static String AVAILABLE = "available";
-    public final static String CHAT = "chat";
-    public final static String STATUS_MODE = "status_mode";
-    public final static String STATUS_MESSAGE = "status_message";
-    public final static String THEME = "theme";
-    public final static String PRIORITY = "account_prio";
+	public final static String SMACKDEBUG = "smackdebug";
+	public final static String REQUIRE_TLS = "require_tls";
+	public final static String AVAILABLE = "available";
 
-    public static String getPrefString(String key,
-                                       final String defaultValue) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        return settings.getString(key, defaultValue);
-    }
-
-    public static void setPrefString(final String key,
-                                     final String value) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        settings.edit().putString(key, value).commit();
-    }
-
-    public static boolean getPrefBoolean(final String key,
-                                         final boolean defaultValue) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        return settings.getBoolean(key, defaultValue);
-    }
-
-    public static boolean hasKey(final String key) {
-        return PreferenceManager.getDefaultSharedPreferences(App.mContext).contains(
-                key);
-    }
-
-    public static void setPrefBoolean(final String key,
-                                      final boolean value) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        settings.edit().putBoolean(key, value).commit();
-    }
-
-    public static void setPrefInt(final String key,
-                                  final int value) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        settings.edit().putInt(key, value).commit();
-    }
-
-    public static int getPrefInt(final String key,
-                                 final int defaultValue) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        return settings.getInt(key, defaultValue);
-    }
-
-    public static void setPrefFloat(final String key,
-                                    final float value) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        settings.edit().putFloat(key, value).commit();
-    }
-
-    public static float getPrefFloat(final String key,
-                                     final float defaultValue) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        return settings.getFloat(key, defaultValue);
-    }
-
-    public static void setSettingLong(final String key,
-                                      final long value) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        settings.edit().putLong(key, value).commit();
-    }
-
-    public static long getPrefLong(final String key,
-                                   final long defaultValue) {
-        final SharedPreferences settings = PreferenceManager
-                .getDefaultSharedPreferences(App.mContext);
-        return settings.getLong(key, defaultValue);
-    }
-
-	public static boolean existsMessage(Message message) {
-		String[] messages = getPrefMessages();
-		if (messages != null && messages.length > 0) {
-			List<String> messageList = Arrays.asList(messages);
-			return messageList.contains(String.valueOf(message.getMessageid()));
-		} else {
-			return false;
-		}
+	public static String getPrefString(String key,
+	                                   final String defaultValue) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		return settings.getString(key, defaultValue);
 	}
+
+	public static void setPrefString(final String key,
+	                                 final String value) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		settings.edit().putString(key, value).commit();
+	}
+
+	public static boolean getPrefBoolean(final String key,
+	                                     final boolean defaultValue) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		return settings.getBoolean(key, defaultValue);
+	}
+
+	public static boolean hasKey(final String key) {
+		return PreferenceManager.getDefaultSharedPreferences(App.mContext).contains(
+				key);
+	}
+
+	public static void setPrefBoolean(final String key,
+	                                  final boolean value) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		settings.edit().putBoolean(key, value).commit();
+	}
+
+	public static void setPrefInt(final String key,
+	                              final int value) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		settings.edit().putInt(key, value).commit();
+	}
+
+	public static int getPrefInt(final String key,
+	                             final int defaultValue) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		return settings.getInt(key, defaultValue);
+	}
+
+	public static void setPrefFloat(final String key,
+	                                final float value) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		settings.edit().putFloat(key, value).commit();
+	}
+
+	public static float getPrefFloat(final String key,
+	                                 final float defaultValue) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		return settings.getFloat(key, defaultValue);
+	}
+
+	public static void setSettingLong(final String key,
+	                                  final long value) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		settings.edit().putLong(key, value).commit();
+	}
+
+	public static long getPrefLong(final String key,
+	                               final long defaultValue) {
+		final SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(App.mContext);
+		return settings.getLong(key, defaultValue);
+	}
+
 
 	public static boolean existsPrefUserInfo() {
 		return getmPref().contains(PREF_USERINFO);
@@ -307,12 +260,6 @@ public class PrefUtils {
 		return str;
 	}
 
-	public static String getPrefPerferLang() {
-		String str = getmPref().getString(PREF_PREFER_LANG,
-				App.readUser().getLang());
-		return str;
-	}
-
 	public static String getPrefException() {
 		String str = getmPref().getString(PREF_EXCEPTION, null);
 		return str;
@@ -344,12 +291,6 @@ public class PrefUtils {
 		int flag = getmPref()
 				.getInt(PREF_STORY_TRANSLATION_SHOW_TIPS_DIALOG, 0);
 		return flag;
-	}
-
-	public static String getPrefThirdPartyType() {
-		String third_party_type = getmPref().getString(
-				AppPreferences.THIRD_PARTY_TYPE, "");
-		return third_party_type;
 	}
 
 	public static boolean getPrefTranslatedNoticeComment() {
@@ -439,17 +380,6 @@ public class PrefUtils {
 		return tag;
 	}
 
-	public static boolean hasPrefThirdPartyAccess() {
-		String third_party_type = getPrefThirdPartyType();
-		String access = getmPref().getString(
-				AppPreferences.THIRD_PARTY_ACCESS_TOKEN, "");
-		if (AppPreferences.THIRD_PARTY_TYPE_GOOGLE.equals(third_party_type)) {
-			return true;
-		} else {
-			return !Utils.isEmpty(third_party_type) && !Utils.isEmpty(access);
-		}
-	}
-
 	public static boolean isShowSystemFreeRechargePointInform(Long userId) {
 		int result = getmPref().getInt(
 				PREF_SHOW_SYS_FREE_RECHARGE_POINT_INFORM + "_" + userId, -1);
@@ -460,14 +390,6 @@ public class PrefUtils {
 		String result = getmPref().getString(
 				PREF_SHOW_SYS_FREE_RECHARGE_POINT_INFORM + "_" + tel, "");
 		return Utils.isEmpty(result) ? false : true;
-	}
-
-	public static boolean isThirdPartyShareInfoEmpty() {
-		if (readThirdParyShare() == null) {
-			return true;
-		} else {
-			return readThirdParyShare().isEmpty();
-		}
 	}
 
 	public static Map<String, Object> readNotificationExtras() {
@@ -514,10 +436,6 @@ public class PrefUtils {
 		return str;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List<Share> readThirdParyShare() {
-		return (List<Share>) readObject(PREF_THIRD_PARTY_SHARE);
-	}
 
 	public static User readUser() {
 		return (User) readObject(PREF_USERINFO);
@@ -544,11 +462,6 @@ public class PrefUtils {
 		remove(getNewMessageCountKey());
 	}
 
-	public static void removePrefPopularType() {
-		App.userPhotoDAO.deleteAll();
-		remove(PREF_POPULAR_TYPE);
-	}
-
 	public static void removePrefPreferLang() {
 		remove(PREF_PREFER_LANG);
 	}
@@ -565,11 +478,6 @@ public class PrefUtils {
 		remove(PREF_SHOW_ANNOUNCEMENT_DIALOG_LAST_UPDATE);
 	}
 
-	public static void removePrefThirdPartyAccess() {
-		remove(AppPreferences.THIRD_PARTY_ACCESS_TOKEN);
-		remove(AppPreferences.THIRD_PARTY_TYPE);
-		remove(AppPreferences.THIRD_PARTY_USER_ID);
-	}
 
 	public static void removePrefTTTLastSelectedLangs() {
 		remove(PREF_TTT_LAST_SELECTED_LANG + "_1");
@@ -603,7 +511,7 @@ public class PrefUtils {
 		if (null != recommendedFriendUserList) {
 			for (int i = 0; i < recommendedFriendUserList.size(); i++) {
 				User user = recommendedFriendUserList.get(i);
-				if (tel.equals(user.getTel())) {
+				if (tel.equals(user.getUsername())) {
 					recommendedFriendUserList.remove(i);
 					writeRecommendedFriendUser(recommendedFriendUserList);
 					break;
@@ -654,18 +562,6 @@ public class PrefUtils {
 				.commit();
 	}
 
-	public static void savePrefMessageLastUpdatedate(long userId,
-			String prefDate) {
-		String dbLastUpdatedate = App.messageDAO.getMaxLastUpdatedate();// DB时间
-		if (prefDate == null
-				|| (dbLastUpdatedate != null && dbLastUpdatedate
-						.compareTo(prefDate) > 0)) {// DB时间大于pref时间
-			prefDate = dbLastUpdatedate;
-		}
-		getmPref().edit()
-				.putString(userId + PREF_MESSAGE_LAST_UPDATE, prefDate)
-				.commit();
-	}
 
 	public static void savePrefNewMessageCount(JSONObject json) {
 		getmPref().edit().putString(getNewMessageCountKey(), json.toString())
@@ -700,21 +596,6 @@ public class PrefUtils {
 	public static void savePrefStoryTranslateShowTipsDialog() {
 		getmPref().edit().putInt(PREF_STORY_TRANSLATION_SHOW_TIPS_DIALOG, 1)
 				.commit();
-	}
-
-	public static void savePrefThirdPartyAccess(String third_party_type,
-			String access_token, String third_party_user_id) {
-		getmPref()
-				.edit()
-				.putString(AppPreferences.THIRD_PARTY_ACCESS_TOKEN,
-						access_token).commit();
-		getmPref().edit()
-				.putString(AppPreferences.THIRD_PARTY_TYPE, third_party_type)
-				.commit();
-		getmPref()
-				.edit()
-				.putString(AppPreferences.THIRD_PARTY_USER_ID,
-						third_party_user_id).commit();
 	}
 
 	public static void savePrefTranslatedNoticeComment(boolean isChecked) {
@@ -823,74 +704,6 @@ public class PrefUtils {
 		getmPref().edit().putString(PREF_EXCEPTION, message).commit();
 	}
 
-	public static void writeGuide(JSONObject guide_data) {
-		if (guide_data == null) {
-			removeGuide();
-		} else {
-			if (guide_data.has("third_party_share_list")) {
-				JSONArray third_party_share_list = new JSONArray();
-				try {
-					third_party_share_list = guide_data
-							.getJSONArray("third_party_share_list");
-				} catch (JSONException e1) {
-				}
-				// App.readServerAppInfo().setThirdPartyShareList(
-				// third_party_share_list);
-
-				List<Share> thirdPartyShareArray = new ArrayList<Share>();
-				int size = third_party_share_list.length();
-				for (int i = 0; i < size; i++) {
-					try {
-						JSONObject third_party_share = third_party_share_list
-								.getJSONObject(i);
-						Share thirdPartyShare = new Share(third_party_share);
-
-						thirdPartyShareArray.add(thirdPartyShare);
-					} catch (JSONException e) {
-					}
-				}
-				writeObject(thirdPartyShareArray, PREF_THIRD_PARTY_SHARE);
-			}
-
-			List<Map<String, String>> qaMapList = new ArrayList<Map<String, String>>();
-			if (guide_data.has("qa_list")) {
-				try {
-					JSONArray qa_list = guide_data.getJSONArray("qa_list");
-
-					int size = qa_list.length();
-					qaMapList = new ArrayList<Map<String, String>>(size);
-
-					for (int i = 0; i < size; i++) {
-						JSONObject jo = qa_list.getJSONObject(i);
-
-						Map<String, String> message = Utils.convertJsonItem(jo);
-						qaMapList.add(message);
-					}
-				} catch (JSONException e1) {
-				}
-				writeObject(qaMapList, PREF_OPEN_QA);
-			}
-
-		}
-	}
-
-	public static void writeMessageList(Message message) {
-		if (message != null) {
-			String[] messages = getPrefMessages();
-			if (messages != null && messages.length > 0) {
-				String str = "";
-				int start = 0;
-				if (messages.length > 500) {
-					start = messages.length - 500;
-				}
-				for (int i = start; i < messages.length; i++) {
-					str += messages[i] + ",";
-				}
-				str += message.getMessageid();
-				getmPref().edit().putString(PREF_MESSAGE_LIST, str).commit();
-			}
-		}
-	}
 
 	public static void writeNotificationExtras(Map<String, Object> extras) {
 		writeObject(extras, PREF_NOTIFICATION_EXTRAS);

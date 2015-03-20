@@ -6,8 +6,8 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.BuildConfig;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -16,11 +16,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class HttpConnection {
@@ -89,7 +87,7 @@ public abstract class HttpConnection {
 	}
 
 	public Response uploadFile(String url, File file,
-			final UploadProgress uploadProgress) {
+	                           final UploadProgress uploadProgress) {
 		if (BuildConfig.DEBUG) {
 			Log.i(TAG, url + ", " + file.getName());
 		}
@@ -102,45 +100,9 @@ public abstract class HttpConnection {
 	}
 
 	/**
-	 * Returns the no sign base URL
-	 *
-	 * @param ifPage
-	 *            业务接口名
-	 * @return the base URL
-	 */
-
-	public String genRequestNoSignURL(String ifPage, Map<String, String> params) {
-		// check ServerAppInfo
-		if (App.readServerAppInfo() == null) {
-			ServerAppInfo serverAppInfo = null;
-			try {
-				serverAppInfo = ver();
-			} catch (Exception e) {
-			}
-			App.writeServerAppInfo(serverAppInfo);
-		}
-		if (App.readServerAppInfo() == null) {
-			return null;
-		}
-
-		//
-		if (params == null) {
-			params = new HashMap<>();
-		}
-
-		String url = ifPage;
-		if (!url.startsWith("http")) {
-			url = getAppServerUrl() + url;
-		}
-		url += "?" + encodeParameters(params);
-		return url;
-	}
-
-	/**
 	 * Returns the base URL
 	 *
-	 * @param ifPage
-	 *            业务接口名
+	 * @param ifPage 业务接口名
 	 * @return the base URL
 	 */
 
@@ -193,7 +155,7 @@ public abstract class HttpConnection {
 
 	/**
 	 * Issues an HTTP GET request.
-	 * 
+	 *
 	 * @return the response
 	 * @throws HttpException
 	 */
@@ -238,24 +200,15 @@ public abstract class HttpConnection {
 	}
 
 	public ServerAppInfo ver() throws Exception {
-		Response res = null;
-		List<String> excludeUrls = new ArrayList<>();
-        String[] SERVER_BASE_URL = new String[]{
-                App.properties.getProperty("SERVER_BASE_URL1"),App.properties.getProperty("SERVER_BASE_URL2")
-        };
-		for (int i = 0; res == null
-				&& i < SERVER_BASE_URL.length; i++) {
-			String url = SERVER_BASE_URL[i] + "utils/ver.php";
-			try {
-				res = get(url);
-				JSONObject verInfo = res.asJSONObject();
-				ServerAppInfo info = ServerAppInfo.parse(verInfo, excludeUrls);
-				return info;
-			} catch (Exception e) {
-				excludeUrls.add(SERVER_BASE_URL[i]);
-				if (BuildConfig.DEBUG)
-					Log.e(TAG, e.getMessage(), e);
-			}
+		String url = App.properties.getProperty("SERVER_BASE_URL") + "ver";
+		try {
+			Response res = get(url);
+			JSONObject verInfo = res.asJSONObject();
+			ServerAppInfo info = ServerAppInfo.parse(verInfo);
+			return info;
+		} catch (Exception e) {
+			if (BuildConfig.DEBUG)
+				Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -282,7 +235,7 @@ public abstract class HttpConnection {
 	}
 
 	protected Response _uploadFile(String ifPage, File file,
-			UploadProgress uploadProgress) throws Exception {
+	                               UploadProgress uploadProgress) throws Exception {
 		Map<String, String> params = genParams(null);
 
 		for (int i = 0; i < 5; i++) {

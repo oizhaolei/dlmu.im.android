@@ -46,19 +46,18 @@ public class ChatRoomDAO {
 	public ChatRoom fetchChatRoomByJid(String jid) {
 		ChatRoom chatRoom = mSqlTemplate.queryForObject(mRowMapper, ChatRoomTable.getName(), null, ChatRoomTable.Columns.JID
 				+ " = ?", new String[]{jid}, null, null, null, "1");
-		if (chatRoom!=null) {
-			Long[] participantIds = fetchParticipantIdsFromChatRoom(chatRoom.getId());
+		if (chatRoom != null) {
+			List<Long> participantIds = fetchParticipantIdsFromChatRoom(chatRoom.getId());
 			chatRoom.setParticipantIds(participantIds);
 		}
 		return chatRoom;
 	}
 
-	private Long[] fetchParticipantIdsFromChatRoom(int chatRoomId) {
+	private List<Long> fetchParticipantIdsFromChatRoom(int chatRoomId) {
 		List<Long> list = new ArrayList<>();
-
 		final Cursor c = mSqlTemplate.getDb(false).query(ChatRoomUserTable.getName(),
 				new String[]{ChatRoomUserTable.Columns.PARTICIPANT_ID},
-				ChatRoomUserTable.Columns.CHATROOM_ID,
+				ChatRoomUserTable.Columns.CHATROOM_ID + "=? ",
 				new String[]{String.valueOf(chatRoomId)}, null, null, null, null);
 		try {
 			while (c.moveToNext()) {
@@ -68,9 +67,8 @@ public class ChatRoomDAO {
 		} finally {
 			c.close();
 		}
-		Long[] participantIds = new Long[list.size()];
-		list.toArray(participantIds);
-		return participantIds;
+
+		return list;
 	}
 
 

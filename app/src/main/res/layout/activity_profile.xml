@@ -45,13 +45,6 @@
                     android:layout_toRightOf="@+id/activity_profile_user_tel_title_textview"
                     android:gravity="right" >
 
-                    <ImageView
-                        android:id="@+id/activity_profile_volunteer_imageview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="matrix"
-                        android:src="@drawable/volunteer" />
-
                     <TextView
                         android:id="@+id/activity_profile_user_tel_textview"
                         android:layout_width="wrap_content"
@@ -60,43 +53,6 @@
                         android:singleLine="true"
                         android:text="@string/empty" />
                 </LinearLayout>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/activity_profile_user_password_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/password" />
-
-                <TextView
-                    android:id="@+id/activity_profile_user_password_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/activity_profile_user_password_imageview"
-                    android:text="@string/default_password" />
-
-                <ImageView
-                    android:id="@+id/activity_profile_user_password_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -191,97 +147,6 @@
 
                 <ImageView
                     android:id="@+id/activity_profile_user_fullname_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/activity_profile_user_language_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/preference_item"
-                android:gravity="center_vertical"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp" >
-
-                <TextView
-                    android:id="@+id/activity_profile_user_language_title_text"
-                    style="@style/importance_contents_text_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:text="@string/language" />
-
-                <HorizontalScrollView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/activity_profile_user_language_imageview"
-                    android:layout_toRightOf="@+id/activity_profile_user_language_title_text"
-                    android:fillViewport="true"
-                    android:scrollbars="none" >
-
-                    <RelativeLayout
-                        android:id="@+id/activity_profile_user_language_rl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="right"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal" >
-
-                            <ImageView
-                                android:id="@+id/activity_profile_user_thumb_lang_imageview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="2dp" />
-
-                            <TextView
-                                android:id="@+id/activity_profile_user_language_textview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="right"
-                                android:layout_marginLeft="2dp"
-                                android:text="@string/empty" />
-
-                            <ImageView
-                                android:id="@+id/activity_profile_user_thumb_lang2_imageview"
-                                android:layout_width="16dp"
-                                android:layout_height="11dp"
-                                android:layout_marginLeft="5dp"
-                                android:scaleType="centerCrop" />
-
-                            <ImageView
-                                android:id="@+id/activity_profile_user_thumb_lang3_imageview"
-                                android:layout_width="16dp"
-                                android:layout_height="11dp"
-                                android:layout_marginLeft="5dp"
-                                android:scaleType="centerCrop" />
-
-                            <ImageView
-                                android:id="@+id/activity_profile_user_thumb_lang4_imageview"
-                                android:layout_width="16dp"
-                                android:layout_height="11dp"
-                                android:layout_marginLeft="5dp"
-                                android:scaleType="centerCrop" />
-                        </LinearLayout>
-                    </RelativeLayout>
-                </HorizontalScrollView>
-
-                <ImageView
-                    android:id="@+id/activity_profile_user_language_imageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"

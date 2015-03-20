@@ -10,7 +10,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -24,22 +24,10 @@ public class SettingGeneralActivity extends ActionBarActivity {
 
 	@InjectView(R.id.activity_setting_message_notification_slipswitch)
 	ToggleButton messageNotificationSlipswitch;
-	@InjectView(R.id.activity_setting_comment_notification_slipswitch)
-	ToggleButton commentNotificationSlipswitch;
-	@InjectView(R.id.activity_setting_reply_notification_slipswitch)
-	ToggleButton replyNotificationSlipswitch;
-	@InjectView(R.id.activity_setting_like_notification_slipswitch)
-	ToggleButton likeNotificationSlipswitch;
-	@InjectView(R.id.activity_setting_friend_notification_slipswitch)
-	ToggleButton friendNotificationSlipswitch;
-	@InjectView(R.id.activity_setting_translate_notification_slipswitch)
-	ToggleButton translateNotificationSlipswitch;
 	@InjectView(R.id.activity_setting_not_interrupt_switch_slipswitch)
 	ToggleButton interruptTimeSlipswitch;
 	@InjectView(R.id.activity_setting_not_interrupt_time_textview)
 	TextView interruptTimeText;
-	@InjectView(R.id.activity_setting_tts_slipswitch)
-	ToggleButton ttsSlipswitch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +79,7 @@ public class SettingGeneralActivity extends ActionBarActivity {
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
+					                             boolean isChecked) {
 						if (isChecked) {
 							PrefUtils.savePrefTranslatedNoticeMessage(true);
 						} else {
@@ -100,108 +88,6 @@ public class SettingGeneralActivity extends ActionBarActivity {
 					}
 				});
 
-		boolean pref_translated_notice_comment = PrefUtils
-				.getPrefTranslatedNoticeComment();
-
-		commentNotificationSlipswitch
-				.setChecked(pref_translated_notice_comment);
-		commentNotificationSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							PrefUtils.savePrefTranslatedNoticeComment(true);
-						} else {
-							PrefUtils.savePrefTranslatedNoticeComment(false);
-						}
-					}
-				});
-
-		boolean pref_translated_notice_reply = PrefUtils
-				.getPrefTranslatedNoticeReply();
-
-		replyNotificationSlipswitch.setChecked(pref_translated_notice_reply);
-		replyNotificationSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							PrefUtils.savePrefTranslatedNoticeReply(true);
-						} else {
-							PrefUtils.savePrefTranslatedNoticeReply(false);
-						}
-					}
-				});
-
-		boolean pref_translated_notice_like = PrefUtils
-				.getPrefTranslatedNoticeLike();
-
-		likeNotificationSlipswitch.setChecked(pref_translated_notice_like);
-		likeNotificationSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							PrefUtils.savePrefTranslatedNoticeLike(true);
-						} else {
-							PrefUtils.savePrefTranslatedNoticeLike(false);
-						}
-					}
-				});
-
-		boolean pref_translated_notice_friend = PrefUtils
-				.getPrefTranslatedNoticeFriend();
-
-		friendNotificationSlipswitch.setChecked(pref_translated_notice_friend);
-		friendNotificationSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							PrefUtils.savePrefTranslatedNoticeFriend(true);
-						} else {
-							PrefUtils.savePrefTranslatedNoticeFriend(false);
-						}
-					}
-				});
-
-		boolean pref_translated_notice_translate = PrefUtils
-				.getPrefTranslatedNoticeTranslate();
-
-		translateNotificationSlipswitch
-				.setChecked(pref_translated_notice_translate);
-		translateNotificationSlipswitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							PrefUtils.savePrefTranslatedNoticeTranslate(true);
-						} else {
-							PrefUtils.savePrefTranslatedNoticeTranslate(false);
-						}
-					}
-				});
-
-		boolean pref_translated_notice_tts = PrefUtils
-				.getPrefTranslatedNoticeTts();
-
-		ttsSlipswitch.setChecked(pref_translated_notice_tts);
-		ttsSlipswitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				if (isChecked) {
-					PrefUtils.savePrefTranslatedNoticeTts(true);
-				} else {
-					PrefUtils.savePrefTranslatedNoticeTts(false);
-				}
-			}
-		});
 
 		boolean pref_translated_interrupt_switch = PrefUtils
 				.getPrefTranslatedNoticeInterruptSwitch();
@@ -210,7 +96,7 @@ public class SettingGeneralActivity extends ActionBarActivity {
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
+					                             boolean isChecked) {
 						PrefUtils
 								.savePrefTranslatedNoticeInterruptSwitch(isChecked);
 					}

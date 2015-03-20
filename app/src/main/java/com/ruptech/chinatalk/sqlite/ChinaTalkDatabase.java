@@ -10,19 +10,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
-import com.ruptech.chinatalk.BuildConfig;
+import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.utils.Utils;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChannelTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.CommentNewsTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.HotUserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.MessageTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomUserTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPhotoTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.UserPropTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class ChinaTalkDatabase {
@@ -49,12 +43,12 @@ public class ChinaTalkDatabase {
 			if (BuildConfig.DEBUG)
 				Log.d(TAG, "Upgrade Database.");
 			if (oldVersion == 57) {
-                try {
-                    udpateTable57to67(db);
-                } catch (Exception e) {
-                    Utils.sendClientException(e);
-                }
-            } else {
+				try {
+					udpateTable57to67(db);
+				} catch (Exception e) {
+					Utils.sendClientException(e);
+				}
+			} else {
 				dropAllTables(db);
 				createAllTables(db);
 				createAllIndexes(db);
@@ -84,63 +78,32 @@ public class ChinaTalkDatabase {
 	// indexes
 	private static void createAllIndexes(SQLiteDatabase db) {
 		db.execSQL(UserTable.getCreateIndexSQL());
-		db.execSQL(UserPhotoTable.getCreateIndexSQL());
-		db.execSQL(UserPropTable.getCreateIndexSQL());
 
 		db.execSQL(FriendTable.getCreateIndexSQL());
-		db.execSQL(MessageTable.getCreateIndexSQL());
-
-		db.execSQL(ChannelTable.getCreateIndexSQL());
-
-		db.execSQL(HotUserPhotoTable.getCreateIndexSQL());
-		db.execSQL(CommentNewsTable.getCreateIndexSQL());
-        db.execSQL(ChatTable.getCreateIndexSQL());
-        db.execSQL(ChatRoomTable.getCreateIndexSQL());
-        db.execSQL(ChatRoomUserTable.getCreateIndexSQL());
+		db.execSQL(ChatTable.getCreateIndexSQL());
+		db.execSQL(ChatRoomTable.getCreateIndexSQL());
+		db.execSQL(ChatRoomUserTable.getCreateIndexSQL());
 	}
 
 	// Create All tables
 	private static void createAllTables(SQLiteDatabase db) {
 		db.execSQL(UserTable.getCreateSQL());
-		db.execSQL(UserPhotoTable.getCreateSQL());
-		db.execSQL(UserPropTable.getCreateSQL());
-
 		db.execSQL(FriendTable.getCreateSQL());
-		db.execSQL(MessageTable.getCreateSQL());
-
-		db.execSQL(ChannelTable.getCreateSQL());
-
-		db.execSQL(HotUserPhotoTable.getCreateSQL());
-
-		db.execSQL(CommentNewsTable.getCreateSQL());
-        db.execSQL(ChatTable.getCreateSQL());
-        db.execSQL(ChatRoomTable.getCreateSQL());
-        db.execSQL(ChatRoomUserTable.getCreateSQL());
+		db.execSQL(ChatTable.getCreateSQL());
+		db.execSQL(ChatRoomTable.getCreateSQL());
+		db.execSQL(ChatRoomUserTable.getCreateSQL());
 	}
 
 	private static void dropAllTables(SQLiteDatabase db) {
 		db.execSQL(UserTable.getDropSQL());
-		db.execSQL(UserPhotoTable.getDropSQL());
-		db.execSQL(UserPropTable.getDropSQL());
-
 		db.execSQL(FriendTable.getDropSQL());
-		db.execSQL(MessageTable.getDropSQL());
-
-		db.execSQL(ChannelTable.getDropSQL());
-
-		db.execSQL(HotUserPhotoTable.getDropSQL());
-
-		db.execSQL(CommentNewsTable.getDropSQL());
-        db.execSQL(ChatTable.getDropSQL());
-        db.execSQL(ChatRoomTable.getDropSQL());
-        db.execSQL(ChatRoomUserTable.getDropSQL());
+		db.execSQL(ChatTable.getDropSQL());
+		db.execSQL(ChatRoomTable.getDropSQL());
+		db.execSQL(ChatRoomUserTable.getDropSQL());
 	}
 
 	/**
 	 * Get Database
-	 *
-	 * @param context
-	 * @return
 	 */
 	public static synchronized ChinaTalkDatabase getInstance(Context context) {
 		if (null == sInstance) {
@@ -150,12 +113,11 @@ public class ChinaTalkDatabase {
 	}
 
 	private static void udpateTable57to67(SQLiteDatabase db) {
-        db.execSQL(ChatTable.getCreateSQL());
-        db.execSQL(ChatRoomTable.getCreateSQL());
-        db.execSQL(ChatRoomUserTable.getCreateSQL());
-        db.execSQL(ChatTable.getBulkInsertSQL());
-        db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
-                + UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
+		db.execSQL(ChatTable.getCreateSQL());
+		db.execSQL(ChatRoomTable.getCreateSQL());
+		db.execSQL(ChatRoomUserTable.getCreateSQL());
+		db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
+				+ UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
 
 	}
 
@@ -167,7 +129,7 @@ public class ChinaTalkDatabase {
 	public static CursorFactory mCursorFactory = new CursorFactory() {
 		@Override
 		public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
-				String editTable, SQLiteQuery query) {
+		                        String editTable, SQLiteQuery query) {
 			if (BuildConfig.DEBUG)
 				Log.i(TAG, query.toString());
 			return new SQLiteCursor(db, driver, editTable, query);
@@ -176,8 +138,6 @@ public class ChinaTalkDatabase {
 
 	/**
 	 * Construct
-	 *
-	 * @param context
 	 */
 	private ChinaTalkDatabase(Context context) {
 		mOpenHelper = new DatabaseHelper(context, mCursorFactory);
@@ -195,9 +155,6 @@ public class ChinaTalkDatabase {
 
 	/**
 	 * Get Database Connection
-	 *
-	 * @param writeable
-	 * @return
 	 */
 	public SQLiteDatabase getDb(boolean writeable) {
 		if (writeable) {
@@ -209,8 +166,6 @@ public class ChinaTalkDatabase {
 
 	/**
 	 * Get SQLiteDatabase Open Helper
-	 *
-	 * @return
 	 */
 	public SQLiteOpenHelper getSQLiteOpenHelper() {
 		return mOpenHelper;

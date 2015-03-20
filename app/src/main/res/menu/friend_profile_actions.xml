@@ -33,16 +33,6 @@
                 android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
                 android:onClick="setting_reportFriend"
                 android:title="@string/friend_menu_report"/>
-            <item
-                android:id="@+id/friend_menu_more_chat_history"
-                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
-                android:onClick="setting_get_historyFriend"
-                android:title="@string/friend_menu_more_chat_history"/>
-            <item
-                android:id="@+id/friend_menu_clean_chat_history"
-                android:actionViewClass="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
-                android:onClick="setting_clean_message"
-                android:title="@string/friend_menu_clean_chat_history"/>
         </menu>
     </item>
 

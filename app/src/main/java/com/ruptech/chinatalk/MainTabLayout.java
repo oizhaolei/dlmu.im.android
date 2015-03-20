@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,10 +89,8 @@ public class MainTabLayout extends LinearLayout implements OnClickListener {
 
 	public void init() {
 
-		mTabs.add(new TabItem(R.string.popular, R.drawable.tab_icon_popular));
 		mTabs.add(new TabItem(R.string.main_tab_discover,
 				R.drawable.tab_icon_discover));
-		mTabs.add(new TabItem(R.string.main_tab_post, R.drawable.tab_icon_post));
 		mTabs.add(new TabItem(R.string.main_tab_chat, R.drawable.tab_icon_chat));
 		mTabs.add(new TabItem(R.string.main_tab_myself,
 				R.drawable.tab_icon_service));
@@ -108,12 +107,6 @@ public class MainTabLayout extends LinearLayout implements OnClickListener {
 				&& previousTabClickTime + 2000 > System.currentTimeMillis()
 				&& tabClickListener != null) {
 			tabClickListener.onTabDoubleClick(v.getId());
-		}
-		if (v.getId() != R.string.main_tab_post) {
-			if (selectedView != null)
-				selectedView.setSelected(false);
-			v.setSelected(true);
-			selectedView = v;
 		}
 
 		previousTabClickTime = System.currentTimeMillis();
@@ -172,18 +165,15 @@ public class MainTabLayout extends LinearLayout implements OnClickListener {
 
 	private void setTabIndex(int resId, int index) {
 		switch (resId) {
-		case R.string.popular:
-			MainActivity.TAB_INDEX_POPULAR = index;
-			break;
-		case R.string.main_tab_discover:
-			MainActivity.TAB_INDEX_DISCOVER = index;
-			break;
-		case R.string.main_tab_chat:
-			MainActivity.TAB_INDEX_CHAT = index;
-			break;
-		case R.string.main_tab_myself:
-			MainActivity.TAB_INDEX_MYSELF = index;
-			break;
+			case R.string.main_tab_discover:
+				MainActivity.TAB_INDEX_DISCOVER = index;
+				break;
+			case R.string.main_tab_chat:
+				MainActivity.TAB_INDEX_CHAT = index;
+				break;
+			case R.string.main_tab_myself:
+				MainActivity.TAB_INDEX_MYSELF = index;
+				break;
 
 		}
 	}

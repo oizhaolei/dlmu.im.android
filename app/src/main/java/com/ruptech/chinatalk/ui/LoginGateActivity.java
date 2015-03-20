@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class LoginGateActivity extends Activity {
 
 		@Override
 		public void onPageScrolled(int position, float positionOffset,
-				int positionOffsetPixels) {
+		                           int positionOffsetPixels) {
 		}
 
 		@Override
@@ -50,23 +50,22 @@ public class LoginGateActivity extends Activity {
 
 	/**
 	 * 监听手势监听器
-	 *
 	 */
 	class MyTouchListener implements OnTouchListener {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-			case MotionEvent.ACTION_MOVE:
-				isContinue = false;
-				mStartTime = System.currentTimeMillis();
-				stopTimer();
-				break;
-			case MotionEvent.ACTION_UP:
-				isContinue = true;
-				mStartTime = System.currentTimeMillis();
-				stopTimer();
-				break;
+				case MotionEvent.ACTION_DOWN:
+				case MotionEvent.ACTION_MOVE:
+					isContinue = false;
+					mStartTime = System.currentTimeMillis();
+					stopTimer();
+					break;
+				case MotionEvent.ACTION_UP:
+					isContinue = true;
+					mStartTime = System.currentTimeMillis();
+					stopTimer();
+					break;
 			}
 			return false;
 		}
@@ -74,9 +73,11 @@ public class LoginGateActivity extends Activity {
 
 	public class ViewPagerAdapter extends PagerAdapter {
 		private final List<View> mViews;
+
 		public ViewPagerAdapter(List<View> mViews) {
 			this.mViews = mViews;
 		}
+
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
 			try {
@@ -191,22 +192,12 @@ public class LoginGateActivity extends Activity {
 		if (!checkNetwork()) {
 			return;
 		}
-		Intent intent = new Intent(this, LoginSignupActivity.class);
-		intent.putExtra(LoginSignupActivity.EXTRA_TYPE,
-				LoginSignupActivity.EXTRA_TYPE_LOGIN);
+		Intent intent = new Intent(this, LoginActivity.class);
+		intent.putExtra(LoginActivity.EXTRA_TYPE,
+				LoginActivity.EXTRA_TYPE_LOGIN);
 		startActivity(intent);
 	}
 
-	@OnClick(R.id.activity_login_gate_signup_button)
-	public void doSignupView(View v) {
-		if (!checkNetwork()) {
-			return;
-		}
-		Intent intent = new Intent(this, LoginSignupActivity.class);
-		intent.putExtra(LoginSignupActivity.EXTRA_TYPE,
-				LoginSignupActivity.EXTRA_TYPE_SIGNUP);
-		startActivity(intent);
-	}
 
 	/**
 	 * 底部圆点初始化
@@ -260,6 +251,7 @@ public class LoginGateActivity extends Activity {
 		dots[currentIndex].setEnabled(true);
 		currentIndex = position;
 	}
+
 	private void setupCompnents() {
 		mViews = new ArrayList<View>();
 		LayoutInflater mLi = LayoutInflater.from(this);

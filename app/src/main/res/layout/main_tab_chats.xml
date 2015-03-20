@@ -3,10 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:id="@+id/chat_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
 
         <ListView
             android:id="@+id/chat_list"
@@ -27,72 +23,5 @@
             android:gravity="center"
             android:text="@string/no_data_found"
             android:visibility="gone" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/comment_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" >
-
-        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
-            android:id="@+id/comment_swype"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <ListView
-                android:id="@+id/comment_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:cacheColorHint="@android:color/transparent"
-                android:dividerHeight="1dp"
-                android:drawSelectorOnTop="true"
-                android:listSelector="@drawable/list_selector" >
-            </ListView>
-        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
-
-        <TextView
-            android:id="@+id/comment_emptyview_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/no_data_found"
-            android:visibility="gone" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/news_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" >
-
-        <com.ruptech.chinatalk.widget.SwipeRefreshLayout
-            android:id="@+id/news_swype"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <ListView
-                android:id="@+id/news_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:cacheColorHint="@android:color/transparent"
-                android:dividerHeight="1dp"
-                android:drawSelectorOnTop="true"
-                android:listSelector="@drawable/list_selector" >
-            </ListView>
-        </com.ruptech.chinatalk.widget.SwipeRefreshLayout>
-
-        <TextView
-            android:id="@+id/news_emptyview_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/no_data_found"
-            android:visibility="gone" />
-    </RelativeLayout>
 
 </RelativeLayout>

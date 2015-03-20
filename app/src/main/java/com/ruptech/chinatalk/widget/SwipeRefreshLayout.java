@@ -53,7 +53,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 	private static final float MAX_SWIPE_DISTANCE_FACTOR = .6f;
 	private static final int REFRESH_TRIGGER_DISTANCE = 120;
 	private final SwipeProgressBar mProgressBar; // the thing that shows
-													// progress is going
+	// progress is going
 	private View mTarget; // the content that gets pulled down
 	private int mOriginalOffsetTop;
 	private OnRefreshListener mListener;
@@ -76,7 +76,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 	public boolean isProgressTop = true;
 	private final AccelerateInterpolator mAccelerateInterpolator;
 
-	private static final int[] LAYOUT_ATTRS = new int[] { android.R.attr.enabled };
+	private static final int[] LAYOUT_ATTRS = new int[]{android.R.attr.enabled};
 
 	private final Animation mAnimateToStartPosition = new Animation() {
 		@Override
@@ -194,7 +194,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 	}
 
 	private void animateOffsetToStartPosition(int from,
-			AnimationListener listener) {
+	                                          AnimationListener listener) {
 		mFrom = from;
 		mAnimateToStartPosition.reset();
 		mAnimateToStartPosition.setDuration(mMediumAnimationDuration);
@@ -214,8 +214,8 @@ public class SwipeRefreshLayout extends ViewGroup {
 				final AbsListView absListView = (AbsListView) mTarget;
 				return absListView.getChildCount() > 0
 						&& (absListView.getFirstVisiblePosition() > 0 || absListView
-								.getChildAt(0).getTop() < absListView
-								.getPaddingTop());
+						.getChildAt(0).getTop() < absListView
+						.getPaddingTop());
 			} else {
 				return mTarget.getScrollY() > 0;
 			}
@@ -226,7 +226,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
 	/**
 	 * @return Whether it is possible for the child view of this layout to
-	 *         scroll up. Override this if the child view is a custom view.
+	 * scroll up. Override this if the child view is a custom view.
 	 */
 	public boolean canChildScrollUp() {
 		if (android.os.Build.VERSION.SDK_INT < 14) {
@@ -234,8 +234,8 @@ public class SwipeRefreshLayout extends ViewGroup {
 				final AbsListView absListView = (AbsListView) mTarget;
 				return absListView.getChildCount() > 0
 						&& (absListView.getFirstVisiblePosition() > 0 || absListView
-								.getChildAt(0).getTop() < absListView
-								.getPaddingTop());
+						.getChildAt(0).getTop() < absListView
+						.getPaddingTop());
 			} else {
 				return mTarget.getScrollY() > 0;
 			}
@@ -275,7 +275,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
 	/**
 	 * @return Whether the SwipeRefreshWidget is actively showing refresh
-	 *         progress.
+	 * progress.
 	 */
 	public boolean isRefreshing() {
 		return mRefreshing;
@@ -311,7 +311,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
-			int bottom) {
+	                        int bottom) {
 		final int width = getMeasuredWidth();
 		final int height = getMeasuredHeight();
 		if (this.isProgressTop)
@@ -342,10 +342,10 @@ public class SwipeRefreshLayout extends ViewGroup {
 		if (getChildCount() > 0) {
 			getChildAt(0).measure(
 					MeasureSpec.makeMeasureSpec(getMeasuredWidth()
-							- getPaddingLeft() - getPaddingRight(),
+									- getPaddingLeft() - getPaddingRight(),
 							MeasureSpec.EXACTLY),
 					MeasureSpec.makeMeasureSpec(getMeasuredHeight()
-							- getPaddingTop() - getPaddingBottom(),
+									- getPaddingTop() - getPaddingBottom(),
 							MeasureSpec.EXACTLY));
 		}
 	}
@@ -355,61 +355,61 @@ public class SwipeRefreshLayout extends ViewGroup {
 		final int action = event.getAction();
 		boolean handled = false;
 		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			mCurrPercentage = 0;
-			mDownEvent = MotionEvent.obtain(event);
-			mPrevY = mDownEvent.getY();
-			break;
-		case MotionEvent.ACTION_MOVE:
-			if (mDownEvent != null && !mReturningToStart) {
-				final float eventY = event.getY();
-				float yDiff = eventY - mDownEvent.getY();
+			case MotionEvent.ACTION_DOWN:
+				mCurrPercentage = 0;
+				mDownEvent = MotionEvent.obtain(event);
+				mPrevY = mDownEvent.getY();
+				break;
+			case MotionEvent.ACTION_MOVE:
+				if (mDownEvent != null && !mReturningToStart) {
+					final float eventY = event.getY();
+					float yDiff = eventY - mDownEvent.getY();
 
-				if (canChildScrollUp()) {
-					yDiff = -eventY + mDownEvent.getY();
-				}
-				if (yDiff > mTouchSlop) {
-					// User velocity passed min velocity; trigger a refresh
-					if (yDiff > mDistanceToTriggerSync) {
-						// User movement passed distance; trigger a refresh
-						startRefresh();
-						handled = true;
-						break;
-					} else {
-						// Just track the user's movement
-						setTriggerPercentage(mAccelerateInterpolator
-								.getInterpolation(yDiff
-										/ mDistanceToTriggerSync));
-						float offsetTop = yDiff;
-						if (mPrevY > eventY) {
-							offsetTop = yDiff - mTouchSlop;
+					if (canChildScrollUp()) {
+						yDiff = -eventY + mDownEvent.getY();
+					}
+					if (yDiff > mTouchSlop) {
+						// User velocity passed min velocity; trigger a refresh
+						if (yDiff > mDistanceToTriggerSync) {
+							// User movement passed distance; trigger a refresh
+							startRefresh();
+							handled = true;
+							break;
+						} else {
+							// Just track the user's movement
+							setTriggerPercentage(mAccelerateInterpolator
+									.getInterpolation(yDiff
+											/ mDistanceToTriggerSync));
+							float offsetTop = yDiff;
+							if (mPrevY > eventY) {
+								offsetTop = yDiff - mTouchSlop;
+							}
+
+							updateContentOffsetTop((int) (offsetTop));
+							// if (mPrevY > eventY && (mTarget.getTop() <
+							// mTouchSlop)) {
+							// // If the user puts the view back at the top, we
+							// // don't need to. This shouldn't be considered
+							// // cancelling the gesture as the user can restart
+							// // from the top.
+							// removeCallbacks(mCancel);
+							// } else {
+							// updatePositionTimeout();
+							// }
+							updatePositionTimeout();
+							mPrevY = event.getY();
+							handled = true;
 						}
-
-						updateContentOffsetTop((int) (offsetTop));
-						// if (mPrevY > eventY && (mTarget.getTop() <
-						// mTouchSlop)) {
-						// // If the user puts the view back at the top, we
-						// // don't need to. This shouldn't be considered
-						// // cancelling the gesture as the user can restart
-						// // from the top.
-						// removeCallbacks(mCancel);
-						// } else {
-						// updatePositionTimeout();
-						// }
-						updatePositionTimeout();
-						mPrevY = event.getY();
-						handled = true;
 					}
 				}
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_CANCEL:
-			if (mDownEvent != null) {
-				mDownEvent.recycle();
-				mDownEvent = null;
-			}
-			break;
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				if (mDownEvent != null) {
+					mDownEvent.recycle();
+					mDownEvent = null;
+				}
+				break;
 		}
 		return handled;
 	}
@@ -424,17 +424,13 @@ public class SwipeRefreshLayout extends ViewGroup {
 	 * also be the color of the bar that grows in response to a user swipe
 	 * gesture.
 	 *
-	 * @param colorRes1
-	 *            Color resource.
-	 * @param colorRes2
-	 *            Color resource.
-	 * @param colorRes3
-	 *            Color resource.
-	 * @param colorRes4
-	 *            Color resource.
+	 * @param colorRes1 Color resource.
+	 * @param colorRes2 Color resource.
+	 * @param colorRes3 Color resource.
+	 * @param colorRes4 Color resource.
 	 */
 	public void setColorScheme(int colorRes1, int colorRes2, int colorRes3,
-			int colorRes4) {
+	                           int colorRes4) {
 		ensureTarget();
 		final Resources res = getResources();
 		final int color1 = res.getColor(colorRes1);
@@ -467,8 +463,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 	 * Notify the widget that refresh state has changed. Do not call this when
 	 * refresh is triggered by a swipe gesture.
 	 *
-	 * @param refreshing
-	 *            Whether or not the view should show refresh progress.
+	 * @param refreshing Whether or not the view should show refresh progress.
 	 */
 	public void setRefreshing(boolean refreshing) {
 		if (mRefreshing != refreshing) {

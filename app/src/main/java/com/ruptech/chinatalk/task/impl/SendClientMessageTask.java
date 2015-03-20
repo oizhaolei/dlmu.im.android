@@ -10,14 +10,15 @@ public class SendClientMessageTask extends GenericTask {
 	public SendClientMessageTask(String msg) {
 		this.msg = msg;
 	}
+
 	@Override
 	protected TaskResult _doInBackground() throws Exception {
-		App.getHttpServer().sendClientMessage(msg);
+		//App.getHttpServer().sendClientMessage(msg);
 		return TaskResult.OK;
 	}
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] { msg };
+		return new Object[]{msg};
 	}
 }

@@ -23,26 +23,8 @@
 			        android:layout_height="50dp"
 			        android:scaleType="centerCrop"
 			        android:src="@drawable/default_portrait" />
-			
-			    <ImageView
-			        android:id="@+id/item_main_tab_friend_sms_imageview"
-			        android:layout_width="11dp"
-			        android:layout_height="11dp"
-			        android:layout_alignBottom="@+id/item_main_tab_friend_thumb_imageview"
-			        android:layout_alignRight="@+id/item_main_tab_friend_thumb_imageview"
-			        android:scaleType="centerCrop"
-			        android:src="@drawable/sms"
-			        android:visibility="gone" />
-			
-			    <ImageView
-			        android:id="@+id/item_main_tab_friend_lang_imageview"
-			        android:layout_width="16dp"
-			        android:layout_height="11dp"
-			        android:layout_alignBottom="@+id/item_main_tab_friend_thumb_imageview"
-			        android:layout_alignLeft="@+id/item_main_tab_friend_thumb_imageview"
-			        android:scaleType="centerCrop"
-			        android:src="@drawable/cn" />
-		 </RelativeLayout>
+
+        </RelativeLayout>
 		 <ImageView
             android:id="@+id/item_main_tab_friend_mask"
             android:layout_width="50dp"

@@ -162,9 +162,9 @@
     <string name="login">Login</string>
     <string name="login_failed">Login failed</string>
     <string name="logout">Logout</string>
-    <string name="main_tab_chat">TTTalk</string>
+    <string name="main_tab_chat">Chat</string>
     <string name="main_tab_contact">Contacts</string>
-    <string name="main_tab_discover">Discover</string>
+    <string name="main_tab_discover">Organize</string>
     <string name="main_tab_post">Post</string>
     <string name="main_language">Native Language</string>
     <string name="message_action_accept_translate">Request Translation</string>

@@ -32,7 +32,7 @@ public class RetrieveFollowerUserTask extends GenericTask {
 
 	@Override
 	public Object[] getMsgs() {
-		return new Object[] {sinceId};
+		return new Object[]{sinceId};
 	}
 
 	public long getSinceId() {

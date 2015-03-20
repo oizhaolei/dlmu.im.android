@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.sqlite.RosterProvider;
 import com.ruptech.chinatalk.event.RosterChangeEvent;
+import com.ruptech.chinatalk.sqlite.ChatRoomProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
 import com.ruptech.chinatalk.utils.StatusMode;
 import com.ruptech.chinatalk.utils.Utils;
@@ -73,7 +73,7 @@ public class TTTalkRosterListener implements RosterListener {
 			RosterEntry rosterEntry = mRoster.getEntry(entry);
 			cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
 		}
-		mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
+		mContentResolver.bulkInsert(ChatRoomProvider.CONTENT_URI, cvs);
 		if (isFirstTime) {
 			isFirstTime = false;
 			App.mBus.post(new RosterChangeEvent());
@@ -83,7 +83,7 @@ public class TTTalkRosterListener implements RosterListener {
 	private void updateRosterEntryInDB(final RosterEntry entry) {
 		final ContentValues values = getContentValuesForRosterEntry(entry);
 
-		if (mContentResolver.update(RosterProvider.CONTENT_URI, values,
+		if (mContentResolver.update(ChatRoomProvider.CONTENT_URI, values,
 				ChatRoomTable.Columns.JID + " = ?", new String[]{entry.getUser()}) == 0)
 			addRosterEntryToDB(entry);
 	}
@@ -122,12 +122,12 @@ public class TTTalkRosterListener implements RosterListener {
 
 	private void addRosterEntryToDB(final RosterEntry entry) {
 		ContentValues values = getContentValuesForRosterEntry(entry);
-		Uri uri = mContentResolver.insert(RosterProvider.CONTENT_URI, values);
+		Uri uri = mContentResolver.insert(ChatRoomProvider.CONTENT_URI, values);
 		Log.i(TAG, "addRosterEntryToDB: Inserted " + uri);
 	}
 
 	private void deleteRosterEntryFromDB(final String jabberID) {
-		int count = mContentResolver.delete(RosterProvider.CONTENT_URI,
+		int count = mContentResolver.delete(ChatRoomProvider.CONTENT_URI,
 				ChatRoomTable.Columns.JID + " = ?", new String[]{jabberID});
 		Log.i(TAG, "deleteRosterEntryFromDB: Deleted " + count + " entries");
 	}

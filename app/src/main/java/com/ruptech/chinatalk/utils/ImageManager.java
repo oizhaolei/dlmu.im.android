@@ -41,8 +41,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.BuildConfig;
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.BuildConfig;
+import com.ruptech.dlmu.im.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -58,7 +58,7 @@ import java.io.OutputStream;
  */
 public class ImageManager {
 	private static int calculateInSampleSize(int width, int height,
-			int reqWidth, int reqHeight) {
+	                                         int reqWidth, int reqHeight) {
 		// Raw height and width of image
 		int inSampleSize = 1;
 		while ((height / inSampleSize) > reqHeight
@@ -71,23 +71,21 @@ public class ImageManager {
 
 	/**
 	 * Compress and resize the Image
-	 *
+	 * <p/>
 	 * <br />
 	 * 因为不论图片大小和尺寸如何, 都会对图片进行一次有损压缩, 所以本地压缩应该 考虑图片将会被二次压缩所造成的图片质量损耗
 	 *
 	 * @param sourceFile
-	 * @param quality
-	 *            , 0~100, recommend 100
+	 * @param quality              , 0~100, recommend 100
 	 * @param wifiAvailible
 	 * @param outputStream
 	 * @param context
 	 * @param abstractChatActivity
 	 * @return
-	 * @return
 	 * @throws IOException
 	 */
 	public static File compressImage(File sourceFile, int quality,
-			Context activity, boolean wifiAvailible) throws IOException {
+	                                 Context activity, boolean wifiAvailible) throws IOException {
 		File destFile;
 		FileOutputStream outputStream;
 
@@ -184,7 +182,7 @@ public class ImageManager {
 
 	/**
 	 * 加载本地图片
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 */
@@ -252,7 +250,7 @@ public class ImageManager {
 	}
 
 	public static String getRealPathFromURI(Activity activity, Uri contentUri) {
-		String[] proj = { MediaColumns.DATA };
+		String[] proj = {MediaColumns.DATA};
 		Cursor cursor = activity.managedQuery(contentUri, proj, null, null,
 				null);
 		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
@@ -266,11 +264,10 @@ public class ImageManager {
 	 * @param bitmap
 	 * @param quality
 	 * @param outputStream
-	 * @param file
-	 *            URL/PATH
+	 * @param file         URL/PATH
 	 */
 	private static void writeBitmap(Bitmap bitmap, int quality,
-			OutputStream outputStream) {
+	                                OutputStream outputStream) {
 		if (bitmap == null) {
 			if (BuildConfig.DEBUG)
 				Log.w(TAG, "Can't write file. Bitmap is null.");

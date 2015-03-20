@@ -23,24 +23,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_portrait" />
 
-        <ImageView
-            android:id="@+id/item_main_tab_friend_request_sms_imageview"
-            android:layout_width="11dp"
-            android:layout_height="11dp"
-            android:layout_alignBottom="@+id/item_main_tab_friend_request_thumb_imageview"
-            android:layout_alignRight="@+id/item_main_tab_friend_request_thumb_imageview"
-            android:scaleType="centerCrop"
-            android:src="@drawable/sms"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/item_main_tab_friend_request_lang_imageview"
-            android:layout_width="16dp"
-            android:layout_height="11dp"
-            android:layout_alignBottom="@+id/item_main_tab_friend_request_thumb_imageview"
-            android:layout_alignLeft="@+id/item_main_tab_friend_request_thumb_imageview"
-            android:scaleType="centerCrop"
-            android:src="@drawable/cn" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -75,17 +57,6 @@
                 android:layout_toRightOf="@+id/item_main_tab_friend_content_one_title_textview"
                 android:src="@drawable/female" />
 
-            <TextView
-                android:id="@+id/item_main_tab_friend_content_one_level_textview"
-                android:layout_width="17dp"
-                android:layout_height="17dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/item_main_tab_friend_content_one_gender_imageview"
-                android:background="@drawable/level"
-                android:gravity="center_vertical|center"
-                android:textColor="@color/opacify_white"
-                android:textSize="8sp" />
         </RelativeLayout>
 
         <TextView
@@ -114,9 +85,8 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true" >
 
-        <com.ruptech.chinatalk.widget.processbutton.ActionProcessButton
+        <Button
             android:id="@+id/item_main_tab_add_new_friend_btn"
-            style="@android:attr/tabWidgetStyle"
             android:layout_width="85dp"
             android:layout_height="25dp"
             android:layout_marginRight="5dp"

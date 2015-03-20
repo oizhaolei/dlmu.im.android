@@ -8,11 +8,10 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
+import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
-import com.ruptech.chinatalk.ui.UpdateVersionService;
 import com.ruptech.chinatalk.widget.CustomDialog;
 
 public class ApkUpgrade {
@@ -27,7 +26,7 @@ public class ApkUpgrade {
 		context = activity;
 	}
 
-	public void cancelVersionCheckTask(){
+	public void cancelVersionCheckTask() {
 		if (mVersionCheckTask != null
 				&& mVersionCheckTask.getStatus() == GenericTask.Status.RUNNING) {
 			mVersionCheckTask.cancel(true);
@@ -36,7 +35,7 @@ public class ApkUpgrade {
 	}
 
 	public void checkApkUpdate(boolean silent) {
-		if (dialog != null && dialog.isShowing() ) {
+		if (dialog != null && dialog.isShowing()) {
 			return;
 		}
 		// new version confirm
@@ -44,41 +43,28 @@ public class ApkUpgrade {
 				&& App.readServerAppInfo().verCode > App.mApkVersionOfClient.verCode) {
 			StringBuffer sb = new StringBuffer();
 			sb.append(context.getString(R.string.current_version))
-			.append(":\n\t").append(App.mApkVersionOfClient.verName);
+					.append(":\n\t").append(App.mApkVersionOfClient.verName);
 			sb.append("\n")
-			.append(context.getString(R.string.new_version_found))
-			.append(":\n\t").append(App.readServerAppInfo().verName);
+					.append(context.getString(R.string.new_version_found))
+					.append(":\n\t").append(App.readServerAppInfo().verName);
 			sb.append("\n").append(context.getString(R.string.whether_udpate));
 			dialog = new CustomDialog(context)
 					.setMessage(sb.toString())
-					.setNeutralButton(
-							// 去市场更新
-							context.getString(R.string.goto_app_store_update),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									String downloadUrl = "market://details?id=com.ruptech.chinatalk";
-									Intent i = new Intent(Intent.ACTION_VIEW,
-											Uri.parse(downloadUrl));
-									context.startActivity(i);
-								}
-							})
-					// 设置内容
+							// 设置内容
 					.setNegativeButton(
 							context.getString(R.string.temporarily_no_update),
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
-										int whichButton) {
+								                    int whichButton) {
 								}
 							})
 					.setPositiveButton(context.getString(R.string.update),// 设置确定按钮
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
-										int which) {
-									checkUpdateVsersionWifiAvailible();
+								                    int which) {
+									notificateUpdateVersion();
 								}
 							});// 创建
 			// 显示对话框
@@ -89,34 +75,13 @@ public class ApkUpgrade {
 					Toast.LENGTH_SHORT).show();
 		}
 	}
+	private void notificateUpdateVersion() {
 
-	private void checkUpdateVsersionWifiAvailible(){
-		if(Utils.isWifiAvailible(context)){
-			notificateUpdateVersion();
-		} else {
-			dialog = new CustomDialog(context)
-					.setMessage(
-							context.getString(R.string.wifi_are_not_available))
-					.setNegativeButton(
-							context.getString(R.string.alert_dialog_cancel),
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							})
-					.setPositiveButton(
-							context.getString(R.string.alert_dialog_ok),// 设置确定按钮
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									notificateUpdateVersion();
-								}
-							});// 创建
-			// 显示对话框
-			dialog.show();
-		}
+		String downloadUrl = App.readServerAppInfo().getAppServerUrl() + App.readServerAppInfo().appname + ".apk";
+		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+		browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(browserIntent);
+
 	}
 
 	public void doRetrieveServerVersion(TaskListener versionCheckListener) {
@@ -130,11 +95,5 @@ public class ApkUpgrade {
 		mVersionCheckTask.setListener(versionCheckListener);
 
 		mVersionCheckTask.execute();
-	}
-
-	private void notificateUpdateVersion() {
-		Intent updateIntent = new Intent(App.mContext,
-				UpdateVersionService.class);
-		App.mContext.startService(updateIntent);
 	}
 }

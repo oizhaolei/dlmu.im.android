@@ -10,24 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.R;
-import com.ruptech.chinatalk.event.ValidateEmailEvent;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.model.UserPhoto;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.ui.ImageViewActivity;
-import com.ruptech.chinatalk.ui.dialog.ChangeFullNameActivity;
-import com.ruptech.chinatalk.ui.dialog.ChangeGenderActivity;
-import com.ruptech.chinatalk.ui.dialog.ChangePasswordActivity;
-import com.ruptech.chinatalk.ui.dialog.ChangePhotoActivity;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
-
-import java.util.ArrayList;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 public class ProfileActivity extends ActionBarActivity {
 	protected static final int EXTRA_ACTIVITY_RESULT_MODIFY_USER = 1;
@@ -58,17 +46,6 @@ public class ProfileActivity extends ActionBarActivity {
 	TextView mFullnameTextView;
 	@InjectView(R.id.activity_profile_user_gender_textview)
 	TextView mGenderTextView;
-	@InjectView(R.id.activity_profile_user_language_textview)
-	TextView mLanguageTextView;
-
-	@InjectView(R.id.activity_profile_user_thumb_lang_imageview)
-	ImageView langImageView;
-	@InjectView(R.id.activity_profile_user_thumb_lang2_imageview)
-	ImageView lang2ImageView;
-	@InjectView(R.id.activity_profile_user_thumb_lang3_imageview)
-	ImageView lang3ImageView;
-	@InjectView(R.id.activity_profile_user_thumb_lang4_imageview)
-	ImageView lang4ImageView;
 
 	private User mUser;
 
@@ -82,192 +59,33 @@ public class ProfileActivity extends ActionBarActivity {
 
 	@InjectView(R.id.activity_profile_user_tel_layout)
 	View profileUserTelView;
-	@InjectView(R.id.activity_profile_user_password_layout)
-	View profileUserPassword;
 
-	@InjectView(R.id.activity_profile_volunteer_imageview)
-	ImageView volunteerImageView;
 
-    @InjectView(R.id.activity_profile_user_tel_title_textview)
-    TextView mAccountLabel;
+	@InjectView(R.id.activity_profile_user_tel_title_textview)
+	TextView mAccountLabel;
 
-    @OnClick(R.id.activity_profile_user_tel_layout)
-    public void gotoValidateEmalil(View v) {
-        if(App.readUser()!=null && Utils.isMail(App.readUser().getTel()) && App.readUser().getAccount_valid() != 1){
-            App.mBus.post(new ValidateEmailEvent("", TaskResult.OK));
-        }
-    }
-
-	@OnClick(R.id.activity_profile_user_fullname_layout)
-	public void changeUserFullName(View v) {
-		if (mUser == null)
-			return;
-		Intent intent = new Intent(this, ChangeFullNameActivity.class);
-		intent.putExtra(EXTRA_USER, mUser);
-		startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-	}
-
-	@OnClick(R.id.activity_profile_user_gender_layout)
-	public void changeUserGender(View v) {
-		if (mUser == null)
-			return;
-		Intent intent = new Intent(this, ChangeGenderActivity.class);
-		intent.putExtra(EXTRA_USER, mUser);
-		startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-	}
-
-	private void changeUserLanguage() {
-		if (mUser == null)
-			return;
-		Intent intent = new Intent(this, LanguageActivity.class);
-		intent.putExtra(EXTRA_USER, mUser);
-		startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-	}
-
-	@OnClick(R.id.activity_profile_user_language_rl)
-	public void changeUserLanguage(View v) {
-		changeUserLanguage();
-	}
-
-	@OnClick(R.id.activity_profile_user_password_layout)
-	public void changeUserPassword(View v) {
-		if (mUser == null)
-			return;
-		Intent intent = new Intent(this, ChangePasswordActivity.class);
-		intent.putExtra(EXTRA_USER, mUser);
-		startActivity(intent);
-	}
-
-	@OnClick(R.id.activity_profile_user_thumb_layout)
-	public void changeUserPhoto(View v) {
-		if (mUser != null && mUser.getId() == App.readUser().getId()) {
-			Intent intent = new Intent(this, ChangePhotoActivity.class);
-			intent.putExtra(EXTRA_USER, mUser);
-			startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-		}
-	}
-
-	private void displayLangView() {
-		langImageView.setImageResource(Utils.getLanguageFlag(mUser.lang));
-		mLanguageTextView.setText(Utils.getLangDisplayName(mUser.getLang()));
-		String additionalLang = getLanguage(0);
-		if (!Utils.isEmpty(additionalLang)) {
-			lang2ImageView.setVisibility(View.VISIBLE);
-			lang2ImageView.setImageResource(Utils
-					.getLanguageFlag(additionalLang));
-		} else {
-			lang2ImageView.setVisibility(View.GONE);
-		}
-
-		String additionalLang2 = getLanguage(1);
-		if (!Utils.isEmpty(additionalLang2)) {
-			lang3ImageView.setVisibility(View.VISIBLE);
-			lang3ImageView.setImageResource(Utils
-					.getLanguageFlag(additionalLang2));
-		} else {
-			lang3ImageView.setVisibility(View.GONE);
-		}
-
-		String additionalLang3 = getLanguage(2);
-		if (!Utils.isEmpty(additionalLang3)) {
-			lang4ImageView.setVisibility(View.VISIBLE);
-			lang4ImageView.setImageResource(Utils
-					.getLanguageFlag(additionalLang3));
-		} else {
-			lang4ImageView.setVisibility(View.GONE);
-		}
-
-	}
 
 	private void displayUser() {
 		try {
 			if (mUser != null && App.readUser() != null) {
-                if (Utils.isMail(App.readUser().getTel())){
-                    if(App.readUser().getAccount_valid() == 1){
-                        mAccountLabel.setText(this.getString(R.string.email_verified));
-                        profileUserTelView.setClickable(false);
-                    }else{
-                        mAccountLabel.setText(this.getString(R.string.email_not_verified));
-                        profileUserTelView.setClickable(true);
-                    }
-                }else{
-                    mAccountLabel.setText(this.getString(R.string.account));
-                    profileUserTelView.setClickable(false);
-                }
+				mAccountLabel.setText(this.getString(R.string.account));
+				profileUserTelView.setClickable(false);
 
-				String thumb = mUser.getPic_url();
-				Utils.setUserPicImage(mThumbImageView, thumb);
-
-				if (Utils.isThirdPartyLogin()) {
-					profileUserTelView.setClickable(false);
-					profileUserPassword.setVisibility(View.GONE);
-				}
-
-				if (mUser != null && mUser.getIs_volunteer() > 0) {
-					volunteerImageView.setVisibility(View.VISIBLE);
-				} else {
-					volunteerImageView.setVisibility(View.GONE);
-				}
 
 				mFullnameTextView.setText(mUser.getFullname());
-				if (Utils.isEmpty(mUser.getTel())) {
+				if (Utils.isEmpty(mUser.getUsername())) {
 					profileUserTelView.setVisibility(View.GONE);
 				} else {
 					profileUserTelView.setVisibility(View.VISIBLE);
-					mTelTextView.setText(mUser.getTel());
+					mTelTextView.setText(mUser.getUsername());
 				}
 
-				displayLangView();
-				if (mUser.getGender() < 1) {
-					mGenderTextView.setText(R.string.no_setting);
-				} else if (mUser.getGender() == AppPreferences.USERS_GENDER_MALE) {
-					mGenderTextView.setText(R.string.gender_male);
-				} else if (mUser.getGender() == AppPreferences.USERS_GENDER_FEMALE) {
-					mGenderTextView.setText(R.string.gender_female);
-				}
 			}
 		} catch (Exception e) {
 			Utils.sendClientException(e);
 		}
 	}
 
-	@OnClick(R.id.activity_profile_user_thumb_mask)
-	public void displayUserOriginal(View v) {
-		if (!Utils.isEmpty(mUser.getPic_url())) {
-			UserPhoto userPhoto = new UserPhoto();
-			userPhoto.setPic_url(mUser.getPic_url());
-			ArrayList<String> extraPhotos = new ArrayList<>();
-			extraPhotos.add(App.readServerAppInfo().getServerOriginal(
-					mUser.getPic_url()));
-			Intent intent = new Intent(this, ImageViewActivity.class);
-			intent.putExtra(ImageViewActivity.EXTRA_POSITION, 0);
-			intent.putExtra(ImageViewActivity.EXTRA_IMAGE_URLS, extraPhotos);
-			startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-		} else {
-			if (mUser == null || mUserId != App.readUser().getId())
-				return;
-			Intent intent = new Intent(this, ChangePhotoActivity.class);
-			intent.putExtra(EXTRA_USER, mUser);
-			startActivityForResult(intent, EXTRA_ACTIVITY_RESULT_MODIFY_USER);
-		}
-	}
-
-	@OnClick(R.id.activity_profile_user_language_layout)
-	public void doChangeUserLanguage(View v) {
-		changeUserLanguage();
-	}
-
-	private String getLanguage(int index) {
-		String lang = null;
-		if (index == LanguageActivity.MAIN_LANGUAGE_INDEX) {
-			lang = mUser.getLang();
-		} else {
-			if (mUser.getAdditionalLangs() != null
-					&& index < mUser.getAdditionalLangs().length)
-				lang = mUser.getAdditionalLangs()[index];
-		}
-		return lang;
-	}
 
 	private User getUserFromExtras() {
 		Bundle extras = getIntent().getExtras();
@@ -298,23 +116,13 @@ public class ProfileActivity extends ActionBarActivity {
 					getSupportActionBar().setTitle(mUser.getFullname());
 
 					mFullnameTextView.setText(mUser.getFullname());
-					if (Utils.isEmpty(mUser.getTel())) {
+					if (Utils.isEmpty(mUser.getUsername())) {
 						profileUserTelView.setVisibility(View.GONE);
 					} else {
 						profileUserTelView.setVisibility(View.VISIBLE);
-						mTelTextView.setText(mUser.getTel());
-					}
-					displayLangView();
-
-					if (mUser.getGender() < 1) {
-						mGenderTextView.setText(R.string.no_setting);
-					} else if (mUser.getGender() == AppPreferences.USERS_GENDER_MALE) {
-						mGenderTextView.setText(R.string.gender_male);
-					} else if (mUser.getGender() == AppPreferences.USERS_GENDER_FEMALE) {
-						mGenderTextView.setText(R.string.gender_female);
+						mTelTextView.setText(mUser.getUsername());
 					}
 
-					Utils.setUserPicImage(mThumbImageView, mUser.getPic_url());
 				}
 			}
 		}
