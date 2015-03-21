@@ -45,9 +45,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="com.ruptech.chinatalk.VersionCheckReceiver"
-            android:enabled="true" />
 
         <meta-data android:value="54f93f50fd98c519d0000b79" android:name="UMENG_APPKEY"/>
         <meta-data android:value="tttalk" android:name="UMENG_CHANNEL"/>
@@ -111,23 +108,10 @@
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.ruptech.chinatalk.ui.user.FriendProfileActivity"
-            android:icon="@drawable/tt_logo2"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.ruptech.chinatalk.ui.LoginLoadingActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyle" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.friend.FriendListActivity"
-            android:icon="@drawable/tt_logo2"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.ruptech.chinatalk.ui.ChatSettingActivity"
-            android:icon="@drawable/tt_logo2"
-            android:screenOrientation="portrait" />
 
         <service android:name="com.ruptech.chinatalk.XMPPService" />
 
@@ -138,14 +122,6 @@
         <provider
             android:name="com.ruptech.chinatalk.sqlite.ChatProvider"
             android:authorities="com.ruptech.dlmu.im.provider.Chats" >
-        </provider>
-        <provider
-            android:name="com.ruptech.chinatalk.sqlite.ChatRoomProvider"
-            android:authorities="com.ruptech.dlmu.im.provider.ChatRoom" >
-        </provider>
-        <provider
-            android:name="com.ruptech.chinatalk.sqlite.FriendProvider"
-            android:authorities="com.ruptech.dlmu.im.provider.Friend" >
         </provider>
     </application>
 

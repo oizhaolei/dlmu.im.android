@@ -1,7 +1,6 @@
 package com.ruptech.chinatalk.http;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.model.Friend;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.utils.Utils;
 
@@ -40,25 +39,6 @@ public class HttpServer extends HttpConnection {
 		return null;
 	}
 
-	private void _parseFriends(Response res, List<User> userList,
-	                           List<Friend> friendList) throws Exception {
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (success) {
-			JSONObject data = result.getJSONObject("data");
-
-			// users
-			JSONArray user_list = data.getJSONArray("users");
-			convertUserList(userList, user_list);
-			// friends
-			JSONArray friend_list = data.getJSONArray("friends");
-			convertFriendList(friendList, friend_list);
-		} else {
-			String msg = result.getString("msg");
-			throw new ServerSideException(msg);
-		}
-	}
-
 
 	private User _parseUser(JSONObject result, Response res) throws Exception {
 		if (result.getBoolean("success")) {
@@ -69,72 +49,6 @@ public class HttpServer extends HttpConnection {
 		}
 	}
 
-
-	public void addFriend(String tel, String friendId, String nickname,
-	                      String memo, String lastUpdatedate, String lang,
-	                      List<User> userList, List<Friend> friendList, String isContact)
-			throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friend_id", friendId);
-		params.put("username", tel);
-		params.put("nickname", nickname);
-		params.put("memo", memo);
-		params.put("lang", lang);
-		params.put("is_contact", isContact);
-		params.put("update_date", lastUpdatedate);
-
-		Response res = _get("friend/friend_add.php", params);
-
-		_parseFriends(res, userList, friendList);
-	}
-
-	public Friend blockFriend(long friend_id) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friend_id", String.valueOf(friend_id));
-
-		Response res = _get("friend/friend_block.php", params);
-
-		JSONObject result = res.asJSONObject();
-		if (result.getBoolean("success")) {
-			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
-			return new Friend(data0);
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-	}
-
-	public Friend changeFriendMemo(long friendid, String memo) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friendid", String.valueOf(friendid));
-		params.put("memo", memo);
-		params.put("func", "change_friend_memo");
-
-		Response res = _get("user/user_change_profile.php", params);
-		JSONObject result = res.asJSONObject();
-		if (result.getBoolean("success")) {
-			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
-			return new Friend(data0);
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-	}
-
-	public Friend changeFriendNickName(long friendid, String nickName)
-			throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friendid", String.valueOf(friendid));
-		params.put("nickname", nickName);
-		params.put("func", "change_friend_nickname");
-
-		Response res = _get("user/user_change_profile.php", params);
-		JSONObject result = res.asJSONObject();
-		if (result.getBoolean("success")) {
-			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
-			return new Friend(data0);
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-	}
 
 	public User changeUserProfile(String mFunc, String mKey, String mValue)
 			throws Exception {
@@ -165,21 +79,6 @@ public class HttpServer extends HttpConnection {
 		return _parseUser(result, res);
 	}
 
-	// Low-level interface
-
-	private void convertFriendList(List<Friend> friendList,
-	                               JSONArray friend_list) throws JSONException {
-		int size;
-		size = friend_list.length();
-
-		friendList.clear();
-		for (int i = 0; i < size; i++) {
-			JSONObject jo = friend_list.getJSONObject(i);
-
-			Friend friend = new Friend(jo);
-			friendList.add(friend);
-		}
-	}
 
 	private Map<String, String> convertJsonItem(JSONObject jo)
 			throws JSONException {
@@ -226,7 +125,7 @@ public class HttpServer extends HttpConnection {
 
 	@Override
 	protected String getAppServerUrl() {
-		return App.readServerAppInfo().getAppServerUrl();
+		return App.properties.getProperty("SERVER_BASE_URL");
 	}
 
 	public User getUser(long userid) throws Exception {
@@ -236,22 +135,6 @@ public class HttpServer extends HttpConnection {
 		return _getUser(null, params);
 	}
 
-	public Friend removeFriend(long friend_id) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friend_id", String.valueOf(friend_id));
-
-		Response res = _get("friend/friend_delete.php", params);
-
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (success) {
-			JSONObject data = result.getJSONObject("data");
-			return new Friend(data);
-		} else {
-			String msg = result.getString("msg");
-			throw new ServerSideException(msg);
-		}
-	}
 
 	public List<User> retrieveBlockedFriends(long sinceId, long[] sinceIdArray)
 			throws Exception {
@@ -305,30 +188,6 @@ public class HttpServer extends HttpConnection {
 		throw new ServerSideException(msg);
 	}
 
-	public void retrieveNewFriends(String lastUpdatedate, List<User> userList,
-	                               List<Friend> friendList, long userId) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("userid", String.valueOf(userId));
-		params.put("update_date", lastUpdatedate);
-
-		Response res = _get("timeline/friend_timeline.php", params);
-
-		_parseFriends(res, userList, friendList);
-	}
-
-	public boolean sendClientMessage(String msg) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("message", msg);
-		if (App.readUser() != null) {
-			params.put("username", App.readUser().getUsername());
-		}
-		Response res = _post("utils/logging_client_message.php", params);
-
-		JSONObject result = res.asJSONObject();
-
-		return result.getBoolean("success");
-	}
-
 	/**
 	 * @throws Exception
 	 */
@@ -353,13 +212,8 @@ public class HttpServer extends HttpConnection {
 		Response res = _get("login", params);
 		JSONObject result = res.asJSONObject();
 
-		if (result.getBoolean("success")) {
-			JSONObject data0 = (JSONObject) result.getJSONArray("data").get(0);
 
-			return new User(data0);
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
+			return new User(result);
 	}
 
 }

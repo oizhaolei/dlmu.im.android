@@ -1,7 +1,6 @@
 package com.ruptech.chinatalk.ui.fragment;
 
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -16,20 +15,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
-import com.ruptech.chinatalk.model.Friend;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.sqlite.TableContent;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.FriendOperate;
-import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
-import com.ruptech.chinatalk.widget.CustomDialog;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -122,11 +113,6 @@ public class ChatFragment extends Fragment {
 	}
 
 
-	private void refreshChatPage() {
-		mRecentChatAdapter.requery();
-	}
-
-
 	private void setupChatLayout() {
 		mContentResolver = getActivity().getContentResolver();
 		mRecentChatAdapter = new RecentChatAdapter(getActivity());
@@ -139,12 +125,12 @@ public class ChatFragment extends Fragment {
 			                        int position, long id) {
 				Cursor clickCursor = mRecentChatAdapter.getCursor();
 				clickCursor.moveToPosition(position);
-				String jid = Utils.getChatFriendJID(clickCursor);
+				String jid = clickCursor.getString(clickCursor
+						.getColumnIndex(TableContent.ChatTable.Columns.TO_JID));
 
 				startChatActivity(jid, XMPPUtils.splitJidAndServer(jid));
 			}
 		});
-
 
 
 	}

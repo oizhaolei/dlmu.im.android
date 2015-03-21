@@ -10,16 +10,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.event.LogoutEvent;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskAdapter;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.utils.ApkUpgrade;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
@@ -57,15 +52,9 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 	@InjectView(R.id.main_tab_setting_version_new_icon)
 	TextView new_icon;
 
-	private ApkUpgrade downloadApk;
 
 	private ProgressDialog progressDialog;
 
-	private void cancelCheckVersionTask() {
-		if (downloadApk != null) {
-			downloadApk.cancelVersionCheckTask();
-		}
-	}
 	@Subscribe
 	public void answerLogout(LogoutEvent event) {
 		finish();
@@ -73,43 +62,9 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 
 	// 版本检测
 	@OnClick(R.id.main_tab_setting_check_version_layout)
-	public void checkVersion(View v) {
-		// version check
-		App.getApkUpgrade(this).doRetrieveServerVersion(new TaskAdapter() {
-
-			@Override
-			public void onPostExecute(GenericTask task, TaskResult result) {
-				if (result == TaskResult.OK) {
-					onVersionCheckSuccess();
-				} else {
-					onVersionCheckFailure();
-				}
-			}
-
-			@Override
-			public void onPreExecute(GenericTask task) {
-				onVersionCheckBegin();
-			}
-
-			protected void onVersionCheckBegin() {
-				progressDialog = Utils.showDialog(SettingSystemInfoActivity.this,
-						getString(R.string.version_checking));
-			}
-
-			protected void onVersionCheckFailure() {
-				Utils.dismissDialog(progressDialog);
-			}
-
-			protected void onVersionCheckSuccess() {
-				Utils.dismissDialog(progressDialog);
-				downloadApk.checkApkUpdate(false);
-			}
-		});
-	}
 
 	@Override
 	public void onBackPressed() {
-		cancelCheckVersionTask();
 		super.onBackPressed();
 	}
 
@@ -118,8 +73,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 	public void doShowSystemUrl(View v) {
 		StringBuffer msg = new StringBuffer(64);
 		msg.append(App.mSmack.getUser());
-		Toast.makeText(this, App.readServerAppInfo().getAppServerUrl() + msg,
-				Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

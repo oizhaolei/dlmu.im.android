@@ -129,7 +129,7 @@ public class XMPPService extends BaseService {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (!isAuthenticated()) {
-			String account = Utils.getOF_username(App.readUser().getId());
+			String account = App.readUser().getUsername();
 			String password = App.readUser().getPassword();
 			login(account, password);
 		}

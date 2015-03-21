@@ -21,7 +21,8 @@
             android:layout_marginTop="10dp"
             android:hint="@string/hint_input_your_tel"
             android:maxLength="50"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="20042020"/>
 
         <EditText
             android:id="@+id/activity_password_edittext"
@@ -30,7 +31,8 @@
             android:layout_marginTop="20dp"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="2020"/>
 
         <Button
             android:id="@+id/activity_next_button"

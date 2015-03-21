@@ -7,11 +7,6 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskAdapter;
-import com.ruptech.chinatalk.task.TaskListener;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
@@ -32,44 +27,10 @@ public class SplashActivity extends Activity {
 
 	public boolean directlyToMain = false;
 
-	private final TaskListener serverInfoCheckTaskListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			if (App.readServerAppInfo() == null) {
-				gotoLogiGateActivity();
-			} else {
-				PrefUtils.saveVersionCheckedTime();
-				App.versionChecked = true;
-				PrefUtils.savePrefLastApkVersion();
-
-				checkVersion();// 通知栏提醒版本更新
-				gotoDispatchActivity();
-			}
-		}
-
-		@Override
-		public void onPreExecute(GenericTask task) {
-		}
-
-	};
 
 	@InjectView(R.id.activity_splash_footer_textview)
 	TextView footerTextView;
 
-
-	private void checkVersion() {
-		if (App.readServerAppInfo() != null
-				&& App.readServerAppInfo().verCode > App.mApkVersionOfClient.verCode) {
-			App.getApkUpgrade(this).checkApkUpdate(false);
-		}
-	}
-
-	private void doCheckServerInfo() {
-		RetrieveServerVersionTask mRetrieveServerVersionTask = new RetrieveServerVersionTask();
-		mRetrieveServerVersionTask.setListener(serverInfoCheckTaskListener);
-		mRetrieveServerVersionTask.execute();
-	}
 
 	private void gotoDispatchActivity() {
 		this.directlyToMain = false;
@@ -105,9 +66,7 @@ public class SplashActivity extends Activity {
 		ButterKnife.inject(this);
 
 		if (App.isAvailableShowMain()
-				&& PrefUtils.getPrefLastApkVersion() == Utils
-				.getAppVersionCode()
-				&& App.readServerAppInfo().verCode == Utils.getAppVersionCode()) {
+				&& PrefUtils.getPrefLastApkVersion() == Utils.getAppVersionCode()) {
 
 			this.directlyToMain = true;
 			LoginLoadingActivity.gotoMainActivity(this);
@@ -125,11 +84,7 @@ public class SplashActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (Utils.checkNetwork(this)) {
-			doCheckServerInfo();
-		} else {
-			gotoDispatchActivity();
-		}
+		gotoDispatchActivity();
 	}
 
 	private void setupComponents() {

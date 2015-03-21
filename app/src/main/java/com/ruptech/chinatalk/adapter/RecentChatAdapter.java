@@ -11,12 +11,12 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -85,11 +85,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		boolean isGroupChat = Utils.isGroupChat(jid);
-		String name;
-		if (isGroupChat)
-			name = Utils.getGroupChatName(jid);
-		else
-			name = Utils.getFriendNameFromOF_JID(jid);
+		String name = jid;
 
 		viewHolder.jidView.setText(name);
 		viewHolder.msgView.setText(XMPPUtils

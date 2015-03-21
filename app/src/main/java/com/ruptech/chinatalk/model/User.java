@@ -18,14 +18,16 @@ public class User extends Item implements Serializable {
 	public String password;
 	public String username;
 	private String fullname;
+	private boolean teacher;
 
 	public User() {
 	}
 
 	public User(JSONObject json) throws JSONException {
-		id = json.getLong("id");
+		id = System.currentTimeMillis();
 		password = json.optString("password");
 		username = json.optString("username");
+		teacher = true;
 	}
 
 	public String getPassword() {
@@ -54,5 +56,20 @@ public class User extends Item implements Serializable {
 
 	public void setFullname(String fullname) {
 		this.fullname = fullname;
+	}
+
+
+	public static String getOF_username(User user) {
+		if (user.teacher)
+			return String.format("teacher_%s", user.getUsername());
+		else
+			return
+					String.format("student_%s", user.getUsername());
+	}
+
+
+
+	public static String getTTTalkIDFromOF_JID(String jid) {
+		return jid.substring( jid.indexOf("_"), jid.indexOf("@"));
 	}
 }

@@ -21,16 +21,11 @@ public class BootReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 		Log.i(TAG, "action = " + action);
 
-		App.cancelPeriodTaskReceiver();
 		if (App.readUser() != null) {
 			if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
 				int connectivity = NetUtil.getNetworkState(context);
 				App.mBus.post(new NetChangeEvent(connectivity));
 
-				if (connectivity != NetUtil.NETWORK_NONE) {
-					//version check
-					App.startPeriodTaskReceiver();
-				}
 			} else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
 				Log.d(TAG, "System shutdown, stopping service.");
 				Intent xmppServiceIntent = new Intent(context, XMPPService.class);
@@ -40,7 +35,6 @@ public class BootReceiver extends BroadcastReceiver {
 				Intent i = new Intent(context, XMPPService.class);
 				i.setAction(BOOT_COMPLETED_ACTION);
 				context.startService(i);
-				App.startPeriodTaskReceiver();
 			}
 		}
 	}

@@ -11,10 +11,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.MainTabLayout.OnTabClickListener;
-import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
-import com.ruptech.chinatalk.event.NewVersionFoundEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.ui.LoginActivity;
@@ -160,8 +158,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onResume();
 		MobclickAgent.onResume(this);
 		long start = System.currentTimeMillis();
-		if (!App.isVersionChecked() || App.readUser() == null
-				|| App.readServerAppInfo() == null) {
+		if (App.readUser() == null) {
 			gotoSplashActivity();
 			finish();
 			return;
@@ -243,13 +240,4 @@ public class MainActivity extends ActionBarActivity implements
 		});
 	}
 
-
-	@Subscribe
-	public void answerFriendReceived(final FriendEvent event) {
-		mainHandler.post(new Runnable() {
-			public void run() {
-				App.mService.displayFrirendNotification(event);
-			}
-		});
-	}
 }

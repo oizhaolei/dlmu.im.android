@@ -193,8 +193,6 @@ public class LoginGateActivity extends Activity {
 			return;
 		}
 		Intent intent = new Intent(this, LoginActivity.class);
-		intent.putExtra(LoginActivity.EXTRA_TYPE,
-				LoginActivity.EXTRA_TYPE_LOGIN);
 		startActivity(intent);
 	}
 

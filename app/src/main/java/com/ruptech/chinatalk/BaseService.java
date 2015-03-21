@@ -9,10 +9,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-import com.ruptech.chinatalk.event.FriendEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.task.impl.RetrieveFriendsTask;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
@@ -46,30 +44,10 @@ public abstract class BaseService extends Service {
 	}
 
 
-	private boolean isTranslationSecretary(String fromJid) {
-		return fromJid.startsWith("tttalk.org@");
-	}
-
 	private String getMessageTitle(String fromJid) {
 		String title;
-		if (isTranslationSecretary(fromJid)) {
-			title = getString(R.string.translation_secretary);
-		} else {
-			boolean isGroupChat = Utils.isGroupChat(fromJid);
-			String name;
-			if (isGroupChat) {
-				name = "Group Chat:" + fromJid.substring(0, fromJid.indexOf("@"));
-			} else {
-				long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
-				User user = App.userDAO.fetchUser(fromUserId);
-				if (user != null) {
-					name = user.getUsername();
-				} else {
-					name = "No name";
-				}
-			}
-			title = name;
-		}
+		String name = User.getTTTalkIDFromOF_JID(fromJid);
+		title = name;
 		return title;
 	}
 
@@ -79,7 +57,6 @@ public abstract class BaseService extends Service {
 		String fromJid = event.fromJID;
 		String content = event.chatMessage;
 
-		long fromUserId = Utils.getTTTalkIDFromOF_JID(fromJid);
 
 		if (Utils.isEmpty(content))
 			return;
@@ -125,18 +102,6 @@ public abstract class BaseService extends Service {
 				isSound, title, content, icon);
 
 		return mBuilder;
-	}
-
-	public static void doRetrieveNewFriend(final long userId,
-	                                       final boolean isNeedNotify) {
-
-		RetrieveFriendsTask mRetrieveFriendsTask = new RetrieveFriendsTask(
-				userId, isNeedNotify);
-		mRetrieveFriendsTask.execute();
-	}
-
-	public void displayFrirendNotification(FriendEvent event) {
-		doRetrieveNewFriend(App.readUser().getId(), false);
 	}
 
 

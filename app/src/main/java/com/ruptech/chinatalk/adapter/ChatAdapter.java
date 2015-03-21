@@ -20,18 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.ui.FullScreenActivity;
-import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
-import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.TimeUtil;
-import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
+import com.ruptech.dlmu.im.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,15 +90,10 @@ public class ChatAdapter extends CursorAdapter {
 		Chat chat = ChatTable.parseCursor(cursor);
 		boolean mine = isMine(chat);
 
-		User fromUser;
-		fromUser = App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(chat.getFromJid()));
-
 		if (!mine && chat.getRead() == ChatProvider.DS_NEW) {
 			markAsReadDelayed(chat.getId(), DELAY_NEW_MSG);
 		}
 
-		bindProfileThumb(fromUser, holder.userThumbImageView);
-		bindUserThumbClickEvent(holder.userThumbView, fromUser);
 		bindLayoutClickEvent(chat, holder.bubbleLayout);
 		bindFromView(chat, holder);
 		bindDateTimeView(cursor, holder.createDateTextView);
@@ -254,23 +246,6 @@ public class ChatAdapter extends CursorAdapter {
 
 	protected void bindProfileThumb(User user, ImageView userThumb) {
 
-	}
-
-
-	protected void bindUserThumbClickEvent(View userThumb, final User user) {
-
-		if (userThumb == null)
-			return;
-
-		userThumb.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getContext(),
-						FriendProfileActivity.class);
-				intent.putExtra(ProfileActivity.EXTRA_USER, user);
-				getContext().startActivity(intent);
-			}
-		});
 	}
 
 

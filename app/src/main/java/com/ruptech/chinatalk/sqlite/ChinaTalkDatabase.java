@@ -10,13 +10,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
-import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.BuildConfig;
 
-import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.ChatRoomUserTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
-import static com.ruptech.chinatalk.sqlite.TableContent.FriendTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class ChinaTalkDatabase {
@@ -79,27 +76,18 @@ public class ChinaTalkDatabase {
 	private static void createAllIndexes(SQLiteDatabase db) {
 		db.execSQL(UserTable.getCreateIndexSQL());
 
-		db.execSQL(FriendTable.getCreateIndexSQL());
 		db.execSQL(ChatTable.getCreateIndexSQL());
-		db.execSQL(ChatRoomTable.getCreateIndexSQL());
-		db.execSQL(ChatRoomUserTable.getCreateIndexSQL());
 	}
 
 	// Create All tables
 	private static void createAllTables(SQLiteDatabase db) {
 		db.execSQL(UserTable.getCreateSQL());
-		db.execSQL(FriendTable.getCreateSQL());
 		db.execSQL(ChatTable.getCreateSQL());
-		db.execSQL(ChatRoomTable.getCreateSQL());
-		db.execSQL(ChatRoomUserTable.getCreateSQL());
 	}
 
 	private static void dropAllTables(SQLiteDatabase db) {
 		db.execSQL(UserTable.getDropSQL());
-		db.execSQL(FriendTable.getDropSQL());
 		db.execSQL(ChatTable.getDropSQL());
-		db.execSQL(ChatRoomTable.getDropSQL());
-		db.execSQL(ChatRoomUserTable.getDropSQL());
 	}
 
 	/**
@@ -114,8 +102,6 @@ public class ChinaTalkDatabase {
 
 	private static void udpateTable57to67(SQLiteDatabase db) {
 		db.execSQL(ChatTable.getCreateSQL());
-		db.execSQL(ChatRoomTable.getCreateSQL());
-		db.execSQL(ChatRoomUserTable.getCreateSQL());
 		db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
 				+ UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
 

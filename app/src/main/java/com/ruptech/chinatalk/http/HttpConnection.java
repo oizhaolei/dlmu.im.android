@@ -107,18 +107,6 @@ public abstract class HttpConnection {
 	 */
 
 	public String genRequestURL(String ifPage, Map<String, String> params) {
-		// check ServerAppInfo
-		if (App.readServerAppInfo() == null) {
-			ServerAppInfo serverAppInfo = null;
-			try {
-				serverAppInfo = ver();
-			} catch (Exception e) {
-			}
-			App.writeServerAppInfo(serverAppInfo);
-		}
-		if (App.readServerAppInfo() == null) {
-			return null;
-		}
 
 		String url = ifPage;
 		if (!url.startsWith("http")) {

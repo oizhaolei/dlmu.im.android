@@ -5,17 +5,12 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -31,7 +26,6 @@ import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -46,23 +40,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.MainActivity;
-import com.ruptech.dlmu.im.R;
-import com.ruptech.chinatalk.VersionCheckReceiver;
 import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.http.HttpConnection;
-import com.ruptech.chinatalk.model.Friend;
-import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.sqlite.TableContent;
-import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.widget.CustomDialog;
-import com.ruptech.chinatalk.widget.MyNotificationBuilder;
-
-import org.jivesoftware.smackx.muc.Affiliate;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.RoomInfo;
+import com.ruptech.dlmu.im.BuildConfig;
+import com.ruptech.dlmu.im.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,10 +58,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -215,37 +196,6 @@ public class Utils {
 		return result;
 	}
 
-	private static String createReportFromException(Throwable e, Object... msgs) {
-		StringBuffer sb = new StringBuffer(1024);
-		sb.append(HttpConnection.getUrlHistory());
-		for (Object o : msgs) {
-			sb.append(o).append(',');
-		}
-
-		sb.append("\nAPP: ").append(App.mApkVersionOfClient);
-		sb.append("\nServerAppInfo: ").append(App.readServerAppInfo());
-		sb.append("\nUser: ").append(App.readUser());
-//        sb.append("\nPush: ")
-//				.append(GCMRegistrar.isRegistered(App.mContext) ? '1' : '0')
-//				.append(GCMRegistrar.isRegisteredOnServer(App.mContext) ? '1'
-//						: '0')
-//                .append(BaiduPushMessageReceiver.isRegistered() ? '1' : '0')
-//                .append(BaiduPushMessageReceiver.isRegisteredOnServer() ? '1'
-//                        : '0');
-		sb.append(",\nHARDWARE: ").append(android.os.Build.HARDWARE)
-				.append(",\nMODEL: ").append(android.os.Build.MODEL)
-				.append(",\nPRODUCT: ").append(android.os.Build.PRODUCT)
-				.append(",\nSERIAL: ").append(android.os.Build.SERIAL)
-				.append(".\n");
-		if (e != null) {
-			sb.append(e.toString()).append("\n");
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			sb.append(sw.toString());
-		}
-
-		return sb.toString();
-	}
 
 	public static SearchView cutomizeSearchView(SearchView searchView) {
 		View bgView = searchView.findViewById(R.id.search_plate);
@@ -290,7 +240,6 @@ public class Utils {
 		// 结束
 		App.removeUser();
 
-		App.friendDAO.deleteAll();
 		App.userDAO.deleteAll();
 		last_friend_updatedate = null;
 
@@ -435,48 +384,6 @@ public class Utils {
 		return degree;
 	}
 
-	public static int[] getFollowFriendCountArray(int[] followFriendCountArray,
-	                                              List<Friend> friends) {
-		int fansNewFollowCount = 0;
-		int fansAlreadyFollowCount = 0;
-		int fansUnFollowCount = 0;
-		for (int i = 0; i < friends.size(); i++) {
-			Friend friend = friends.get(i);
-
-			// db
-			Friend dbFriend = App.friendDAO.fetchFriend(friend.user_id,
-					friend.friend_id);
-			Friend dbCheckFriend = App.friendDAO.fetchFriend(friend.friend_id,
-					friend.user_id);
-			// request
-			if (friend.friend_id == App.readUser().getId() && friend.done == 1
-					&& dbFriend == null && dbCheckFriend == null) {
-				fansNewFollowCount++;
-			}
-			// accpet
-			if (friend.friend_id == App.readUser().getId() && friend.done == 1
-					&& dbFriend == null && dbCheckFriend != null
-					&& dbCheckFriend.done == 1) {
-				fansNewFollowCount++;
-			}
-
-			// already follow
-			if (friend.friend_id == App.readUser().getId() && friend.done == 1
-					&& dbFriend != null) {
-				fansAlreadyFollowCount++;
-			}
-
-			// unfollowed
-			if (friend.friend_id == App.readUser().getId() && friend.done == 0
-					&& dbFriend != null && dbFriend.done != 0) {
-				fansUnFollowCount++;
-			}
-		}
-		followFriendCountArray[0] = fansNewFollowCount;
-		followFriendCountArray[1] = fansAlreadyFollowCount;
-		followFriendCountArray[2] = fansUnFollowCount;
-		return followFriendCountArray;
-	}
 
 	private static String getFormattedText(byte[] bytes) {
 		int len = bytes.length;
@@ -489,33 +396,6 @@ public class Utils {
 		return buf.toString();
 	}
 
-	public static String getFriendLastUpdatedate() {
-		// mem
-		if (last_friend_updatedate != null) {
-			return last_friend_updatedate;
-		}
-		// local db
-		last_friend_updatedate = App.friendDAO.getLastUpdatedate();
-		if (last_friend_updatedate != null) {
-			return last_friend_updatedate;
-		}
-		// zero time
-		last_friend_updatedate = DateCommonUtils.getUtcDate(new Date(0),
-				DateCommonUtils.DF_yyyyMMddHHmmssSSS);
-
-		return last_friend_updatedate;
-	}
-
-	// story 相关的，有朋友昵称则使用昵称（评论里除外）,没有则使用fullname
-	public static String getFriendName(Long userId, String defaultName) {
-		Friend friendInfo = App.friendDAO.fetchFriend(App.readUser().getId(),
-				userId);
-		if (friendInfo != null
-				&& !Utils.isEmpty(friendInfo.getFriend_nickname())) {
-			return friendInfo.getFriend_nickname();
-		}
-		return defaultName;
-	}
 
 	private static String getHashString(MessageDigest digest) {
 		StringBuilder builder = new StringBuilder();
@@ -768,9 +648,6 @@ public class Utils {
 		return d * Math.PI / 180.0;
 	}
 
-	public static void saveClientException(Throwable e, Object... msgs) {
-		PrefUtils.savePrefException(createReportFromException(e, msgs));
-	}
 
 	public static boolean saveFileFromServer(String imageURL, File file) {
 		URL url;
@@ -799,14 +676,6 @@ public class Utils {
 	}
 
 	public static void sendClientException(Throwable e, Object... msgs) {
-		if (BuildConfig.DEBUG) {
-			return;
-		}
-		String report = createReportFromException(e, msgs);
-
-		SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
-				report);
-		sendClientMessageTask.execute();
 	}
 
 	public static void setImageResource(ImageView iconView, int resId) {
@@ -843,21 +712,6 @@ public class Utils {
 
 		ColorStateList colorList = new ColorStateList(color_states, colors);
 		textview.setTextColor(colorList);
-	}
-
-	public static void setUserPicImage(ImageView imageView, String url) {
-		if (!isEmpty(url)) {
-			if (!url.equals(imageView.getTag())) {
-				ImageManager.imageLoader.displayImage(App.readServerAppInfo()
-						.getServerThumbnail(url), imageView, ImageManager
-						.getOptionsPortrait());
-				imageView.setTag(url);
-			}
-		} else {
-			ImageManager.imageLoader.displayImage(null, imageView,
-					ImageManager.getOptionsPortrait());
-			imageView.setTag(null);
-		}
 	}
 
 	public static String sha1(String str) {
@@ -927,45 +781,6 @@ public class Utils {
 		return text.length();
 	}
 
-	public static void updateFriendLastUpdatedate() {
-		String lastUpdatedate = App.friendDAO.getLastUpdatedate();
-		if (lastUpdatedate != null) {
-			last_friend_updatedate = lastUpdatedate;
-		}
-	}
-
-	public static String getOF_username(long ttalkid) {
-		return String.format("chinatalk_%d", ttalkid);
-	}
-
-	public static String getFriendNameFromOF_JID(String jid) {
-		long tttalkID = getTTTalkIDFromOF_JID(jid);
-		String name = "TTTalk.org";
-		if (tttalkID > 0) {
-			Friend friend = App.friendDAO.fetchFriend(App.readUser().getId(), tttalkID);
-			if (friend != null)
-				name = friend.getFriend_nickname();
-			if (Utils.isEmpty(name)) {
-				User user = App.userDAO.fetchUser(tttalkID);
-				if (user != null)
-					name = user.getFullname();
-			}
-		}
-
-		if (Utils.isEmpty(name))
-			name = "TTTalk.org";
-		return name;
-	}
-
-
-	public static long getTTTalkIDFromOF_JID(String jid) {
-		long tttalkId = -1;
-		String pattern = "chinatalk_";
-		if (jid.contains(pattern)) {
-			tttalkId = Long.parseLong(jid.substring("chinatalk_".length(), jid.indexOf("@")));
-		}
-		return tttalkId;
-	}
 
 	public static boolean isGroupChat(String jid) {
 		return jid.contains(AppPreferences.GROUP_CHAT_SUFFIX);
@@ -980,66 +795,4 @@ public class Utils {
 		return String.format("chinatalk_%d@tttalk.org", tttalkId);
 	}
 
-
-	//Receiver 版本检查
-	public static void startVersionCheckReceiver(Context context) {
-		//version check
-		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
-		App.versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-		alarmManager.setRepeating(AlarmManager.RTC, 60 * 1000, 60 * 60 * 1000, App.versionCheckPendingIntent);
-	}
-
-	public static void cancelReceiverPendingIntent(Context context, PendingIntent pendingIntent) {
-		if (pendingIntent != null) {
-			AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			alarmManager.cancel(pendingIntent);
-		}
-	}
-
-
-	public static String convert2BaiduLang(String lang) {
-
-		String[] langs = App.mContext.getResources().getStringArray(
-				R.array.baidu_language_short_adapter);
-		String[] baidu_langs = App.mContext.getResources().getStringArray(
-				R.array.baidu_language_short);
-		for (int i = 0; i < baidu_langs.length; i++) {
-			if (langs[i].equals(lang)) {
-				return baidu_langs[i];
-			}
-		}
-		return null;
-	}
-
-	public static List<User> getGroupChatUserList(MultiUserChat chatRoom) {
-		List<User> list = new ArrayList();
-		try {
-			Iterator<Affiliate> iterator = chatRoom.getOwners().iterator();
-			while (iterator.hasNext()) {
-				Affiliate affiliate = iterator.next();
-				list.add(App.userDAO.fetchUser(Utils.getTTTalkIDFromOF_JID(affiliate.getJid())));
-			}
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
-		return list;
-	}
-
-	public static String getGroupChatName(String fromJID) {
-		RoomInfo roomInfo = App.mSmack.getChatRoomInfo(fromJID);
-		if (roomInfo != null)
-			return roomInfo.getDescription();
-		else
-			return "Group Chat";
-	}
-
-
-	public static String getChatFriendJID(Cursor cursor) {
-		String from_jid = cursor.getString(cursor
-				.getColumnIndex(TableContent.ChatTable.Columns.FROM_JID));
-		String to_jid = cursor.getString(cursor
-				.getColumnIndex(TableContent.ChatTable.Columns.TO_JID));
-		return App.readUser().getOF_JabberID().equals(from_jid) ? to_jid : from_jid;
-	}
 }

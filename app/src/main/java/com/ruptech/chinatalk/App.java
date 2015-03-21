@@ -2,16 +2,12 @@ package com.ruptech.chinatalk;
 
 import android.app.Application;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Point;
 import android.os.IBinder;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -27,12 +23,8 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.ruptech.chinatalk.http.HttpServer;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.smack.TTTalkSmack;
-import com.ruptech.chinatalk.sqlite.ChatRoomDAO;
-import com.ruptech.chinatalk.sqlite.FriendDAO;
 import com.ruptech.chinatalk.sqlite.UserDAO;
 import com.ruptech.chinatalk.task.TaskManager;
-import com.ruptech.chinatalk.task.impl.SendClientMessageTask;
-import com.ruptech.chinatalk.utils.ApkUpgrade;
 import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
@@ -65,22 +57,9 @@ public class App extends Application implements
 	}
 
 	public static boolean isAvailableShowMain() {
-		return App.isVersionChecked() && App.readUser() != null
-				&& App.readServerAppInfo() != null;
+		return App.readUser() != null;
 	}
 
-	public static boolean isVersionChecked() {
-		return versionChecked
-				|| ((System.currentTimeMillis() - PrefUtils
-				.getPrefVersionCheckedDate()) < AppPreferences.VERSION_CHECK_INTERVAL);
-	}
-
-	public static ServerAppInfo readServerAppInfo() {
-		if (mServerAppInfo == null) {
-			mServerAppInfo = PrefUtils.readServerAppInfo();
-		}
-		return mServerAppInfo;
-	}
 
 	public static User readUser() {
 		if (user == null)
@@ -117,18 +96,13 @@ public class App extends Application implements
 	private static ServerAppInfo mServerAppInfo;
 
 	public static UserDAO userDAO;
-	public static FriendDAO friendDAO;
-	public static ChatRoomDAO chatRoomDAO;
 
 	public final static String TAG = Utils.CATEGORY + App.class.getSimpleName();
-
-	public static boolean versionChecked = false;
 
 	public static int displayHeight;
 
 	public static int displayWidth;
 
-	public static PendingIntent versionCheckPendingIntent;
 
 	private void getDisplaySize() {
 		WindowManager wm = (WindowManager) mContext
@@ -189,8 +163,6 @@ public class App extends Application implements
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		userDAO = new UserDAO(getApplicationContext());
-		friendDAO = new FriendDAO(getApplicationContext());
-		chatRoomDAO = new ChatRoomDAO(getApplicationContext());
 
 		mImageManager = new ImageManager(App.mContext);
 		initImageLoader(getApplicationContext());
@@ -198,11 +170,6 @@ public class App extends Application implements
 
 		getDisplaySize();
 
-		checkPreviousException();
-
-		// receiver 定期执行
-		cancelPeriodTaskReceiver();
-		startPeriodTaskReceiver();
 	}
 
 	@Override
@@ -229,22 +196,12 @@ public class App extends Application implements
 		super.onTerminate();
 	}
 
-	private void checkPreviousException() {
-		String previousException = PrefUtils.getPrefException();
-		if (previousException != null) {
-			SendClientMessageTask sendClientMessageTask = new SendClientMessageTask(
-					previousException);
-			sendClientMessageTask.execute();
-			PrefUtils.removePrefException();
-		}
-	}
 
 	@Override
 	public void uncaughtException(Thread thread, Throwable throwable) {
 		if (BuildConfig.DEBUG)
 			Log.e(TAG, thread.getName(), throwable);
 
-		Utils.saveClientException(throwable);
 	}
 
 	public static XMPPService mService;
@@ -254,7 +211,7 @@ public class App extends Application implements
 			XMPPService.XBinder binder = (XMPPService.XBinder) service;
 			mService = binder.getService();
 			if (!mService.isAuthenticated()) {
-				String account = Utils.getOF_username(App.readUser().getId());
+				String account = User.getOF_username(App.readUser());
 				String password = App.readUser().getPassword();
 
 				mService.login(account, password);
@@ -278,15 +235,8 @@ public class App extends Application implements
 			App.mContext.unbindService(mServiceConnection);
 			Log.i(TAG, "unbindXMPPService");
 		} catch (IllegalArgumentException e) {
-			Log.e(TAG, "Service wasn't bound!");
+			Log.e(TAG, "Service wasn't bound!", e);
 		}
-	}
-	private static ApkUpgrade apkUpgrade;
-	public  static ApkUpgrade getApkUpgrade(Context context) {
-		if (apkUpgrade == null) {
-			apkUpgrade = new ApkUpgrade(context);
-		}
-		return apkUpgrade;
 	}
 
 	/**
@@ -296,17 +246,6 @@ public class App extends Application implements
 		Log.i(TAG, "bindXMPPService");
 		Intent serviceIntent = new Intent(App.mContext, XMPPService.class);
 		App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
-	}
-
-	public static void cancelPeriodTaskReceiver() {
-		Utils.cancelReceiverPendingIntent(App.mContext, App.versionCheckPendingIntent);
-		App.versionCheckPendingIntent = null;
-	}
-
-	public static void startPeriodTaskReceiver() {
-		if (App.versionCheckPendingIntent == null) {
-			Utils.startVersionCheckReceiver(App.mContext);
-		}
 	}
 
 }

@@ -10,10 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
-import com.ruptech.chinatalk.ui.user.FriendProfileActivity;
-import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -22,10 +19,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class MyselfFragment extends Fragment {
-
-	public static Fragment newInstance() {
-		return new MyselfFragment();
-	}
 
 	@InjectView(R.id.main_tab_setting_profile_thumb_imageview)
 	ImageView mThumbImageview;
@@ -52,12 +45,6 @@ public class MyselfFragment extends Fragment {
 		startActivity(intent);
 	}
 
-
-	private void gotoProfile() {
-		Intent intent = new Intent(getActivity(), FriendProfileActivity.class);
-		intent.putExtra(ProfileActivity.EXTRA_USER, App.readUser());
-		this.startActivity(intent);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,12 +78,5 @@ public class MyselfFragment extends Fragment {
 		tp.setTypeface(mNameTextView.getTypeface());
 
 	}
-
-
-	@OnClick(R.id.main_tab_setting_profile_top_layout)
-	public void setting_profile(View v) {
-		gotoProfile();
-	}
-
 
 }

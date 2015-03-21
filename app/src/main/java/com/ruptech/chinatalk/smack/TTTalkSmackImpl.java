@@ -181,18 +181,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		return mXMPPConnection.isAuthenticated();
 	}
 
-	/**
-	 * **************************** start 联系人数据库事件处理 *********************************
-	 */
-	private void registerRosterListener() {
-		mRoster = mXMPPConnection.getRoster();
-		mRosterListener = new TTTalkRosterListener(mRoster, mContentResolver);
-		mRoster.addRosterListener(mRosterListener);
-	}
-
-	/**
-	 * ************** end 发送离线消息 **********************
-	 */
 
 
 	private void unRegisterAllListener() {
@@ -210,7 +198,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			registerMessageListener();
 			registerMessageSendFailureListener();
 			registerChatRoomInvitationListener();
-			registerRosterListener();// 监听联系人动态变化
 //            registerPongListener();
 			sendOfflineMessages();
 
