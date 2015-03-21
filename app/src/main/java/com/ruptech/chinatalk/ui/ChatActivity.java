@@ -10,8 +10,6 @@ import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -31,6 +29,7 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
+import com.ruptech.chinatalk.task.impl.SendGroupTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.dlmu.im.R;
@@ -106,26 +105,15 @@ public class ChatActivity extends ActionBarActivity {
 			return;
 		}
 
-
 		setContentView(R.layout.activity_chat);
 		ButterKnife.inject(this);
 
 		mToJid = (String) getIntent().getExtras().get(EXTRA_JID);
 
-
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu mMenu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.chat_actions, mMenu);
-
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -184,13 +172,6 @@ public class ChatActivity extends ActionBarActivity {
 	InputMethodManager mInputMethodManager;
 
 
-	private void doRetrieveUser(long userId) {
-		RetrieveUserTask mRetrieveUserTask = new RetrieveUserTask(userId);
-		mRetrieveUserTask.setListener(mRetrieveUserListener);
-		mRetrieveUserTask.execute();
-	}
-
-
 	private void gotoSplashActivity() {
 		Intent intent = new Intent(this, SplashActivity.class);
 		startActivity(intent);
@@ -243,6 +224,16 @@ public class ChatActivity extends ActionBarActivity {
 
 	}
 
+	private final TaskListener mSendGroupMessageTaskListener = new TaskAdapter() {
+
+		@Override
+		public void onPostExecute(GenericTask task, TaskResult result) {
+			if (result == TaskResult.OK) {
+				SendGroupTask sgt = (SendGroupTask)task;
+				Toast.makeText(ChatActivity.this,"Send to: "+sgt.getSendList(), Toast.LENGTH_SHORT).show();
+			}
+		}
+	};
 
 	private void sendText(String content) {
 		Chat chat = new Chat();
@@ -254,6 +245,19 @@ public class ChatActivity extends ActionBarActivity {
 		chat.setCreated_date(System.currentTimeMillis());
 		sendMessageIfNotNull(chat);
 
+		if (isGroup(mToJid)) {
+
+			String fromJid = App.readUser().getOF_JabberID();
+			SendGroupTask sendGroupTask = new SendGroupTask(fromJid, mToJid, "From:" + fromJid, content);
+			sendGroupTask.setListener(mSendGroupMessageTaskListener);
+
+			sendGroupTask.execute();
+
+		}
+	}
+
+	private boolean isGroup(String jid) {
+		return jid.startsWith("org_");
 	}
 
 
@@ -283,31 +287,8 @@ public class ChatActivity extends ActionBarActivity {
 
 		String selection = ChatTable.Columns.FROM_JID + " = ? and " + ChatTable.Columns.TO_JID + " = ?";
 
-		Cursor childCursor = getContentResolver().query(ChatProvider.CONTENT_URI,
+		return getContentResolver().query(ChatProvider.CONTENT_URI,
 				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mToJid}, null);
-		return childCursor;
-	}
-
-	private class MessageObserver extends ContentObserver {
-		public MessageObserver() {
-			super(new Handler());
-		}
-
-		public void onChange(boolean selfChange) {
-			Log.d(TAG, "ContactObserver.onChange: " + selfChange);
-			// TODO
-		}
-	}
-
-	private class FriendObserver extends ContentObserver {
-		public FriendObserver() {
-			super(new Handler());
-		}
-
-		public void onChange(boolean selfChange) {
-			Log.d(TAG, "ContactObserver.onChange: " + selfChange);
-			// TODO
-		}
 	}
 
 	protected void sendMessageIfNotNull(Chat chat) {

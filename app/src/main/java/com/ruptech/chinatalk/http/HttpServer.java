@@ -192,9 +192,22 @@ public class HttpServer extends HttpConnection {
 	 * @throws Exception
 	 */
 
-	public boolean sendGroupMessage(String title, String body)
+	public List<String> sendGroupMessage(String fromJid, String toGroupJid, String subject, String body)
 			throws Exception {
-		return true;
+		Map<String, String> params = new HashMap<>();
+		params.put("from_jid", fromJid);
+		params.put("to_group", toGroupJid);
+		params.put("subject", subject);
+		params.put("body", body);
+
+		Response res = _get("send", params);
+		JSONArray result = res.asJSONArray();
+		List<String> sends= new ArrayList<>(result.length());
+		for (int i = 0; i < result.length(); i++) {
+			String memberId = result.getString(i);
+			sends.add(memberId);
+		}
+		return sends;
 	}
 
 	/**

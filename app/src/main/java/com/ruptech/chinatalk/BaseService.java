@@ -46,7 +46,7 @@ public abstract class BaseService extends Service {
 
 	private String getMessageTitle(String fromJid) {
 		String title;
-		String name = User.getTTTalkIDFromOF_JID(fromJid);
+		String name = fromJid;
 		title = name;
 		return title;
 	}

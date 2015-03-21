@@ -18,7 +18,6 @@ import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.ServerUtilities;
 import com.ruptech.chinatalk.utils.Utils;
 
 import org.jivesoftware.smack.AccountManager;
@@ -144,6 +143,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	@Override
 	public boolean login(String account, String password) throws XMPPException {
 		try {
+			Log.e(TAG, String.format("login:%s, %s", account, password));
 			if (mXMPPConnection.isConnected()) {
 				try {
 					mXMPPConnection.disconnect();
@@ -176,11 +176,9 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		}
 		registerAllListener();// 注册监听其他的事件，比如新消息
 
-		ServerUtilities.registerOpenfirePushOnServer(getUser());
 		App.mBus.post(new OnlineEvent());
 		return mXMPPConnection.isAuthenticated();
 	}
-
 
 
 	private void unRegisterAllListener() {

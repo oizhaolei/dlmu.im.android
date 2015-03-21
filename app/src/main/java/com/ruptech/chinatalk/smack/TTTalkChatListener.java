@@ -35,6 +35,7 @@ public class TTTalkChatListener implements PacketListener {
 		}
 
 		String fromJID = XMPPUtils.getJabberID(msg.getFrom());
+		String toJID = XMPPUtils.getJabberID(msg.getTo());
 
 		Log.e(TAG, msg.toXML());
 
@@ -42,9 +43,9 @@ public class TTTalkChatListener implements PacketListener {
 		long ts = System.currentTimeMillis();
 
 		Chat chat = new Chat();
-		chat.setFromJid(App.readUser().getOF_JabberID());
+		chat.setFromJid(fromJID);
 		chat.setContent(body);
-		chat.setToJid(fromJID);
+		chat.setToJid(toJID);
 		chat.setPid(msg.getPacketID());
 		chat.setStatus(ChatProvider.DS_NEW);
 		chat.setCreated_date(ts);

@@ -41,8 +41,7 @@ import org.jivesoftware.smack.SmackAndroid;
 import java.io.File;
 import java.util.Properties;
 
-public class App extends Application implements
-		Thread.UncaughtExceptionHandler {
+public class App extends Application  {
 
 	public static Bus mBus;
 	public static TTTalkSmack mSmack;
@@ -152,8 +151,6 @@ public class App extends Application implements
 		AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
 		properties = assetsPropertyReader.getProperties("env.properties");
 
-		// setup handler for uncaught exception
-		Thread.setDefaultUncaughtExceptionHandler(this);
 		mContext = this.getApplicationContext();
 
 		mApkVersionOfClient = Utils.getAppVersionOfClient(this);
@@ -197,12 +194,6 @@ public class App extends Application implements
 	}
 
 
-	@Override
-	public void uncaughtException(Thread thread, Throwable throwable) {
-		if (BuildConfig.DEBUG)
-			Log.e(TAG, thread.getName(), throwable);
-
-	}
 
 	public static XMPPService mService;
 	public static ServiceConnection mServiceConnection = new ServiceConnection() {
