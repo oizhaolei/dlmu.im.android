@@ -39,17 +39,10 @@ public class ChinaTalkDatabase {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			if (BuildConfig.DEBUG)
 				Log.d(TAG, "Upgrade Database.");
-			if (oldVersion == 57) {
-				try {
-					udpateTable57to67(db);
-				} catch (Exception e) {
-					Utils.sendClientException(e);
-				}
-			} else {
-				dropAllTables(db);
-				createAllTables(db);
-				createAllIndexes(db);
-			}
+
+			dropAllTables(db);
+			createAllTables(db);
+			createAllIndexes(db);
 		}
 
 	}
@@ -65,7 +58,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 67;
+	public static final int DATABASE_VERSION = 68;
 
 	/**
 	 * self instance
@@ -100,12 +93,6 @@ public class ChinaTalkDatabase {
 		return sInstance;
 	}
 
-	private static void udpateTable57to67(SQLiteDatabase db) {
-		db.execSQL(ChatTable.getCreateSQL());
-		db.execSQL("ALTER TABLE " + UserTable.getName() + " ADD "
-				+ UserTable.Columns.TERMINAL_TYPE + "    TEXT;");
-
-	}
 
 	/**
 	 * SQLiteDatabase Open Helper

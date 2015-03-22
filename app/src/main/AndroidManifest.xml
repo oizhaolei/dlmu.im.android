@@ -85,6 +85,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.ruptech.chinatalk.ui.OrgActivity"
+            android:icon="@drawable/tt_logo2"  >
+        </activity>
+        <activity
             android:name="com.ruptech.chinatalk.ui.FullScreenActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="landscape" >

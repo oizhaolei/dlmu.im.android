@@ -202,7 +202,7 @@ public class App extends Application  {
 			XMPPService.XBinder binder = (XMPPService.XBinder) service;
 			mService = binder.getService();
 			if (!mService.isAuthenticated()) {
-				String account = User.getOF_username(App.readUser());
+				String account =  App.readUser().getOF_username();
 				String password = App.readUser().getPassword();
 
 				mService.login(account, password);

@@ -14,6 +14,7 @@ import android.util.Log;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.NetChangeEvent;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -112,7 +113,8 @@ public class XMPPService extends BaseService {
 		if (isAuthenticated())// 如果已经连接上，直接返回
 			return;
 
-		String account = App.readUser().getUsername();
+
+		String account =App.readUser().getOF_username();
 		String password = App.readUser().getPassword();
 
 		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
@@ -129,7 +131,8 @@ public class XMPPService extends BaseService {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (!isAuthenticated()) {
-			String account = App.readUser().getUsername();
+
+			String account = App.readUser().getOF_username();
 			String password = App.readUser().getPassword();
 			login(account, password);
 		}
@@ -239,7 +242,8 @@ public class XMPPService extends BaseService {
 				Log.d(TAG, "Reconnect attempt aborted: we are connected again!");
 				return;
 			}
-			String account = App.readUser().getUsername();
+
+			String account = App.readUser().getOF_username();
 			String password = App.readUser().getPassword();
 
 			if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {

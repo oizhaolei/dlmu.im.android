@@ -127,7 +127,7 @@ public abstract class TableContent {
 			create.append("CREATE TABLE ").append(getName()).append("( ");
 			create.append(Columns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, ");
 			create.append(Columns.CREATED_DATE + " INTEGER, ");
-			create.append(Columns.FROM_JID + " INTEGER, ");
+			create.append(Columns.FROM_JID + " TEXT, ");
 			create.append(Columns.TO_JID + " TEXT, ");
 			create.append(Columns.CONTENT + " TEXT, ");
 			create.append(Columns.DELIVERY_STATUS + " INTEGER, ");

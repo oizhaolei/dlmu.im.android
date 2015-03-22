@@ -15,11 +15,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
-import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -63,11 +64,11 @@ public class ChatFragment extends Fragment {
 	static final String LOG_TAG = ChatFragment.class.getName();
 
 	public void updateRoster() {
-//        mRecentChatAdapter.requery();
+        mRecentChatAdapter.requery();
 	}
 
 
-	private void startChatActivity(String userJid, String userName) {
+	private void startChatActivity(String userJid) {
 		Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
 		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
 		startActivity(chatIntent);
@@ -125,10 +126,16 @@ public class ChatFragment extends Fragment {
 			                        int position, long id) {
 				Cursor clickCursor = mRecentChatAdapter.getCursor();
 				clickCursor.moveToPosition(position);
-				String jid = clickCursor.getString(clickCursor
-						.getColumnIndex(TableContent.ChatTable.Columns.TO_JID));
+				String from_Jid = clickCursor.getString(clickCursor
+						.getColumnIndex(ChatTable.Columns.FROM_JID));
+				String to_Jid = clickCursor.getString(clickCursor
+						.getColumnIndex(ChatTable.Columns.TO_JID));
+				String name = to_Jid;
+				if (to_Jid.startsWith( App.readUser().getOF_username())) {
+					name = from_Jid;
+				}
 
-				startChatActivity(jid, XMPPUtils.splitJidAndServer(jid));
+				startChatActivity(name);
 			}
 		});
 

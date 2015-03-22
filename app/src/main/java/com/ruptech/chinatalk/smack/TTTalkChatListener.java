@@ -44,8 +44,8 @@ public class TTTalkChatListener implements PacketListener {
 
 		Chat chat = new Chat();
 		chat.setFromJid(fromJID);
-		chat.setContent(body);
 		chat.setToJid(toJID);
+		chat.setContent(body);
 		chat.setPid(msg.getPacketID());
 		chat.setStatus(ChatProvider.DS_NEW);
 		chat.setCreated_date(ts);

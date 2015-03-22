@@ -11,10 +11,10 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
-import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.dlmu.im.R;
 
@@ -60,10 +60,12 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		String date = DateCommonUtils.formatDateToString(dateMilliseconds, false, false);
 		String message = cursor.getString(cursor
 				.getColumnIndex(ChatTable.Columns.CONTENT));
-		String jid = cursor.getString(cursor
+		String from_Jid = cursor.getString(cursor
+				.getColumnIndex(ChatTable.Columns.FROM_JID));
+		String to_Jid = cursor.getString(cursor
 				.getColumnIndex(ChatTable.Columns.TO_JID));
 
-		String selection = ChatTable.Columns.TO_JID + " = '" + jid + "' AND "
+		String selection = ChatTable.Columns.TO_JID + " = '" + to_Jid + "' AND "
 				+ ChatTable.Columns.FROM_JID + " = '" + App.readUser().getOF_JabberID()
 				+ "' AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
 				+ ChatProvider.DS_NEW;// 新消息数量字段
@@ -84,8 +86,10 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		boolean isGroupChat = Utils.isGroupChat(jid);
-		String name = jid;
+		String name = to_Jid;
+		if (to_Jid.startsWith(App.readUser() .getOF_username())) {
+			name = from_Jid;
+		}
 
 		viewHolder.jidView.setText(name);
 		viewHolder.msgView.setText(XMPPUtils

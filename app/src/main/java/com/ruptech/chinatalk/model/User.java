@@ -47,7 +47,7 @@ public class User extends Item implements Serializable {
 	}
 
 	public String getOF_JabberID() {
-		return username+"@im.dlmu.edu.cn";
+		return getOF_username()+"@im.dlmu.edu.cn";
 	}
 
 	public String getFullname() {
@@ -59,12 +59,12 @@ public class User extends Item implements Serializable {
 	}
 
 
-	public static String getOF_username(User user) {
-		if (user.teacher)
-			return String.format("teacher_%s", user.getUsername());
+	public   String getOF_username( ) {
+		if ( teacher)
+			return String.format("teacher_%s",  getUsername());
 		else
 			return
-					String.format("student_%s", user.getUsername());
+					String.format("student_%s",  getUsername());
 	}
 
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
@@ -34,8 +35,6 @@ public class MyselfFragment extends Fragment {
 	View profileTopView;
 
 	public static MyselfFragment instance = null;
-
-	private final TextPaint tp = new TextPaint();
 
 
 	@OnClick(R.id.main_tab_myself_setting_layout)
@@ -74,9 +73,7 @@ public class MyselfFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 		instance = this;
 
-		tp.setTextSize(mNameTextView.getTextSize());
-		tp.setTypeface(mNameTextView.getTypeface());
-
+		mTelTextView.setText(App.readUser().getUsername());
 	}
 
 }

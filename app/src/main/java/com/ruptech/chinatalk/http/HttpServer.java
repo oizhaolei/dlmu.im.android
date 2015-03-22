@@ -202,7 +202,7 @@ public class HttpServer extends HttpConnection {
 
 		Response res = _get("send", params);
 		JSONArray result = res.asJSONArray();
-		List<String> sends= new ArrayList<>(result.length());
+		List<String> sends = new ArrayList<>(result.length());
 		for (int i = 0; i < result.length(); i++) {
 			String memberId = result.getString(i);
 			sends.add(memberId);
@@ -226,7 +226,17 @@ public class HttpServer extends HttpConnection {
 		JSONObject result = res.asJSONObject();
 
 
-			return new User(result);
+		return new User(result);
 	}
 
+	public Map retrieveOrgList(String parentJid)
+			throws Exception {
+		Map<String, String> params = new HashMap<>();
+		params.put("pid", parentJid);
+
+		Response res = _get("org", params);
+		JSONObject result = res.asJSONObject();
+		return toMap(result);
+
+	}
 }

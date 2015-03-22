@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ruptech.chinatalk.ui.ChatActivity;
+import com.ruptech.chinatalk.ui.OrgActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -46,17 +47,17 @@ public class DiscoverFragment extends Fragment {
 	}
 	@OnClick(R.id.main_tab_organize_muc_testroom1_layout)
 	public void chatToMucTestRoom1(View v) {
-//		Intent orgIntent = new Intent(getActivity(), OrgActivity.class);
-//		orgIntent.putExtra(OrgActivity.PARENT_JID, "1000");
-//		startActivity(orgIntent);
+		Intent orgIntent = new Intent(getActivity(), OrgActivity.class);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, "100000");
+		startActivity(orgIntent);
 
-		startChatActivity("org_101000@im.dlmu.edu.cn");
+		//startChatActivity("org_101000@im.dlmu.edu.cn");
 
 	}
 
 	@OnClick(R.id.main_tab_organize_user_zhao_layout)
 	public void chatToUserCai(View v) {
-		startChatActivity("teacher_20142203@im.dlmu.edu.cn");
+		startChatActivity("teacher_20042020@im.dlmu.edu.cn");
 	}
 
 	@Override

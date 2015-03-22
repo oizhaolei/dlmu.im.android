@@ -28,7 +28,6 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.task.impl.SendGroupTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.BuildConfig;
@@ -54,25 +53,6 @@ public class ChatActivity extends ActionBarActivity {
 	@InjectView(R.id.activity_chat_message_listview)
 	ListView mMessageListView;
 
-
-	private final TaskListener mRetrieveUserListener = new TaskAdapter() {
-
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
-			if (result == TaskResult.OK) {
-				if (retrieveUserTask.getUser() != null) {
-					mFriendUser = retrieveUserTask.getUser();
-
-					displayTitle();
-				}
-			} else {
-				String msg = retrieveUserTask.getMsg();
-				onRetrieveUserTaskFailure(msg);
-			}
-		}
-
-	};
 
 	private CursorAdapter cursorAdapter;
 
@@ -122,10 +102,6 @@ public class ChatActivity extends ActionBarActivity {
 		}
 
 		return true;
-	}
-
-	private void onRetrieveUserTaskFailure(String msg) {
-		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 
 
@@ -229,8 +205,8 @@ public class ChatActivity extends ActionBarActivity {
 		@Override
 		public void onPostExecute(GenericTask task, TaskResult result) {
 			if (result == TaskResult.OK) {
-				SendGroupTask sgt = (SendGroupTask)task;
-				Toast.makeText(ChatActivity.this,"Send to: "+sgt.getSendList(), Toast.LENGTH_SHORT).show();
+				SendGroupTask sgt = (SendGroupTask) task;
+				Toast.makeText(ChatActivity.this, "Send to: " + sgt.getSendList(), Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -285,10 +261,12 @@ public class ChatActivity extends ActionBarActivity {
 
 	private Cursor reQuery() {
 
-		String selection = ChatTable.Columns.FROM_JID + " = ? and " + ChatTable.Columns.TO_JID + " = ?";
+		String selection = "(" + ChatTable.Columns.FROM_JID + " = ? and " + ChatTable.Columns.TO_JID + " = ?) or " +
+				"(" + ChatTable.Columns.TO_JID + " = ? and " + ChatTable.Columns.FROM_JID + " = ?)";
 
 		return getContentResolver().query(ChatProvider.CONTENT_URI,
-				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mToJid}, null);
+				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mToJid, App.readUser().getOF_JabberID(), mToJid}, null);
+
 	}
 
 	protected void sendMessageIfNotNull(Chat chat) {
