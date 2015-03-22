@@ -3,6 +3,8 @@ package com.ruptech.chinatalk.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,8 +32,26 @@ public class OrgActivity extends ActionBarActivity {
 	static final String TAG = Utils.CATEGORY
 			+ OrgActivity.class.getSimpleName();
 
-	private String mParentOrgJid;
+	private String mParentOrgId;
 
+
+	private void startChatActivity(String userJid) {
+		Intent chatIntent = new Intent(this, ChatActivity.class);
+		chatIntent.putExtra(ChatActivity.EXTRA_JID, String.format("org_%s@im.dlmu.edu.cn", userJid));
+		startActivity(chatIntent);
+	}
+
+	// doChat
+	public void doChat(MenuItem item) {
+		startChatActivity(mParentOrgId);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu mMenu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.org_actions, mMenu);
+		return true;
+	}
 
 	@InjectView(R.id.activity_org_listview)
 	ListView mOrgListView;
@@ -40,7 +60,7 @@ public class OrgActivity extends ActionBarActivity {
 
 	protected void displayTitle() {
 		String title;
-		title = mParentOrgJid;
+		title = mParentOrgId;
 		getSupportActionBar().setTitle(title);
 	}
 
@@ -59,12 +79,12 @@ public class OrgActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_org);
 		ButterKnife.inject(this);
 
-		mParentOrgJid = (String) getIntent().getExtras().get(PARENT_ORG_ID);
+		mParentOrgId = (String) getIntent().getExtras().get(PARENT_ORG_ID);
 
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		retrieveOrg(mParentOrgJid);
+		retrieveOrg(mParentOrgId);
 	}
 
 	private void retrieveOrg(String parentOrgJid) {
@@ -123,7 +143,7 @@ public class OrgActivity extends ActionBarActivity {
 				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
 
 				Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
-				orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, (String)item.get("jid"));
+				orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, (String) item.get("jid"));
 				startActivity(orgIntent);
 			}
 		});
