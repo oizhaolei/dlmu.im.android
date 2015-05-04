@@ -232,7 +232,7 @@ public class HttpServer extends HttpConnection {
 	public Map retrieveOrgList(String parentJid)
 			throws Exception {
 		Map<String, String> params = new HashMap<>();
-		params.put("pid", parentJid);
+		params.put("jid", parentJid);
 
 		Response res = _get("org", params);
 		JSONObject result = res.asJSONObject();

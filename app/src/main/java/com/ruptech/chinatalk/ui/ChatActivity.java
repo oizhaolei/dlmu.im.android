@@ -45,6 +45,7 @@ public class ChatActivity extends ActionBarActivity {
 			+ ChatActivity.class.getSimpleName();
 
 	private String mToJid;//可以是friend的JID，也可以是muc的JID
+	private String mTitle;
 	private User mFriendUser;
 
 
@@ -57,13 +58,7 @@ public class ChatActivity extends ActionBarActivity {
 	private CursorAdapter cursorAdapter;
 
 	protected void displayTitle() {
-		String title;
-		if (mFriendUser != null) {
-			title = mFriendUser.getFullname();
-		} else {
-			title = mToJid;
-		}
-		getSupportActionBar().setTitle(title);
+		getSupportActionBar().setTitle(mTitle);
 	}
 
 
@@ -89,6 +84,7 @@ public class ChatActivity extends ActionBarActivity {
 		ButterKnife.inject(this);
 
 		mToJid = (String) getIntent().getExtras().get(EXTRA_JID);
+		mTitle = (String) getIntent().getExtras().get(EXTRA_TITLE);
 
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -143,6 +139,7 @@ public class ChatActivity extends ActionBarActivity {
 
 
 	public static final String EXTRA_JID = "EXTRA_JID";
+	public static final String EXTRA_TITLE = "EXTRA_TITLE";
 
 
 	InputMethodManager mInputMethodManager;

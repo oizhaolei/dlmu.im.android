@@ -19,6 +19,7 @@ import com.ruptech.chinatalk.task.impl.RetrieveOrgListTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,17 +34,19 @@ public class OrgActivity extends ActionBarActivity {
 			+ OrgActivity.class.getSimpleName();
 
 	private String mParentOrgId;
+	private String mTitle;
 
 
-	private void startChatActivity(String userJid) {
+	private void startChatActivity(String userJid, String name) {
 		Intent chatIntent = new Intent(this, ChatActivity.class);
-		chatIntent.putExtra(ChatActivity.EXTRA_JID, String.format("org_%s@im.dlmu.edu.cn", userJid));
+		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
+		chatIntent.putExtra(ChatActivity.EXTRA_TITLE, name);
 		startActivity(chatIntent);
 	}
 
 	// doChat
 	public void doChat(MenuItem item) {
-		startChatActivity(mParentOrgId);
+		startChatActivity(mParentOrgId, mTitle);
 	}
 
 	@Override
@@ -55,13 +58,10 @@ public class OrgActivity extends ActionBarActivity {
 
 	@InjectView(R.id.activity_org_listview)
 	ListView mOrgListView;
-	private List<Map<String, Object>> orgList;
-	private List<Map<String, Object>> memberList;
+	private List<Map<String, Object>> itemList = new ArrayList<>();
 
 	protected void displayTitle() {
-		String title;
-		title = mParentOrgId;
-		getSupportActionBar().setTitle(title);
+		getSupportActionBar().setTitle(mTitle);
 	}
 
 
@@ -80,6 +80,7 @@ public class OrgActivity extends ActionBarActivity {
 		ButterKnife.inject(this);
 
 		mParentOrgId = (String) getIntent().getExtras().get(PARENT_ORG_ID);
+		mTitle = (String) getIntent().getExtras().get(PARENT_ORG_NAME);
 
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -95,8 +96,12 @@ public class OrgActivity extends ActionBarActivity {
 				super.onPostExecute(task, result);
 				RetrieveOrgListTask retrieveOrgListTask = (RetrieveOrgListTask) task;
 				if (result == TaskResult.OK) {
-					orgList = retrieveOrgListTask.getOrgList();
-					memberList = retrieveOrgListTask.getMemberList();
+
+					List<Map<String, Object>> orgList = retrieveOrgListTask.getOrgList();
+					List<Map<String, Object>> memberList = retrieveOrgListTask.getMemberList();
+
+					itemList.addAll(orgList);
+					itemList.addAll(memberList);
 					setAdapter();
 
 				}
@@ -109,15 +114,9 @@ public class OrgActivity extends ActionBarActivity {
 
 	private void setAdapter() {
 		SimpleAdapter adapter;
-		if (orgList.size() > 0) {
-			adapter = new SimpleAdapter(this, orgList, R.layout.item_org,
-					new String[]{"jid", "name"},
-					new int[]{R.id.item_org_jid, R.id.item_org_name});
-		} else {
-			adapter = new SimpleAdapter(this, memberList, R.layout.item_member,
-					new String[]{"jid", "name"},
-					new int[]{R.id.item_member_jid, R.id.item_org_name});
-		}
+		adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
+				new String[]{"jid", "name"},
+				new int[]{R.id.item_org_jid, R.id.item_org_name});
 		mOrgListView.setAdapter(adapter);
 	}
 
@@ -141,16 +140,27 @@ public class OrgActivity extends ActionBarActivity {
 			public void onItemClick(AdapterView<?> view, View arg1,
 			                        int position, long id) {
 				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
-
-				Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
-				orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, (String) item.get("jid"));
-				startActivity(orgIntent);
+				String jid = (String) item.get("jid");
+				String name = (String) item.get("name");
+				if (jid.startsWith("teacher_") || jid.startsWith("student_")) {
+					startChatActivity(jid, name);
+				} else {
+					startOrgActivity(jid, name);
+				}
 			}
 		});
 	}
 
+	private void startOrgActivity(String jid, String name) {
+		Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, jid);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, name);
+		startActivity(orgIntent);
+	}
+
 
 	public static final String PARENT_ORG_ID = "PARENT_ORG_ID";
+	public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
 
 
 	private void gotoSplashActivity() {

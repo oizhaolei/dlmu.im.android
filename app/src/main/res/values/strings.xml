@@ -576,4 +576,5 @@
     <string name="email_verified">Email(verified)</string>
     <string name="email_not_verified">Email(not verified)</string>
     <string name="send_failure">Send failed</string>
+    <string name="dlmu_title">大连海事大学</string>
 </resources>

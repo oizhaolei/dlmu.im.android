@@ -89,9 +89,9 @@ public class MainTabLayout extends LinearLayout implements OnClickListener {
 
 	public void init() {
 
+		mTabs.add(new TabItem(R.string.main_tab_chat, R.drawable.tab_icon_chat));
 		mTabs.add(new TabItem(R.string.main_tab_discover,
 				R.drawable.tab_icon_discover));
-		mTabs.add(new TabItem(R.string.main_tab_chat, R.drawable.tab_icon_chat));
 		mTabs.add(new TabItem(R.string.main_tab_myself,
 				R.drawable.tab_icon_service));
 

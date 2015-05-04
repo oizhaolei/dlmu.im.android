@@ -22,40 +22,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
-            android:text="大连海事大学" />
+            android:text="@string/dlmu_title" />
 
 
         <ImageView
             android:id="@+id/main_tab_organize_muc_testroom1_submenu_imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="20dp"
-            android:scaleType="matrix"
-            android:src="@drawable/submenu" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/main_tab_organize_user_zhao_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/preference_item"
-        android:gravity="center_vertical"
-        android:paddingBottom="12dp"
-        android:paddingTop="12dp" >
-
-        <TextView
-            android:id="@+id/main_tab_organize_user_cai_title_textview"
-            style="@style/importance_contents_text_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:text="teacher_20042020@im.dlmu.edu.cn" />
-
-
-        <ImageView
-            android:id="@+id/main_tab_organize_user_cai_submenu_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

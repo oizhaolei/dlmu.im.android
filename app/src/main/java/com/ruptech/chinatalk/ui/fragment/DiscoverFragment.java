@@ -40,24 +40,15 @@ public class DiscoverFragment extends Fragment {
 
 	}
 
-	private void startChatActivity(String userJid ) {
-		Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
-		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
-		startActivity(chatIntent);
-	}
 	@OnClick(R.id.main_tab_organize_muc_testroom1_layout)
 	public void chatToMucTestRoom1(View v) {
 		Intent orgIntent = new Intent(getActivity(), OrgActivity.class);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, "100000");
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
 		startActivity(orgIntent);
 
 		//startChatActivity("org_101000@im.dlmu.edu.cn");
 
-	}
-
-	@OnClick(R.id.main_tab_organize_user_zhao_layout)
-	public void chatToUserCai(View v) {
-		startChatActivity("teacher_20042020@im.dlmu.edu.cn");
 	}
 
 	@Override
