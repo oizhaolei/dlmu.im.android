@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.OrgActivity;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
@@ -43,7 +42,7 @@ public class DiscoverFragment extends Fragment {
 	@OnClick(R.id.main_tab_organize_muc_testroom1_layout)
 	public void chatToMucTestRoom1(View v) {
 		Intent orgIntent = new Intent(getActivity(), OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, "100000");
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@im.dlmu.edu.cn");
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
 		startActivity(orgIntent);
 

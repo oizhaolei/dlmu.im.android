@@ -79,7 +79,7 @@ public class OrgActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_org);
 		ButterKnife.inject(this);
 
-		mParentOrgId = (String) getIntent().getExtras().get(PARENT_ORG_ID);
+		mParentOrgId = (String) getIntent().getExtras().get(PARENT_ORG_JID);
 		mTitle = (String) getIntent().getExtras().get(PARENT_ORG_NAME);
 
 		setupComponents();
@@ -153,13 +153,13 @@ public class OrgActivity extends ActionBarActivity {
 
 	private void startOrgActivity(String jid, String name) {
 		Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_ID, jid);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, jid);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, name);
 		startActivity(orgIntent);
 	}
 
 
-	public static final String PARENT_ORG_ID = "PARENT_ORG_ID";
+	public static final String PARENT_ORG_JID = "PARENT_ORG_JID";
 	public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
 
 
