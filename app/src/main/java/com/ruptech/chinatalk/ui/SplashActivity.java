@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -38,16 +37,16 @@ public class SplashActivity extends Activity {
 			@Override
 			public void run() {
 				// usage demo
-				if (PrefUtils.existsPrefUserInfo()) {
+				if (App.isAvailableShowMain()) {
 					gotoLoginLoadingActivity();
 				} else {
-					gotoLogiGateActivity();
+					gotoLoginGateActivity();
 				}
 			}
 		});
 	}
 
-	private void gotoLogiGateActivity() {
+	private void gotoLoginGateActivity() {
 		Intent intent = new Intent(SplashActivity.this, LoginGateActivity.class);
 		startActivity(intent);
 	}
@@ -65,8 +64,7 @@ public class SplashActivity extends Activity {
 		setContentView(R.layout.activity_splash);
 		ButterKnife.inject(this);
 
-		if (App.isAvailableShowMain()
-				&& PrefUtils.getPrefLastApkVersion() == Utils.getAppVersionCode()) {
+		if (App.isAvailableShowMain()) {
 
 			this.directlyToMain = true;
 			LoginLoadingActivity.gotoMainActivity(this);

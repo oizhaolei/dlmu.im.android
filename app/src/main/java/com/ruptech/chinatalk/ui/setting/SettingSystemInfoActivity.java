@@ -71,8 +71,8 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 	// 系统url
 	@OnClick(R.id.main_tab_setting_show_system_url_textview)
 	public void doShowSystemUrl(View v) {
-		StringBuffer msg = new StringBuffer(64);
-		msg.append(App.mSmack.getUser());
+
+		//
 	}
 
 	@Override

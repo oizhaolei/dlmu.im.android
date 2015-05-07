@@ -411,7 +411,7 @@ public class PrefUtils {
 			Object obj = in.readObject();
 			in.close();
 			return obj;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Log.e(TAG, e.getMessage(), e);
 			return null;
 		}
@@ -427,8 +427,8 @@ public class PrefUtils {
 		return (List<User>) readObject(PREF_RECOMMENDED_FRIENDS);
 	}
 
-	public static ServerAppInfo readServerAppInfo() {
-		return (ServerAppInfo) readObject(PREF_SERVERAPP_INFO);
+	public static AppVersion readServerAppInfo() {
+		return (AppVersion) readObject(PREF_SERVERAPP_INFO);
 	}
 
 	private static String readStr(String key) {
@@ -744,7 +744,7 @@ public class PrefUtils {
 		writeObject(recommendedFriendList, PREF_RECOMMENDED_FRIENDS);
 	}
 
-	public static void writeServerAppInfo(ServerAppInfo serverAppInfo) {
+	public static void writeServerAppInfo(AppVersion serverAppInfo) {
 		writeObject(serverAppInfo, PREF_SERVERAPP_INFO);
 	}
 

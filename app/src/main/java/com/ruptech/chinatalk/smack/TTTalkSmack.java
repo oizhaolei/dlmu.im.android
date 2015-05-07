@@ -5,31 +5,18 @@ import com.ruptech.chinatalk.exception.XMPPException;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
 
+import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.RoomInfo;
 
 import java.util.List;
 
 public interface TTTalkSmack {
-	public boolean login(String account, String password) throws XMPPException;
+	boolean login(String account, String password) throws Exception;
 
-	public boolean logout();
+	boolean logout();
 
-	public boolean isAuthenticated();
-
-	String getUser();
-
-	public boolean createAccount(String username, String password);
-
-	public void sendMessage(String toJid, Chat chat);
-
-	public void sendGroupMessage(MultiUserChat chatRoom, Chat chat);
-
-	public String getNameForJID(String jid);
-
-	public MultiUserChat createChatRoom(List<User> inviteUserList);
-
-	public MultiUserChat createChatRoomByRoomName(String roomName);
-
-	public RoomInfo getChatRoomInfo(String roomName);
+	boolean isAuthenticated();
+	
+	void sendMessage(String toJid, Chat chat) throws SmackException.NotConnectedException ;
 }

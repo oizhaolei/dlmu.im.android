@@ -1,7 +1,9 @@
 package com.ruptech.chinatalk;
 
+import android.app.AlarmManager;
 import android.app.Application;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,21 +24,17 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.ruptech.chinatalk.http.HttpServer;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.smack.TTTalkSmack;
 import com.ruptech.chinatalk.sqlite.UserDAO;
 import com.ruptech.chinatalk.task.TaskManager;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.PrefUtils;
-import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.BuildConfig;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
-import org.jivesoftware.smack.SmackAndroid;
 
 import java.io.File;
 import java.util.Properties;
@@ -44,9 +42,7 @@ import java.util.Properties;
 public class App extends Application  {
 
 	public static Bus mBus;
-	public static TTTalkSmack mSmack;
 	static public Properties properties;
-	private SmackAndroid smackAndroid;
 
 	public static HttpServer getHttpServer() {
 		if (httpServer == null) {
@@ -71,11 +67,6 @@ public class App extends Application  {
 		App.user = null;
 	}
 
-	public static void writeServerAppInfo(ServerAppInfo serverAppInfo) {
-		PrefUtils.writeServerAppInfo(serverAppInfo);
-		App.mServerAppInfo = serverAppInfo;
-	}
-
 	public static void writeUser(User user) {
 		if (user == null)
 			return;
@@ -92,7 +83,6 @@ public class App extends Application  {
 
 	public static TaskManager taskManager = new TaskManager();
 	private static User user;
-	private static ServerAppInfo mServerAppInfo;
 
 	public static UserDAO userDAO;
 
@@ -146,7 +136,6 @@ public class App extends Application  {
 
 		mBus = new Bus(ThreadEnforcer.ANY);
 		mBus.register(this);
-		smackAndroid = SmackAndroid.init(this);
 
 		AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
 		properties = assetsPropertyReader.getProperties("env.properties");
@@ -154,7 +143,6 @@ public class App extends Application  {
 		mContext = this.getApplicationContext();
 
 		mApkVersionOfClient = Utils.getAppVersionOfClient(this);
-		mServerAppInfo = PrefUtils.readServerAppInfo();
 
 		notificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -167,8 +155,17 @@ public class App extends Application  {
 
 		getDisplaySize();
 
+		startVersionCheckReceiver(this);
 	}
-
+	public static PendingIntent versionCheckPendingIntent;
+	//Receiver 版本检查
+	public static void startVersionCheckReceiver(Context context) {
+		//version check
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
+		 versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 90 * 60 * 1000, versionCheckPendingIntent);
+	}
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
@@ -183,9 +180,6 @@ public class App extends Application  {
 
 		if (BuildConfig.DEBUG)
 			Log.e(TAG, "onTerminate");
-		if (smackAndroid != null) {
-			smackAndroid.onDestroy();
-		}
 		if (mBus != null) {
 			mBus.unregister(this);
 		}

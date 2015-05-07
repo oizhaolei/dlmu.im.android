@@ -38,6 +38,10 @@
         android:icon="@drawable/tt_logo2"
         android:label="@string/app_name"
         android:theme="@style/Theme.Yellow_light" >
+        <receiver
+            android:name="com.ruptech.chinatalk.VersionCheckReceiver"
+            android:enabled="true" />
+
         <receiver android:name="com.ruptech.chinatalk.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +24,7 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.ui.ChatActivity;
+import com.ruptech.chinatalk.ui.OrgActivity;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -40,11 +44,6 @@ public class ChatFragment extends Fragment {
 				}
 			}, 100);
 		}
-	}
-
-	public static Fragment newInstance() {
-		ChatFragment fragment = new ChatFragment();
-		return fragment;
 	}
 
 	@InjectView(R.id.chat_list)
@@ -78,6 +77,7 @@ public class ChatFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -86,6 +86,11 @@ public class ChatFragment extends Fragment {
 		View view = inflater.inflate(R.layout.main_tab_chats, container, false);
 		ButterKnife.inject(this, view);
 		return view;
+	}
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.chat_actions, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 

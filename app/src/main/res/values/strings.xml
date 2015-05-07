@@ -25,7 +25,7 @@
     <string name="album">Album</string>
     <string name="alert_dialog_cancel">Cancel</string>
     <string name="alert_dialog_ok">OK</string>
-    <string name="alipay_recharge_memo"><![CDATA[If Alipay failed, please prepaid expenses transferred Alipay account (<font color="blue">finance@tttalk.org</font>), then contact <font color="blue">0411-3970-7280</font>, for you to manually recharge after we confirm the information.]]></string>
+    <string name="alipay_recharge_memo"><![CDATA[If Alipay failed, please prepaid expenses transferred Alipay account (<font color="blue">finance@im.dlmu.edu.cn</font>), then contact <font color="blue">0411-3970-7280</font>, for you to manually recharge after we confirm the information.]]></string>
     <string name="alipay_result_status_4000" tools:ignore="ExtraTranslation，UnusedResources">系统异常</string>
     <string name="alipay_result_status_4001" tools:ignore="ExtraTranslation，UnusedResources">数据格式不正确</string>
     <string name="alipay_result_status_4003" tools:ignore="ExtraTranslation，UnusedResources">该用户绑定的支付宝账户被冻结或不允许支付</string>
@@ -143,7 +143,7 @@
     <string name="input_your_password_msg">Please input old password, new password and the repassword correctly.</string>
     <string name="input_your_verify_code">Please input verification code.</string>
     <string name="introduce">Introduce</string>
-    <string name="introduce_url">http://www.tttalk.org/</string>
+    <string name="introduce_url">http://www.im.dlmu.edu.cn/</string>
     <string name="invite_accept_message">You got %d Point.</string>
     <string name="is_revise_number">Been Revised:%s</string>
     <string name="kakaotalk_is_not_installed">You have not installed KakaoTalk. Please install KakaoTalk and try again.</string>
@@ -223,7 +223,7 @@
     <string name="notification_picture">[Picture]</string>
     <string name="notification_voice">[Voice]</string>
     <string name="ok">OK</string>
-    <string name="online_help_url">http://www.tttalk.org/help.php</string>
+    <string name="online_help_url">http://www.im.dlmu.edu.cn/help.php</string>
     <string name="online_recharge">Recharge</string>
     <string name="password">Password</string>
     <string name="photo">Photo</string>
@@ -332,7 +332,7 @@
     <string name="tel_should_not_public">Your should change another name.</string>
     <string name="temporarily_no_update">No</string>
     <string name="terms_of_service">Terms of Service</string>
-    <string name="thirdparty_share_downloadurl">http://www.tttalk.org/tttalk.apk</string>
+    <string name="thirdparty_share_downloadurl">http://www.im.dlmu.edu.cn/tttalk.apk</string>
     <string name="thirdparty_share_webpage_template">%1$s (Share from TTTalk)</string>
     <string name="thirdparty_signup_tip">Please confirm your profile</string>
     <string name="tip_logout">This will not delete any data. You can still log in with this account.</string>
@@ -406,7 +406,7 @@
     <string name="update_tag_failure">Label update failed</string>
     <string name="cleanup_cache">Clear Cache</string>
     <string name="cleanup_cache_msg">Cache has been cleared</string>
-    <string name="wechat_recharge_memo"><![CDATA[If tenpay failed, please prepaid expenses transferred Alipay account (weixin@tttalk.org), then contact <font color="blue">0411-3970-7280</font>, for you to manually recharge after we confirm the information.]]></string>
+    <string name="wechat_recharge_memo"><![CDATA[If tenpay failed, please prepaid expenses transferred Alipay account (weixin@im.dlmu.edu.cn), then contact <font color="blue">0411-3970-7280</font>, for you to manually recharge after we confirm the information.]]></string>
     <string name="wechat_getting_access_token">Getting access token&#8230;</string>
     <string name="wechat_app_tip">Tips</string>
     <string name="wechat_getting_prepayid">Order processing, please wait&#8230;</string>
@@ -454,7 +454,7 @@
     <string name="popular_no_data">No popular</string>
     <string name="no_translator">No translators</string>
     <string name="like_notification">Like Notification</string>
-    <string name="copyright">TTTalk 2014 ©tttalk.org, All Rights Reserved</string>
+    <string name="copyright">TTTalk 2014 ©im.dlmu.edu.cn, All Rights Reserved</string>
     <string name="popular_user">Recommended Users</string>
     <string name="push_title_announcement">Announcement</string>
     <string name="push_title_qa">QA</string>

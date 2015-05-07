@@ -11,13 +11,16 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 
 /**
  * TTTalk translated
  */
-public class TTTalkChatListener implements PacketListener {
+public class TTTalkChatListener implements StanzaListener {
 	private final ContentResolver mContentResolver;
 	protected final String TAG = Utils.CATEGORY + TTTalkChatListener.class.getSimpleName();
 
@@ -26,7 +29,7 @@ public class TTTalkChatListener implements PacketListener {
 	}
 
 	@Override
-	public void processPacket(Packet packet) {
+	public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
 		Message msg = (Message) packet;
 
 		String body = msg.getBody();
@@ -37,7 +40,7 @@ public class TTTalkChatListener implements PacketListener {
 		String fromJID = XMPPUtils.getJabberID(msg.getFrom());
 		String toJID = XMPPUtils.getJabberID(msg.getTo());
 
-		Log.e(TAG, msg.toXML());
+		Log.e(TAG, msg.toString());
 
 
 		long ts = System.currentTimeMillis();

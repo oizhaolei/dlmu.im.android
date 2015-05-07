@@ -2,23 +2,11 @@ package com.ruptech.chinatalk.utils;
 
 public class AppPreferences {
 
+	public static final java.lang.String ORG_PREFIX = "org_";
+	public static final java.lang.String TEACHER_PREFIX = "teacher_";
+	public static final java.lang.String STUDENT_PREFIX = "student_";
 	public static long[] NOTIFICATION_VIBRATE = new long[]{0, 200, 100, 200};// 数组是以毫秒为单位的暂停、震动、暂停……时间
 
-	public static final int MESSAGE_STATUS_SEND_FAILED = -1;
-	public static final int MESSAGE_STATUS_BEFORE_SEND = 0;
-	public static final int MESSAGE_STATUS_REQUEST_TRANS = 1;
-	public static final int MESSAGE_STATUS_TRANSLATING = 2;
-	public static final int MESSAGE_STATUS_TRANSLATED = 3;
-	public static final int MESSAGE_STATUS_FEEDBACKED = 4;
-	public static final int MESSAGE_STATUS_PASSED = 5;
-	public static final int MESSAGE_STATUS_GIVEUP = 6;
-	public static final int MESSAGE_STATUS_ACCEPT_TRANSLATE = 7;
-	public static final int MESSAGE_STATUS_NO_TRANSLATE = 8;
-	public static final int MESSAGE_STATUS_ACCEPT_TRANSLATING = 9;
-
-	public static final int VERIFY_STATUS_REQUEST = 1;
-	public static final int VERIFY_STATUS_MISTAKE = 2;
-	public static final int VERIFY_STATUS_RIGHT = 3;
 
 	public static int MAX_INPUT_LENGTH = 200;
 	public static int MAX_TRANSLATE_INPUT_LENGTH = 600;
@@ -75,8 +63,8 @@ public class AppPreferences {
 	public static final long SYSTEM_REQUEST_TO_USERID = 20;
 	public static final long TTT_REQUEST_TO_USERID = 0;
 	public static final long STORY_REQUEST_TO_USERID = 10;
-	public static final String TTT_OF_USERNAME = "tttalk.org";
-	public static final String GROUP_CHAT_SUFFIX = "@conference.tttalk.org";
+	public static final String TTT_OF_USERNAME = "im.dlmu.edu.cn";
+	public static final String GROUP_CHAT_SUFFIX = "@conference.im.dlmu.edu.cn";
 
 
 	public static final int LATE6_IMPOSSIBLE = 200 * 1000000;

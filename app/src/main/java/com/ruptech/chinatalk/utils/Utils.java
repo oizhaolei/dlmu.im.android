@@ -792,7 +792,20 @@ public class Utils {
 	}
 
 	public static String getOF_JIDFromTTTalkId(long tttalkId) {
-		return String.format("chinatalk_%d@tttalk.org", tttalkId);
+		return String.format("chinatalk_%d@im.dlmu.edu.cn", tttalkId);
 	}
 
+	public static void setUserPicImage(ImageView imageView, String url) {
+		if (!isEmpty(url)) {
+			if (!url.equals(imageView.getTag())) {
+				ImageManager.imageLoader.displayImage(url, imageView, ImageManager
+						.getOptionsPortrait());
+				imageView.setTag(url);
+			}
+		} else {
+			ImageManager.imageLoader.displayImage(null, imageView,
+					ImageManager.getOptionsPortrait());
+			imageView.setTag(null);
+		}
+	}
 }

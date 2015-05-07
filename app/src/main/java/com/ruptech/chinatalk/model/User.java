@@ -1,5 +1,7 @@
 package com.ruptech.chinatalk.model;
 
+import com.ruptech.chinatalk.utils.AppPreferences;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,10 +63,10 @@ public class User extends Item implements Serializable {
 
 	public   String getOF_username( ) {
 		if ( teacher)
-			return String.format("teacher_%s",  getUsername());
+			return String.format(AppPreferences.TEACHER_PREFIX +"%s",  getUsername());
 		else
 			return
-					String.format("student_%s",  getUsername());
+					String.format(AppPreferences.STUDENT_PREFIX+"%s",  getUsername());
 	}
 
 

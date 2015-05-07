@@ -6,9 +6,9 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.dlmu.im.R;
-import com.ruptech.chinatalk.utils.ServerAppInfo;
 import com.ruptech.chinatalk.utils.Utils;
 
 import org.apache.http.HttpException;
@@ -192,12 +192,12 @@ public abstract class HttpConnection {
 		return "an-" + Utils.getAppVersionCode();
 	}
 
-	public ServerAppInfo ver() throws Exception {
+	public AppVersion ver() throws Exception {
 		String url = App.properties.getProperty("SERVER_BASE_URL") + "ver";
 		try {
 			Response res = get(url);
 			JSONObject verInfo = res.asJSONObject();
-			ServerAppInfo info = ServerAppInfo.parse(verInfo);
+			AppVersion info = AppVersion.parse(verInfo);
 			return info;
 		} catch (Exception e) {
 			if (BuildConfig.DEBUG)

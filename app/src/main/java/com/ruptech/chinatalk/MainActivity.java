@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ruptech.chinatalk.MainTabLayout.OnTabClickListener;
@@ -18,9 +19,10 @@ import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.ui.LoginActivity;
 import com.ruptech.chinatalk.ui.LoginGateActivity;
 import com.ruptech.chinatalk.ui.LoginLoadingActivity;
+import com.ruptech.chinatalk.ui.OrgActivity;
 import com.ruptech.chinatalk.ui.SplashActivity;
 import com.ruptech.chinatalk.ui.fragment.ChatFragment;
-import com.ruptech.chinatalk.ui.fragment.DiscoverFragment;
+import com.ruptech.chinatalk.ui.fragment.ServiceFragment;
 import com.ruptech.chinatalk.ui.fragment.MyselfFragment;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
@@ -63,7 +65,7 @@ public class MainActivity extends ActionBarActivity implements
 	protected final String TAG = Utils.CATEGORY
 			+ MainActivity.class.getSimpleName();
 
-	private DiscoverFragment discoverFragment;
+	private ServiceFragment serviceFragment;
 
 	private ChatFragment chatFragment;
 
@@ -171,9 +173,9 @@ public class MainActivity extends ActionBarActivity implements
 
 		switch (viewId) {
 			case R.string.main_tab_discover:
-				if (discoverFragment == null)
-					discoverFragment = new DiscoverFragment();
-				changeTab(discoverFragment);
+				if (serviceFragment == null)
+					serviceFragment = new ServiceFragment();
+				changeTab(serviceFragment);
 				break;
 			case R.string.main_tab_chat:
 				if (chatFragment == null)
@@ -238,6 +240,14 @@ public class MainActivity extends ActionBarActivity implements
 						Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	public void doSetting(MenuItem item) {
+
+		Intent orgIntent = new Intent(this, OrgActivity.class);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@im.dlmu.edu.cn");
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+		startActivity(orgIntent);
 	}
 
 }

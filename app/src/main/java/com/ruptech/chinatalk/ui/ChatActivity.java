@@ -29,6 +29,7 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskListener;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.SendGroupTask;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.dlmu.im.R;
@@ -218,7 +219,7 @@ public class ChatActivity extends ActionBarActivity {
 		chat.setCreated_date(System.currentTimeMillis());
 		sendMessageIfNotNull(chat);
 
-		if (isGroup(mToJid)) {
+		if (isOrg(mToJid)) {
 
 			String fromJid = App.readUser().getOF_JabberID();
 			SendGroupTask sendGroupTask = new SendGroupTask(fromJid, mToJid, "From:" + fromJid, content);
@@ -229,8 +230,8 @@ public class ChatActivity extends ActionBarActivity {
 		}
 	}
 
-	private boolean isGroup(String jid) {
-		return jid.startsWith("org_");
+	private boolean isOrg(String jid) {
+		return jid.startsWith(AppPreferences.ORG_PREFIX);
 	}
 
 

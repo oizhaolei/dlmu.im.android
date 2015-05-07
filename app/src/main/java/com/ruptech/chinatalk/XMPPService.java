@@ -14,7 +14,7 @@ import android.util.Log;
 import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.NetChangeEvent;
 import com.ruptech.chinatalk.model.Chat;
-import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.TTTalkSmack;
 import com.ruptech.chinatalk.smack.TTTalkSmackImpl;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -25,13 +25,14 @@ import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.Utils;
 import com.squareup.otto.Subscribe;
 
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smack.SmackException;
 
 /**
  * Helper class providing methods and constants common to other classes in the
  * app.
  */
 public class XMPPService extends BaseService {
+	TTTalkSmack mSmack;
 
 	public static final int CONNECTED = 0;
 	public static final int DISCONNECTED = -1;
@@ -96,9 +97,6 @@ public class XMPPService extends BaseService {
 
 	// 是否连接上服务器
 	public boolean isAuthenticated() {
-		if (App.mSmack != null) {
-			return App.mSmack.isAuthenticated();
-		}
 
 		return false;
 	}
@@ -114,7 +112,7 @@ public class XMPPService extends BaseService {
 			return;
 
 
-		String account =App.readUser().getOF_username();
+		String account = App.readUser().getOF_username();
 		String password = App.readUser().getPassword();
 
 		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
@@ -151,10 +149,8 @@ public class XMPPService extends BaseService {
 	}
 
 	private void createSmack() {
-		if (App.mSmack == null) {
-			String server = App.properties.getProperty("xmpp.server.host");
-			int port = Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
-			App.mSmack = new TTTalkSmackImpl(server, port, getContentResolver());
+		if (mSmack == null) {
+			mSmack = new TTTalkSmackImpl(getContentResolver());
 		}
 	}
 
@@ -165,7 +161,7 @@ public class XMPPService extends BaseService {
 			return;
 		}
 
-		XMPPLoginTask xLoginTask = new XMPPLoginTask(account, password);
+		XMPPLoginTask xLoginTask = new XMPPLoginTask(mSmack, account, password);
 		xLoginTask.setListener(new TaskAdapter() {
 			@Override
 			public void onPostExecute(GenericTask task, TaskResult result) {
@@ -196,7 +192,7 @@ public class XMPPService extends BaseService {
 			return;
 		}
 
-		XMPPLogoutTask xLogoutTask = new XMPPLogoutTask();
+		XMPPLogoutTask xLogoutTask = new XMPPLogoutTask(mSmack);
 		xLogoutTask.execute();
 	}
 
@@ -262,21 +258,11 @@ public class XMPPService extends BaseService {
 
 	// 发送消息
 	public void sendMessage(String toJID, Chat chat) {
-		if (App.mSmack != null)
-			App.mSmack.sendMessage(toJID, chat);
-		else
-			TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), toJID, chat);
-	}
-
-	// 发送消息
-	public void sendGroupMessage(MultiUserChat chatRoom, Chat chat) {
 		try {
-			if (chatRoom != null)
-				App.mSmack.sendGroupMessage(chatRoom, chat);
-			else
-				TTTalkSmackImpl.sendOfflineMessage(getContentResolver(), chatRoom.getRoom(), chat);
-		} catch (Exception e) {
-			Log.d(TAG, e.getMessage());
+			mSmack.sendMessage(toJID, chat);
+		} catch (SmackException.NotConnectedException e) {
+			Log.e(TAG, e.getMessage(), e);
 		}
 	}
+
 }

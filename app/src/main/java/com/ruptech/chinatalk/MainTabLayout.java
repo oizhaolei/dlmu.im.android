@@ -20,9 +20,9 @@ import static butterknife.ButterKnife.findById;
 public class MainTabLayout extends LinearLayout implements OnClickListener {
 
 	public interface OnTabClickListener {
-		public void onTabClick(int viewId);
+		void onTabClick(int viewId);
 
-		public void onTabDoubleClick(int viewId);
+		void onTabDoubleClick(int viewId);
 	}
 
 	class TabItem {

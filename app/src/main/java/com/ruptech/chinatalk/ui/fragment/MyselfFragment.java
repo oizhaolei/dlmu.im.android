@@ -3,7 +3,6 @@ package com.ruptech.chinatalk.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity;
+import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -74,6 +74,9 @@ public class MyselfFragment extends Fragment {
 		instance = this;
 
 		mTelTextView.setText(App.readUser().getUsername());
+		String portrait = AppVersion.getPortraitUrl(App.readUser().getUsername());
+		Utils.setUserPicImage(mThumbImageview, portrait);
+
 	}
 
 }

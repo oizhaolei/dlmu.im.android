@@ -16,6 +16,7 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveOrgListTask;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -142,7 +143,7 @@ public class OrgActivity extends ActionBarActivity {
 				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
 				String jid = (String) item.get("jid");
 				String name = (String) item.get("name");
-				if (jid.startsWith("teacher_") || jid.startsWith("student_")) {
+				if (jid.startsWith(AppPreferences.TEACHER_PREFIX) || jid.startsWith(AppPreferences.STUDENT_PREFIX)) {
 					startChatActivity(jid, name);
 				} else {
 					startOrgActivity(jid, name);

@@ -25,7 +25,7 @@
     <string name="album">相册</string>
     <string name="alert_dialog_cancel">取消</string>
     <string name="alert_dialog_ok">确定</string>
-    <string name="alipay_recharge_memo"><![CDATA[如果支付宝无响应，您可以选择将充值费用转入我们的支付宝账户(<font color="blue">finance@tttalk.org</font>)，然后联系我们：<font color="blue">0411-3970-7280</font>，我们确认后为您手动充值。]]></string>
+    <string name="alipay_recharge_memo"><![CDATA[如果支付宝无响应，您可以选择将充值费用转入我们的支付宝账户(<font color="blue">finance@im.dlmu.edu.cn</font>)，然后联系我们：<font color="blue">0411-3970-7280</font>，我们确认后为您手动充值。]]></string>
     <string name="already_copy_to_clipboard">已拷贝到剪贴板</string>
     <string name="already_exists_user_pls_change_tel">这个联系方式已注册过，请重新输入。</string>
     <string name="already_exists_user_pls_login">这个联系方式已注册过，请登录。</string>
@@ -130,7 +130,7 @@
     <string name="input_your_password_msg">请正确输入输入旧密码、新密码和重复密码</string>
     <string name="input_your_verify_code">输入验证码</string>
     <string name="introduce">应用介绍</string>
-    <string name="introduce_url">http://www.tttalk.org/</string>
+    <string name="introduce_url">http://www.im.dlmu.edu.cn/</string>
     <string name="invite_accept_message">已成功接收%dT币.</string>
     <string name="is_revise_number">被纠错条数:%s</string>
     <string name="kakaotalk_is_not_installed">系统检测到您目前没有安装KakaoTalk，请安装后重试。</string>
@@ -210,7 +210,7 @@
     <string name="notification_picture">[图片]</string>
     <string name="notification_voice">[语音]</string>
     <string name="ok">安装</string>
-    <string name="online_help_url">http://www.tttalk.org/help.php</string>
+    <string name="online_help_url">http://www.im.dlmu.edu.cn/help.php</string>
     <string name="online_recharge">在线充值</string>
     <string name="password">密码</string>
     <string name="photo">头像</string>
@@ -318,7 +318,7 @@
     <string name="tel_should_not_public">个人信息里面请勿含有您的联系方式</string>
     <string name="temporarily_no_update">暂不更新</string>
     <string name="terms_of_service">服务条款</string>
-    <string name="thirdparty_share_downloadurl">http://www.tttalk.org/tttalk.apk</string>
+    <string name="thirdparty_share_downloadurl">http://www.im.dlmu.edu.cn/tttalk.apk</string>
     <string name="thirdparty_share_webpage_template">【%1$s】（分享自 TT译聊）</string>
     <string name="thirdparty_signup_tip">请设置您的基本信息</string>
     <string name="tip_logout">注销或者切换至其他账号登陆</string>
@@ -393,7 +393,7 @@
     <string name="update_tag_failure">标签更新失败</string>
     <string name="cleanup_cache">清理缓存</string>
     <string name="cleanup_cache_msg">缓存已清除</string>
-    <string name="wechat_recharge_memo"><![CDATA[如果财付通无响应，您可以选择将充值费用转入我们的财付通账户<font color="blue">weixin@tttalk.org</font>，然后联系我们：<font color="blue">0411-3970-7280</font>，我们确认后为您手动充值。]]></string>
+    <string name="wechat_recharge_memo"><![CDATA[如果财付通无响应，您可以选择将充值费用转入我们的财付通账户<font color="blue">weixin@im.dlmu.edu.cn</font>，然后联系我们：<font color="blue">0411-3970-7280</font>，我们确认后为您手动充值。]]></string>
     <string name="wechat_getting_access_token">正在获取access token&#8230;</string>
     <string name="wechat_app_tip">提示</string>
     <string name="wechat_getting_prepayid">订单处理中,请稍后&#8230;</string>
@@ -433,7 +433,7 @@
     <string name="follow_no_data">暂无关注的人</string>
     <string name="popular_no_data">暂无贴图</string>
     <string name="no_translator">暂无翻译者</string>
-    <string name="copyright">TTTalk 2014 ©tttalk.org, All Rights Reserved</string>
+    <string name="copyright">TTTalk 2014 ©im.dlmu.edu.cn, All Rights Reserved</string>
 	<string name="filter_original">原图</string>
 	<string name="filter_white">美白</string>
 	<string name="filter_red">红色</string>
