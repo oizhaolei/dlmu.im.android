@@ -151,7 +151,7 @@
     <string name="logout">退出账号</string>
     <string name="main_tab_chat">聊天</string>
     <string name="main_tab_contact">好友</string>
-    <string name="main_tab_discover">组织</string>
+    <string name="main_tab_service">组织</string>
     <string name="main_tab_myself">我的</string>
     <string name="main_language">母语</string>
     <string name="message_action_accept_translate">请求翻译</string>

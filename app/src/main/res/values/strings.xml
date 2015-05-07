@@ -164,7 +164,7 @@
     <string name="logout">Logout</string>
     <string name="main_tab_chat">Chat</string>
     <string name="main_tab_contact">Contacts</string>
-    <string name="main_tab_discover">Organize</string>
+    <string name="main_tab_service">Service</string>
     <string name="main_tab_post">Post</string>
     <string name="main_language">Native Language</string>
     <string name="message_action_accept_translate">Request Translation</string>
@@ -577,4 +577,6 @@
     <string name="email_not_verified">Email(not verified)</string>
     <string name="send_failure">Send failed</string>
     <string name="dlmu_title">大连海事大学</string>
+    <string name="student">Student</string>
+    <string name="teacher">Teacher</string>
 </resources>

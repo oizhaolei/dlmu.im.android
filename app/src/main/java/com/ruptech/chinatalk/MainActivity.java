@@ -172,7 +172,7 @@ public class MainActivity extends ActionBarActivity implements
 	public void onTabClick(int viewId) {
 
 		switch (viewId) {
-			case R.string.main_tab_discover:
+			case R.string.main_tab_service:
 				if (serviceFragment == null)
 					serviceFragment = new ServiceFragment();
 				changeTab(serviceFragment);
@@ -242,7 +242,7 @@ public class MainActivity extends ActionBarActivity implements
 		});
 	}
 
-	public void doSetting(MenuItem item) {
+	public void doChatTeacher(MenuItem item) {
 
 		Intent orgIntent = new Intent(this, OrgActivity.class);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@im.dlmu.edu.cn");

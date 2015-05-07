@@ -4,7 +4,21 @@
     <item
         android:id="@+id/menu_item_chat_setting"
         android:icon="@drawable/ic_action_overflow_dark"
-        android:onClick="doSetting"
         android:title="@string/add"
-        app:showAsAction="always"/>
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/translator_action_giveup"
+                android:icon="@drawable/discover_addfriends"
+                app:showAsAction="ifRoom|collapseActionView"
+                android:onClick="doChatTeacher"
+                android:title="@string/student"/>
+            <item
+                android:id="@+id/translator_action_history"
+                app:showAsAction="ifRoom|collapseActionView"
+                android:icon="@drawable/discover_addfriends"
+                android:onClick="doChatTeacher"
+                android:title="@string/teacher"/>
+        </menu>
+    </item>
 </menu>
