@@ -24,6 +24,7 @@ import com.ruptech.chinatalk.ui.SplashActivity;
 import com.ruptech.chinatalk.ui.fragment.ChatFragment;
 import com.ruptech.chinatalk.ui.fragment.ServiceFragment;
 import com.ruptech.chinatalk.ui.fragment.MyselfFragment;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.dlmu.im.R;
@@ -134,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		ButterKnife.inject(this);
-		App.bindXMPPService();
+		App.bindXMPPService(this);
 		setupComponents(savedInstanceState);
 		// 关闭之前所有进入Main的activity
 		closeOthers();
@@ -145,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	protected void onDestroy() {
 
-		App.unbindXMPPService();
+		App.unbindXMPPService(this);
 		super.onDestroy();
 	}
 
@@ -164,6 +165,14 @@ public class MainActivity extends ActionBarActivity implements
 			gotoSplashActivity();
 			finish();
 			return;
+		}
+
+		if (Utils.isExistNewVersion()) {
+			mainHandler.post(new Runnable() {
+				public void run() {
+					Utils.doNotifyNewVersionFound(App.mContext, false);
+				}
+			});
 		}
 		Log.w(TAG, "onResume: " + (System.currentTimeMillis() - start));
 	}
@@ -245,7 +254,7 @@ public class MainActivity extends ActionBarActivity implements
 	public void doChatTeacher(MenuItem item) {
 
 		Intent orgIntent = new Intent(this, OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@im.dlmu.edu.cn");
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@"+ AppPreferences.IM_SERVER_RESOURCE);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
 		startActivity(orgIntent);
 	}

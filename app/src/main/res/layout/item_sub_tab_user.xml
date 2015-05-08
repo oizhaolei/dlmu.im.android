@@ -5,7 +5,7 @@
     android:background="#FFffffff" >
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/recent_portrait"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerVertical="true"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/arrow"
-        android:layout_toRightOf="@+id/icon"
+        android:layout_toRightOf="@+id/recent_portrait"
         android:padding="15dp"
         android:singleLine="true" />
 

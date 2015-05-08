@@ -29,6 +29,7 @@ public class User extends Item implements Serializable {
 		id = System.currentTimeMillis();
 		password = json.optString("password");
 		username = json.optString("username");
+		fullname = json.optString("fullname");
 		teacher = true;
 	}
 
@@ -49,7 +50,7 @@ public class User extends Item implements Serializable {
 	}
 
 	public String getOF_JabberID() {
-		return getOF_username()+"@im.dlmu.edu.cn";
+		return getOF_username()+"@" + AppPreferences.IM_SERVER_RESOURCE;
 	}
 
 	public String getFullname() {
@@ -70,8 +71,4 @@ public class User extends Item implements Serializable {
 	}
 
 
-
-	public static String getTTTalkIDFromOF_JID(String jid) {
-		return jid.substring( jid.indexOf("_"), jid.indexOf("@"));
-	}
 }

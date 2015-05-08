@@ -163,7 +163,7 @@ public class ChatActivity extends ActionBarActivity {
 	public void onPause() {
 		super.onPause();
 		//PrefUtils.removePrefNewMessageCount(mToJid);//TODO 按 Home ||
-		App.unbindXMPPService();
+		App.unbindXMPPService(this);
 
 		getContentResolver().unregisterContentObserver(mChatObserver);
 	}
@@ -173,7 +173,7 @@ public class ChatActivity extends ActionBarActivity {
 	public void onResume() {
 		super.onResume();
 		App.notificationManager.cancel(mToJid.hashCode());
-		App.bindXMPPService();
+		App.bindXMPPService(this);
 
 		getContentResolver().registerContentObserver(
 				ChatProvider.CONTENT_URI, true, mChatObserver);// 开始监听chat数据库

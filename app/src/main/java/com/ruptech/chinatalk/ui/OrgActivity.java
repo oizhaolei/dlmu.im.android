@@ -34,7 +34,7 @@ public class OrgActivity extends ActionBarActivity {
 	static final String TAG = Utils.CATEGORY
 			+ OrgActivity.class.getSimpleName();
 
-	private String mParentOrgId;
+	private String mParentOrgJId;
 	private String mTitle;
 
 
@@ -47,7 +47,7 @@ public class OrgActivity extends ActionBarActivity {
 
 	// doChat
 	public void doChat(MenuItem item) {
-		startChatActivity(mParentOrgId, mTitle);
+		startChatActivity(mParentOrgJId, mTitle);
 	}
 
 	@Override
@@ -80,13 +80,13 @@ public class OrgActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_org);
 		ButterKnife.inject(this);
 
-		mParentOrgId = (String) getIntent().getExtras().get(PARENT_ORG_JID);
+		mParentOrgJId = (String) getIntent().getExtras().get(PARENT_ORG_JID);
 		mTitle = (String) getIntent().getExtras().get(PARENT_ORG_NAME);
 
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		retrieveOrg(mParentOrgId);
+		retrieveOrg(mParentOrgJId);
 	}
 
 	private void retrieveOrg(String parentOrgJid) {
@@ -114,8 +114,7 @@ public class OrgActivity extends ActionBarActivity {
 	}
 
 	private void setAdapter() {
-		SimpleAdapter adapter;
-		adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
+		SimpleAdapter adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
 				new String[]{"jid", "name"},
 				new int[]{R.id.item_org_jid, R.id.item_org_name});
 		mOrgListView.setAdapter(adapter);

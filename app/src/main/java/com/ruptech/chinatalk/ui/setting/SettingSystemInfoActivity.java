@@ -47,12 +47,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 	}
 
 
-	@InjectView(R.id.main_tab_setting_version_version)
-	TextView text_version;
-	@InjectView(R.id.main_tab_setting_version_new_icon)
-	TextView new_icon;
-
-
 	private ProgressDialog progressDialog;
 
 	@Subscribe
@@ -60,8 +54,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 		finish();
 	}
 
-	// 版本检测
-	@OnClick(R.id.main_tab_setting_check_version_layout)
 
 	@Override
 	public void onBackPressed() {

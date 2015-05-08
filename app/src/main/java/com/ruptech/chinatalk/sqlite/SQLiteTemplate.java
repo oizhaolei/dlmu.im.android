@@ -18,8 +18,6 @@ public class SQLiteTemplate {
 	 * Some as Spring JDBC RowMapper
 	 *
 	 * @param <T>
-	 * @see org.springframework.jdbc.core.RowMapper
-	 * @see com.ch_linghu.fanfoudroid.db.dao.SqliteTemplate
 	 */
 	public interface RowMapper<T> {
 		public T mapRow(Cursor cursor, int rowNum);

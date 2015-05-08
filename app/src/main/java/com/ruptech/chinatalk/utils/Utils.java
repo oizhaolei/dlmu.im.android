@@ -5,9 +5,12 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.ColorStateList;
@@ -26,6 +29,8 @@ import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -42,9 +47,9 @@ import android.widget.Toast;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.MainActivity;
 import com.ruptech.chinatalk.event.LogoutEvent;
-import com.ruptech.chinatalk.http.HttpConnection;
 import com.ruptech.chinatalk.ui.user.ProfileActivity;
 import com.ruptech.chinatalk.widget.CustomDialog;
+import com.ruptech.chinatalk.widget.MyNotificationBuilder;
 import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.dlmu.im.R;
 
@@ -52,8 +57,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -113,6 +116,12 @@ public class Utils {
 					start, nextDay, end);
 		}
 		return result;
+	}
+
+	public static String jid2Username(String jid) {
+		int start = jid.indexOf('_')+1;
+		int end= jid.indexOf('@');
+		return jid.substring(start,end);
 	}
 
 	public static class LengthFilter implements InputFilter {
@@ -782,18 +791,6 @@ public class Utils {
 	}
 
 
-	public static boolean isGroupChat(String jid) {
-		return jid.contains(AppPreferences.GROUP_CHAT_SUFFIX);
-	}
-
-	public static String parseJIDFromGroupChatJID(String groupChatJID) {
-		String jid = groupChatJID.substring(groupChatJID.indexOf(AppPreferences.GROUP_CHAT_SUFFIX) + AppPreferences.GROUP_CHAT_SUFFIX.length());
-		return jid;
-	}
-
-	public static String getOF_JIDFromTTTalkId(long tttalkId) {
-		return String.format("chinatalk_%d@im.dlmu.edu.cn", tttalkId);
-	}
 
 	public static void setUserPicImage(ImageView imageView, String url) {
 		if (!isEmpty(url)) {
@@ -808,4 +805,56 @@ public class Utils {
 			imageView.setTag(null);
 		}
 	}
+
+	public static PackageInfo getPackageInfo(Context context) {
+		try {
+			PackageInfo packageInfo = context.getPackageManager()
+					.getPackageInfo(context.getPackageName(), 0);
+			return packageInfo;
+		} catch (NameNotFoundException e) {
+			if (BuildConfig.DEBUG)
+				Log.e(TAG, e.getMessage(), e);
+		}
+
+		return null;
+	}
+
+	public static boolean isExistNewVersion() {
+		AppVersion serverAppInfo = PrefUtils.readServerAppInfo();
+		if (serverAppInfo != null
+				&& serverAppInfo.verCode > Utils.getPackageInfo(App.mContext).versionCode) {
+			return true;
+		}
+		return false;
+	}
+
+
+	public static void doNotifyNewVersionFound(Context context, boolean defaultSound) {
+		AppVersion serverAppInfo = PrefUtils.readServerAppInfo();
+
+		String content = context.getString(R.string.please_click_to_update_newapk);
+		int defaults = Notification.DEFAULT_LIGHTS;
+		if(defaultSound){
+			defaults = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND;
+		}
+		long when = System.currentTimeMillis();
+		NotificationCompat.Builder mBuilder = new MyNotificationBuilder(context)
+				.setSmallIcon(R.drawable.tt_logo2 )
+				.setLargeIcon(
+						BitmapFactory.decodeResource(context.getResources(),
+								R.drawable.tt_logo2))
+				.setContentTitle(context.getString(R.string.app_name))
+				.setTicker(content).setContentText(content)
+				.setVibrate(null)
+				.setDefaults(defaults).setAutoCancel(true).setWhen(when) ;
+		Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(serverAppInfo.appUrl));
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				context, 0, notificationIntent, 0);
+		mBuilder.setContentIntent(contentIntent);
+
+		App.notificationManager.cancel(R.string.please_click_to_update_newapk);
+		App.notificationManager.notify(R.string.please_click_to_update_newapk,
+				mBuilder.build());
+	}
+
 }

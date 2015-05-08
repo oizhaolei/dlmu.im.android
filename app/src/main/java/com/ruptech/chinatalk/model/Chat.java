@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class Chat implements Serializable {
 	private static final long serialVersionUID = -850853231465927885L;
 	protected int id;
+	protected String pid;
 	protected long created_date;
 	protected String fromJid;
-	protected int read;
 	protected String toJid;
+	protected int read;
 	protected String content;
-	protected String pid;
 	protected int status;
 
 	public int getId() {

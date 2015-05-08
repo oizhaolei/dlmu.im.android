@@ -11,10 +11,11 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
+import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
+import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 import com.ruptech.dlmu.im.R;
 
@@ -86,12 +87,15 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		String name = to_Jid;
+		String jid = to_Jid;
 		if (to_Jid.startsWith(App.readUser() .getOF_username())) {
-			name = from_Jid;
+			jid = from_Jid;
 		}
 
-		viewHolder.jidView.setText(name);
+		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(jid));
+		Utils.setUserPicImage(viewHolder.portraitImageView, portrait);
+
+		viewHolder.jidView.setText(jid);
 		viewHolder.msgView.setText(XMPPUtils
 				.convertNormalStringToSpannableString(mContext, message, true));
 		viewHolder.dataView.setText(date);
@@ -114,8 +118,8 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 
 
 	static class ViewHolder {
-		@InjectView(R.id.icon)
-		ImageView icon;
+		@InjectView(R.id.recent_portrait)
+		ImageView portraitImageView;
 		@InjectView(R.id.recent_list_item_name)
 		TextView jidView;
 		@InjectView(R.id.recent_list_item_time)

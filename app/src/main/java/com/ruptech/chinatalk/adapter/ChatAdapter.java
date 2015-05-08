@@ -25,8 +25,10 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.ui.FullScreenActivity;
+import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.TimeUtil;
+import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.dlmu.im.R;
 
@@ -93,6 +95,10 @@ public class ChatAdapter extends CursorAdapter {
 		if (!mine && chat.getRead() == ChatProvider.DS_NEW) {
 			markAsReadDelayed(chat.getId(), DELAY_NEW_MSG);
 		}
+
+		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(chat.getFromJid()));
+		Utils.setUserPicImage(holder.userThumbImageView, portrait);
+
 
 		bindLayoutClickEvent(chat, holder.bubbleLayout);
 		bindFromView(chat, holder);

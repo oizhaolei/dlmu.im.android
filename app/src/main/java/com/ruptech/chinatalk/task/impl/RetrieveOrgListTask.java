@@ -27,9 +27,6 @@ public class RetrieveOrgListTask extends GenericTask {
 
 	@Override
 	protected TaskResult _doInBackground() throws Exception {
-		orgList = new ArrayList<>();
-		memberList = new ArrayList<>();
-
 		Map map = App.getHttpServer().retrieveOrgList(parentJid);
 		orgList = (List<Map<String, Object>>) map.get("orgs");
 		memberList = (List<Map<String, Object>>) map.get("members");

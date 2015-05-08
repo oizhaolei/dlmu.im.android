@@ -107,7 +107,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 		configBuilder.setHost(server)
 				.setPort(port);
 		configBuilder.setResource(XMPP_IDENTITY_NAME);
-		configBuilder.setServiceName(AppPreferences.TTT_OF_USERNAME);
+		configBuilder.setServiceName(AppPreferences.IM_SERVER_RESOURCE);
 
 		configBuilder.setSendPresence(false);
 		configBuilder.setCompressionEnabled(false); // disable for now

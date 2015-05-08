@@ -239,4 +239,12 @@ public class HttpServer extends HttpConnection {
 		return toMap(result);
 
 	}
+	public List retrieveServiceList( )
+			throws Exception {
+
+		Response res = _get("service", null);
+		JSONArray result = res.asJSONArray();
+		return toList(result);
+
+	}
 }

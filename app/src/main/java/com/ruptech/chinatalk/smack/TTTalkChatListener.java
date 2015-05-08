@@ -41,6 +41,9 @@ public class TTTalkChatListener implements StanzaListener {
 		String toJID = XMPPUtils.getJabberID(msg.getTo());
 
 		Log.e(TAG, msg.toString());
+		if (fromJID.equals(toJID)){
+			return;
+		}
 
 
 		long ts = System.currentTimeMillis();

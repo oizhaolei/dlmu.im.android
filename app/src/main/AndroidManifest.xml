@@ -1,34 +1,34 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ruptech.dlmu.im">
+<manifest package="com.ruptech.dlmu.im"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_VIDEO" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="android.permission.RECORD_VIDEO"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false" />
+        android:required="false"/>
 
 
     <application
@@ -37,99 +37,107 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/tt_logo2"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Yellow_light" >
+        android:theme="@style/Theme.Yellow_light">
         <receiver
             android:name="com.ruptech.chinatalk.VersionCheckReceiver"
-            android:enabled="true" />
+            android:enabled="true"/>
 
-        <receiver android:name="com.ruptech.chinatalk.BootReceiver" >
+        <receiver android:name="com.ruptech.chinatalk.BootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
 
-        <meta-data android:value="54f93f50fd98c519d0000b79" android:name="UMENG_APPKEY"/>
-        <meta-data android:value="tttalk" android:name="UMENG_CHANNEL"/>
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="54f93f50fd98c519d0000b79"/>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="tttalk"/>
 
         <activity
             android:name="com.ruptech.chinatalk.ui.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.LoginActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name="com.ruptech.chinatalk.ui.LoginGateActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@android:style/Theme.NoTitleBar"/>
         <activity
             android:name="com.ruptech.chinatalk.MainActivity"
             android:icon="@drawable/tt_logo2"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="tttalk" />
+                <data android:scheme="tttalk"/>
             </intent-filter>
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.OrgActivity"
-            android:icon="@drawable/tt_logo2"  >
+            android:icon="@drawable/tt_logo2">
+        </activity>
+        <activity
+            android:name="com.ruptech.chinatalk.ui.ServiceActivity"
+            android:icon="@drawable/tt_logo2">
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.FullScreenActivity"
             android:icon="@drawable/tt_logo2"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape">
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.setting.SettingSystemInfoActivity"
             android:icon="@drawable/tt_logo2"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.ruptech.chinatalk.ui.ChatActivity"
             android:configChanges="orientation|keyboardHidden"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name="com.ruptech.chinatalk.ui.ImageViewActivity"
-            android:icon="@drawable/tt_logo2" />
+            android:icon="@drawable/tt_logo2"/>
         <activity
             android:name="com.ruptech.chinatalk.ui.user.ProfileActivity"
             android:icon="@drawable/tt_logo2"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.ruptech.chinatalk.ui.LoginLoadingActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
-            android:theme="@style/MyDialogStyle" />
+            android:theme="@style/MyDialogStyle"/>
 
-        <service android:name="com.ruptech.chinatalk.XMPPService" />
+        <service android:name="com.ruptech.chinatalk.XMPPService"/>
 
-		<provider
-			android:name="com.ruptech.chinatalk.sqlite.UserProvider"
-			android:authorities="com.ruptech.dlmu.im.provider.User" >
-		</provider>
+        <provider
+            android:name="com.ruptech.chinatalk.sqlite.UserProvider"
+            android:authorities="com.ruptech.dlmu.im.provider.User">
+        </provider>
         <provider
             android:name="com.ruptech.chinatalk.sqlite.ChatProvider"
-            android:authorities="com.ruptech.dlmu.im.provider.Chats" >
+            android:authorities="com.ruptech.dlmu.im.provider.Chats">
         </provider>
     </application>
 

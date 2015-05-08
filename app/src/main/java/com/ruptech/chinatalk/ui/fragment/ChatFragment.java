@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,11 +19,9 @@ import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.adapter.RecentChatAdapter;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.ui.ChatActivity;
-import com.ruptech.chinatalk.ui.OrgActivity;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -40,7 +37,7 @@ public class ChatFragment extends Fragment {
 		public void onChange(boolean selfChange) {
 			mainHandler.postDelayed(new Runnable() {
 				public void run() {
-					updateRoster();
+					updateChat();
 				}
 			}, 100);
 		}
@@ -62,7 +59,7 @@ public class ChatFragment extends Fragment {
 
 	static final String LOG_TAG = ChatFragment.class.getName();
 
-	public void updateRoster() {
+	public void updateChat() {
         mRecentChatAdapter.requery();
 	}
 

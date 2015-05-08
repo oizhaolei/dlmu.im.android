@@ -35,11 +35,10 @@ import com.ruptech.dlmu.im.BuildConfig;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
-
 import java.io.File;
 import java.util.Properties;
 
-public class App extends Application  {
+public class App extends Application {
 
 	public static Bus mBus;
 	static public Properties properties;
@@ -157,15 +156,18 @@ public class App extends Application  {
 
 		startVersionCheckReceiver(this);
 	}
+
 	public static PendingIntent versionCheckPendingIntent;
+
 	//Receiver 版本检查
 	public static void startVersionCheckReceiver(Context context) {
 		//version check
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
-		 versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 90 * 60 * 1000, versionCheckPendingIntent);
+		versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 1 * 60 * 1000, versionCheckPendingIntent);
 	}
+
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
@@ -188,7 +190,6 @@ public class App extends Application  {
 	}
 
 
-
 	public static XMPPService mService;
 	public static ServiceConnection mServiceConnection = new ServiceConnection() {
 		@Override
@@ -196,7 +197,7 @@ public class App extends Application  {
 			XMPPService.XBinder binder = (XMPPService.XBinder) service;
 			mService = binder.getService();
 			if (!mService.isAuthenticated()) {
-				String account =  App.readUser().getOF_username();
+				String account = App.readUser().getOF_username();
 				String password = App.readUser().getPassword();
 
 				mService.login(account, password);
@@ -214,10 +215,12 @@ public class App extends Application  {
 
 	/**
 	 * 解绑服务
+	 *
+	 * @param context
 	 */
-	public static void unbindXMPPService() {
+	public static void unbindXMPPService(Context context) {
 		try {
-			App.mContext.unbindService(mServiceConnection);
+			context.unbindService(mServiceConnection);
 			Log.i(TAG, "unbindXMPPService");
 		} catch (IllegalArgumentException e) {
 			Log.e(TAG, "Service wasn't bound!", e);
@@ -226,11 +229,13 @@ public class App extends Application  {
 
 	/**
 	 * 绑定服务
+	 *
+	 * @param context
 	 */
-	public static void bindXMPPService() {
+	public static void bindXMPPService(Context context) {
 		Log.i(TAG, "bindXMPPService");
 		Intent serviceIntent = new Intent(App.mContext, XMPPService.class);
-		App.mContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+		context.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
 	}
 
 }
