@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -251,12 +252,38 @@ public class MainActivity extends ActionBarActivity implements
 		});
 	}
 
+	public void doChatStudent(MenuItem item) {
+		Intent orgIntent = new Intent(this, OrgActivity.class);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@"+ AppPreferences.IM_SERVER_RESOURCE);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+		startActivity(orgIntent);	}
+
 	public void doChatTeacher(MenuItem item) {
 
 		Intent orgIntent = new Intent(this, OrgActivity.class);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@"+ AppPreferences.IM_SERVER_RESOURCE);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
 		startActivity(orgIntent);
+	}
+
+	// 退出
+	public void doSystemLogout(MenuItem item) {
+		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				Utils.doLogout(App.mContext);
+			}
+		};
+		DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton) {
+			}
+		};
+		Utils.AlertDialog(this, positiveListener, negativeListener,
+				this.getString(R.string.logout),
+				this.getString(R.string.tip_logout));
 	}
 
 }

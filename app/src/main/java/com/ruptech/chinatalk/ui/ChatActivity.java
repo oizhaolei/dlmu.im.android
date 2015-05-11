@@ -214,24 +214,20 @@ public class ChatActivity extends ActionBarActivity {
 		chat.setContent(content);
 
 		//chat
-		chat.setFromJid(App.readUser().getOF_JabberID());
+		chat.setFromJid(App.readUser().getJid());
 		chat.setToJid(mToJid);
 		chat.setCreated_date(System.currentTimeMillis());
 		sendMessageIfNotNull(chat);
 
-		if (isOrg(mToJid)) {
+		if (User.isOrg(mToJid)) {
 
-			String fromJid = App.readUser().getOF_JabberID();
+			String fromJid = App.readUser().getJid();
 			SendGroupTask sendGroupTask = new SendGroupTask(fromJid, mToJid, "From:" + fromJid, content);
 			sendGroupTask.setListener(mSendGroupMessageTaskListener);
 
 			sendGroupTask.execute();
 
 		}
-	}
-
-	private boolean isOrg(String jid) {
-		return jid.startsWith(AppPreferences.ORG_PREFIX);
 	}
 
 
@@ -263,7 +259,7 @@ public class ChatActivity extends ActionBarActivity {
 				"(" + ChatTable.Columns.TO_JID + " = ? and " + ChatTable.Columns.FROM_JID + " = ?)";
 
 		return getContentResolver().query(ChatProvider.CONTENT_URI,
-				CHAT_PROJECTION, selection, new String[]{App.readUser().getOF_JabberID(), mToJid, App.readUser().getOF_JabberID(), mToJid}, null);
+				CHAT_PROJECTION, selection, new String[]{App.readUser().getJid(), mToJid, App.readUser().getJid(), mToJid}, null);
 
 	}
 

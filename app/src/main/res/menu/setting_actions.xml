@@ -10,7 +10,6 @@
         <menu>
             <item
                 android:id="@+id/menu_logout"
-                android:actionViewClass="com.ruptech.chinatalk.ui.user.Org"
                 android:onClick="doSystemLogout"
                 android:title="@string/logout"/>
         </menu>

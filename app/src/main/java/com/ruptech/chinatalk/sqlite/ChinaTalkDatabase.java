@@ -58,7 +58,7 @@ public class ChinaTalkDatabase {
 	/**
 	 * Database Version
 	 */
-	public static final int DATABASE_VERSION = 68;
+	public static final int DATABASE_VERSION = 69;
 
 	/**
 	 * self instance

@@ -133,7 +133,7 @@ public class ChatFragment extends Fragment {
 				String to_Jid = clickCursor.getString(clickCursor
 						.getColumnIndex(ChatTable.Columns.TO_JID));
 				String name = to_Jid;
-				if (to_Jid.startsWith( App.readUser().getOF_username())) {
+				if (to_Jid.startsWith( App.readUser().getUsername())) {
 					name = from_Jid;
 				}
 

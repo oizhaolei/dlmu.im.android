@@ -20,7 +20,6 @@ public class User extends Item implements Serializable {
 	public String password;
 	public String username;
 	private String fullname;
-	private boolean teacher;
 
 	public User() {
 	}
@@ -30,7 +29,6 @@ public class User extends Item implements Serializable {
 		password = json.optString("password");
 		username = json.optString("username");
 		fullname = json.optString("fullname");
-		teacher = true;
 	}
 
 	public String getPassword() {
@@ -49,8 +47,8 @@ public class User extends Item implements Serializable {
 		this.username = username;
 	}
 
-	public String getOF_JabberID() {
-		return getOF_username()+"@" + AppPreferences.IM_SERVER_RESOURCE;
+	public String getJid() {
+		return getUsername() + "@" + AppPreferences.IM_SERVER_RESOURCE;
 	}
 
 	public String getFullname() {
@@ -62,13 +60,21 @@ public class User extends Item implements Serializable {
 	}
 
 
-	public   String getOF_username( ) {
-		if ( teacher)
-			return String.format(AppPreferences.TEACHER_PREFIX +"%s",  getUsername());
-		else
-			return
-					String.format(AppPreferences.STUDENT_PREFIX+"%s",  getUsername());
+	public static String getUsernameFromJid(String fromJID) {
+		int start = 0;
+		int end = fromJID.indexOf('@');
+		return fromJID.substring(start, end);
 	}
 
+	public static boolean isOrg(String jid) {
+		return getUsernameFromJid(jid).length() == 6;
+	}
 
+	public static boolean isTeacher(String jid) {
+		return getUsernameFromJid(jid).length() == 8;
+	}
+
+	public static boolean isStudent(String jid) {
+		return getUsernameFromJid(jid).length() == 10;
+	}
 }

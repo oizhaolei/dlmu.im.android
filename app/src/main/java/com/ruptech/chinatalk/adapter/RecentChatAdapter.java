@@ -65,9 +65,13 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 				.getColumnIndex(ChatTable.Columns.FROM_JID));
 		String to_Jid = cursor.getString(cursor
 				.getColumnIndex(ChatTable.Columns.TO_JID));
+		String fromFullname = cursor.getString(cursor
+				.getColumnIndex(ChatTable.Columns.FROM_FULLNAME));
+		String toFullname = cursor.getString(cursor
+				.getColumnIndex(ChatTable.Columns.TO_FULLNAME));
 
 		String selection = ChatTable.Columns.TO_JID + " = '" + to_Jid + "' AND "
-				+ ChatTable.Columns.FROM_JID + " = '" + App.readUser().getOF_JabberID()
+				+ ChatTable.Columns.FROM_JID + " = '" + App.readUser().getJid()
 				+ "' AND " + ChatTable.Columns.DELIVERY_STATUS + " = "
 				+ ChatProvider.DS_NEW;// 新消息数量字段
 		Cursor msgcursor = mContentResolver.query(ChatProvider.CONTENT_URI,
@@ -87,15 +91,15 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		String jid = to_Jid;
-		if (to_Jid.startsWith(App.readUser() .getOF_username())) {
-			jid = from_Jid;
+		String fullname = toFullname;
+		if (to_Jid.equals(App.readUser().getJid())) {
+			fullname = fromFullname;
 		}
 
-		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(jid));
+		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(fullname));
 		Utils.setUserPicImage(viewHolder.portraitImageView, portrait);
 
-		viewHolder.jidView.setText(jid);
+		viewHolder.fullnameView.setText(fullname);
 		viewHolder.msgView.setText(XMPPUtils
 				.convertNormalStringToSpannableString(mContext, message, true));
 		viewHolder.dataView.setText(date);
@@ -121,7 +125,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		@InjectView(R.id.recent_portrait)
 		ImageView portraitImageView;
 		@InjectView(R.id.recent_list_item_name)
-		TextView jidView;
+		TextView fullnameView;
 		@InjectView(R.id.recent_list_item_time)
 		TextView dataView;
 		@InjectView(R.id.recent_list_item_msg)

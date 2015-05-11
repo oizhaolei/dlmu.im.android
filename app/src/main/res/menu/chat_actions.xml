@@ -11,7 +11,7 @@
                 android:id="@+id/translator_action_giveup"
                 android:icon="@drawable/discover_addfriends"
                 app:showAsAction="ifRoom|collapseActionView"
-                android:onClick="doChatTeacher"
+                android:onClick="doChatStudent"
                 android:title="@string/student"/>
             <item
                 android:id="@+id/translator_action_history"

@@ -9,6 +9,8 @@ public class Chat implements Serializable {
 	protected long created_date;
 	protected String fromJid;
 	protected String toJid;
+	protected String fromFullname;
+	protected String toFullname;
 	protected int read;
 	protected String content;
 	protected int status;
@@ -19,6 +21,22 @@ public class Chat implements Serializable {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getFromFullname() {
+		return fromFullname;
+	}
+
+	public void setFromFullname(String fromFullname) {
+		this.fromFullname = fromFullname;
+	}
+
+	public String getToFullname() {
+		return toFullname;
+	}
+
+	public void setToFullname(String toFullname) {
+		this.toFullname = toFullname;
 	}
 
 	public long getCreated_date() {

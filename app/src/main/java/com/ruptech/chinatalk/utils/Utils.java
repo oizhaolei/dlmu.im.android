@@ -279,29 +279,10 @@ public class Utils {
 			}
 		}
 		sb.append(AppPreferences.APK_SECRET);
+		Log.d(TAG, sb.toString());
 
 		String sign = Utils.sha1(sb.toString());
-
 		return sign;
-	}
-
-	/**
-	 * 口音
-	 *
-	 * @param langAbbr
-	 * @return
-	 */
-	public static String getAccentLanguageFromAbbr(String langAbbr) {
-		String[] accent_languages_from = App.mContext.getResources()
-				.getStringArray(R.array.accent_languages);
-		String[] languages_from_code = App.mContext.getResources()
-				.getStringArray(R.array.lang_code);
-		for (int i = 0; i < languages_from_code.length; i++) {
-			if (languages_from_code[i].equals(langAbbr)) {
-				return accent_languages_from[i];
-			}
-		}
-		return null;
 	}
 
 	public static int getAppVersionCode() {

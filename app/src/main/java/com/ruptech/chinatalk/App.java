@@ -165,7 +165,7 @@ public class App extends Application {
 		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
 		versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 1 * 60 * 1000, versionCheckPendingIntent);
+		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 60 * 60 * 1000, versionCheckPendingIntent);
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public class App extends Application {
 			XMPPService.XBinder binder = (XMPPService.XBinder) service;
 			mService = binder.getService();
 			if (!mService.isAuthenticated()) {
-				String account = App.readUser().getOF_username();
+				String account = App.readUser().getUsername();
 				String password = App.readUser().getPassword();
 
 				mService.login(account, password);

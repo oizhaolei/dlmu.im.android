@@ -10,11 +10,13 @@ import java.util.Map;
 
 public class RetrieveOrgListTask extends GenericTask {
 	private final String parentJid;
+	private final boolean isStudent;
 	private List<Map<String, Object>> orgList;
 	private List<Map<String, Object>>  memberList;
 
-	public RetrieveOrgListTask(String parentJid) {
+	public RetrieveOrgListTask(String parentJid, boolean isStudent) {
 		this.parentJid = parentJid;
+		this.isStudent = isStudent;
 	}
 
 	public List<Map<String, Object>> getOrgList() {
@@ -27,7 +29,7 @@ public class RetrieveOrgListTask extends GenericTask {
 
 	@Override
 	protected TaskResult _doInBackground() throws Exception {
-		Map map = App.getHttpServer().retrieveOrgList(parentJid);
+		Map map = App.getHttpServer().retrieveOrgList(parentJid, isStudent);
 		orgList = (List<Map<String, Object>>) map.get("orgs");
 		memberList = (List<Map<String, Object>>) map.get("members");
 

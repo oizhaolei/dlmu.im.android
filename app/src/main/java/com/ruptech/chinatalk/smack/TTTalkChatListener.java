@@ -6,15 +6,18 @@ import android.util.Log;
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskAdapter;
+import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
 
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Stanza;
 
 /**
@@ -41,10 +44,9 @@ public class TTTalkChatListener implements StanzaListener {
 		String toJID = XMPPUtils.getJabberID(msg.getTo());
 
 		Log.e(TAG, msg.toString());
-		if (fromJID.equals(toJID)){
+		if (fromJID.equals(toJID)) {
 			return;
 		}
-
 
 		long ts = System.currentTimeMillis();
 
@@ -56,9 +58,45 @@ public class TTTalkChatListener implements StanzaListener {
 		chat.setStatus(ChatProvider.DS_NEW);
 		chat.setCreated_date(ts);
 
-		ChatProvider.insertChat(mContentResolver, chat);
+		//from fullname, to fullname
+		User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJID));
+		User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
+		if (fromUser != null) {
+			chat.setFromFullname(fromUser.getFullname());
+		}
+		if (toUser != null) {
+			chat.setToFullname(toUser.getFullname());
+		}
 
+		if (fromUser == null) {
+			retrieveUser(fromJID);
+		} else if (toUser == null) {
+			retrieveUser(toJID);
+		}
+
+		ChatProvider.insertChat(mContentResolver, chat);
 		App.mBus.post(new NewChatEvent(fromJID, body));
+	}
+
+	private void retrieveUser(final String jid) {
+		String username = User.getUsernameFromJid(jid);
+		RetrieveUserTask retrieveUserTask = new RetrieveUserTask(username);
+		TaskAdapter taskListener = new TaskAdapter() {
+			@Override
+			public void onPostExecute(GenericTask task, TaskResult result) {
+				super.onPostExecute(task, result);
+				RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
+				if (result == TaskResult.OK) {
+					User user = retrieveUserTask.getUser();
+					App.userDAO.mergeUser(user);
+
+					ChatProvider.updateChat(jid, user.getFullname());
+				}
+			}
+
+		};
+		retrieveUserTask.setListener(taskListener);
+		retrieveUserTask.execute();
 	}
 
 

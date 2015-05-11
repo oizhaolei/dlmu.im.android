@@ -2,11 +2,6 @@ package com.ruptech.chinatalk.utils;
 
 public class AppPreferences {
 
-	public static final java.lang.String ORG_PREFIX = "org_";
-	public static final java.lang.String SERVICE_PREFIX = "service_";
-	public static final java.lang.String TEACHER_PREFIX = "teacher_";
-	public static final java.lang.String STUDENT_PREFIX = "student_";
-
 	public static final String IM_SERVER_RESOURCE = "im.dlmu.edu.cn";
 
 	public static long[] NOTIFICATION_VIBRATE = new long[]{0, 200, 100, 200};// 数组是以毫秒为单位的暂停、震动、暂停……时间

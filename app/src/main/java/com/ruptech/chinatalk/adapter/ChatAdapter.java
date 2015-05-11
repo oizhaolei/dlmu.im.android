@@ -344,7 +344,7 @@ public class ChatAdapter extends CursorAdapter {
 	}
 
 	public boolean isMine(Chat chat) {
-		return (chat.getFromJid().equalsIgnoreCase(App.readUser().getOF_JabberID()));
+		return (chat.getFromJid().equalsIgnoreCase(App.readUser().getJid()));
 	}
 
 }

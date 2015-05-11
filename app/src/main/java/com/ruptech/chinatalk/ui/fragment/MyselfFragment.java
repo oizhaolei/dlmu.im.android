@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,6 +37,12 @@ public class MyselfFragment extends Fragment {
 	View profileTopView;
 
 	public static MyselfFragment instance = null;
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.setting_actions, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
 
 	@OnClick(R.id.main_tab_myself_setting_layout)

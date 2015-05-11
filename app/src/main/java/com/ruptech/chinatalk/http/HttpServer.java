@@ -225,26 +225,39 @@ public class HttpServer extends HttpConnection {
 		Response res = _get("login", params);
 		JSONObject result = res.asJSONObject();
 
-
 		return new User(result);
 	}
 
-	public Map retrieveOrgList(String parentJid)
+	public Map retrieveOrgList(String parentJid, boolean isStudent)
 			throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("jid", parentJid);
+		params.put("student", String.valueOf(isStudent));
 
 		Response res = _get("org", params);
 		JSONObject result = res.asJSONObject();
 		return toMap(result);
 
 	}
+
 	public List retrieveServiceList( )
 			throws Exception {
 
 		Response res = _get("service", null);
 		JSONArray result = res.asJSONArray();
 		return toList(result);
+
+	}
+
+	public User retrieveUser(String username)
+			throws Exception {
+		Map<String, String> params = new HashMap<>();
+		params.put("username", username);
+
+		Response res = _get("user", params);
+		JSONObject result = res.asJSONObject();
+
+		return new User(result);
 
 	}
 }

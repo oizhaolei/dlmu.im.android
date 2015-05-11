@@ -112,7 +112,7 @@ public class XMPPService extends BaseService {
 			return;
 
 
-		String account = App.readUser().getOF_username();
+		String account = App.readUser().getUsername();
 		String password = App.readUser().getPassword();
 
 		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
@@ -130,7 +130,7 @@ public class XMPPService extends BaseService {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (!isAuthenticated()) {
 
-			String account = App.readUser().getOF_username();
+			String account = App.readUser().getUsername();
 			String password = App.readUser().getPassword();
 			login(account, password);
 		}
@@ -239,7 +239,7 @@ public class XMPPService extends BaseService {
 				return;
 			}
 
-			String account = App.readUser().getOF_username();
+			String account = App.readUser().getUsername();
 			String password = App.readUser().getPassword();
 
 			if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {

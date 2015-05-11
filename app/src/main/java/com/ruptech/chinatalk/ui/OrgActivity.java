@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
@@ -36,6 +37,7 @@ public class OrgActivity extends ActionBarActivity {
 
 	private String mParentOrgJId;
 	private String mTitle;
+	private boolean mIsStudent;
 
 
 	private void startChatActivity(String userJid, String name) {
@@ -80,8 +82,9 @@ public class OrgActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_org);
 		ButterKnife.inject(this);
 
-		mParentOrgJId = (String) getIntent().getExtras().get(PARENT_ORG_JID);
-		mTitle = (String) getIntent().getExtras().get(PARENT_ORG_NAME);
+		mParentOrgJId = getIntent().getExtras().getString(PARENT_ORG_JID);
+		mTitle =  getIntent().getExtras().getString(PARENT_ORG_NAME);
+		mIsStudent =  getIntent().getExtras().getBoolean(PARENT_ORG_STUDENT);
 
 		setupComponents();
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -90,7 +93,7 @@ public class OrgActivity extends ActionBarActivity {
 	}
 
 	private void retrieveOrg(String parentOrgJid) {
-		RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid);
+		RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid, mIsStudent);
 		TaskAdapter taskListener = new TaskAdapter() {
 			@Override
 			public void onPostExecute(GenericTask task, TaskResult result) {
@@ -130,7 +133,6 @@ public class OrgActivity extends ActionBarActivity {
 		return true;
 	}
 
-
 	public void setupComponents() {
 		displayTitle();
 
@@ -142,7 +144,7 @@ public class OrgActivity extends ActionBarActivity {
 				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
 				String jid = (String) item.get("jid");
 				String name = (String) item.get("name");
-				if (jid.startsWith(AppPreferences.TEACHER_PREFIX) || jid.startsWith(AppPreferences.STUDENT_PREFIX)) {
+				if (User.isTeacher(jid) || User.isStudent(jid)) {
 					startChatActivity(jid, name);
 				} else {
 					startOrgActivity(jid, name);
@@ -161,6 +163,7 @@ public class OrgActivity extends ActionBarActivity {
 
 	public static final String PARENT_ORG_JID = "PARENT_ORG_JID";
 	public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
+	public static final String PARENT_ORG_STUDENT = "PARENT_ORG_STUDENT";
 
 
 	private void gotoSplashActivity() {

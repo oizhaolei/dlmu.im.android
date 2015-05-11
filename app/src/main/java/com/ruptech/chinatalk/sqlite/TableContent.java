@@ -107,6 +107,8 @@ public abstract class TableContent {
 			public final String CREATED_DATE = "created_date";
 			public final String FROM_JID = "from_jid";
 			public final String TO_JID = "to_jid";
+			public final String FROM_FULLNAME = "from_fullname";
+			public final String TO_FULLNAME= "to_fullname";
 			public final String CONTENT = "content";
 			public final String DELIVERY_STATUS = "read";
 			public final String PACKET_ID = "pid";
@@ -129,6 +131,8 @@ public abstract class TableContent {
 			create.append(Columns.CREATED_DATE + " INTEGER, ");
 			create.append(Columns.FROM_JID + " TEXT, ");
 			create.append(Columns.TO_JID + " TEXT, ");
+			create.append(Columns.FROM_FULLNAME + " TEXT, ");
+			create.append(Columns.TO_FULLNAME + " TEXT, ");
 			create.append(Columns.CONTENT + " TEXT, ");
 			create.append(Columns.DELIVERY_STATUS + " INTEGER, ");
 			create.append(Columns.PACKET_ID + " TEXT ");
@@ -143,12 +147,6 @@ public abstract class TableContent {
 			if (BuildConfig.DEBUG)
 				Log.w(TAG, "sql:" + sql);
 			return sql;
-		}
-
-		public String[] getIndexColumns() {
-			return new String[]{Columns.ID, Columns.CREATED_DATE, Columns.FROM_JID, Columns.TO_JID,
-					Columns.CONTENT,
-					Columns.DELIVERY_STATUS, Columns.PACKET_ID};
 		}
 
 		public static String getName() {
@@ -173,6 +171,10 @@ public abstract class TableContent {
 					.getColumnIndex(Columns.FROM_JID)));// 消息来自
 			chat.setToJid(cursor.getString(cursor
 					.getColumnIndex(Columns.TO_JID)));
+			chat.setFromFullname(cursor.getString(cursor
+					.getColumnIndex(Columns.FROM_FULLNAME)));// 消息来自
+			chat.setToFullname(cursor.getString(cursor
+					.getColumnIndex(Columns.TO_FULLNAME)));
 			chat.setPid(cursor.getString(cursor
 					.getColumnIndex(Columns.PACKET_ID)));
 			chat.setRead(cursor.getInt(cursor
@@ -191,6 +193,8 @@ public abstract class TableContent {
 			v.put(Columns.CREATED_DATE, chat.getCreated_date());
 			v.put(Columns.FROM_JID, chat.getFromJid());
 			v.put(Columns.TO_JID, chat.getToJid());
+			v.put(Columns.FROM_FULLNAME, chat.getFromFullname());
+			v.put(Columns.TO_FULLNAME, chat.getToFullname());
 			v.put(Columns.CONTENT, chat.getContent());
 			v.put(Columns.DELIVERY_STATUS, chat.getRead());
 			v.put(Columns.PACKET_ID, chat.getPid());

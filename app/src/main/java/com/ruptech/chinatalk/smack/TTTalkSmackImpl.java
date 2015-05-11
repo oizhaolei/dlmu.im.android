@@ -66,7 +66,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			ChatTable.Columns.ID, ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
 			ChatTable.Columns.CREATED_DATE, ChatTable.Columns.PACKET_ID};
 	final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.FROM_JID
-			+ " = '" + App.readUser().getOF_JabberID() + "' AND "
+			+ " = '" + App.readUser().getJid() + "' AND "
 			+ ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
 
 	private final ContentResolver mContentResolver;
@@ -333,7 +333,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
 		Log.e(TAG, newMessage.toString());
 
-		chat.setFromJid(App.readUser().getOF_JabberID());
+		chat.setFromJid(App.readUser().getJid());
 		chat.setToJid(toJID);
 		chat.setPid(newMessage.getPacketID());
 		chat.setCreated_date(System.currentTimeMillis());
@@ -352,7 +352,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	public static void sendOfflineMessage(ContentResolver cr, String toJID,
 	                                      Chat chat) {
 		ContentValues values = new ContentValues();
-		values.put(ChatTable.Columns.FROM_JID, App.readUser().getOF_JabberID());
+		values.put(ChatTable.Columns.FROM_JID, App.readUser().getJid());
 		values.put(ChatTable.Columns.TO_JID, toJID);
 		values.put(ChatTable.Columns.CONTENT, chat.getContent());
 		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);

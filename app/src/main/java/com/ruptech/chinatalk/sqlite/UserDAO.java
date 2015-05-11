@@ -232,7 +232,7 @@ public class UserDAO {
 	 * @param tel
 	 * @return
 	 */
-	public User fetchUserByTel(String tel) {
+	public User fetchUserByUsername(String tel) {
 		return mSqlTemplate.queryForObject(mRowMapper, UserTable.getName(),
 				null, UserTable.Columns.USERNAME + " = ?", new String[]{tel},
 				null, null, "_id DESC", "1");

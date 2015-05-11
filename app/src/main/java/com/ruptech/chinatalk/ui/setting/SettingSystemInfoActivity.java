@@ -27,25 +27,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 			+ SettingSystemInfoActivity.class.getSimpleName();
 
 
-	// 退出
-	public void doSystemLogout(MenuItem item) {
-		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-
-				Utils.doLogout(App.mContext);
-			}
-		};
-		DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-			}
-		};
-		Utils.AlertDialog(this, positiveListener, negativeListener,
-				this.getString(R.string.logout),
-				this.getString(R.string.tip_logout));
-	}
-
 
 	private ProgressDialog progressDialog;
 
@@ -78,13 +59,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setupComponents();
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu mMenu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.setting_actions, mMenu);
-		return true;
 	}
 
 	@Override

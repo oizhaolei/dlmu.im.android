@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 
@@ -209,5 +210,18 @@ public class ChatProvider extends ContentProvider {
 		values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
 
 		contentResolver.insert(ChatProvider.CONTENT_URI, values);
+	}
+
+	public static void updateChat(String jid, String fullname) {
+		SQLiteDatabase db = ChinaTalkDatabase
+				.getInstance(App.mContext).getSQLiteOpenHelper().getWritableDatabase();
+		//from jid
+		ContentValues values = new ContentValues();
+		values.put(ChatTable.Columns.FROM_FULLNAME, fullname);
+		db.update(TABLE_NAME, values, "from_jid=" + jid, null);
+		//to_jid
+		values = new ContentValues();
+		values.put(ChatTable.Columns.TO_FULLNAME, fullname);
+		db.update(TABLE_NAME, values, "to_jid=" + jid, null);
 	}
 }
