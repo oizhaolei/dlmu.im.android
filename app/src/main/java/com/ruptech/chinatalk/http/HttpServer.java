@@ -18,26 +18,6 @@ public class HttpServer extends HttpConnection {
 	private final String TAG = Utils.CATEGORY
 			+ HttpServer.class.getSimpleName();
 
-	private User _getUser(String[] prop, Map<String, String> params)
-			throws Exception {
-		Response res = _get("user/user.php", params);
-		JSONObject result = res.asJSONObject();
-		if (result.getBoolean("success")) {
-			if (prop != null && result.has("username")) {
-				prop[0] = result.optString("username");
-				prop[1] = result.optString("lang");
-			}
-			if (!"null".equals(result.getString("data"))) {
-				JSONObject data0 = (JSONObject) result.getJSONArray("data")
-						.get(0);
-				return new User(data0);
-			}
-
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-		return null;
-	}
 
 
 	private User _parseUser(JSONObject result, Response res) throws Exception {
@@ -92,101 +72,12 @@ public class HttpServer extends HttpConnection {
 		return map;
 	}
 
-	private void convertUserList(List<User> userList, JSONArray user_list)
-			throws JSONException {
-		int size = user_list.length();
-
-		userList.clear();
-		for (int i = 0; i < size; i++) {
-			JSONObject jo = user_list.getJSONObject(i);
-
-			User friend = new User(jo);
-			userList.add(friend);
-		}
-	}
-
-
-	public boolean friendReport(Long friendId, String report_content)
-			throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("friend_id", String.valueOf(friendId));
-		params.put("report_content", report_content);
-		Response res = _get("friend/friend_report.php", params);
-
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (success) {
-			return success;
-		} else {
-			throw new ServerSideException(result.getString("msg"));
-		}
-
-	}
 
 	@Override
 	protected String getAppServerUrl() {
 		return App.properties.getProperty("SERVER_BASE_URL");
 	}
 
-	public User getUser(long userid) throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("id", String.valueOf(userid));
-
-		return _getUser(null, params);
-	}
-
-
-	public List<User> retrieveBlockedFriends(long sinceId, long[] sinceIdArray)
-			throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("since_id", String.valueOf(sinceId));
-
-		Response res = _get("friend/retrieve_blocked_friends.php", params);
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (success) {
-			JSONArray list = result.getJSONArray("data");
-			int size = list.length();
-			List<User> blockedFriendsList = new ArrayList<>(size);
-			for (int i = 0; i < size; i++) {
-				JSONObject jo = list.getJSONObject(i);
-				User user = new User(jo);
-				blockedFriendsList.add(user);
-			}
-			if (size > 0) {
-				sinceIdArray[0] = list.getJSONObject(size - 1).getLong("fid");
-			}
-			return blockedFriendsList;
-		}
-		String msg = result.getString("msg");
-		throw new ServerSideException(msg);
-	}
-
-	public List<User> retrieveFollowerUsers(long sinceId, long[] sinceIdArray)
-			throws Exception {
-		Map<String, String> params = new HashMap<>();
-		params.put("since_id", String.valueOf(sinceId));
-
-		Response res = _get("timeline/follower_friend_timeline.php", params);
-		JSONObject result = res.asJSONObject();
-		boolean success = result.getBoolean("success");
-		if (success) {
-			JSONArray list = result.getJSONArray("data");
-			int size = list.length();
-			List<User> followerUserList = new ArrayList<>(size);
-			for (int i = 0; i < size; i++) {
-				JSONObject jo = list.getJSONObject(i);
-				User user = new User(jo);
-				followerUserList.add(user);
-			}
-			if (size > 0) {
-				sinceIdArray[0] = list.getJSONObject(size - 1).getLong("fid");
-			}
-			return followerUserList;
-		}
-		String msg = result.getString("msg");
-		throw new ServerSideException(msg);
-	}
 
 	/**
 	 * @throws Exception
@@ -224,8 +115,12 @@ public class HttpServer extends HttpConnection {
 
 		Response res = _get("login", params);
 		JSONObject result = res.asJSONObject();
-
-		return new User(result);
+		String code = result.getString("code");
+		if ("99".equals(code)) {
+			JSONObject user = result.getJSONObject("user");
+			return new User(user);
+		}
+		throw new Exception("login error");
 	}
 
 	public Map retrieveOrgList(String parentJid, boolean isStudent)
@@ -240,12 +135,12 @@ public class HttpServer extends HttpConnection {
 
 	}
 
-	public List retrieveServiceList( )
+	public List retrieveServiceList()
 			throws Exception {
 
 		Response res = _get("service", null);
-		JSONArray result = res.asJSONArray();
-		return toList(result);
+		JSONObject result = res.asJSONObject();
+		return toList(result.getJSONArray("data"));
 
 	}
 

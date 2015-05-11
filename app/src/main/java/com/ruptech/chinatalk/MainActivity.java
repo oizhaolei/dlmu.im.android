@@ -254,14 +254,14 @@ public class MainActivity extends ActionBarActivity implements
 
 	public void doChatStudent(MenuItem item) {
 		Intent orgIntent = new Intent(this, OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@"+ AppPreferences.IM_SERVER_RESOURCE);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@"+ AppPreferences.IM_SERVER_RESOURCE);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
 		startActivity(orgIntent);	}
 
 	public void doChatTeacher(MenuItem item) {
 
 		Intent orgIntent = new Intent(this, OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "org_100000@"+ AppPreferences.IM_SERVER_RESOURCE);
+		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@"+ AppPreferences.IM_SERVER_RESOURCE);
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
 		orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
 		startActivity(orgIntent);

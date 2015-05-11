@@ -235,6 +235,8 @@ public class ChatActivity extends ActionBarActivity {
 			ChatTable.Columns.ID,
 			ChatTable.Columns.FROM_JID,
 			ChatTable.Columns.TO_JID,
+			ChatTable.Columns.FROM_FULLNAME,
+			ChatTable.Columns.TO_FULLNAME,
 			ChatTable.Columns.CONTENT,
 			ChatTable.Columns.CREATED_DATE,
 			ChatTable.Columns.DELIVERY_STATUS,

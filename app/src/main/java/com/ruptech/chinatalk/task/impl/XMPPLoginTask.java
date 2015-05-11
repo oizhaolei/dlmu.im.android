@@ -1,7 +1,6 @@
 package com.ruptech.chinatalk.task.impl;
 
 
-import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.smack.TTTalkSmack;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;

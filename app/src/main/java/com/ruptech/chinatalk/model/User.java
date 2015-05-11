@@ -20,15 +20,24 @@ public class User extends Item implements Serializable {
 	public String password;
 	public String username;
 	private String fullname;
+	private String deptid;
+	private String deptname;
 
 	public User() {
 	}
 
 	public User(JSONObject json) throws JSONException {
 		id = System.currentTimeMillis();
-		password = json.optString("password");
-		username = json.optString("username");
-		fullname = json.optString("fullname");
+		username = json.optString("userid");
+		password  = json.optString("passwd");
+		fullname = json.optString("xm");
+		deptid = json.optString("deptid");
+		deptname = json.optString("deptname");
+	}
+
+	public User(String username, String fullname) {
+		this.username = username;
+		this.fullname = fullname;
 	}
 
 	public String getPassword() {

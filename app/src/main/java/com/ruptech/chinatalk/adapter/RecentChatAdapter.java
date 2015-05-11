@@ -11,6 +11,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.AppVersion;
@@ -28,9 +29,13 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 			+ ChatProvider.TABLE_NAME + " group by " + ChatTable.Columns.FROM_JID
 			+ " having count(*)>0)";// 查询合并重复jid字段的所有聊天对象
 	private static final String[] FROM = new String[]{
-			ChatTable.Columns.ID, ChatTable.Columns.CREATED_DATE,
+			ChatTable.Columns.ID,
+			ChatTable.Columns.CREATED_DATE,
 			ChatTable.Columns.FROM_JID,
-			ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
+			ChatTable.Columns.TO_JID,
+			ChatTable.Columns.FROM_FULLNAME,
+			ChatTable.Columns.TO_FULLNAME,
+			ChatTable.Columns.CONTENT,
 			ChatTable.Columns.DELIVERY_STATUS};// 查询字段
 	private static final String SORT_ORDER = ChatTable.Columns.CREATED_DATE + " DESC";
 	private ContentResolver mContentResolver;
@@ -91,12 +96,14 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
+		String jid = to_Jid;
 		String fullname = toFullname;
 		if (to_Jid.equals(App.readUser().getJid())) {
+			jid = from_Jid;
 			fullname = fromFullname;
 		}
 
-		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(fullname));
+		String portrait = AppVersion.getPortraitUrl(User.getUsernameFromJid(jid));
 		Utils.setUserPicImage(viewHolder.portraitImageView, portrait);
 
 		viewHolder.fullnameView.setText(fullname);

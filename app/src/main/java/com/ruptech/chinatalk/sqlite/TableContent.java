@@ -97,6 +97,7 @@ public abstract class TableContent {
 			v.put(Columns.ID, user.getId());
 			v.put(Columns.PASSWORD, user.password);
 			v.put(Columns.USERNAME, user.username);
+			v.put(Columns.FULLNAME, user.getFullname());
 			return v;
 		}
 	}

@@ -102,7 +102,7 @@ public class ServiceFragment extends Fragment {
 			public void onItemClick(AdapterView<?> view, View arg1,
 			                        int position, long id) {
 				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
-				String jid = (String) item.get("jid");
+				String jid = item.get("fnid").toString();
 				String title = (String) item.get("title");
 				String url = (String) item.get("url");
 				if (Utils.isEmpty(url)) {
@@ -112,8 +112,6 @@ public class ServiceFragment extends Fragment {
 				}
 			}
 		});
-
-
 	}
 
 	private void startChatActivity(String userJid, String name) {
@@ -132,7 +130,7 @@ public class ServiceFragment extends Fragment {
 
 	private void setAdapter() {
 		serviceAdapter = new SimpleAdapter(getActivity(), itemList, R.layout.item_serivce,
-				new String[]{"jid", "title"},
+				new String[]{"fnid", "title"},
 				new int[]{R.id.item_service_jid, R.id.item_service_name});
 		serviceListView.setAdapter(serviceAdapter);
 	}

@@ -118,12 +118,6 @@ public class Utils {
 		return result;
 	}
 
-	public static String jid2Username(String jid) {
-		int start = jid.indexOf('_')+1;
-		int end= jid.indexOf('@');
-		return jid.substring(start,end);
-	}
-
 	public static class LengthFilter implements InputFilter {
 
 		@Override

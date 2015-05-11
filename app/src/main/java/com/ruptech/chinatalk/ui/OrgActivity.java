@@ -17,7 +17,6 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveOrgListTask;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -40,10 +39,13 @@ public class OrgActivity extends ActionBarActivity {
 	private boolean mIsStudent;
 
 
-	private void startChatActivity(String userJid, String name) {
+	private void startChatActivity(String userJid, String fullname) {
+		User user = new User(User.getUsernameFromJid(userJid), fullname);
+		App.userDAO.mergeUser(user);
+
 		Intent chatIntent = new Intent(this, ChatActivity.class);
 		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
-		chatIntent.putExtra(ChatActivity.EXTRA_TITLE, name);
+		chatIntent.putExtra(ChatActivity.EXTRA_TITLE, fullname);
 		startActivity(chatIntent);
 	}
 

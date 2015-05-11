@@ -96,8 +96,8 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			server = serverAppInfo.imHost;
 			port = serverAppInfo.imPort;
 		} else {
-			 server = App.properties.getProperty("xmpp.server.host");
-			 port = Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
+			server = App.properties.getProperty("xmpp.server.host");
+			port = Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
 		}
 
 		Log.i(TAG, String.format("xmpp: %s, %s", server, port));
@@ -140,6 +140,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 	@Override
 	public boolean login(String account, String password) throws Exception {
 		Log.i(TAG, String.format("login: %s, %s", account, password));
+		password = account.substring(account.length() - 4);//TODO
 		registerConnectionListener();
 
 		if (!mXMPPConnection.isConnected()) {

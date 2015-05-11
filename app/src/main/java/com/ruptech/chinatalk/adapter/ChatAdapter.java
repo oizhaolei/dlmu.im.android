@@ -96,7 +96,7 @@ public class ChatAdapter extends CursorAdapter {
 			markAsReadDelayed(chat.getId(), DELAY_NEW_MSG);
 		}
 
-		String portrait = AppVersion.getPortraitUrl(Utils.jid2Username(chat.getFromJid()));
+		String portrait = AppVersion.getPortraitUrl(User.getUsernameFromJid(chat.getFromJid()));
 		Utils.setUserPicImage(holder.userThumbImageView, portrait);
 
 
