@@ -106,7 +106,8 @@ public class ServiceFragment extends Fragment {
 				String title = (String) item.get("title");
 				String url = (String) item.get("url");
 				if (Utils.isEmpty(url)) {
-					startChatActivity(jid, title);
+					//startChatActivity(jid, title);
+                    startMeetingCheckInActivity(jid, title);
 				} else {
 					startServiceActivity(url);
 				}
@@ -127,6 +128,12 @@ public class ServiceFragment extends Fragment {
 		startActivity(intent);
 	}
 
+    private void startMeetingCheckInActivity(String userJid, String name) {
+        Intent meetingIntent = new Intent(getActivity(), ChatActivity.class);
+        meetingIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
+        meetingIntent.putExtra(ChatActivity.EXTRA_TITLE, name);
+        startActivity(meetingIntent);
+    }
 
 	private void setAdapter() {
 		serviceAdapter = new SimpleAdapter(getActivity(), itemList, R.layout.item_serivce,

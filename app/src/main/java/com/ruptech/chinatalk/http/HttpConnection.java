@@ -118,6 +118,7 @@ public abstract class HttpConnection {
 			url = getAppServerUrl() + url;
 		}
 		url += "?" + encodeParameters(params);
+        System.out.println(">>>>>>>>>>>>>>>>"+url);
 		return url;
 	}
 
