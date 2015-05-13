@@ -28,7 +28,7 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 			+ " in (select max(" + ChatTable.Columns.CREATED_DATE + ") from "
 			+ ChatProvider.TABLE_NAME + " group by " + ChatTable.Columns.FROM_JID
 			+ " having count(*)>0)";// 查询合并重复jid字段的所有聊天对象
-	private static final String[] FROM = new String[]{
+	private static final String[] PROJECTION = new String[]{
 			ChatTable.Columns.ID,
 			ChatTable.Columns.CREATED_DATE,
 			ChatTable.Columns.FROM_JID,
@@ -43,14 +43,14 @@ public class RecentChatAdapter extends SimpleCursorAdapter {
 	private Activity mContext;
 
 	public RecentChatAdapter(Activity context) {
-		super(context, 0, null, FROM, null);
+		super(context, 0, null, PROJECTION, null);
 		mContext = context;
 		mContentResolver = context.getContentResolver();
 		mLayoutInflater = LayoutInflater.from(context);
 	}
 
 	public void requery() {
-		Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI, FROM,
+		Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI, PROJECTION,
 				SELECT, null, SORT_ORDER);
 		Cursor oldCursor = getCursor();
 		changeCursor(cursor);

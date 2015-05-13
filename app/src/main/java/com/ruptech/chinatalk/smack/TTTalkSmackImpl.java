@@ -11,6 +11,7 @@ import com.ruptech.chinatalk.event.ConnectionStatusChangedEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
 import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.utils.AppPreferences;
@@ -71,7 +72,6 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
 	private final ContentResolver mContentResolver;
 	private AbstractXMPPConnection mXMPPConnection;
-	private StanzaListener mSendFailureListener;
 	private ConnectionListener mConnectionListener;
 
 	static {
@@ -334,9 +334,10 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 
 		Log.e(TAG, newMessage.toString());
 
-		chat.setFromJid(App.readUser().getJid());
+		String fromJid = App.readUser().getJid();
+		chat.setFromJid(fromJid);
 		chat.setToJid(toJID);
-		chat.setPid(newMessage.getPacketID());
+		chat.setPid(newMessage.getStanzaId());
 		chat.setCreated_date(System.currentTimeMillis());
 
 		if (isAuthenticated()) {
@@ -346,20 +347,19 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			// send offline -> store to DB
 			chat.setStatus(ChatProvider.DS_NEW);
 		}
+
+
+		//from fullname, to fullname
+		User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJid));
+		User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
+		if (fromUser != null) {
+			chat.setFromFullname(fromUser.getFullname());
+		}
+		if (toUser != null) {
+			chat.setToFullname(toUser.getFullname());
+		}
+
 		ChatProvider.insertChat(mContentResolver, chat);
-	}
-
-
-	public static void sendOfflineMessage(ContentResolver cr, String toJID,
-	                                      Chat chat) {
-		ContentValues values = new ContentValues();
-		values.put(ChatTable.Columns.FROM_JID, App.readUser().getJid());
-		values.put(ChatTable.Columns.TO_JID, toJID);
-		values.put(ChatTable.Columns.CONTENT, chat.getContent());
-		values.put(ChatTable.Columns.DELIVERY_STATUS, ChatProvider.DS_NEW);
-		values.put(ChatTable.Columns.CREATED_DATE, System.currentTimeMillis());
-
-		cr.insert(ChatProvider.CONTENT_URI, values);
 	}
 
 
@@ -382,7 +382,7 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			int _id = cursor.getInt(_ID_COL);
 			String toJID = cursor.getString(JID_COL);
 			String message = cursor.getString(MSG_COL);
-			String packetID = cursor.getString(PACKETID_COL);
+			String stanzaId = cursor.getString(PACKETID_COL);
 			long ts = cursor.getLong(TS_COL);
 			Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
 			final Message newMessage = new Message(toJID, Message.Type.chat);
@@ -392,11 +392,11 @@ public class TTTalkSmackImpl implements TTTalkSmack {
 			DelayInformation delay = new DelayInformation(new Date(ts));
 			newMessage.addExtension(delay);
 			newMessage.addExtension(new DeliveryReceiptRequest());
-			if ((packetID != null) && (packetID.length() > 0)) {
-				newMessage.setStanzaId(packetID);
+			if ((stanzaId != null) && (stanzaId.length() > 0)) {
+				newMessage.setStanzaId(stanzaId);
 			} else {
-				packetID = newMessage.getStanzaId();
-				mark_sent.put(ChatTable.Columns.PACKET_ID, packetID);
+				stanzaId = newMessage.getStanzaId();
+				mark_sent.put(ChatTable.Columns.PACKET_ID, stanzaId);
 			}
 			Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
 					+ ChatProvider.QUERY_URI + "/" + _id);
