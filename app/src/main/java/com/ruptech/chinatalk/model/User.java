@@ -28,6 +28,7 @@ public class User extends Item implements Serializable {
 
 	public User(JSONObject json) throws JSONException {
 		id = System.currentTimeMillis();
+
 		username = json.optString("userid");
 		password  = json.optString("passwd");
 		fullname = json.optString("xm");
@@ -36,6 +37,8 @@ public class User extends Item implements Serializable {
 	}
 
 	public User(String username, String fullname) {
+		id = System.currentTimeMillis();
+
 		this.username = username;
 		this.fullname = fullname;
 	}
@@ -69,10 +72,14 @@ public class User extends Item implements Serializable {
 	}
 
 
-	public static String getUsernameFromJid(String fromJID) {
-		int start = 0;
-		int end = fromJID.indexOf('@');
-		return fromJID.substring(start, end);
+	public static String getUsernameFromJid(String jid) {
+		try {
+			int start = 0;
+			int end = jid.indexOf('@');
+			return jid.substring(start, end);
+		} catch (Exception e) {
+			return jid;
+		}
 	}
 
 	public static boolean isOrg(String jid) {
