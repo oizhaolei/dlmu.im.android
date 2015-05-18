@@ -66,6 +66,7 @@ public class OrgActivity extends ActionBarActivity {
 	private List<Map<String, Object>> itemList = new ArrayList<>();
 
 	protected void displayTitle() {
+        //System.out.println("-----------"+mTitle);
 		getSupportActionBar().setTitle(mTitle);
 	}
 

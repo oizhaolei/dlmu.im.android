@@ -36,124 +36,125 @@ import butterknife.InjectView;
 
 /**
  */
-public class ServiceActivity extends ActionBarActivity  implements
-		SwipeRefreshLayout.OnRefreshListener {
-	public static final String EXTERNAL_URL = "EXTRA_E_URL";
-	public static final String EXTERNAL_TITLE = "EXTRA_TITLE";
+public class ServiceActivity extends ActionBarActivity implements
+        SwipeRefreshLayout.OnRefreshListener {
+    public static final String EXTERNAL_URL = "EXTRA_E_URL";
+    public static final String EXTERNAL_TITLE = "EXTRA_TITLE";
 
-	static final String TAG = Utils.CATEGORY
-			+ ServiceActivity.class.getSimpleName();
+    static final String TAG = Utils.CATEGORY
+            + ServiceActivity.class.getSimpleName();
 
-	private String mUrl;
-	private String mTitle;
+    private String mUrl;
+    private String mTitle;
 
-	public void doExternalUrl(MenuItem item) {
-	}
-	@Override
-	public void onBackPressed() {
-		if (webview.canGoBack()) {
-			webview.goBack();
-		} else {
-			finish();
-		}
-	}
+    public void doExternalUrl(MenuItem item) {
+    }
 
-	@Override
-	public void onRefresh() {
-		swypeLayout.setRefreshing(false);
-	}
+    @Override
+    public void onBackPressed() {
+        if (webview.canGoBack()) {
+            webview.goBack();
+        } else {
+            finish();
+        }
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu mMenu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.org_service, mMenu);
-		return true;
-	}
+    @Override
+    public void onRefresh() {
+        swypeLayout.setRefreshing(false);
+    }
 
-	@InjectView(R.id.service_webview)
-	WebView webview;
+    @Override
+    public boolean onCreateOptionsMenu(Menu mMenu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.org_service, mMenu);
+        return true;
+    }
 
-	@InjectView(R.id.swype)
-	SwipeRefreshLayout swypeLayout;
+    @InjectView(R.id.service_webview)
+    WebView webview;
 
-
-	protected void displayTitle() {
-		getSupportActionBar().setTitle(mTitle);
-	}
-
-	private void gotoSplashActivity() {
-		Intent intent = new Intent(this, SplashActivity.class);
-		startActivity(intent);
-	}
-	//
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (App.readUser() == null) {
-			gotoSplashActivity();
-			finish();
-			return;
-		}
-
-		setContentView(R.layout.activity_service);
-		ButterKnife.inject(this);
-
-		mUrl = (String) getIntent().getExtras().get(EXTERNAL_URL);
-		mTitle = (String) getIntent().getExtras().get(EXTERNAL_TITLE);
-
-		setupComponents();
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-	}
+    @InjectView(R.id.swype)
+    SwipeRefreshLayout swypeLayout;
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			Utils.onBackPressed(this);
-		}
+    protected void displayTitle() {
+        getSupportActionBar().setTitle(mTitle);
+    }
 
-		return true;
-	}
+    private void gotoSplashActivity() {
+        Intent intent = new Intent(this, SplashActivity.class);
+        startActivity(intent);
+    }
+    //
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (App.readUser() == null) {
+            gotoSplashActivity();
+            finish();
+            return;
+        }
+
+        setContentView(R.layout.activity_service);
+        ButterKnife.inject(this);
+
+        mUrl = (String) getIntent().getExtras().get(EXTERNAL_URL);
+        mTitle = (String) getIntent().getExtras().get(EXTERNAL_TITLE);
+
+        setupComponents();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        System.out.println("--------------"+mTitle);
+    }
 
 
-	public void setupComponents() {
-		displayTitle();
-		swypeLayout.setOnRefreshListener(this);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Utils.onBackPressed(this);
+        }
+
+        return true;
+    }
 
 
-		webview.setWebViewClient(new WebViewClient() {
-			@Override
-			public void onPageFinished(WebView view, String url) {
-				swypeLayout.setRefreshing(false);
-			}
+    public void setupComponents() {
+        displayTitle();
+        swypeLayout.setOnRefreshListener(this);
 
-			@Override
-			public void onPageStarted(WebView view, String url, Bitmap favicon) {
-				swypeLayout.setRefreshing(true);
-			}
 
-			@Override
-			public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-				handler.proceed();
-			}
+        webview.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                swypeLayout.setRefreshing(false);
+            }
 
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				swypeLayout.setRefreshing(true);
-				view.loadUrl(url);
-				return true;
-			}
-		});
-		webview.getSettings().setUseWideViewPort(true);
-		webview.getSettings().setLoadWithOverviewMode(true);
-		webview.getSettings().setBuiltInZoomControls(true);
-		webview.getSettings().setDomStorageEnabled(true);// 解决加载出现空白
-		webview.clearCache(true);
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                swypeLayout.setRefreshing(true);
+            }
 
-		Log.i(TAG, mUrl);
-		webview.loadUrl(mUrl);
-	}
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                swypeLayout.setRefreshing(true);
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        webview.getSettings().setUseWideViewPort(true);
+        webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setBuiltInZoomControls(true);
+        webview.getSettings().setDomStorageEnabled(true);// 解决加载出现空白
+        webview.clearCache(true);
+
+        Log.i(TAG, mUrl);
+        webview.loadUrl(mUrl);
+    }
 
 }

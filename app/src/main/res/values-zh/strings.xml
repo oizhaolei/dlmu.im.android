@@ -32,7 +32,7 @@
     <string name="already_sms_friend_msg">该好友通过手机短信可以与您沟通。</string>
     <string name="announcement">系统公告</string>
     <string name="app_id">1448374425401042</string>
-    <string name="app_name">dlmu.im</string>
+    <string name="app_name">易校</string>
     <string name="apply_do_translator">申请成为翻译者</string>
     <string name="are_you_sure_delete_message">你确定要删除这条内容吗？</string>
     <string name="auto_translation_msg">免费翻译</string>
@@ -565,4 +565,9 @@
     <string name="email_verified">邮箱（已验证）</string>
     <string name="email_not_verified">邮箱（未验证）</string>
     <string name="send_failure">发送失败</string>
+
+    <string name="meeting_checkin_stop">停止签到</string>
+    <string name="meeting_checkin_start">启动签到</string>
+    <string name="nfc_nomodule">没有NFC模块</string>
+    <string name="nfc_disabled">NFC模块未启用</string>
 </resources>

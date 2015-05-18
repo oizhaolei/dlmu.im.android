@@ -38,8 +38,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,8 +62,6 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
     Button checkin_start_button;
     @InjectView(R.id.activity_meeting_checkin_Log_textview)
     TextView checkin_log_textview;
-    @InjectView(R.id.activity_meeting_checkin_info_textview)
-    TextView checkin_ifno_textview;
 
     private ProgressDialog progressDialog;
     private NfcAdapter mAdapter;
@@ -67,6 +69,12 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
     private boolean start = false;// 是否开始刷卡了
+    private String mTitle;
+
+    private String ssDate = "";
+    private final String JSH = "19971053";
+    private final String KCH = "13608400";
+    private final String ZXJXJHH = "2014-2015-2-1";
 
     @Override
     public void onBackPressed() {
@@ -86,11 +94,15 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             finish();
             return;
         }
+
+        DateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        ssDate = sdf.format(new Date());
+
+
         Intent intent = getIntent();
         String jid = intent.getStringExtra("EXTRA_JID");
         String name = intent.getStringExtra("EXTRA_TITLE");
 
-        System.out.println("<<<<<<<"+jid+"<<<"+name);
         setContentView(R.layout.activity_meeting_checkin);
         ButterKnife.inject(this);
 
@@ -139,6 +151,8 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
         }
         mFilters = new IntentFilter[]{ndef,};
         mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
+        mTitle = (String) getIntent().getExtras().get(EXTRA_TITLE);
+        getSupportActionBar().setTitle(mTitle);
     }
 
     @Override
@@ -161,25 +175,41 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             boolean b = false;
             if (null != cardPhyId) {
                 //TODO 检查后台是否已经签到，如果未签到，则保存签到日志
-                String url_query = "http://202.118.89.129/dlmu_rest_webservice/CI0101?mid=1&token=1&cardphyid=" + cardPhyId;
-                String url_save = "http://202.118.89.129/dlmu_rest_webservice/CI0111";
+                String url_query = "http://202.118.89.129/dlmu_rest_webservice/CI0201?token=1&jsh=19971053&kch=13608400&zxjxjhh=2014-2015-2-1&cardphyid=" + cardPhyId;
+                String url_save = "http://202.118.89.129/dlmu_rest_webservice/CI0211";
                 try {
                     //System.out.println(url_query);
-                    String meetinguser = new queryMeetingUserTask().execute(url_query).get();
-                    //System.out.println(meetinguser);
-                    JSONObject json = new JSONObject(meetinguser);
+                    String cci = new queryClassroomCheckInTask().execute(url_query).get();
+                    //System.out.println(cci);
+                    JSONObject json = new JSONObject(cci);
                     Integer code = json.getInt("code");
-                    if (code != 99)
+                    if (code != 99) {
                         Toast.makeText(this, json.getString("msg"), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     JSONObject data = json.getJSONObject("data");
 
-                    if (data.getInt("muflag") == 0) {
-                        String save = new saveLogTask().execute(url_save, "1", data.getString("muuserid"), data.getString("muusername"), data.getString("mudeptcode"), data.getString("mudeptname"), App.readUser().getUsername()).get();
+                    if (data.getInt("cciflag") == 0) {
+                        String save = new saveLogTask().execute(url_save,
+                                "1",
+                                data.getString("xh"), data.getString("xm"),
+                                data.getString("bm"),
+                                data.getString("zym"),
+                                data.getString("xym"),
+                                data.getString("zxjxjhh"),
+                                data.getString("jsh"),
+                                data.getString("jash"),
+                                data.getString("zcsm"),
+                                data.getString("jasm"),
+                                data.getString("kch"),
+                                data.getString("kcm"),
+                                data.getString("jxlh"),
+                                data.getString("jxlm")).get();
                         System.out.println(save);
-                        checkin_log_textview.setText("成功->" + data.getString("muusername") + "@" + data.getString("mudeptname") + "\r\n" + checkin_log_textview.getText());
+                        checkin_log_textview.setText("成功->" + data.getString("xm") + "@" + data.getString("zym") + "\r\n" + checkin_log_textview.getText());
 
                     } else {
-                        checkin_log_textview.setText("重复->" + data.getString("muusername") + "@" + data.getString("mudeptname") + "\r\n" + checkin_log_textview.getText());
+                        checkin_log_textview.setText("重复->" + data.getString("xm") + "@" + data.getString("zym") + "\r\n" + checkin_log_textview.getText());
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -202,7 +232,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
         return Converter.getHexString(myNFCID, myNFCID.length);
     }
 
-    public class queryMeetingUserTask extends AsyncTask<String, String, String> {
+    public class queryClassroomCheckInTask extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -230,9 +260,6 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 if (httpEntity != null && httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     rtn = EntityUtils.toString(httpEntity);
-                    //System.out.println(rtn);
-
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -269,6 +296,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             HttpPost httpRequest = new HttpPost(params[0]);
             List<NameValuePair> p = new ArrayList<NameValuePair>();
             String strResult = null;
+
             System.out.println((String) params[0]);
             System.out.println((String) params[1]);
             System.out.println((String) params[2]);
@@ -278,13 +306,20 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             System.out.println((String) params[6]);
 
             p.add(new BasicNameValuePair("token", "1"));
-            p.add(new BasicNameValuePair("mid", params[1]));
-            p.add(new BasicNameValuePair("muuserid", params[2]));
-            p.add(new BasicNameValuePair("muusername", params[3]));
-            p.add(new BasicNameValuePair("mudeptcode", params[4]));
-            p.add(new BasicNameValuePair("mudeptname", params[5]));
-            p.add(new BasicNameValuePair("mciterminal", params[6]));
-
+            p.add(new BasicNameValuePair("xh", params[2]));
+            p.add(new BasicNameValuePair("bm", params[3]));
+            p.add(new BasicNameValuePair("zym", params[4]));
+            p.add(new BasicNameValuePair("xym", params[5]));
+            p.add(new BasicNameValuePair("zxjxjhh", params[6]));
+            p.add(new BasicNameValuePair("jsh", params[7]));
+            p.add(new BasicNameValuePair("jash", params[8]));
+            p.add(new BasicNameValuePair("zcsm", params[9]));
+            p.add(new BasicNameValuePair("jasm", params[10]));
+            p.add(new BasicNameValuePair("kch", params[11]));
+            p.add(new BasicNameValuePair("kcm", params[12]));
+            p.add(new BasicNameValuePair("jxlh", params[13]));
+            p.add(new BasicNameValuePair("jxlm", params[14]));
+            p.add(new BasicNameValuePair("cciterminal", params[15]));
             try {
                 // 发出HTTP request
                 httpRequest.setEntity(new UrlEncodedFormEntity(p, HTTP.UTF_8));
