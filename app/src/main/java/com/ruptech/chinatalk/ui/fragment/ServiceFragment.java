@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
@@ -111,6 +112,11 @@ public class ServiceFragment extends Fragment {
                 String jid = item.get("fnid").toString();
                 String title = (String) item.get("title");
                 String url = (String) item.get("url");
+                String[] param = new String[]{};
+                System.out.println(item.get("param"));
+                if (null != item.get("param")) {
+                    param = item.get("param").toString().split(";");
+                }
                 Integer type = (Integer) item.get("typeid");
                 switch (type) {
                     case 0:
@@ -138,6 +144,13 @@ public class ServiceFragment extends Fragment {
                         }
                         break;
                     case 1:
+                        if (param != null && param.length > 0) {
+                            for (int i = 0; i < param.length; i++) {
+                                if (param[i].equals("stuempno")) {
+                                    url = url.replace("{stuempno}", App.readUser().getUsername());
+                                }
+                            }
+                        }
                         System.out.println(url);
                         startServiceActivity(url, title);
                         break;
