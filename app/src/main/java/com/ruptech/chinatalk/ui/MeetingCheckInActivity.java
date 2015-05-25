@@ -96,7 +96,7 @@ public class MeetingCheckInActivity extends ActionBarActivity {
         //System.out.println("------------mid:" + mid);
         //System.out.println("------------name:" + name);
         //System.out.println("------------jid:" + jid);
-        setContentView(R.layout.activity_meeting_checkin);
+        setContentView(R.layout.activity_checkin_meeting);
         ButterKnife.inject(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -128,12 +128,12 @@ public class MeetingCheckInActivity extends ActionBarActivity {
         checkin_start_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                start = !start;
-                if (start) {
-                    checkin_start_button.setText(R.string.meeting_checkin_stop);
-                } else {
-                    checkin_start_button.setText(R.string.meeting_checkin_start);
-                }
+            start = !start;
+            if (start) {
+                checkin_start_button.setText(R.string.checkin_stop);
+            } else {
+                checkin_start_button.setText(R.string.checkin_start);
+            }
             }
         });
 
