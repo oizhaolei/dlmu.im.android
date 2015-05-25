@@ -106,6 +106,10 @@
             android:icon="@drawable/tt_logo2">
         </activity>
         <activity
+            android:name="com.ruptech.chinatalk.ui.ClassroomCheckInActivity"
+            android:icon="@drawable/tt_logo2">
+        </activity>
+        <activity
             android:name="com.ruptech.chinatalk.ui.FullScreenActivity"
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="landscape">
