@@ -151,6 +151,7 @@ public class ServiceActivity extends ActionBarActivity implements
         webview.getSettings().setLoadWithOverviewMode(true);
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setDomStorageEnabled(true);// 解决加载出现空白
+        webview.getSettings().setJavaScriptEnabled(true);
         webview.clearCache(true);
 
         Log.i(TAG, mUrl);
