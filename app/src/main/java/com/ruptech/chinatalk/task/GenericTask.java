@@ -4,134 +4,134 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.chinatalk.http.NetworkException;
 import com.ruptech.chinatalk.http.ServerSideException;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.BuildConfig;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public abstract class GenericTask extends AsyncTask<Object, Object, TaskResult> implements Observer {
-	protected final String TAG = "TaskManager";
-	private String msg;
+    protected final String TAG = "TaskManager";
+    private String msg;
 
-	private boolean isCancelable = true;
+    private boolean isCancelable = true;
 
-	private TaskListener mListener = null;
+    private TaskListener mListener = null;
 
-	abstract protected TaskResult _doInBackground() throws Exception;
+    abstract protected TaskResult _doInBackground() throws Exception;
 
-	private void addTaskToTaskManager() {
-		if (App.taskManager != null)
-			App.taskManager.addTask(this);
-	}
+    private void addTaskToTaskManager() {
+        if (App.taskManager != null)
+            App.taskManager.addTask(this);
+    }
 
-	private void deleteTaskFromTaskManager() {
-		if (App.taskManager != null)
-			App.taskManager.deleteObserver(this);
-	}
+    private void deleteTaskFromTaskManager() {
+        if (App.taskManager != null)
+            App.taskManager.deleteObserver(this);
+    }
 
-	@Override
-	protected TaskResult doInBackground(Object... params) {
-		TaskResult result;
-		try {
-			result = _doInBackground();
-		} catch (Exception e) {
-			handleException(e);
-			return TaskResult.FAILED;
-		}
-		return result;
-	}
+    @Override
+    protected TaskResult doInBackground(Object... params) {
+        TaskResult result;
+        try {
+            result = _doInBackground();
+        } catch (Exception e) {
+            handleException(e);
+            return TaskResult.FAILED;
+        }
+        return result;
+    }
 
-	public void doPublishProgress(Object... values) {
-		super.publishProgress(values);
-	}
+    public void doPublishProgress(Object... values) {
+        super.publishProgress(values);
+    }
 
-	public TaskListener getListener() {
-		return mListener;
-	}
+    public TaskListener getListener() {
+        return mListener;
+    }
 
-	public String getMsg() {
-		return msg;
-	}
+    public void setListener(TaskListener taskListener) {
+        mListener = taskListener;
+    }
 
-	public Object[] getMsgs() {
-		return new Object[0];
-	}
+    public String getMsg() {
+        return msg;
+    }
 
-	protected void handleException(Throwable e) {
-		if (BuildConfig.DEBUG)
-			Log.e(TAG, e.getMessage(), e);
-		if (e instanceof ServerSideException) {
-			msg = e.getMessage();
-			publishProgress(msg);
-		} else if (e instanceof NetworkException) {
-			msg = e.getMessage();
-			publishProgress(msg);
-		}
-		if (!(e instanceof NetworkException)) {
-			Utils.sendClientException(e, getMsgs());
-		}
-	}
+    public Object[] getMsgs() {
+        return new Object[0];
+    }
 
-	@Override
-	protected void onCancelled() {
-		super.onCancelled();
-		deleteTaskFromTaskManager();
-		if (mListener != null) {
-			mListener.onCancelled(this);
-		}
-	}
+    protected void handleException(Throwable e) {
+        if (BuildConfig.DEBUG)
+            Log.e(TAG, e.getMessage(), e);
+        if (e instanceof ServerSideException) {
+            msg = e.getMessage();
+            publishProgress(msg);
+        } else if (e instanceof NetworkException) {
+            msg = e.getMessage();
+            publishProgress(msg);
+        }
+        if (!(e instanceof NetworkException)) {
+            Utils.sendClientException(e, getMsgs());
+        }
+    }
 
-	@Override
-	protected void onPostExecute(TaskResult result) {
-		super.onPostExecute(result);
-		deleteTaskFromTaskManager();
-		if (mListener != null) {
-			mListener.onPostExecute(this, result);
-		}
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        deleteTaskFromTaskManager();
+        if (mListener != null) {
+            mListener.onCancelled(this);
+        }
+    }
 
-	}
+    @Override
+    protected void onPostExecute(TaskResult result) {
+        super.onPostExecute(result);
+        deleteTaskFromTaskManager();
+        if (mListener != null) {
+            mListener.onPostExecute(this, result);
+        }
 
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
+    }
 
-		addTaskToTaskManager();
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
 
-		if (mListener != null) {
-			mListener.onPreExecute(this);
-		}
+        addTaskToTaskManager();
 
-	}
+        if (mListener != null) {
+            mListener.onPreExecute(this);
+        }
 
-	@Override
-	protected void onProgressUpdate(Object... values) {
-		super.onProgressUpdate(values);
+    }
 
-		if (mListener != null) {
-			if (values != null && values.length > 0) {
-				mListener.onProgressUpdate(this, values[0]);
-			}
-		}
+    @Override
+    protected void onProgressUpdate(Object... values) {
+        super.onProgressUpdate(values);
 
-	}
+        if (mListener != null) {
+            if (values != null && values.length > 0) {
+                mListener.onProgressUpdate(this, values[0]);
+            }
+        }
 
-	public void setCancelable(boolean flag) {
-		isCancelable = flag;
-	}
+    }
 
-	public void setListener(TaskListener taskListener) {
-		mListener = taskListener;
-	}
+    public void setCancelable(boolean flag) {
+        isCancelable = flag;
+    }
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (TaskManager.CANCEL_ALL == (Integer) arg && isCancelable) {
-			if (getStatus() == GenericTask.Status.RUNNING) {
-				cancel(true);
-			}
-		}
-	}
+    @Override
+    public void update(Observable o, Object arg) {
+        if (TaskManager.CANCEL_ALL == (Integer) arg && isCancelable) {
+            if (getStatus() == GenericTask.Status.RUNNING) {
+                cancel(true);
+            }
+        }
+    }
 }

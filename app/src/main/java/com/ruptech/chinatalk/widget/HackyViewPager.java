@@ -10,7 +10,7 @@ import com.ruptech.chinatalk.utils.Utils;
 /**
  * Found at http://stackoverflow.com/questions/7814017/is-it-possible-to-disable-scrolling-on-a-viewpager.
  * Convenient way to temporarily disable ViewPager navigation while interacting with ImageView.
- *
+ * <p/>
  * Julia Zudikova
  */
 
@@ -29,49 +29,49 @@ import com.ruptech.chinatalk.utils.Utils;
  */
 public class HackyViewPager extends ViewPager {
 
-	private boolean isLocked;
+    private boolean isLocked;
 
-	public HackyViewPager(Context context) {
-		super(context);
-		isLocked = false;
-	}
+    public HackyViewPager(Context context) {
+        super(context);
+        isLocked = false;
+    }
 
-	public HackyViewPager(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		isLocked = false;
-	}
+    public HackyViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        isLocked = false;
+    }
 
-	public boolean isLocked() {
-		return isLocked;
-	}
+    public boolean isLocked() {
+        return isLocked;
+    }
 
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		if (!isLocked) {
-			try {
-				return super.onInterceptTouchEvent(ev);
-			} catch (IllegalArgumentException e) {
-				Utils.sendClientException(e);
-				return false;
-			}
-		}
-		return false;
-	}
+    public void setLocked(boolean isLocked) {
+        this.isLocked = isLocked;
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (!isLocked) {
-			return super.onTouchEvent(event);
-		}
-		return false;
-	}
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (!isLocked) {
+            try {
+                return super.onInterceptTouchEvent(ev);
+            } catch (IllegalArgumentException e) {
+                Utils.sendClientException(e);
+                return false;
+            }
+        }
+        return false;
+    }
 
-	public void setLocked(boolean isLocked) {
-		this.isLocked = isLocked;
-	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!isLocked) {
+            return super.onTouchEvent(event);
+        }
+        return false;
+    }
 
-	public void toggleLock() {
-		isLocked = !isLocked;
-	}
+    public void toggleLock() {
+        isLocked = !isLocked;
+    }
 
 }

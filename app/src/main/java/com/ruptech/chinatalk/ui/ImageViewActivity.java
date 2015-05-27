@@ -25,13 +25,13 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.ruptech.chinatalk.App;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.FileHelper;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.Gallery;
 import com.ruptech.chinatalk.widget.ImagePagerAdapter;
 import com.ruptech.chinatalk.widget.ImageProgressBar;
 import com.ruptech.chinatalk.widget.MyNotificationBuilder;
+import com.ruptech.dlmu.im.R;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,331 +40,322 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class ImageViewActivity extends ActionBarActivity {
-	private class ImageOnPageChangeListener implements OnPageChangeListener {
+    public static final String EXTRA_IMAGE_URLS = "EXTRA_IMAGE_URLS";
+    public static final String EXTRA_POSITION = "POSITION";
+    private static ImageViewActivity instance = null;
+    private final String TAG = Utils.CATEGORY
+            + ImageViewActivity.class.getSimpleName();
+    @InjectView(R.id.activity_image_pager)
+    ViewPager imagePager;
+    @InjectView(R.id.image_progress_bar)
+    ImageProgressBar imageProgressBar;
+    File saveTo;
+    ArrayList<String> imageUrlList = new ArrayList<>();
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            boolean result = (Boolean) msg.obj;
+            if (result) {
+                sendSavePhotoNotice(ImageViewActivity.this, saveTo.getPath());
+                App.mImageManager.scanPhotos(saveTo.getPath());
+            } else {
+                Toast.makeText(ImageViewActivity.this, R.string.save_failure,
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
 
-		@Override
-		public void onPageScrolled(int position, float positionOffset,
-		                           int positionOffsetPixels) {
+        ;
+    };
+    private ImagePagerAdapter imagePagerAdapter;
+    private int pagerPosition;
+    private Drawable mActionBarBackgroundDrawable;
 
-		}
+    public static SimpleImageLoadingListener createImageLoadingListener(
+            final ImageProgressBar imageProgressBar) {
+        return new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view,
+                                          Bitmap loadedImage) {
+                imageProgressBar.setVisibility(View.GONE);
+            }
 
-		@Override
-		public void onPageScrollStateChanged(int position) {
+            @Override
+            public void onLoadingFailed(String imageUri, View view,
+                                        FailReason failReason) {
+                switch (failReason.getType()) {
+                    case IO_ERROR:
+                        break;
+                    case DECODING_ERROR:
+                        break;
+                    case NETWORK_DENIED:
+                        break;
+                    case OUT_OF_MEMORY:
+                        break;
+                    case UNKNOWN:
+                        break;
+                }
+                imageProgressBar.setVisibility(View.GONE);
+                view.setTag(null);
+            }
 
-		}
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+            }
+        };
+    }
 
-		@Override
-		public void onPageSelected(int position) {
-			pagerPosition = position;
-		}
+    public static SimpleImageLoadingListener createImageLoadingListenerWithResize(
+            final ImageProgressBar imageProgressBar, final int width,
+            final int height, final int portraitLeftRightMargin,
+            final float maxRate) {
 
-	}
+        final int INIT_HEIGHT = 300;
 
-	private static ImageViewActivity instance = null;
+        return new SimpleImageLoadingListener() {
+            public void initLayout(View view) {
+                RelativeLayout.LayoutParams imaegViewParams = (RelativeLayout.LayoutParams) view
+                        .getLayoutParams();
+                if (width > 0 && height > 0) {
+                    resizeView(view, width, height);
+                } else {
+                    imaegViewParams.height = Gallery.dip2px(view.getContext(),
+                            INIT_HEIGHT);
+                    imaegViewParams.setMargins(0, 0, 0, 0);
+                }
 
-	public static final String EXTRA_IMAGE_URLS = "EXTRA_IMAGE_URLS";
+            }
 
-	public static final String EXTRA_POSITION = "POSITION";
+            @Override
+            public void onLoadingComplete(String imageUri, final View view,
+                                          final Bitmap loadedImage) {
+                imageProgressBar.setVisibility(View.GONE);
 
-	public static SimpleImageLoadingListener createImageLoadingListener(
-			final ImageProgressBar imageProgressBar) {
-		return new SimpleImageLoadingListener() {
-			@Override
-			public void onLoadingComplete(String imageUri, View view,
-			                              Bitmap loadedImage) {
-				imageProgressBar.setVisibility(View.GONE);
-			}
+                int imageViewWidth = view.getMeasuredWidth();
+                if (imageViewWidth > 0) {
+                    resizeView(view, loadedImage.getWidth(),
+                            loadedImage.getHeight());
+                } else {
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            resizeView(view, loadedImage.getWidth(),
+                                    loadedImage.getHeight());
+                        }
+                    });
+                }
 
-			@Override
-			public void onLoadingFailed(String imageUri, View view,
-			                            FailReason failReason) {
-				switch (failReason.getType()) {
-					case IO_ERROR:
-						break;
-					case DECODING_ERROR:
-						break;
-					case NETWORK_DENIED:
-						break;
-					case OUT_OF_MEMORY:
-						break;
-					case UNKNOWN:
-						break;
-				}
-				imageProgressBar.setVisibility(View.GONE);
-				view.setTag(null);
-			}
+            }
 
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-			}
-		};
-	}
+            @Override
+            public void onLoadingFailed(String imageUri, View view,
+                                        FailReason failReason) {
+                switch (failReason.getType()) {
+                    case IO_ERROR:
+                        break;
+                    case DECODING_ERROR:
+                        break;
+                    case NETWORK_DENIED:
+                        break;
+                    case OUT_OF_MEMORY:
+                        break;
+                    case UNKNOWN:
+                        break;
+                }
+                imageProgressBar.setVisibility(View.GONE);
+                initLayout(view);
+                view.setTag(null);
+            }
 
-	public static SimpleImageLoadingListener createImageLoadingListenerWithResize(
-			final ImageProgressBar imageProgressBar, final int width,
-			final int height, final int portraitLeftRightMargin,
-			final float maxRate) {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+                initLayout(view);
+            }
 
-		final int INIT_HEIGHT = 300;
+            public void resizeView(View imageView, int width, int height) {
+                int imageViewWidth = imageView.getMeasuredWidth();
+                if (imageViewWidth <= 0) {
+                    imageViewWidth = App.displayWidth;
+                }
+                int imageViewHeight = height * imageViewWidth / width;
+                int maxHeight = (int) (imageViewWidth * maxRate);
+                if (imageViewHeight > maxHeight)
+                    imageViewHeight = maxHeight;
 
-		return new SimpleImageLoadingListener() {
-			public void initLayout(View view) {
-				RelativeLayout.LayoutParams imaegViewParams = (RelativeLayout.LayoutParams) view
-						.getLayoutParams();
-				if (width > 0 && height > 0) {
-					resizeView(view, width, height);
-				} else {
-					imaegViewParams.height = Gallery.dip2px(view.getContext(),
-							INIT_HEIGHT);
-					imaegViewParams.setMargins(0, 0, 0, 0);
-				}
+                RelativeLayout.LayoutParams imageViewParams = (RelativeLayout.LayoutParams) imageView
+                        .getLayoutParams();
+                // imaegViewParams.width = imageViewWidth;
+                imageViewParams.height = imageViewHeight;
+                int margin = Gallery.dip2px(imageView.getContext(),
+                        portraitLeftRightMargin);
+                if (imageViewHeight > imageViewWidth) {
+                    imageViewParams.setMargins(margin, 0, margin, 0);
+                } else {
+                    imageViewParams.setMargins(0, 0, 0, 0);
+                }
+            }
+        };
+    }
 
-			}
+    public static ImageLoadingProgressListener createLoadingProgresListener(
+            final ImageProgressBar imageProgressBar) {
+        return new ImageLoadingProgressListener() {
+            @Override
+            public void onProgressUpdate(String imageUri, View view,
+                                         int current, int total) {
+                int round = Math.round(100.0f * current / total);
+                if (0 <= round && round < 100) {
+                    imageProgressBar.setVisibility(View.VISIBLE);
+                } else {
+                    imageProgressBar.setVisibility(View.GONE);
+                }
+                imageProgressBar.setProgress(round);
+            }
+        };
+    }
 
-			@Override
-			public void onLoadingComplete(String imageUri, final View view,
-			                              final Bitmap loadedImage) {
-				imageProgressBar.setVisibility(View.GONE);
+    private static void sendSavePhotoNotice(Context context, String filePath) {
 
-				int imageViewWidth = view.getMeasuredWidth();
-				if (imageViewWidth > 0) {
-					resizeView(view, loadedImage.getWidth(),
-							loadedImage.getHeight());
-				} else {
-					view.post(new Runnable() {
-						@Override
-						public void run() {
-							resizeView(view, loadedImage.getWidth(),
-									loadedImage.getHeight());
-						}
-					});
-				}
+        final int iconRes = R.drawable.tt_logo2;
+        long when = System.currentTimeMillis();
+        NotificationCompat.Builder mBuilder = new MyNotificationBuilder(context)
+                .setSmallIcon(iconRes)
+                .setLargeIcon(
+                        BitmapFactory.decodeResource(context.getResources(),
+                                R.drawable.tt_logo2))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(
+                        context.getString(R.string.photo_save_path)
+                                + FileHelper.getPublicPath(context));
+        Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
+        notificationIntent.setDataAndType(Uri.parse("file://" + filePath),
+                "image/*");
 
-			}
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
+                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-			@Override
-			public void onLoadingFailed(String imageUri, View view,
-			                            FailReason failReason) {
-				switch (failReason.getType()) {
-					case IO_ERROR:
-						break;
-					case DECODING_ERROR:
-						break;
-					case NETWORK_DENIED:
-						break;
-					case OUT_OF_MEMORY:
-						break;
-					case UNKNOWN:
-						break;
-				}
-				imageProgressBar.setVisibility(View.GONE);
-				initLayout(view);
-				view.setTag(null);
-			}
+        mBuilder.setWhen(when);
+        mBuilder.setAutoCancel(true);
+        mBuilder.setTicker(context.getString(R.string.photo_save_path)
+                + FileHelper.getPublicPath(context));//
+        mBuilder.setContentIntent(resultPendingIntent);
+        App.notificationManager.notify(iconRes, mBuilder.build());
+        // close after 60 seconds
+        new Handler().postDelayed(new Runnable() {
 
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-				initLayout(view);
-			}
+            @Override
+            public void run() {
+                App.notificationManager.cancel(iconRes);
+            }
+        }, 1000 * 60);
+    }
 
-			public void resizeView(View imageView, int width, int height) {
-				int imageViewWidth = imageView.getMeasuredWidth();
-				if (imageViewWidth <= 0) {
-					imageViewWidth = App.displayWidth;
-				}
-				int imageViewHeight = height * imageViewWidth / width;
-				int maxHeight = (int) (imageViewWidth * maxRate);
-				if (imageViewHeight > maxHeight)
-					imageViewHeight = maxHeight;
+    public void btn_back(View v) { // 标题栏 返回按钮
+        this.finish();
+    }
 
-				RelativeLayout.LayoutParams imageViewParams = (RelativeLayout.LayoutParams) imageView
-						.getLayoutParams();
-				// imaegViewParams.width = imageViewWidth;
-				imageViewParams.height = imageViewHeight;
-				int margin = Gallery.dip2px(imageView.getContext(),
-						portraitLeftRightMargin);
-				if (imageViewHeight > imageViewWidth) {
-					imageViewParams.setMargins(margin, 0, margin, 0);
-				} else {
-					imageViewParams.setMargins(0, 0, 0, 0);
-				}
-			}
-		};
-	}
+    public void doSavePhoto(MenuItem item) {
+        String url = imageUrlList.get(pagerPosition);
+        saveAction(url, this);
+    }
 
-	public static ImageLoadingProgressListener createLoadingProgresListener(
-			final ImageProgressBar imageProgressBar) {
-		return new ImageLoadingProgressListener() {
-			@Override
-			public void onProgressUpdate(String imageUri, View view,
-			                             int current, int total) {
-				int round = Math.round(100.0f * current / total);
-				if (0 <= round && round < 100) {
-					imageProgressBar.setVisibility(View.VISIBLE);
-				} else {
-					imageProgressBar.setVisibility(View.GONE);
-				}
-				imageProgressBar.setProgress(round);
-			}
-		};
-	}
+    private int getContentViewRes() {
+        return R.layout.activity_image_pager;
+    }
 
-	private static void sendSavePhotoNotice(Context context, String filePath) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_AppCompat);
+        super.onCreate(savedInstanceState);
+        setContentView(getContentViewRes());
+        ButterKnife.inject(this);
+        instance = this;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.picture);
+        parseExtras(getIntent().getExtras());
+        setupComponents();
+    }
 
-		final int iconRes = R.drawable.tt_logo2;
-		long when = System.currentTimeMillis();
-		NotificationCompat.Builder mBuilder = new MyNotificationBuilder(context)
-				.setSmallIcon(iconRes)
-				.setLargeIcon(
-						BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.tt_logo2))
-				.setContentTitle(context.getString(R.string.app_name))
-				.setContentText(
-						context.getString(R.string.photo_save_path)
-								+ FileHelper.getPublicPath(context));
-		Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-		notificationIntent.setDataAndType(Uri.parse("file://" + filePath),
-				"image/*");
+    @Override
+    public boolean onCreateOptionsMenu(Menu mMenu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.photo_save_actions, mMenu);
 
-		PendingIntent resultPendingIntent = PendingIntent.getActivity(context,
-				0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return true;
+    }
 
-		mBuilder.setWhen(when);
-		mBuilder.setAutoCancel(true);
-		mBuilder.setTicker(context.getString(R.string.photo_save_path)
-				+ FileHelper.getPublicPath(context));//
-		mBuilder.setContentIntent(resultPendingIntent);
-		App.notificationManager.notify(iconRes, mBuilder.build());
-		// close after 60 seconds
-		new Handler().postDelayed(new Runnable() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return true;
+    }
 
-			@Override
-			public void run() {
-				App.notificationManager.cancel(iconRes);
-			}
-		}, 1000 * 60);
-	}
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
-	@InjectView(R.id.activity_image_pager)
-	ViewPager imagePager;
-	private ImagePagerAdapter imagePagerAdapter;
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
-	@InjectView(R.id.image_progress_bar)
-	ImageProgressBar imageProgressBar;
-	File saveTo;
+    protected void parseExtras(Bundle extras) {
+        this.pagerPosition = extras.getInt(EXTRA_POSITION);
+        this.imageUrlList = extras.getStringArrayList(EXTRA_IMAGE_URLS);
+    }
 
-	ArrayList<String> imageUrlList = new ArrayList<>();
+    private void saveAction(final String downloadUrl, final Context context) {
+        Toast.makeText(this, getString(R.string.data_saving),
+                Toast.LENGTH_SHORT).show();
+        new Thread() {
+            @Override
+            public void run() {
+                saveTo = new File(FileHelper.getPublicPath(context),
+                        System.currentTimeMillis() + ".jpg");
+                boolean result = Utils.saveFileFromServer(downloadUrl, saveTo);
+                Message msg = new Message();
+                msg.obj = result;
+                mHandler.sendMessage(msg);
+            }
 
-	Handler mHandler = new Handler() {
-		@Override
-		public void handleMessage(android.os.Message msg) {
-			boolean result = (Boolean) msg.obj;
-			if (result) {
-				sendSavePhotoNotice(ImageViewActivity.this, saveTo.getPath());
-				App.mImageManager.scanPhotos(saveTo.getPath());
-			} else {
-				Toast.makeText(ImageViewActivity.this, R.string.save_failure,
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+        }.start();
+    }
 
-		;
-	};
+    private void setupComponents() {
+        mActionBarBackgroundDrawable = getResources().getDrawable(
+                R.color.action_bar_background_comment);
+        mActionBarBackgroundDrawable.setAlpha(40);
+        getSupportActionBar().setBackgroundDrawable(
+                mActionBarBackgroundDrawable);
 
-	private int pagerPosition;
+        imagePagerAdapter = new ImagePagerAdapter(this, imageProgressBar);
+        imagePagerAdapter.setImageUrlList(imageUrlList);
 
-	private final String TAG = Utils.CATEGORY
-			+ ImageViewActivity.class.getSimpleName();
+        imagePager.setAdapter(imagePagerAdapter);
+        imagePager.setCurrentItem(pagerPosition);
+        imagePager.setOnPageChangeListener(new ImageOnPageChangeListener());
 
-	private Drawable mActionBarBackgroundDrawable;
+    }
 
-	public void btn_back(View v) { // 标题栏 返回按钮
-		this.finish();
-	}
+    private class ImageOnPageChangeListener implements OnPageChangeListener {
 
-	public void doSavePhoto(MenuItem item) {
-		String url = imageUrlList.get(pagerPosition);
-		saveAction(url, this);
-	}
+        @Override
+        public void onPageScrolled(int position, float positionOffset,
+                                   int positionOffsetPixels) {
 
-	private int getContentViewRes() {
-		return R.layout.activity_image_pager;
-	}
+        }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.Theme_AppCompat);
-		super.onCreate(savedInstanceState);
-		setContentView(getContentViewRes());
-		ButterKnife.inject(this);
-		instance = this;
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(R.string.picture);
-		parseExtras(getIntent().getExtras());
-		setupComponents();
-	}
+        @Override
+        public void onPageScrollStateChanged(int position) {
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu mMenu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.photo_save_actions, mMenu);
+        }
 
-		return true;
-	}
+        @Override
+        public void onPageSelected(int position) {
+            pagerPosition = position;
+        }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			onBackPressed();
-		}
-		return true;
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-	}
-
-	protected void parseExtras(Bundle extras) {
-		this.pagerPosition = extras.getInt(EXTRA_POSITION);
-		this.imageUrlList = extras.getStringArrayList(EXTRA_IMAGE_URLS);
-	}
-
-	private void saveAction(final String downloadUrl, final Context context) {
-		Toast.makeText(this, getString(R.string.data_saving),
-				Toast.LENGTH_SHORT).show();
-		new Thread() {
-			@Override
-			public void run() {
-				saveTo = new File(FileHelper.getPublicPath(context),
-						System.currentTimeMillis() + ".jpg");
-				boolean result = Utils.saveFileFromServer(downloadUrl, saveTo);
-				Message msg = new Message();
-				msg.obj = result;
-				mHandler.sendMessage(msg);
-			}
-
-		}.start();
-	}
-
-	private void setupComponents() {
-		mActionBarBackgroundDrawable = getResources().getDrawable(
-				R.color.action_bar_background_comment);
-		mActionBarBackgroundDrawable.setAlpha(40);
-		getSupportActionBar().setBackgroundDrawable(
-				mActionBarBackgroundDrawable);
-
-		imagePagerAdapter = new ImagePagerAdapter(this, imageProgressBar);
-		imagePagerAdapter.setImageUrlList(imageUrlList);
-
-		imagePager.setAdapter(imagePagerAdapter);
-		imagePager.setCurrentItem(pagerPosition);
-		imagePager.setOnPageChangeListener(new ImageOnPageChangeListener());
-
-	}
+    }
 }

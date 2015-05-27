@@ -5,33 +5,28 @@ import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 
-import java.util.List;
-import java.util.Map;
-
 public class RetrieveUserTask extends GenericTask {
-	private final String username;
+    private final String username;
+    private User user;
 
-	public User getUser() {
-		return user;
-	}
+    public RetrieveUserTask(String username) {
+        this.username = username;
+    }
 
-	private User user;
+    public User getUser() {
+        return user;
+    }
 
-	public RetrieveUserTask(String username) {
-		this.username = username;
-	}
-
-
-	@Override
-	protected TaskResult _doInBackground() throws Exception {
-		user = App.getHttpServer().retrieveUser(username);
+    @Override
+    protected TaskResult _doInBackground() throws Exception {
+        user = App.getHttpServer().retrieveUser(username);
 
 
-		return TaskResult.OK;
-	}
+        return TaskResult.OK;
+    }
 
-	@Override
-	public Object[] getMsgs() {
-		return new Object[]{username};
-	}
+    @Override
+    public Object[] getMsgs() {
+        return new Object[]{username};
+    }
 }

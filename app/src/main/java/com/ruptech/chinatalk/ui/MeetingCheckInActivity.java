@@ -59,7 +59,9 @@ public class MeetingCheckInActivity extends ActionBarActivity {
     Button checkin_start_button;
     @InjectView(R.id.activity_meeting_checkin_Log_textview)
     TextView checkin_log_textview;
-
+    String jid;
+    String name;
+    String mid;
     private ProgressDialog progressDialog;
     private NfcAdapter mAdapter;
     private PendingIntent mPendingIntent;
@@ -67,9 +69,6 @@ public class MeetingCheckInActivity extends ActionBarActivity {
     private String[][] mTechLists;
     private boolean start = false;// 是否开始刷卡了
     private String mTitle;
-    String jid;
-    String name;
-    String mid;
 
     @Override
     public void onBackPressed() {
@@ -128,12 +127,12 @@ public class MeetingCheckInActivity extends ActionBarActivity {
         checkin_start_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            start = !start;
-            if (start) {
-                checkin_start_button.setText(R.string.checkin_stop);
-            } else {
-                checkin_start_button.setText(R.string.checkin_start);
-            }
+                start = !start;
+                if (start) {
+                    checkin_start_button.setText(R.string.checkin_stop);
+                } else {
+                    checkin_start_button.setText(R.string.checkin_start);
+                }
             }
         });
 

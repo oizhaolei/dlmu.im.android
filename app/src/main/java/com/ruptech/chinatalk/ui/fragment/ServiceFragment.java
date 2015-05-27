@@ -35,14 +35,14 @@ public class ServiceFragment extends Fragment {
 
     private static final String TAG = Utils.CATEGORY
             + ServiceFragment.class.getSimpleName();
+    @InjectView(R.id.service_list)
+    ListView serviceListView;
     private SimpleAdapter serviceAdapter;
+    private List<Map<String, Object>> itemList = new ArrayList<>();
 
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
     }
-
-    @InjectView(R.id.service_list)
-    ListView serviceListView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,19 +54,16 @@ public class ServiceFragment extends Fragment {
         return v;
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
-
 
     @Override
     public void onResume() {
         super.onResume();
         Utils.showNormalActionBar(getActivity());
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -97,9 +94,6 @@ public class ServiceFragment extends Fragment {
         RetrieveServiceListTask.setListener(taskListener);
         RetrieveServiceListTask.execute();
     }
-
-    private List<Map<String, Object>> itemList = new ArrayList<>();
-
 
     private void setupChatLayout() {
 

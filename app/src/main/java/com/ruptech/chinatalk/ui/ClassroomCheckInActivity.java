@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -65,17 +64,17 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
 
     static final String TAG = Utils.CATEGORY
             + ServiceActivity.class.getSimpleName();
-
+    private final String JSH = "19971053";
+    private final String KCH = "13608400";
+    private final String ZXJXJHH = "2014-2015-2-1";
     @InjectView(R.id.activity_checkin_classroom_button)
     Button checkin_start_button;
     @InjectView(R.id.activity_checkin_classroom_textview)
     TextView checkin_log_textview;
-
     private ListView radioButtonList;
     private ListViewRadioAdapter adapter;
     private List<Map<String, String>> data;
     private int index = -1;
-
     private ProgressDialog progressDialog;
     private NfcAdapter mAdapter;
     private PendingIntent mPendingIntent;
@@ -83,11 +82,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
     private String[][] mTechLists;
     private boolean start = false;// 是否开始刷卡了
     private String mTitle;
-
     private String ssDate = "";
-    private final String JSH = "19971053";
-    private final String KCH = "13608400";
-    private final String ZXJXJHH = "2014-2015-2-1";
 
     @Override
     public void onBackPressed() {

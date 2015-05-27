@@ -31,148 +31,141 @@ import butterknife.InjectView;
  */
 public class OrgActivity extends ActionBarActivity {
 
-	static final String TAG = Utils.CATEGORY
-			+ OrgActivity.class.getSimpleName();
+    public static final String PARENT_ORG_JID = "PARENT_ORG_JID";
+    public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
+    public static final String PARENT_ORG_STUDENT = "PARENT_ORG_STUDENT";
+    static final String TAG = Utils.CATEGORY
+            + OrgActivity.class.getSimpleName();
+    @InjectView(R.id.activity_org_listview)
+    ListView mOrgListView;
+    private String mParentOrgJId;
+    private String mTitle;
+    private boolean mIsStudent;
+    private List<Map<String, Object>> itemList = new ArrayList<>();
 
-	private String mParentOrgJId;
-	private String mTitle;
-	private boolean mIsStudent;
+    private void startChatActivity(String userJid, String fullname) {
+        User user = new User(User.getUsernameFromJid(userJid), fullname);
+        App.userDAO.mergeUser(user);
+
+        Intent chatIntent = new Intent(this, ChatActivity.class);
+        chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
+        chatIntent.putExtra(ChatActivity.EXTRA_TITLE, fullname);
+        startActivity(chatIntent);
+    }
 
 
-	private void startChatActivity(String userJid, String fullname) {
-		User user = new User(User.getUsernameFromJid(userJid), fullname);
-		App.userDAO.mergeUser(user);
+    //
 
-		Intent chatIntent = new Intent(this, ChatActivity.class);
-		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
-		chatIntent.putExtra(ChatActivity.EXTRA_TITLE, fullname);
-		startActivity(chatIntent);
-	}
+    // doChat
+    public void doChat(MenuItem item) {
+        startChatActivity(mParentOrgJId, mTitle);
+    }
 
-	// doChat
-	public void doChat(MenuItem item) {
-		startChatActivity(mParentOrgJId, mTitle);
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu mMenu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.org_actions, mMenu);
+        return true;
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu mMenu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.org_actions, mMenu);
-		return true;
-	}
-
-	@InjectView(R.id.activity_org_listview)
-	ListView mOrgListView;
-	private List<Map<String, Object>> itemList = new ArrayList<>();
-
-	protected void displayTitle() {
+    protected void displayTitle() {
         //System.out.println("-----------"+mTitle);
-		getSupportActionBar().setTitle(mTitle);
-	}
+        getSupportActionBar().setTitle(mTitle);
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (App.readUser() == null) {
+            gotoSplashActivity();
+            finish();
+            return;
+        }
 
-	//
+        setContentView(R.layout.activity_org);
+        ButterKnife.inject(this);
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (App.readUser() == null) {
-			gotoSplashActivity();
-			finish();
-			return;
-		}
+        mParentOrgJId = getIntent().getExtras().getString(PARENT_ORG_JID);
+        mTitle = getIntent().getExtras().getString(PARENT_ORG_NAME);
+        mIsStudent = getIntent().getExtras().getBoolean(PARENT_ORG_STUDENT);
 
-		setContentView(R.layout.activity_org);
-		ButterKnife.inject(this);
+        setupComponents();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mParentOrgJId = getIntent().getExtras().getString(PARENT_ORG_JID);
-		mTitle =  getIntent().getExtras().getString(PARENT_ORG_NAME);
-		mIsStudent =  getIntent().getExtras().getBoolean(PARENT_ORG_STUDENT);
+        retrieveOrg(mParentOrgJId);
+    }
 
-		setupComponents();
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    private void retrieveOrg(String parentOrgJid) {
+        RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid, mIsStudent);
+        TaskAdapter taskListener = new TaskAdapter() {
+            @Override
+            public void onPostExecute(GenericTask task, TaskResult result) {
+                super.onPostExecute(task, result);
+                RetrieveOrgListTask retrieveOrgListTask = (RetrieveOrgListTask) task;
+                if (result == TaskResult.OK) {
 
-		retrieveOrg(mParentOrgJId);
-	}
+                    List<Map<String, Object>> orgList = retrieveOrgListTask.getOrgList();
+                    List<Map<String, Object>> memberList = retrieveOrgListTask.getMemberList();
 
-	private void retrieveOrg(String parentOrgJid) {
-		RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid, mIsStudent);
-		TaskAdapter taskListener = new TaskAdapter() {
-			@Override
-			public void onPostExecute(GenericTask task, TaskResult result) {
-				super.onPostExecute(task, result);
-				RetrieveOrgListTask retrieveOrgListTask = (RetrieveOrgListTask) task;
-				if (result == TaskResult.OK) {
+                    itemList.addAll(orgList);
+                    itemList.addAll(memberList);
+                    setAdapter();
 
-					List<Map<String, Object>> orgList = retrieveOrgListTask.getOrgList();
-					List<Map<String, Object>> memberList = retrieveOrgListTask.getMemberList();
+                }
+            }
 
-					itemList.addAll(orgList);
-					itemList.addAll(memberList);
-					setAdapter();
+        };
+        retrieveOrgListTask.setListener(taskListener);
+        retrieveOrgListTask.execute();
+    }
 
-				}
-			}
+    private void setAdapter() {
+        SimpleAdapter adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
+                new String[]{"jid", "name"},
+                new int[]{R.id.item_org_jid, R.id.item_org_name});
+        mOrgListView.setAdapter(adapter);
+    }
 
-		};
-		retrieveOrgListTask.setListener(taskListener);
-		retrieveOrgListTask.execute();
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Utils.onBackPressed(this);
+        }
 
-	private void setAdapter() {
-		SimpleAdapter adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
-				new String[]{"jid", "name"},
-				new int[]{R.id.item_org_jid, R.id.item_org_name});
-		mOrgListView.setAdapter(adapter);
-	}
+        return true;
+    }
 
+    public void setupComponents() {
+        displayTitle();
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			Utils.onBackPressed(this);
-		}
+        mOrgListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-		return true;
-	}
+            @Override
+            public void onItemClick(AdapterView<?> view, View arg1,
+                                    int position, long id) {
+                Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
+                String jid = (String) item.get("jid");
+                String name = (String) item.get("name");
+                if (User.isTeacher(jid) || User.isStudent(jid)) {
+                    startChatActivity(jid, name);
+                } else {
+                    startOrgActivity(jid, name);
+                }
+            }
+        });
+    }
 
-	public void setupComponents() {
-		displayTitle();
+    private void startOrgActivity(String jid, String name) {
+        Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, jid);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, name);
+        startActivity(orgIntent);
+    }
 
-		mOrgListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> view, View arg1,
-			                        int position, long id) {
-				Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
-				String jid = (String) item.get("jid");
-				String name = (String) item.get("name");
-				if (User.isTeacher(jid) || User.isStudent(jid)) {
-					startChatActivity(jid, name);
-				} else {
-					startOrgActivity(jid, name);
-				}
-			}
-		});
-	}
-
-	private void startOrgActivity(String jid, String name) {
-		Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, jid);
-		orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, name);
-		startActivity(orgIntent);
-	}
-
-
-	public static final String PARENT_ORG_JID = "PARENT_ORG_JID";
-	public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
-	public static final String PARENT_ORG_STUDENT = "PARENT_ORG_STUDENT";
-
-
-	private void gotoSplashActivity() {
-		Intent intent = new Intent(this, SplashActivity.class);
-		startActivity(intent);
-	}
+    private void gotoSplashActivity() {
+        Intent intent = new Intent(this, SplashActivity.class);
+        startActivity(intent);
+    }
 
 
 }

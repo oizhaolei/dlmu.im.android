@@ -14,12 +14,12 @@ import com.ruptech.chinatalk.task.impl.RetrieveServerVersionTask;
 public class VersionCheckReceiver extends BroadcastReceiver {
 
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
+    @Override
+    public void onReceive(Context context, Intent intent) {
 
-		GenericTask mVersionCheckTask = new RetrieveServerVersionTask();
+        GenericTask mVersionCheckTask = new RetrieveServerVersionTask();
 
-		mVersionCheckTask.execute();
-	}
+        mVersionCheckTask.execute();
+    }
 
 }

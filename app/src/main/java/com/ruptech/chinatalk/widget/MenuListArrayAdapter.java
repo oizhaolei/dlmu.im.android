@@ -10,58 +10,55 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class MenuListArrayAdapter extends ArrayAdapter<CharSequence> {
-	static class ViewHolder {
-		@InjectView(R.id.item_menu_textview)
-		TextView friendFullName;
+    private static final int mResource = R.layout.item_menu; // xml布局文件
+    private final LayoutInflater mInflater;
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+    public MenuListArrayAdapter(Context context) {
+        super(context, mResource);
 
-	private static final int mResource = R.layout.item_menu; // xml布局文件
+        mInflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-	private final LayoutInflater mInflater;
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
+        View view;
+        final ViewHolder holder;
+        if (convertView == null) {
+            view = mInflater.inflate(mResource, parent, false);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
+        }
 
-	public MenuListArrayAdapter(Context context) {
-		super(context, mResource);
+        String menuItem = (String) getItem(position);
 
-		mInflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+        if (Utils.isEmpty(menuItem)) {
+            holder.friendFullName.setText("");
+        } else {
+            holder.friendFullName.setText(Utils.abbrString(menuItem, 20));
+        }
 
+        return view;
+    }
 
-	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
+    static class ViewHolder {
+        @InjectView(R.id.item_menu_textview)
+        TextView friendFullName;
 
-		View view;
-		final ViewHolder holder;
-		if (convertView == null) {
-			view = mInflater.inflate(mResource, parent, false);
-			holder = new ViewHolder(view);
-			view.setTag(holder);
-		} else {
-			view = convertView;
-			holder = (ViewHolder) view.getTag();
-		}
-
-		String menuItem = (String) getItem(position);
-
-		if (Utils.isEmpty(menuItem)) {
-			holder.friendFullName.setText("");
-		} else {
-			holder.friendFullName.setText(Utils.abbrString(menuItem, 20));
-		}
-
-		return view;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 
 }

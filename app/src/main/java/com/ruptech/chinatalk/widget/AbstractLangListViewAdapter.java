@@ -12,59 +12,58 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class AbstractLangListViewAdapter extends BaseAdapter {
 
-	public static class ViewHolder {
-		@InjectView(R.id.language_text)
-		TextView languageText;
-		@InjectView(R.id.language_radio_btn)
-		RadioButton languageRadioButton;
-		@InjectView(R.id.language_flag_img)
-		ImageView languageFlagImg;
+    public static final int mResource = R.layout.item_main_tab_profile_lang; // xml布局文件
+    static final String TAG = Utils.CATEGORY + AbstractLangListViewAdapter.class.getSimpleName();
+    public String[] langArray;
+    public int clickPosition = -1;
+    public boolean itemCanClick = true;
+    public Context mContext;
+    public ViewHolder holder;
+    public LayoutInflater mInflater;
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+    @Override
+    public int getCount() {
+        return langArray.length;
+    }
 
-	static final String TAG = Utils.CATEGORY + AbstractLangListViewAdapter.class.getSimpleName();
-	public static final int mResource = R.layout.item_main_tab_profile_lang; // xml布局文件
-	public String[] langArray;
-	public int clickPosition = -1;
-	public boolean itemCanClick = true;
+    @Override
+    public Object getItem(int position) {
+        return langArray[position];
+    }
 
-	public Context mContext;
-	public ViewHolder holder;
-	public LayoutInflater mInflater;
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public int getCount() {
-		return langArray.length;
-	}
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        View view = null;
+        return view;
+    }
 
-	@Override
-	public Object getItem(int position) {
-		return langArray[position];
-	}
+    public void setItem(int position) {
+        this.clickPosition = position;
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    public static class ViewHolder {
+        @InjectView(R.id.language_text)
+        TextView languageText;
+        @InjectView(R.id.language_radio_btn)
+        RadioButton languageRadioButton;
+        @InjectView(R.id.language_flag_img)
+        ImageView languageFlagImg;
 
-	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
-		View view = null;
-		return view;
-	}
-
-	public void setItem(int position) {
-		this.clickPosition = position;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 }

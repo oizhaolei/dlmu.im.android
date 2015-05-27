@@ -19,163 +19,161 @@ import static butterknife.ButterKnife.findById;
 
 public class MainTabLayout extends LinearLayout implements OnClickListener {
 
-	public interface OnTabClickListener {
-		void onTabClick(int viewId);
+    static final String LOG_TAG = "MainTabLayout";
+    private final List<TabItem> mTabs = new ArrayList<TabItem>();
+    private OnTabClickListener tabClickListener;
+    private View selectedView;
+    private long previousTabClickTime;
+    public MainTabLayout(Context context) {
+        super(context);
+    }
 
-		void onTabDoubleClick(int viewId);
-	}
+    public MainTabLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
 
-	class TabItem {
-		private final int mTitleResId;
-		private final int mIconResId;
+    public MainTabLayout(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
 
-		TabItem(int titleResId, int iconResId) {
-			mTitleResId = titleResId;
-			mIconResId = iconResId;
-		}
+    public void clickTab(int index) {
+        View view = getChildAt(index);
+        onClick(view);
+    }
 
-		public int getIconResId() {
-			return mIconResId;
-		}
+    private View createTabView(int textID, int iconID) {
 
-		public int getTitleResId() {
-			return mTitleResId;
-		}
-	}
+        View tab = LayoutInflater.from(getContext()).inflate(
+                R.layout.item_main_tab, null);
+        TextView textView = (TextView) findById(tab, R.id.tab_textview);
+        ImageView icon = (ImageView) findById(tab, R.id.tab_icon);
+        icon.setVisibility(View.VISIBLE);
 
-	private OnTabClickListener tabClickListener;
-	private View selectedView;
-	private long previousTabClickTime;
-	static final String LOG_TAG = "MainTabLayout";
+        if (iconID != R.drawable.tab_icon_post) {
+            Utils.setImageResource(icon, iconID);
+            textView.setText(textID);
+            Utils.setTextColor(textView);
+        } else {
+            icon.setImageResource(iconID);
+            textView.setVisibility(View.GONE);
+        }
+        return tab;
+    }
 
-	private final List<TabItem> mTabs = new ArrayList<TabItem>();
+    public void init() {
 
-	public MainTabLayout(Context context) {
-		super(context);
-	}
+        mTabs.add(new TabItem(R.string.main_tab_chat, R.drawable.tab_icon_chat));
+        mTabs.add(new TabItem(R.string.main_tab_service,
+                R.drawable.tab_icon_service));
+        mTabs.add(new TabItem(R.string.main_tab_myself,
+                R.drawable.tab_icon_me));
 
-	public MainTabLayout(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
+        populateTab();
+    }
 
-	public MainTabLayout(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init();
-	}
+    @Override
+    public void onClick(View v) {
+        if (selectedView != v && tabClickListener != null)
+            tabClickListener.onTabClick(v.getId());
 
-	public void clickTab(int index) {
-		View view = getChildAt(index);
-		onClick(view);
-	}
+        if (selectedView == v
+                && previousTabClickTime + 2000 > System.currentTimeMillis()
+                && tabClickListener != null) {
+            tabClickListener.onTabDoubleClick(v.getId());
+        }
 
-	private View createTabView(int textID, int iconID) {
+        previousTabClickTime = System.currentTimeMillis();
+    }
 
-		View tab = LayoutInflater.from(getContext()).inflate(
-				R.layout.item_main_tab, null);
-		TextView textView = (TextView) findById(tab, R.id.tab_textview);
-		ImageView icon = (ImageView) findById(tab, R.id.tab_icon);
-		icon.setVisibility(View.VISIBLE);
+    private void populateTab() {
+        TabItem tab;
+        for (int i = 0; i < mTabs.size(); i++) {
+            tab = mTabs.get(i);
+            View tabView = createTabView(tab.getTitleResId(),
+                    tab.getIconResId());
+            tabView.setId(tab.getTitleResId());
+            tabView.setOnClickListener(this);
+            tabView.setLayoutParams(new LinearLayout.LayoutParams(0,
+                    LayoutParams.MATCH_PARENT, 1f));
+            addView(tabView);
+            setTabIndex(tab.getTitleResId(), i);
+        }
+    }
 
-		if (iconID != R.drawable.tab_icon_post) {
-			Utils.setImageResource(icon, iconID);
-			textView.setText(textID);
-			Utils.setTextColor(textView);
-		} else {
-			icon.setImageResource(iconID);
-			textView.setVisibility(View.GONE);
-		}
-		return tab;
-	}
+    public void setNewCountForTab(int count, int tabIndex) {
+        if (tabIndex < 0 || tabIndex >= mTabs.size())
+            return;
 
-	public void init() {
+        View tabView = getChildAt(tabIndex);
 
-		mTabs.add(new TabItem(R.string.main_tab_chat, R.drawable.tab_icon_chat));
-		mTabs.add(new TabItem(R.string.main_tab_service,
-				R.drawable.tab_icon_service));
-		mTabs.add(new TabItem(R.string.main_tab_myself,
-				R.drawable.tab_icon_me));
+        if (tabView != null) {
+            TextView countTextView = (TextView) tabView
+                    .findViewById(R.id.tab_number_icon);
+            ImageView smallNewMark = (ImageView) tabView
+                    .findViewById(R.id.new_mark);
 
-		populateTab();
-	}
+            if (countTextView == null || smallNewMark == null)
+                return;
 
-	@Override
-	public void onClick(View v) {
-		if (selectedView != v && tabClickListener != null)
-			tabClickListener.onTabClick(v.getId());
+            if (tabIndex == MainActivity.TAB_INDEX_MYSELF && count > 0)
+                count += 10;
 
-		if (selectedView == v
-				&& previousTabClickTime + 2000 > System.currentTimeMillis()
-				&& tabClickListener != null) {
-			tabClickListener.onTabDoubleClick(v.getId());
-		}
+            if (count == 0) {
+                countTextView.setVisibility(View.INVISIBLE);
+                smallNewMark.setVisibility(View.INVISIBLE);
+            } else if (count < 10) {
+                countTextView.setText(String.valueOf(count));
+                countTextView.setVisibility(View.VISIBLE);
+                smallNewMark.setVisibility(View.INVISIBLE);
+            } else {
+                countTextView.setVisibility(View.INVISIBLE);
+                smallNewMark.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
-		previousTabClickTime = System.currentTimeMillis();
-	}
+    public void setOnTabClickListener(OnTabClickListener listener) {
+        tabClickListener = listener;
+    }
 
-	private void populateTab() {
-		TabItem tab;
-		for (int i = 0; i < mTabs.size(); i++) {
-			tab = mTabs.get(i);
-			View tabView = createTabView(tab.getTitleResId(),
-					tab.getIconResId());
-			tabView.setId(tab.getTitleResId());
-			tabView.setOnClickListener(this);
-			tabView.setLayoutParams(new LinearLayout.LayoutParams(0,
-					LayoutParams.MATCH_PARENT, 1f));
-			addView(tabView);
-			setTabIndex(tab.getTitleResId(), i);
-		}
-	}
+    private void setTabIndex(int resId, int index) {
+        switch (resId) {
+            case R.string.main_tab_service:
+                MainActivity.TAB_INDEX_DISCOVER = index;
+                break;
+            case R.string.main_tab_chat:
+                MainActivity.TAB_INDEX_CHAT = index;
+                break;
+            case R.string.main_tab_myself:
+                MainActivity.TAB_INDEX_MYSELF = index;
+                break;
 
-	public void setNewCountForTab(int count, int tabIndex) {
-		if (tabIndex < 0 || tabIndex >= mTabs.size())
-			return;
+        }
+    }
 
-		View tabView = getChildAt(tabIndex);
+    public interface OnTabClickListener {
+        void onTabClick(int viewId);
 
-		if (tabView != null) {
-			TextView countTextView = (TextView) tabView
-					.findViewById(R.id.tab_number_icon);
-			ImageView smallNewMark = (ImageView) tabView
-					.findViewById(R.id.new_mark);
+        void onTabDoubleClick(int viewId);
+    }
 
-			if (countTextView == null || smallNewMark == null)
-				return;
+    class TabItem {
+        private final int mTitleResId;
+        private final int mIconResId;
 
-			if (tabIndex == MainActivity.TAB_INDEX_MYSELF && count > 0)
-				count += 10;
+        TabItem(int titleResId, int iconResId) {
+            mTitleResId = titleResId;
+            mIconResId = iconResId;
+        }
 
-			if (count == 0) {
-				countTextView.setVisibility(View.INVISIBLE);
-				smallNewMark.setVisibility(View.INVISIBLE);
-			} else if (count < 10) {
-				countTextView.setText(String.valueOf(count));
-				countTextView.setVisibility(View.VISIBLE);
-				smallNewMark.setVisibility(View.INVISIBLE);
-			} else {
-				countTextView.setVisibility(View.INVISIBLE);
-				smallNewMark.setVisibility(View.VISIBLE);
-			}
-		}
-	}
+        public int getIconResId() {
+            return mIconResId;
+        }
 
-	public void setOnTabClickListener(OnTabClickListener listener) {
-		tabClickListener = listener;
-	}
-
-	private void setTabIndex(int resId, int index) {
-		switch (resId) {
-			case R.string.main_tab_service:
-				MainActivity.TAB_INDEX_DISCOVER = index;
-				break;
-			case R.string.main_tab_chat:
-				MainActivity.TAB_INDEX_CHAT = index;
-				break;
-			case R.string.main_tab_myself:
-				MainActivity.TAB_INDEX_MYSELF = index;
-				break;
-
-		}
-	}
+        public int getTitleResId() {
+            return mTitleResId;
+        }
+    }
 
 }

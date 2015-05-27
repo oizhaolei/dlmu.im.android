@@ -32,237 +32,236 @@ import org.jivesoftware.smack.SmackException;
  * app.
  */
 public class XMPPService extends BaseService {
-	TTTalkSmack mSmack;
+    public static final int CONNECTED = 0;
+    public static final int DISCONNECTED = -1;
+    public static final int CONNECTING = 1;
+    public static final String LOGOUT = "logout";// 手动退出
+    public static final String NETWORK_ERROR = "network error";// 网络错误
+    public static final String LOGIN_FAILED = "login failed";// 登录失败
+    // 自动重连 start
+    private static final int RECONNECT_AFTER = 5;
+    private static final int RECONNECT_MAXIMUM = 10 * 60;// 最大重连时间间隔
+    private static final String RECONNECT_ALARM = "com.ruptech.tttalk.RECONNECT_ALARM";
+    protected final String TAG = Utils.CATEGORY
+            + XMPPService.class.getSimpleName();
+    TTTalkSmack mSmack;
+    private int mConnectedState = DISCONNECTED; // 是否已经连接
+    private int mReconnectTimeout = RECONNECT_AFTER;
+    private Intent mAlarmIntent = new Intent(RECONNECT_ALARM);
+    private IBinder mBinder = new XBinder();
+    private PendingIntent mPAlarmIntent;
+    private BroadcastReceiver mAlarmReceiver = new ReconnectAlarmReceiver();
 
-	public static final int CONNECTED = 0;
-	public static final int DISCONNECTED = -1;
-	private int mConnectedState = DISCONNECTED; // 是否已经连接
-	public static final int CONNECTING = 1;
-	public static final String LOGOUT = "logout";// 手动退出
-	public static final String NETWORK_ERROR = "network error";// 网络错误
-	public static final String LOGIN_FAILED = "login failed";// 登录失败
-	// 自动重连 start
-	private static final int RECONNECT_AFTER = 5;
-	private int mReconnectTimeout = RECONNECT_AFTER;
-	private static final int RECONNECT_MAXIMUM = 10 * 60;// 最大重连时间间隔
-	private static final String RECONNECT_ALARM = "com.ruptech.tttalk.RECONNECT_ALARM";
-	private Intent mAlarmIntent = new Intent(RECONNECT_ALARM);
-	protected final String TAG = Utils.CATEGORY
-			+ XMPPService.class.getSimpleName();
-	private IBinder mBinder = new XBinder();
-	private PendingIntent mPAlarmIntent;
-	private BroadcastReceiver mAlarmReceiver = new ReconnectAlarmReceiver();
+    /**
+     * UI线程反馈连接失败
+     *
+     * @param reason
+     */
+    private void connectionFailed(String reason) {
+        Log.i(TAG, "connectionFailed: " + reason);
+        mConnectedState = DISCONNECTED;// 更新当前连接状态
+        if (TextUtils.equals(reason, LOGOUT)) {// 如果是手动退出
+            ((AlarmManager) getSystemService(Context.ALARM_SERVICE))
+                    .cancel(mPAlarmIntent);
+            return;
+        }
+        // 回调
+        App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, reason));
 
-	/**
-	 * UI线程反馈连接失败
-	 *
-	 * @param reason
-	 */
-	private void connectionFailed(String reason) {
-		Log.i(TAG, "connectionFailed: " + reason);
-		mConnectedState = DISCONNECTED;// 更新当前连接状态
-		if (TextUtils.equals(reason, LOGOUT)) {// 如果是手动退出
-			((AlarmManager) getSystemService(Context.ALARM_SERVICE))
-					.cancel(mPAlarmIntent);
-			return;
-		}
-		// 回调
-		App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, reason));
+        // 无网络连接时,直接返回
+        if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
+            ((AlarmManager) getSystemService(Context.ALARM_SERVICE))
+                    .cancel(mPAlarmIntent);
+            return;
+        }
 
-		// 无网络连接时,直接返回
-		if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
-			((AlarmManager) getSystemService(Context.ALARM_SERVICE))
-					.cancel(mPAlarmIntent);
-			return;
-		}
+        String account = App.readUser().getUsername();
+        String password = App.readUser().getPassword();
+        // 无保存的帐号密码时，也直接返回
+        if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
+            Log.d(TAG, "account = null || password = null");
+            return;
+        }
+        // 如果不是手动退出并且需要重新连接，则开启重连闹钟
+        Log.d(TAG, "connectionFailed(): registering reconnect in "
+                + mReconnectTimeout + "s");
+        ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).set(
+                AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                        + mReconnectTimeout * 1000, mPAlarmIntent);
+        mReconnectTimeout = mReconnectTimeout * 2;
+        if (mReconnectTimeout > RECONNECT_MAXIMUM)
+            mReconnectTimeout = RECONNECT_MAXIMUM;
 
-		String account = App.readUser().getUsername();
-		String password = App.readUser().getPassword();
-		// 无保存的帐号密码时，也直接返回
-		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-			Log.d(TAG, "account = null || password = null");
-			return;
-		}
-		// 如果不是手动退出并且需要重新连接，则开启重连闹钟
-		Log.d(TAG, "connectionFailed(): registering reconnect in "
-				+ mReconnectTimeout + "s");
-		((AlarmManager) getSystemService(Context.ALARM_SERVICE)).set(
-				AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-						+ mReconnectTimeout * 1000, mPAlarmIntent);
-		mReconnectTimeout = mReconnectTimeout * 2;
-		if (mReconnectTimeout > RECONNECT_MAXIMUM)
-			mReconnectTimeout = RECONNECT_MAXIMUM;
+    }
 
-	}
+    // 是否连接上服务器
+    public boolean isAuthenticated() {
 
-	// 是否连接上服务器
-	public boolean isAuthenticated() {
+        return false;
+    }
 
-		return false;
-	}
+    @Subscribe
+    public void onNetChange(NetChangeEvent event) {
+        if (event.connectivity == NetUtil.NETWORK_NONE) {// 如果是网络断开，不作处理
+            connectionFailed(NETWORK_ERROR);
+            return;
+        }
 
-	@Subscribe
-	public void onNetChange(NetChangeEvent event) {
-		if (event.connectivity == NetUtil.NETWORK_NONE) {// 如果是网络断开，不作处理
-			connectionFailed(NETWORK_ERROR);
-			return;
-		}
-
-		if (isAuthenticated())// 如果已经连接上，直接返回
-			return;
+        if (isAuthenticated())// 如果已经连接上，直接返回
+            return;
 
 
-		String account = App.readUser().getUsername();
-		String password = App.readUser().getPassword();
+        String account = App.readUser().getUsername();
+        String password = App.readUser().getPassword();
 
-		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
-			return;
-		login(account, password);// 重连
-	}    // 判断程序是否在后台运行的任务
+        if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
+            return;
+        login(account, password);// 重连
+    }    // 判断程序是否在后台运行的任务
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.i(TAG, "[SERVICE] onBind");
-		return mBinder;
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.i(TAG, "[SERVICE] onBind");
+        return mBinder;
+    }
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (!isAuthenticated()) {
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (!isAuthenticated()) {
 
-			String account = App.readUser().getUsername();
-			String password = App.readUser().getPassword();
-			login(account, password);
-		}
-		return super.onStartCommand(intent, flags, startId);
-	}
+            String account = App.readUser().getUsername();
+            String password = App.readUser().getPassword();
+            login(account, password);
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-		mPAlarmIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		registerReceiver(mAlarmReceiver, new IntentFilter(RECONNECT_ALARM));
+        mPAlarmIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        registerReceiver(mAlarmReceiver, new IntentFilter(RECONNECT_ALARM));
 
-		createSmack();
-	}
+        createSmack();
+    }
 
-	private void createSmack() {
-		if (mSmack == null) {
-			mSmack = new TTTalkSmackImpl(getContentResolver());
-		}
-	}
+    private void createSmack() {
+        if (mSmack == null) {
+            mSmack = new TTTalkSmackImpl(getContentResolver());
+        }
+    }
 
-	// 登录
-	public void login(final String account, final String password) {
-		if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
-			connectionFailed(NETWORK_ERROR);
-			return;
-		}
+    // 登录
+    public void login(final String account, final String password) {
+        if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
+            connectionFailed(NETWORK_ERROR);
+            return;
+        }
 
-		XMPPLoginTask xLoginTask = new XMPPLoginTask(mSmack, account, password);
-		xLoginTask.setListener(new TaskAdapter() {
-			@Override
-			public void onPostExecute(GenericTask task, TaskResult result) {
-				super.onPostExecute(task, result);
+        XMPPLoginTask xLoginTask = new XMPPLoginTask(mSmack, account, password);
+        xLoginTask.setListener(new TaskAdapter() {
+            @Override
+            public void onPostExecute(GenericTask task, TaskResult result) {
+                super.onPostExecute(task, result);
 
-				if (result == TaskResult.OK) {
-					// 登陆成功
-					connectionScuessed();
-				} else {
-					// 登陆失败
-					connectionFailed("onLoginFailure");
-				}
-			}
+                if (result == TaskResult.OK) {
+                    // 登陆成功
+                    connectionScuessed();
+                } else {
+                    // 登陆失败
+                    connectionFailed("onLoginFailure");
+                }
+            }
 
-			@Override
-			public void onPreExecute(GenericTask task) {
-				super.onPreExecute(task);
-				connecting();
-			}
-		});
-		xLoginTask.execute();
+            @Override
+            public void onPreExecute(GenericTask task) {
+                super.onPreExecute(task);
+                connecting();
+            }
+        });
+        xLoginTask.execute();
 
-	}
+    }
 
-	public void logout() {
-		if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
-			connectionFailed(NETWORK_ERROR);
-			return;
-		}
+    public void logout() {
+        if (NetUtil.getNetworkState(this) == NetUtil.NETWORK_NONE) {
+            connectionFailed(NETWORK_ERROR);
+            return;
+        }
 
-		XMPPLogoutTask xLogoutTask = new XMPPLogoutTask(mSmack);
-		xLogoutTask.execute();
-	}
+        XMPPLogoutTask xLogoutTask = new XMPPLogoutTask(mSmack);
+        xLogoutTask.execute();
+    }
 
-	private void connectionScuessed() {
-		mConnectedState = CONNECTED;// 已经连接上
-		mReconnectTimeout = RECONNECT_AFTER;// 重置重连的时间
+    private void connectionScuessed() {
+        mConnectedState = CONNECTED;// 已经连接上
+        mReconnectTimeout = RECONNECT_AFTER;// 重置重连的时间
 
-		App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, ""));
-	}
+        App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, ""));
+    }
 
-	private void connecting() {
-		mConnectedState = CONNECTING;// 连接中
-		String reason = "";
-		App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, reason));
-	}
+    private void connecting() {
+        mConnectedState = CONNECTING;// 连接中
+        String reason = "";
+        App.mBus.post(new ConnectionStatusChangedEvent(mConnectedState, reason));
+    }
 
-	@Override
-	public void onDestroy() {
+    @Override
+    public void onDestroy() {
 
-		((AlarmManager) getSystemService(Context.ALARM_SERVICE))
-				.cancel(mPAlarmIntent);// 取消重连闹钟
-		unregisterReceiver(mAlarmReceiver);// 注销广播监听
+        ((AlarmManager) getSystemService(Context.ALARM_SERVICE))
+                .cancel(mPAlarmIntent);// 取消重连闹钟
+        unregisterReceiver(mAlarmReceiver);// 注销广播监听
 
-		super.onDestroy();
-	}
+        super.onDestroy();
+    }
 
-	@Override
-	public void onRebind(Intent intent) {
-		super.onRebind(intent);
-	}
+    @Override
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
+    }
 
-	@Override
-	public boolean onUnbind(Intent intent) {
-		return true;
-	}
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return true;
+    }
 
-	// 自动重连广播
-	private class ReconnectAlarmReceiver extends BroadcastReceiver {
-		public void onReceive(Context ctx, Intent i) {
-			Log.d(TAG, "Alarm received.");
+    // 发送消息
+    public void sendMessage(String toJID, Chat chat) {
+        try {
+            mSmack.sendMessage(toJID, chat);
+        } catch (SmackException.NotConnectedException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+    }
 
-			if (mConnectedState != DISCONNECTED) {
-				Log.d(TAG, "Reconnect attempt aborted: we are connected again!");
-				return;
-			}
+    // 自动重连广播
+    private class ReconnectAlarmReceiver extends BroadcastReceiver {
+        public void onReceive(Context ctx, Intent i) {
+            Log.d(TAG, "Alarm received.");
 
-			String account = App.readUser().getUsername();
-			String password = App.readUser().getPassword();
+            if (mConnectedState != DISCONNECTED) {
+                Log.d(TAG, "Reconnect attempt aborted: we are connected again!");
+                return;
+            }
 
-			if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-				Log.d(TAG, "account = null || password = null");
-				return;
-			}
-			login(account, password);
-		}
-	}
+            String account = App.readUser().getUsername();
+            String password = App.readUser().getPassword();
 
-	public class XBinder extends Binder {
-		public XMPPService getService() {
-			return XMPPService.this;
-		}
-	}
+            if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
+                Log.d(TAG, "account = null || password = null");
+                return;
+            }
+            login(account, password);
+        }
+    }
 
-	// 发送消息
-	public void sendMessage(String toJID, Chat chat) {
-		try {
-			mSmack.sendMessage(toJID, chat);
-		} catch (SmackException.NotConnectedException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-	}
+    public class XBinder extends Binder {
+        public XMPPService getService() {
+            return XMPPService.this;
+        }
+    }
 
 }

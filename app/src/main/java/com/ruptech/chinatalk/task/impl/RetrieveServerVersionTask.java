@@ -9,15 +9,15 @@ import com.ruptech.chinatalk.utils.PrefUtils;
 public class RetrieveServerVersionTask extends GenericTask {
 
 
-	@Override
-	protected TaskResult _doInBackground() throws Exception {
-		// check version
-		AppVersion serverAppInfo = App.getHttpServer().ver();
-		if (serverAppInfo != null) {
-			PrefUtils.writeServerAppInfo(serverAppInfo);
-		}
-		return TaskResult.OK;
-	}
+    @Override
+    protected TaskResult _doInBackground() throws Exception {
+        // check version
+        AppVersion serverAppInfo = App.getHttpServer().ver();
+        if (serverAppInfo != null) {
+            PrefUtils.writeServerAppInfo(serverAppInfo);
+        }
+        return TaskResult.OK;
+    }
 
 
 }

@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 public class RetrieveServiceListTask extends GenericTask {
-	private List<Map<String, Object>> serviceList;
+    private List<Map<String, Object>> serviceList;
 
-	public List<Map<String, Object>> getServiceList() {
-		return serviceList;
-	}
+    public List<Map<String, Object>> getServiceList() {
+        return serviceList;
+    }
 
-	@Override
-	protected TaskResult _doInBackground() throws Exception {
+    @Override
+    protected TaskResult _doInBackground() throws Exception {
 
-		serviceList = App.getHttpServer().retrieveServiceList();
+        serviceList = App.getHttpServer().retrieveServiceList();
 
-		return TaskResult.OK;
-	}
+        return TaskResult.OK;
+    }
 
 }

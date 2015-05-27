@@ -11,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import java.util.Locale;
 
@@ -21,62 +21,61 @@ import butterknife.InjectView;
 
 public class LangSpinnerAdapter extends BaseAdapter {
 
-	static class ViewHolder {
-		@InjectView(R.id.ttt_spinner_language_text)
-		TextView languageText;
-		@InjectView(R.id.ttt_spinner_language_flag_img)
-		ImageView languageFlagImg;
+    static final String TAG = Utils.CATEGORY + LangSpinnerAdapter.class.getSimpleName();
+    private static final int mResource = R.layout.item_main_tab_ttt_spinner_lang; // xml布局文件
+    private final String[] langArray;
+    private ViewHolder holder;
+    private LayoutInflater mInflater;
+    public LangSpinnerAdapter(Context context, String[] langArray) {
+        this.langArray = langArray;
+        if (context != null) {
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+    }
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+    @Override
+    public int getCount() {
+        return langArray.length;
+    }
 
-	static final String TAG = Utils.CATEGORY + LangSpinnerAdapter.class.getSimpleName();
-	private static final int mResource = R.layout.item_main_tab_ttt_spinner_lang; // xml布局文件
-	private final String[] langArray;
-	private ViewHolder holder;
-	private LayoutInflater mInflater;
+    @Override
+    public Object getItem(int position) {
+        return langArray[position];
+    }
 
-	public LangSpinnerAdapter(Context context, String[] langArray) {
-		this.langArray = langArray;
-		if (context != null) {
-			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public int getCount() {
-		return langArray.length;
-	}
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        View view;
 
-	@Override
-	public Object getItem(int position) {
-		return langArray[position];
-	}
+        if (convertView == null) {
+            view = mInflater.inflate(mResource, null);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
+        }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+        holder.languageText.setText(Utils.getLangDisplayName(langArray[position]));
+        String lang = langArray[position].toLowerCase(Locale.getDefault());
+        holder.languageFlagImg.setImageResource(Utils.getLanguageFlag(lang));
 
-	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
-		View view;
+        return view;
+    }
 
-		if (convertView == null) {
-			view = mInflater.inflate(mResource, null);
-			holder = new ViewHolder(view);
-			view.setTag(holder);
-		} else {
-			view = convertView;
-			holder = (ViewHolder) view.getTag();
-		}
+    static class ViewHolder {
+        @InjectView(R.id.ttt_spinner_language_text)
+        TextView languageText;
+        @InjectView(R.id.ttt_spinner_language_flag_img)
+        ImageView languageFlagImg;
 
-		holder.languageText.setText(Utils.getLangDisplayName(langArray[position]));
-		String lang = langArray[position].toLowerCase(Locale.getDefault());
-		holder.languageFlagImg.setImageResource(Utils.getLanguageFlag(lang));
-
-		return view;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 }

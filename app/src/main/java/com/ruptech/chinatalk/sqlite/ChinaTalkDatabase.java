@@ -17,130 +17,125 @@ import static com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import static com.ruptech.chinatalk.sqlite.TableContent.UserTable;
 
 public class ChinaTalkDatabase {
-	/**
-	 * SQLiteOpenHelper
-	 */
-	private static class DatabaseHelper extends SQLiteOpenHelper {
+    /**
+     * Database Version
+     */
+    public static final int DATABASE_VERSION = 69;
+    private static final String TAG = Utils.CATEGORY
+            + ChinaTalkDatabase.class.getSimpleName();
 
-		// Construct
-		public DatabaseHelper(Context context, CursorFactory cf) {
-			super(context, DATABASE_NAME, cf, DATABASE_VERSION);
-		}
+    /**
+     * SQLite Database file name
+     */
+    private static final String DATABASE_NAME = "chinatalk.db";
+    public static CursorFactory mCursorFactory = new CursorFactory() {
+        @Override
+        public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
+                                String editTable, SQLiteQuery query) {
+            if (BuildConfig.DEBUG)
+                Log.i(TAG, query.toString());
+            return new SQLiteCursor(db, driver, editTable, query);
+        }
+    };
+    /**
+     * self instance
+     */
+    private static ChinaTalkDatabase sInstance = null;
+    /**
+     * SQLiteDatabase Open Helper
+     */
+    private DatabaseHelper mOpenHelper = null;
 
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			if (BuildConfig.DEBUG)
-				Log.d(TAG, "Create Database.");
-			createAllTables(db);
-			createAllIndexes(db);
-		}
+    /**
+     * Construct
+     */
+    private ChinaTalkDatabase(Context context) {
+        mOpenHelper = new DatabaseHelper(context, mCursorFactory);
+    }
 
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if (BuildConfig.DEBUG)
-				Log.d(TAG, "Upgrade Database.");
+    // indexes
+    private static void createAllIndexes(SQLiteDatabase db) {
+        db.execSQL(UserTable.getCreateIndexSQL());
 
-			dropAllTables(db);
-			createAllTables(db);
-			createAllIndexes(db);
-		}
+        db.execSQL(ChatTable.getCreateIndexSQL());
+    }
 
-	}
+    // Create All tables
+    private static void createAllTables(SQLiteDatabase db) {
+        db.execSQL(UserTable.getCreateSQL());
+        db.execSQL(ChatTable.getCreateSQL());
+    }
 
-	private static final String TAG = Utils.CATEGORY
-			+ ChinaTalkDatabase.class.getSimpleName();
+    private static void dropAllTables(SQLiteDatabase db) {
+        db.execSQL(UserTable.getDropSQL());
+        db.execSQL(ChatTable.getDropSQL());
+    }
 
-	/**
-	 * SQLite Database file name
-	 */
-	private static final String DATABASE_NAME = "chinatalk.db";
+    /**
+     * Get Database
+     */
+    public static synchronized ChinaTalkDatabase getInstance(Context context) {
+        if (null == sInstance) {
+            sInstance = new ChinaTalkDatabase(context);
+        }
+        return sInstance;
+    }
 
-	/**
-	 * Database Version
-	 */
-	public static final int DATABASE_VERSION = 69;
+    /**
+     * Close Database
+     */
+    public void close() {
+        if (null != sInstance) {
+            mOpenHelper.close();
+            sInstance = null;
+        }
+    }
 
-	/**
-	 * self instance
-	 */
-	private static ChinaTalkDatabase sInstance = null;
+    /**
+     * Get Database Connection
+     */
+    public SQLiteDatabase getDb(boolean writeable) {
+        if (writeable) {
+            return mOpenHelper.getWritableDatabase();
+        } else {
+            return mOpenHelper.getReadableDatabase();
+        }
+    }
 
-	// indexes
-	private static void createAllIndexes(SQLiteDatabase db) {
-		db.execSQL(UserTable.getCreateIndexSQL());
+    /**
+     * Get SQLiteDatabase Open Helper
+     */
+    public SQLiteOpenHelper getSQLiteOpenHelper() {
+        return mOpenHelper;
+    }
 
-		db.execSQL(ChatTable.getCreateIndexSQL());
-	}
+    /**
+     * SQLiteOpenHelper
+     */
+    private static class DatabaseHelper extends SQLiteOpenHelper {
 
-	// Create All tables
-	private static void createAllTables(SQLiteDatabase db) {
-		db.execSQL(UserTable.getCreateSQL());
-		db.execSQL(ChatTable.getCreateSQL());
-	}
+        // Construct
+        public DatabaseHelper(Context context, CursorFactory cf) {
+            super(context, DATABASE_NAME, cf, DATABASE_VERSION);
+        }
 
-	private static void dropAllTables(SQLiteDatabase db) {
-		db.execSQL(UserTable.getDropSQL());
-		db.execSQL(ChatTable.getDropSQL());
-	}
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "Create Database.");
+            createAllTables(db);
+            createAllIndexes(db);
+        }
 
-	/**
-	 * Get Database
-	 */
-	public static synchronized ChinaTalkDatabase getInstance(Context context) {
-		if (null == sInstance) {
-			sInstance = new ChinaTalkDatabase(context);
-		}
-		return sInstance;
-	}
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "Upgrade Database.");
 
+            dropAllTables(db);
+            createAllTables(db);
+            createAllIndexes(db);
+        }
 
-	/**
-	 * SQLiteDatabase Open Helper
-	 */
-	private DatabaseHelper mOpenHelper = null;
-
-	public static CursorFactory mCursorFactory = new CursorFactory() {
-		@Override
-		public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
-		                        String editTable, SQLiteQuery query) {
-			if (BuildConfig.DEBUG)
-				Log.i(TAG, query.toString());
-			return new SQLiteCursor(db, driver, editTable, query);
-		}
-	};
-
-	/**
-	 * Construct
-	 */
-	private ChinaTalkDatabase(Context context) {
-		mOpenHelper = new DatabaseHelper(context, mCursorFactory);
-	}
-
-	/**
-	 * Close Database
-	 */
-	public void close() {
-		if (null != sInstance) {
-			mOpenHelper.close();
-			sInstance = null;
-		}
-	}
-
-	/**
-	 * Get Database Connection
-	 */
-	public SQLiteDatabase getDb(boolean writeable) {
-		if (writeable) {
-			return mOpenHelper.getWritableDatabase();
-		} else {
-			return mOpenHelper.getReadableDatabase();
-		}
-	}
-
-	/**
-	 * Get SQLiteDatabase Open Helper
-	 */
-	public SQLiteOpenHelper getSQLiteOpenHelper() {
-		return mOpenHelper;
-	}
+    }
 }

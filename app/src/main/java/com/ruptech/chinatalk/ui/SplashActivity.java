@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -15,78 +14,74 @@ import butterknife.InjectView;
 
 public class SplashActivity extends Activity {
 
-	public static SplashActivity instance;
+    public static SplashActivity instance;
+    public boolean directlyToMain = false;
+    @InjectView(R.id.activity_splash_footer_textview)
+    TextView footerTextView;
 
-	public static void close() {
-		if (instance != null) {
-			instance.finish();
-			instance = null;
-		}
-	}
+    public static void close() {
+        if (instance != null) {
+            instance.finish();
+            instance = null;
+        }
+    }
 
-	public boolean directlyToMain = false;
+    private void gotoDispatchActivity() {
+        this.directlyToMain = false;
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                // usage demo
+                if (App.isAvailableShowMain()) {
+                    gotoLoginLoadingActivity();
+                } else {
+                    gotoLoginGateActivity();
+                }
+            }
+        });
+    }
 
+    private void gotoLoginGateActivity() {
+        Intent intent = new Intent(SplashActivity.this, LoginGateActivity.class);
+        startActivity(intent);
+    }
 
-	@InjectView(R.id.activity_splash_footer_textview)
-	TextView footerTextView;
+    private void gotoLoginLoadingActivity() {
+        Intent intent = new Intent(SplashActivity.this,
+                LoginLoadingActivity.class);
+        startActivity(intent);
+    }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	private void gotoDispatchActivity() {
-		this.directlyToMain = false;
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				// usage demo
-				if (App.isAvailableShowMain()) {
-					gotoLoginLoadingActivity();
-				} else {
-					gotoLoginGateActivity();
-				}
-			}
-		});
-	}
+        setContentView(R.layout.activity_splash);
+        ButterKnife.inject(this);
 
-	private void gotoLoginGateActivity() {
-		Intent intent = new Intent(SplashActivity.this, LoginGateActivity.class);
-		startActivity(intent);
-	}
+        if (App.isAvailableShowMain()) {
 
-	private void gotoLoginLoadingActivity() {
-		Intent intent = new Intent(SplashActivity.this,
-				LoginLoadingActivity.class);
-		startActivity(intent);
-	}
+            this.directlyToMain = true;
+            LoginLoadingActivity.gotoMainActivity(this);
+            finish();
+            return;
+        }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        setupComponents();
 
-		setContentView(R.layout.activity_splash);
-		ButterKnife.inject(this);
+        instance = this;
+        App.taskManager.cancelAll();
 
-		if (App.isAvailableShowMain()) {
+    }
 
-			this.directlyToMain = true;
-			LoginLoadingActivity.gotoMainActivity(this);
-			finish();
-			return;
-		}
+    @Override
+    public void onResume() {
+        super.onResume();
+        gotoDispatchActivity();
+    }
 
-		setupComponents();
-
-		instance = this;
-		App.taskManager.cancelAll();
-
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		gotoDispatchActivity();
-	}
-
-	private void setupComponents() {
-		footerTextView.setText(getString(R.string.gate_footer_text,
-				App.mApkVersionOfClient.verName));
-	}
+    private void setupComponents() {
+        footerTextView.setText(getString(R.string.gate_footer_text,
+                App.mApkVersionOfClient.verName));
+    }
 }

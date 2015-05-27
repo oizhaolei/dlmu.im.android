@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.DateCommonUtils;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import java.util.Map;
 
@@ -21,60 +21,59 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class AnnouncementListArrayAdapter extends ArrayAdapter<Map<String, String>> {
-	static class ViewHolder {
+    private static final int mResource = R.layout.item_announcement_full; // xml布局文件
+    private final LayoutInflater mInflater;
 
-		@InjectView(R.id.listitem_announcement_create_date)
-		TextView listitem_announcement_create_date;
-		@InjectView(R.id.listitem_announcement_title)
-		TextView listitem_announcement_title;
-		@InjectView(R.id.listitem_announcement_content)
-		TextView listitem_announcement_content;
+    public AnnouncementListArrayAdapter(Context context) {
+        super(context, mResource);
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-	private static final int mResource = R.layout.item_announcement_full; // xml布局文件
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
-	private final LayoutInflater mInflater;
+        View view;
+        final ViewHolder holder;
+        if (convertView == null) {
+            view = mInflater.inflate(mResource, parent, false);
+            holder = new ViewHolder(view);
 
-	public AnnouncementListArrayAdapter(Context context) {
-		super(context, mResource);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
 
-		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+        }
 
-	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
+        String utcDatetimeStr = DateCommonUtils.convUtcDateString(
+                getItem(position).get("create_date"),
+                DateCommonUtils.DF_yyyyMMddHHmmss);
+        if (Utils.isEmpty(utcDatetimeStr)) {
+            holder.listitem_announcement_create_date.setText("");
+        } else {
+            holder.listitem_announcement_create_date.setText(utcDatetimeStr
+                    .substring(0, 11));
+        }
+        holder.listitem_announcement_title.setText(getItem(position).get("title"));
+        holder.listitem_announcement_content.setText(Html.fromHtml(getItem(
+                position).get("content")));
 
-		View view;
-		final ViewHolder holder;
-		if (convertView == null) {
-			view = mInflater.inflate(mResource, parent, false);
-			holder = new ViewHolder(view);
+        return view;
+    }
 
-			view.setTag(holder);
-		} else {
-			view = convertView;
-			holder = (ViewHolder) view.getTag();
+    static class ViewHolder {
 
-		}
+        @InjectView(R.id.listitem_announcement_create_date)
+        TextView listitem_announcement_create_date;
+        @InjectView(R.id.listitem_announcement_title)
+        TextView listitem_announcement_title;
+        @InjectView(R.id.listitem_announcement_content)
+        TextView listitem_announcement_content;
 
-		String utcDatetimeStr = DateCommonUtils.convUtcDateString(
-				getItem(position).get("create_date"),
-				DateCommonUtils.DF_yyyyMMddHHmmss);
-		if (Utils.isEmpty(utcDatetimeStr)) {
-			holder.listitem_announcement_create_date.setText("");
-		} else {
-			holder.listitem_announcement_create_date.setText(utcDatetimeStr
-					.substring(0, 11));
-		}
-		holder.listitem_announcement_title.setText(getItem(position).get("title"));
-		holder.listitem_announcement_content.setText(Html.fromHtml(getItem(
-				position).get("content")));
-
-		return view;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 
 }
