@@ -8,9 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.model.User;
-import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,61 +18,60 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class ChatUserListAdapter extends ArrayAdapter<User> {
-	class ViewHolder {
-		@InjectView(R.id.item_chat_user_thumb)
-		ImageView userThumbView;
-		@InjectView(R.id.item_chat_user_name)
-		TextView userNameView;
+    private final LayoutInflater viewInflater;
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+    public ChatUserListAdapter(Context context, int resource) {
+        super(context, resource);
+        viewInflater = LayoutInflater.from(getContext());
+    }
 
-	private final LayoutInflater viewInflater;
+    @Override
+    public int getCount() {
+        return super.getCount() + 1;
+    }
 
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = viewInflater.inflate(R.layout.item_chat_user,
+                    parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
 
-	public ChatUserListAdapter(Context context, int resource) {
-		super(context, resource);
-		viewInflater = LayoutInflater.from(getContext());
-	}
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
-	@Override
-	public int getCount() {
-		return super.getCount() + 1;
-	}
+        if (position == getCount() - 1) {
+            holder.userThumbView.setImageResource(R.drawable.invite_btn);
+            holder.userThumbView.setTag(null);
+            holder.userNameView.setText(R.string.invite_chat);
+        } else {
+            User user = this.getItem(position);
+            holder.userNameView.setText(user.getFullname());
+        }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-		if (convertView == null) {
-			convertView = viewInflater.inflate(R.layout.item_chat_user,
-					parent, false);
-			holder = new ViewHolder(convertView);
-			convertView.setTag(holder);
+        return convertView;
+    }
 
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-		}
+    public List<User> getUserList() {
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < super.getCount(); i++) {
+            list.add(getItem(i));
+        }
+        return list;
+    }
 
-		if (position == getCount() - 1) {
-			holder.userThumbView.setImageResource(R.drawable.invite_btn);
-			holder.userThumbView.setTag(null);
-			holder.userNameView.setText(R.string.invite_chat);
-		} else {
-			User user = this.getItem(position);
-			holder.userNameView.setText(user.getFullname());
-		}
+    class ViewHolder {
+        @InjectView(R.id.item_chat_user_thumb)
+        ImageView userThumbView;
+        @InjectView(R.id.item_chat_user_name)
+        TextView userNameView;
 
-		return convertView;
-	}
-
-	public List<User> getUserList() {
-		List<User> list = new ArrayList<>();
-		for (int i = 0; i < super.getCount(); i++) {
-			list.add(getItem(i));
-		}
-		return list;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 
 }

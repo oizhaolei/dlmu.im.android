@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.MainActivity;
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
@@ -17,155 +16,152 @@ import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.LoginTask;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 public class LoginLoadingActivity extends Activity {
-	public static void close() {
-		if (instance != null) {
-			instance.finish();
-			instance = null;
-		}
-	}
+    public static final String PREF_USERINFO_NAME = "pref_userinfo_name";
+    public static final String PREF_USERINFO_PASS = "pref_userinfo_pass";
+    protected static LoginLoadingActivity instance;
+    private final TaskListener mLoginTaskListener = new TaskAdapter() {
 
-	/*
-	 * 进入主画面
-	 */
-	public static void gotoMainActivity(final Activity currentActivity) {
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				Intent intent = new Intent(currentActivity, MainActivity.class);
-				currentActivity.startActivity(intent);
-			}
-		}, 1);
-	}
+        @Override
+        public void onPostExecute(GenericTask task, TaskResult result) {
+            if (result == TaskResult.OK) {
+                onLoginPrepare();
+                onLoginSuccess();
+            } else {
+                onLoginFailure(task.getMsg());
+            }
+        }
 
-	public static void loginSuccessHandler(Activity currentActivity) {
-		App.userDAO.mergeUser(App.readUser());
+        @Override
+        public void onPreExecute(GenericTask task) {
+            onLoginBegin();
+        }
+    };
+    // Tasks.
+    private GenericTask mLoginTask;
 
-		gotoMainActivity(currentActivity);
-	}
+    public static void close() {
+        if (instance != null) {
+            instance.finish();
+            instance = null;
+        }
+    }
 
-	protected static LoginLoadingActivity instance;
+    /*
+     * 进入主画面
+     */
+    public static void gotoMainActivity(final Activity currentActivity) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(currentActivity, MainActivity.class);
+                currentActivity.startActivity(intent);
+            }
+        }, 1);
+    }
 
-	public static final String PREF_USERINFO_NAME = "pref_userinfo_name";
+    public static void loginSuccessHandler(Activity currentActivity) {
+        App.userDAO.mergeUser(App.readUser());
 
-	public static final String PREF_USERINFO_PASS = "pref_userinfo_pass";
+        gotoMainActivity(currentActivity);
+    }
 
-	// Tasks.
-	private GenericTask mLoginTask;
+    private void doLogin(String username, String password, String encrypt) {
+        if (mLoginTask != null
+                && mLoginTask.getStatus() == GenericTask.Status.RUNNING) {
+            return;
+        }
 
-	private final TaskListener mLoginTaskListener = new TaskAdapter() {
+        mLoginTask = new LoginTask(username, password, Boolean.valueOf(encrypt));
+        mLoginTask.setListener(mLoginTaskListener);
+        mLoginTask.execute();
+    }
 
-		@Override
-		public void onPostExecute(GenericTask task, TaskResult result) {
-			if (result == TaskResult.OK) {
-				onLoginPrepare();
-				onLoginSuccess();
-			} else {
-				onLoginFailure(task.getMsg());
-			}
-		}
+    private String[] getLoginInfo() {
+        // 1, from extras
+        String[] loginInfo = getLoginInfoFromExtras();
+        if (loginInfo != null)
+            return loginInfo;
 
-		@Override
-		public void onPreExecute(GenericTask task) {
-			onLoginBegin();
-		}
-	};
+        // 2, from SharedPreference
+        User user = PrefUtils.readUser();
+        if (user != null) {
+            loginInfo = new String[]{user.getUsername(), user.getPassword(),
+                    Boolean.TRUE.toString()};
+        }
+        return loginInfo;
+    }
 
-	private void doLogin(String username, String password, String encrypt) {
-		if (mLoginTask != null
-				&& mLoginTask.getStatus() == GenericTask.Status.RUNNING) {
-			return;
-		}
+    private String[] getLoginInfoFromExtras() {
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            return null;
+        } else {
+            String username = extras.getString(PREF_USERINFO_NAME);
+            if (username == null)
+                return null;
+            String password = extras.getString(PREF_USERINFO_PASS);
+            String encrypt = Boolean.FALSE.toString();
+            return new String[]{username, password, encrypt};
+        }
+    }
 
-		mLoginTask = new LoginTask(username, password, Boolean.valueOf(encrypt));
-		mLoginTask.setListener(mLoginTaskListener);
-		mLoginTask.execute();
-	}
+    private void gotoLoginGatingActivity() {
+        Intent intent = new Intent(this, LoginGateActivity.class);
+        startActivity(intent);
+    }
 
-	private String[] getLoginInfo() {
-		// 1, from extras
-		String[] loginInfo = getLoginInfoFromExtras();
-		if (loginInfo != null)
-			return loginInfo;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+        setContentView(R.layout.activity_login_loading);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tryLogin();
+            }
+        }, 0);
+    }
 
-		// 2, from SharedPreference
-		User user = PrefUtils.readUser();
-		if (user != null) {
-			loginInfo = new String[]{user.getUsername(), user.getPassword(),
-					Boolean.TRUE.toString()};
-		}
-		return loginInfo;
-	}
+    private void onLoginBegin() {
+        // Utils.showProgress(this, R.string.logging_in);
+    }
 
-	private String[] getLoginInfoFromExtras() {
-		Bundle extras = getIntent().getExtras();
-		if (extras == null) {
-			return null;
-		} else {
-			String username = extras.getString(PREF_USERINFO_NAME);
-			if (username == null)
-				return null;
-			String password = extras.getString(PREF_USERINFO_PASS);
-			String encrypt = Boolean.FALSE.toString();
-			return new String[]{username, password, encrypt};
-		}
-	}
+    private void onLoginFailure(String msg) {
+        Utils.dismissDialog(LoginActivity.progressDialog);
+        if (!Utils.isEmpty(msg)) {
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        }
+        // Utils.doLogout(this);
+        if (null == LoginActivity.instance) {
+            gotoLoginGatingActivity();
+        }
+        this.finish();
+    }
 
-	private void gotoLoginGatingActivity() {
-		Intent intent = new Intent(this, LoginGateActivity.class);
-		startActivity(intent);
-	}
+    private void onLoginPrepare() {
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		instance = this;
-		setContentView(R.layout.activity_login_loading);
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				tryLogin();
-			}
-		}, 0);
-	}
+    private void onLoginSuccess() {
+        Utils.dismissDialog(LoginActivity.progressDialog);
+        loginSuccessHandler(LoginLoadingActivity.this);
+    }
 
-	private void onLoginBegin() {
-		// Utils.showProgress(this, R.string.logging_in);
-	}
+    private void tryLogin() {
+        String[] loginInfo = getLoginInfo();
+        if (loginInfo == null) {
+            Toast.makeText(this, R.string.incorrect_login_info,
+                    Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            String username = loginInfo[0];
+            String password = loginInfo[1];
+            String encrypt = loginInfo[2];
 
-	private void onLoginFailure(String msg) {
-		Utils.dismissDialog(LoginActivity.progressDialog);
-		if (!Utils.isEmpty(msg)) {
-			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-		}
-		// Utils.doLogout(this);
-		if (null == LoginActivity.instance) {
-			gotoLoginGatingActivity();
-		}
-		this.finish();
-	}
-
-	private void onLoginPrepare() {
-	}
-
-	private void onLoginSuccess() {
-		Utils.dismissDialog(LoginActivity.progressDialog);
-		loginSuccessHandler(LoginLoadingActivity.this);
-	}
-
-	private void tryLogin() {
-		String[] loginInfo = getLoginInfo();
-		if (loginInfo == null) {
-			Toast.makeText(this, R.string.incorrect_login_info,
-					Toast.LENGTH_SHORT).show();
-			finish();
-		} else {
-			String username = loginInfo[0];
-			String password = loginInfo[1];
-			String encrypt = loginInfo[2];
-
-			doLogin(username, password, encrypt);
-		}
-	}
+            doLogin(username, password, encrypt);
+        }
+    }
 }

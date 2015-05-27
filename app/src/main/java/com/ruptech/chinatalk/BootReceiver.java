@@ -12,30 +12,30 @@ import com.ruptech.chinatalk.utils.NetUtil;
 import com.ruptech.chinatalk.utils.Utils;
 
 public class BootReceiver extends BroadcastReceiver {
-	private static final String TAG = Utils.CATEGORY
-			+ BootReceiver.class.getSimpleName();
-	public static final String BOOT_COMPLETED_ACTION = "com.ruptech.tttalk.action.BOOT_COMPLETED";
+    public static final String BOOT_COMPLETED_ACTION = "com.ruptech.tttalk.action.BOOT_COMPLETED";
+    private static final String TAG = Utils.CATEGORY
+            + BootReceiver.class.getSimpleName();
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		String action = intent.getAction();
-		Log.i(TAG, "action = " + action);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        Log.i(TAG, "action = " + action);
 
-		if (App.readUser() != null) {
-			if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
-				int connectivity = NetUtil.getNetworkState(context);
-				App.mBus.post(new NetChangeEvent(connectivity));
+        if (App.readUser() != null) {
+            if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
+                int connectivity = NetUtil.getNetworkState(context);
+                App.mBus.post(new NetChangeEvent(connectivity));
 
-			} else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-				Log.d(TAG, "System shutdown, stopping service.");
-				Intent xmppServiceIntent = new Intent(context, XMPPService.class);
-				context.stopService(xmppServiceIntent);
+            } else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
+                Log.d(TAG, "System shutdown, stopping service.");
+                Intent xmppServiceIntent = new Intent(context, XMPPService.class);
+                context.stopService(xmppServiceIntent);
 
-			} else {
-				Intent i = new Intent(context, XMPPService.class);
-				i.setAction(BOOT_COMPLETED_ACTION);
-				context.startService(i);
-			}
-		}
-	}
+            } else {
+                Intent i = new Intent(context, XMPPService.class);
+                i.setAction(BOOT_COMPLETED_ACTION);
+                context.startService(i);
+            }
+        }
+    }
 }

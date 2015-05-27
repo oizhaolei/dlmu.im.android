@@ -24,80 +24,80 @@ import org.jivesoftware.smack.packet.Stanza;
  * TTTalk translated
  */
 public class TTTalkChatListener implements StanzaListener {
-	private final ContentResolver mContentResolver;
-	protected final String TAG = Utils.CATEGORY + TTTalkChatListener.class.getSimpleName();
+    protected final String TAG = Utils.CATEGORY + TTTalkChatListener.class.getSimpleName();
+    private final ContentResolver mContentResolver;
 
-	protected TTTalkChatListener(ContentResolver contentResolver) {
-		this.mContentResolver = contentResolver;
-	}
+    protected TTTalkChatListener(ContentResolver contentResolver) {
+        this.mContentResolver = contentResolver;
+    }
 
-	@Override
-	public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
-		Message msg = (Message) packet;
+    @Override
+    public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
+        Message msg = (Message) packet;
 
-		String body = msg.getBody();
-		if (body == null) {
-			return;
-		}
+        String body = msg.getBody();
+        if (body == null) {
+            return;
+        }
 
-		String fromJID = XMPPUtils.getJabberID(msg.getFrom());
-		String toJID = XMPPUtils.getJabberID(msg.getTo());
+        String fromJID = XMPPUtils.getJabberID(msg.getFrom());
+        String toJID = XMPPUtils.getJabberID(msg.getTo());
 
-		Log.e(TAG, msg.toString());
-		if (fromJID.equals(toJID)) {
-			return;
-		}
+        Log.e(TAG, msg.toString());
+        if (fromJID.equals(toJID)) {
+            return;
+        }
 
-		long ts = System.currentTimeMillis();
+        long ts = System.currentTimeMillis();
 
-		Chat chat = new Chat();
-		chat.setFromJid(fromJID);
-		chat.setToJid(toJID);
-		chat.setContent(body);
-		chat.setPid(msg.getPacketID());
-		chat.setStatus(ChatProvider.DS_NEW);
-		chat.setCreated_date(ts);
+        Chat chat = new Chat();
+        chat.setFromJid(fromJID);
+        chat.setToJid(toJID);
+        chat.setContent(body);
+        chat.setPid(msg.getPacketID());
+        chat.setStatus(ChatProvider.DS_NEW);
+        chat.setCreated_date(ts);
 
-		//from fullname, to fullname
-		User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJID));
-		User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
-		if (fromUser != null) {
-			chat.setFromFullname(fromUser.getFullname());
-		}
-		if (toUser != null) {
-			chat.setToFullname(toUser.getFullname());
-		}
+        //from fullname, to fullname
+        User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJID));
+        User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
+        if (fromUser != null) {
+            chat.setFromFullname(fromUser.getFullname());
+        }
+        if (toUser != null) {
+            chat.setToFullname(toUser.getFullname());
+        }
 
-		if (fromUser == null) {
-			retrieveUser(fromJID);
-		} else if (toUser == null) {
-			retrieveUser(toJID);
-		}
+        if (fromUser == null) {
+            retrieveUser(fromJID);
+        } else if (toUser == null) {
+            retrieveUser(toJID);
+        }
 
-		ChatProvider.insertChat(mContentResolver, chat);
-		App.mBus.post(new NewChatEvent(fromJID, body));
-	}
+        ChatProvider.insertChat(mContentResolver, chat);
+        App.mBus.post(new NewChatEvent(fromJID, body));
+    }
 
-	private void retrieveUser(final String jid) {
-		String username = User.getUsernameFromJid(jid);
-		RetrieveUserTask retrieveUserTask = new RetrieveUserTask(username);
-		TaskAdapter taskListener = new TaskAdapter() {
-			@Override
-			public void onPostExecute(GenericTask task, TaskResult result) {
-				super.onPostExecute(task, result);
-				RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
-				if (result == TaskResult.OK) {
-					User user = retrieveUserTask.getUser();
-					App.userDAO.mergeUser(user);
+    private void retrieveUser(final String jid) {
+        String username = User.getUsernameFromJid(jid);
+        RetrieveUserTask retrieveUserTask = new RetrieveUserTask(username);
+        TaskAdapter taskListener = new TaskAdapter() {
+            @Override
+            public void onPostExecute(GenericTask task, TaskResult result) {
+                super.onPostExecute(task, result);
+                RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
+                if (result == TaskResult.OK) {
+                    User user = retrieveUserTask.getUser();
+                    App.userDAO.mergeUser(user);
 
-					ChatProvider.updateChat(jid, user.getFullname());
-				}
-			}
+                    ChatProvider.updateChat(jid, user.getFullname());
+                }
+            }
 
-		};
-		retrieveUserTask.setListener(taskListener);
-		retrieveUserTask.execute();
-	}
+        };
+        retrieveUserTask.setListener(taskListener);
+        retrieveUserTask.execute();
+    }
 
 
 }

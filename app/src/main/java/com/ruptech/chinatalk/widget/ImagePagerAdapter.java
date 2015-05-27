@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.ui.ImageViewActivity;
 import com.ruptech.chinatalk.utils.ImageManager;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import java.util.List;
 
@@ -25,87 +25,87 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import static butterknife.ButterKnife.findById;
 
 public class ImagePagerAdapter extends PagerAdapter {
-	private final LayoutInflater inflater;
-	private List<String> imageUrlList;
-	private final ImageProgressBar imageProgressBar;
-	private ImageViewTouch imageView;
+    private final LayoutInflater inflater;
+    private final ImageProgressBar imageProgressBar;
+    private List<String> imageUrlList;
+    private ImageViewTouch imageView;
 
-	public ImagePagerAdapter(Context context, ImageProgressBar progressBar) {
-		inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		this.imageProgressBar = progressBar;
-	}
+    public ImagePagerAdapter(Context context, ImageProgressBar progressBar) {
+        inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.imageProgressBar = progressBar;
+    }
 
-	@Override
-	public void destroyItem(ViewGroup view, int position, Object object) {
-		((ViewPager) view).removeView((View) object);
-	}
+    @Override
+    public void destroyItem(ViewGroup view, int position, Object object) {
+        ((ViewPager) view).removeView((View) object);
+    }
 
-	@Override
-	public void finishUpdate(View container) {
-	}
+    @Override
+    public void finishUpdate(View container) {
+    }
 
-	@Override
-	public int getCount() {
-		return imageUrlList.size();
-	}
+    @Override
+    public int getCount() {
+        return imageUrlList.size();
+    }
 
-	public List<String> getImageUrlList() {
-		return imageUrlList;
-	}
+    public List<String> getImageUrlList() {
+        return imageUrlList;
+    }
 
-	public ImageView getImageView() {
-		return imageView;
-	}
+    public void setImageUrlList(List<String> imageUrlList) {
+        this.imageUrlList = imageUrlList;
+    }
 
-	@Override
-	public int getItemPosition(Object object) {
-		return super.getItemPosition(object);
-	}
+    public ImageView getImageView() {
+        return imageView;
+    }
 
-	public String getUrl(int pos) {
-		return imageUrlList.get(pos);
-	}
+    @Override
+    public int getItemPosition(Object object) {
+        return super.getItemPosition(object);
+    }
 
-	@Override
-	public Object instantiateItem(ViewGroup view, final int position) {
-		View imageLayout = inflater.inflate(R.layout.item_image_view, view,
-				false);
+    public String getUrl(int pos) {
+        return imageUrlList.get(pos);
+    }
 
-		imageView = (ImageViewTouch) findById(imageLayout, R.id.imageView);
-		imageView.setDisplayType(DisplayType.FIT_TO_SCREEN);
+    @Override
+    public Object instantiateItem(ViewGroup view, final int position) {
+        View imageLayout = inflater.inflate(R.layout.item_image_view, view,
+                false);
 
-		String url = imageUrlList.get(position);
-		if (!Utils.isEmpty(url)) {
-			ImageManager.imageLoader.displayImage(url, imageView, ImageManager
-							.getImageOptionsPortrait(), ImageViewActivity
-							.createImageLoadingListener(imageProgressBar),
-					ImageViewActivity
-							.createLoadingProgresListener(imageProgressBar));
-		}
-		((ViewPager) view).addView(imageLayout, 0);
-		return imageLayout;
-	}
+        imageView = (ImageViewTouch) findById(imageLayout, R.id.imageView);
+        imageView.setDisplayType(DisplayType.FIT_TO_SCREEN);
 
-	@Override
-	public boolean isViewFromObject(View view, Object object) {
-		return view.equals(object);
-	}
+        String url = imageUrlList.get(position);
+        if (!Utils.isEmpty(url)) {
+            ImageManager.imageLoader.displayImage(url, imageView, ImageManager
+                            .getImageOptionsPortrait(), ImageViewActivity
+                            .createImageLoadingListener(imageProgressBar),
+                    ImageViewActivity
+                            .createLoadingProgresListener(imageProgressBar));
+        }
+        ((ViewPager) view).addView(imageLayout, 0);
+        return imageLayout;
+    }
 
-	@Override
-	public void restoreState(Parcelable state, ClassLoader loader) {
-	}
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view.equals(object);
+    }
 
-	@Override
-	public Parcelable saveState() {
-		return null;
-	}
+    @Override
+    public void restoreState(Parcelable state, ClassLoader loader) {
+    }
 
-	public void setImageUrlList(List<String> imageUrlList) {
-		this.imageUrlList = imageUrlList;
-	}
+    @Override
+    public Parcelable saveState() {
+        return null;
+    }
 
-	@Override
-	public void startUpdate(View container) {
-	}
+    @Override
+    public void startUpdate(View container) {
+    }
 }

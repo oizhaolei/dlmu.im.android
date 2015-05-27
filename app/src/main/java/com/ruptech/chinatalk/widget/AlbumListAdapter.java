@@ -15,8 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.ImageManager;
+import com.ruptech.dlmu.im.R;
 
 import java.util.List;
 import java.util.Map;
@@ -27,164 +27,162 @@ import butterknife.InjectView;
 import static butterknife.ButterKnife.findById;
 
 public class AlbumListAdapter extends ArrayAdapter<Map<String, String>> {
-	class ViewHolder {
-		@InjectView(R.id.item_album_grid_image)
-		ImageView imageView;
+    private final Context mContext;
+    private final LayoutInflater viewInflater;
+    private final int mWidth;
+    private Camera mCamera;
+    private SurfaceView mPreview;
+    private final SurfaceHolder.Callback callback = new SurfaceHolder.Callback() {
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                                   int height) {
 
-	private final Context mContext;
-	private final LayoutInflater viewInflater;
-	private final int mWidth;
+            if (mCamera != null) {
+                try {
+                    Camera.Parameters params = mCamera.getParameters();
+                    List<Camera.Size> sizes = params.getSupportedPreviewSizes();
+                    for (int i = 0; i < sizes.size(); i++) {
+                        Size temp = sizes.get(i);
+                        if (temp.width == temp.height) {
+                            params.setPreviewSize(temp.width, temp.height);
+                            break;
+                        }
+                    }
+                    mCamera.setParameters(params);
+                } catch (Exception e) {
+                    Log.i("TAG", "Set parameter" + e.getMessage());
+                }
 
-	private Camera mCamera;
-	private SurfaceView mPreview;
-	private View cameraView;
+                mCamera.startPreview();
+            }
+        }
 
-	private final SurfaceHolder.Callback callback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            try {
+                mCamera = Camera.open();
+                mCamera.setDisplayOrientation(90);
+                mCamera.setPreviewDisplay(mPreview.getHolder());
+            } catch (Exception e) {
+                // Utils.sendClientException(e);
+            }
+        }
 
-		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width,
-		                           int height) {
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
 
-			if (mCamera != null) {
-				try {
-					Camera.Parameters params = mCamera.getParameters();
-					List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-					for (int i = 0; i < sizes.size(); i++) {
-						Size temp = sizes.get(i);
-						if (temp.width == temp.height) {
-							params.setPreviewSize(temp.width, temp.height);
-							break;
-						}
-					}
-					mCamera.setParameters(params);
-				} catch (Exception e) {
-					Log.i("TAG", "Set parameter" + e.getMessage());
-				}
+            releaseCamera();
+        }
+    };
+    private View cameraView;
 
-				mCamera.startPreview();
-			}
-		}
+    public AlbumListAdapter(Context context, int resource) {
+        super(context, resource);
+        mContext = context;
+        Display display = ((Activity) mContext).getWindowManager()
+                .getDefaultDisplay();
+        mWidth = display.getWidth();
+        viewInflater = LayoutInflater.from(getContext());
+        this.initCamera();
+    }
 
-		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
-			try {
-				mCamera = Camera.open();
-				mCamera.setDisplayOrientation(90);
-				mCamera.setPreviewDisplay(mPreview.getHolder());
-			} catch (Exception e) {
-				// Utils.sendClientException(e);
-			}
-		}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-		@Override
-		public void surfaceDestroyed(SurfaceHolder holder) {
+    @Override
+    public int getItemViewType(int position) {
+        return position == 0 ? 0 : 1;
+    }
 
-			releaseCamera();
-		}
-	};
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            if (position == 0) {
+                return cameraView;
 
-	public AlbumListAdapter(Context context, int resource) {
-		super(context, resource);
-		mContext = context;
-		Display display = ((Activity) mContext).getWindowManager()
-				.getDefaultDisplay();
-		mWidth = display.getWidth();
-		viewInflater = LayoutInflater.from(getContext());
-		this.initCamera();
-	}
+            } else {
+                convertView = viewInflater.inflate(
+                        R.layout.item_photo_album_image, parent, false);
+                holder = new ViewHolder(convertView);
+                convertView.setTag(holder);
+                setItemSize(holder.imageView);
+                setItemSize(findById(convertView, R.id.item_mask));
+            }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+            if (position == 0) {
+                return cameraView;
+            }
+        }
 
-	@Override
-	public int getItemViewType(int position) {
-		return position == 0 ? 0 : 1;
-	}
+        if (position != 0) {
+            Map<String, String> photoData = getItem(position);
+            String path = "file://" + photoData.get("path");
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-		if (convertView == null) {
-			if (position == 0) {
-				return cameraView;
+            if (!path.equals(holder.imageView.getTag())) {
+                ImageManager.imageLoader.displayImage(path, holder.imageView,
+                        ImageManager.getOptionsLandscape(), null);
+                holder.imageView.setTag(path);
+            }
 
-			} else {
-				convertView = viewInflater.inflate(
-						R.layout.item_photo_album_image, parent, false);
-				holder = new ViewHolder(convertView);
-				convertView.setTag(holder);
-				setItemSize(holder.imageView);
-				setItemSize(findById(convertView, R.id.item_mask));
-			}
+        }
 
-		} else {
-			holder = (ViewHolder) convertView.getTag();
-			if (position == 0) {
-				return cameraView;
-			}
-		}
+        return convertView;
+    }
 
-		if (position != 0) {
-			Map<String, String> photoData = getItem(position);
-			String path = "file://" + photoData.get("path");
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
 
-			if (!path.equals(holder.imageView.getTag())) {
-				ImageManager.imageLoader.displayImage(path, holder.imageView,
-						ImageManager.getOptionsLandscape(), null);
-				holder.imageView.setTag(path);
-			}
+    private View initCamera() {
 
-		}
+        cameraView = viewInflater.inflate(R.layout.item_photo_camera_image,
+                null, false);
+        mPreview = (SurfaceView) findById(cameraView, R.id.surfaceView1);
 
-		return convertView;
-	}
+        setItemSize(mPreview);
+        setItemSize(findById(cameraView, R.id.item_mask));
+        mPreview.getHolder().addCallback(callback);
+        mPreview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mPreview.getHolder().setKeepScreenOn(true);
 
-	@Override
-	public int getViewTypeCount() {
-		return 2;
-	}
+        return cameraView;
+    }
 
-	private View initCamera() {
+    public void releaseCamera() {
+        if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
 
-		cameraView = viewInflater.inflate(R.layout.item_photo_camera_image,
-				null, false);
-		mPreview = (SurfaceView) findById(cameraView, R.id.surfaceView1);
+    }
 
-		setItemSize(mPreview);
-		setItemSize(findById(cameraView, R.id.item_mask));
-		mPreview.getHolder().addCallback(callback);
-		mPreview.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		mPreview.getHolder().setKeepScreenOn(true);
+    public void removeCallback() {
+        mPreview.getHolder().removeCallback(callback);
+    }
 
-		return cameraView;
-	}
+    private void setItemSize(View itemView) {
 
-	public void releaseCamera() {
-		if (mCamera != null) {
-			mCamera.setPreviewCallback(null);
-			mCamera.stopPreview();
-			mCamera.release();
-			mCamera = null;
-		}
+        LayoutParams imageParams = (LayoutParams) itemView.getLayoutParams();
+        imageParams.width = mWidth / 3;
+        imageParams.height = mWidth / 3;
+        itemView.setLayoutParams(imageParams);
+    }
 
-	}
+    class ViewHolder {
+        @InjectView(R.id.item_album_grid_image)
+        ImageView imageView;
 
-	public void removeCallback() {
-		mPreview.getHolder().removeCallback(callback);
-	}
-
-	private void setItemSize(View itemView) {
-
-		LayoutParams imageParams = (LayoutParams) itemView.getLayoutParams();
-		imageParams.width = mWidth / 3;
-		imageParams.height = mWidth / 3;
-		itemView.setLayoutParams(imageParams);
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 }

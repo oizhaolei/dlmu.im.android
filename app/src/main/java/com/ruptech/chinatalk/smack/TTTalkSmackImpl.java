@@ -54,360 +54,358 @@ import java.util.Date;
 
 public class TTTalkSmackImpl implements TTTalkSmack {
 
-	public static final String XMPP_IDENTITY_NAME = "tttalk";
-	public static final String XMPP_IDENTITY_TYPE = "phone";
-	static final DiscoverInfo.Identity TTTALK_IDENTITY = new DiscoverInfo.Identity("client",
-			XMPP_IDENTITY_NAME,
-			XMPP_IDENTITY_TYPE);
-	public static final int PACKET_TIMEOUT = 30000;
+    public static final String XMPP_IDENTITY_NAME = "tttalk";
+    public static final String XMPP_IDENTITY_TYPE = "phone";
+    public static final int PACKET_TIMEOUT = 30000;
+    static final DiscoverInfo.Identity TTTALK_IDENTITY = new DiscoverInfo.Identity("client",
+            XMPP_IDENTITY_NAME,
+            XMPP_IDENTITY_TYPE);
+    final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
+            ChatTable.Columns.ID, ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
+            ChatTable.Columns.CREATED_DATE, ChatTable.Columns.PACKET_ID};
+    final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.FROM_JID
+            + " = '" + App.readUser().getJid() + "' AND "
+            + ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
 
-	protected final String TAG = Utils.CATEGORY + TTTalkSmackImpl.class.getSimpleName();
+    static {
+        registerSmackProviders();
 
-	final static private String[] SEND_OFFLINE_PROJECTION = new String[]{
-			ChatTable.Columns.ID, ChatTable.Columns.TO_JID, ChatTable.Columns.CONTENT,
-			ChatTable.Columns.CREATED_DATE, ChatTable.Columns.PACKET_ID};
-	final static private String SEND_OFFLINE_SELECTION = ChatTable.Columns.FROM_JID
-			+ " = '" + App.readUser().getJid() + "' AND "
-			+ ChatTable.Columns.DELIVERY_STATUS + " = " + ChatProvider.DS_NEW;
+        SmackConfiguration.setDefaultPacketReplyTimeout(PACKET_TIMEOUT);
+    }
 
-	private final ContentResolver mContentResolver;
-	private AbstractXMPPConnection mXMPPConnection;
-	private ConnectionListener mConnectionListener;
+    protected final String TAG = Utils.CATEGORY + TTTalkSmackImpl.class.getSimpleName();
+    private final ContentResolver mContentResolver;
+    private AbstractXMPPConnection mXMPPConnection;
+    private ConnectionListener mConnectionListener;
 
-	static {
-		registerSmackProviders();
+    public TTTalkSmackImpl(ContentResolver contentResolver) {
 
-		SmackConfiguration.setDefaultPacketReplyTimeout(PACKET_TIMEOUT);
-	}
+        mContentResolver = contentResolver;
 
-	public TTTalkSmackImpl(ContentResolver contentResolver) {
+        initXMPPConnection();
 
-		mContentResolver = contentResolver;
+    }
 
-		initXMPPConnection();
-
-	}
-
-	private void initXMPPConnection() {
-		AppVersion serverAppInfo = PrefUtils.readServerAppInfo();
-		String server;
-		int port;//Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
-		if (serverAppInfo != null) {
-			server = serverAppInfo.imHost;
-			port = serverAppInfo.imPort;
-		} else {
-			server = App.properties.getProperty("xmpp.server.host");
-			port = Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
-		}
-
-		Log.i(TAG, String.format("xmpp: %s, %s", server, port));
-
-
-		XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-		configBuilder.setHost(server)
-				.setPort(port);
-		configBuilder.setResource(XMPP_IDENTITY_NAME);
-		configBuilder.setServiceName(AppPreferences.IM_SERVER_RESOURCE);
-
-		configBuilder.setSendPresence(false);
-		configBuilder.setCompressionEnabled(false); // disable for now
-		configBuilder.setDebuggerEnabled(BuildConfig.DEBUG);
-		configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
-		this.mXMPPConnection = new XMPPTCPConnection(configBuilder.build());
-
-		initServiceDiscovery();
-	}
-	// ping-pong服务器
-
-	static void registerSmackProviders() {
-		// add IQ handling
-		ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
-		ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
-		// add delayed delivery notifications
-		ProviderManager.addExtensionProvider("delay", "urn:xmpp:delay", new DelayInformationProvider());
+    static void registerSmackProviders() {
+        // add IQ handling
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#info", new DiscoverInfoProvider());
+        ProviderManager.addIQProvider("query", "http://jabber.org/protocol/disco#items", new DiscoverItemsProvider());
+        // add delayed delivery notifications
+        ProviderManager.addExtensionProvider("delay", "urn:xmpp:delay", new DelayInformationProvider());
 //		ProviderManager.addExtensionProvider("x", "jabber:x:delay", new DelayInformationProvider());
 
-		// add delivery receipts
-		ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-		ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
-		// add XMPP Ping (XEP-0199)
-		ProviderManager.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
+        // add delivery receipts
+        ProviderManager.addExtensionProvider(DeliveryReceipt.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
+        ProviderManager.addExtensionProvider(DeliveryReceiptRequest.ELEMENT, DeliveryReceipt.NAMESPACE, new DeliveryReceiptRequest.Provider());
+        // add XMPP Ping (XEP-0199)
+        ProviderManager.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
 
 
-		ServiceDiscoveryManager.setDefaultIdentity(TTTALK_IDENTITY);
-	}
+        ServiceDiscoveryManager.setDefaultIdentity(TTTALK_IDENTITY);
+    }
+    // ping-pong服务器
 
-	@Override
-	public boolean login(String account, String password) throws Exception {
-		Log.i(TAG, String.format("login: %s, %s", account, password));
-		password = account.substring(account.length() - 4);//TODO
-		registerConnectionListener();
+    private void initXMPPConnection() {
+        AppVersion serverAppInfo = PrefUtils.readServerAppInfo();
+        String server;
+        int port;//Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
+        if (serverAppInfo != null) {
+            server = serverAppInfo.imHost;
+            port = serverAppInfo.imPort;
+        } else {
+            server = App.properties.getProperty("xmpp.server.host");
+            port = Integer.parseInt(App.properties.getProperty("xmpp.server.port"));
+        }
 
-		if (!mXMPPConnection.isConnected()) {
-			mXMPPConnection.connect();
-		}
-		if (!mXMPPConnection.isAuthenticated()) {
-			try {
-				mXMPPConnection.login(account, password);
-
-				registerAllListener();// 注册监听其他的事件，比如新消息
-			} catch (Exception e) {
-				throw new Exception(String.format("%s, %s", account, password), e);
-			}
-		}
-
-		sendOfflineMessages();
-
-		setStatusFromConfig();// 更新在线状态
+        Log.i(TAG, String.format("xmpp: %s, %s", server, port));
 
 
-		App.mBus.post(new OnlineEvent());
-		//joinAllChatRoom(App.readUser().getId());
-		return mXMPPConnection.isAuthenticated();
-	}
+        XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
+        configBuilder.setHost(server)
+                .setPort(port);
+        configBuilder.setResource(XMPP_IDENTITY_NAME);
+        configBuilder.setServiceName(AppPreferences.IM_SERVER_RESOURCE);
+
+        configBuilder.setSendPresence(false);
+        configBuilder.setCompressionEnabled(false); // disable for now
+        configBuilder.setDebuggerEnabled(BuildConfig.DEBUG);
+        configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+        this.mXMPPConnection = new XMPPTCPConnection(configBuilder.build());
+
+        initServiceDiscovery();
+    }
+
+    @Override
+    public boolean login(String account, String password) throws Exception {
+        Log.i(TAG, String.format("login: %s, %s", account, password));
+        password = account.substring(account.length() - 4);//TODO
+        registerConnectionListener();
+
+        if (!mXMPPConnection.isConnected()) {
+            mXMPPConnection.connect();
+        }
+        if (!mXMPPConnection.isAuthenticated()) {
+            try {
+                mXMPPConnection.login(account, password);
+
+                registerAllListener();// 注册监听其他的事件，比如新消息
+            } catch (Exception e) {
+                throw new Exception(String.format("%s, %s", account, password), e);
+            }
+        }
+
+        sendOfflineMessages();
+
+        setStatusFromConfig();// 更新在线状态
 
 
-	private void unRegisterAllListener() {
-		mXMPPConnection.removeConnectionListener(mConnectionListener);
-	}
-
-	private void registerAllListener() {
-		registerMessageListener();
-
-	}
-
-	private void registerConnectionListener() {
-		if (mConnectionListener != null)
-			mXMPPConnection.removeConnectionListener(mConnectionListener);
-
-		mConnectionListener = new ConnectionListener() {
-			public void connectionClosedOnError(Exception e) {
-				Log.e(TAG, "connectionClosedOnError:" + e.getMessage());
-				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
-			}
-
-			@Override
-			public void connected(XMPPConnection connection) {
-				Log.e(TAG, "connected");
-			}
-
-			@Override
-			public void authenticated(XMPPConnection connection, boolean resumed) {
-				Log.e(TAG, "authenticated");
-			}
-
-			public void connectionClosed() {
-				Log.e(TAG, "connectionClosed");
-				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
-			}
-
-			public void reconnectingIn(int seconds) {
-				Log.e(TAG, "reconnectingIn");
-				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
-			}
-
-			public void reconnectionFailed(Exception e) {
-				Log.e(TAG, "reconnectionFailed:" + e.getMessage());
-				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
-			}
-
-			public void reconnectionSuccessful() {
-				Log.e(TAG, "reconnectionSuccessful");
-				App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
-			}
-		};
-
-		mXMPPConnection.addConnectionListener(mConnectionListener);
-	}
+        App.mBus.post(new OnlineEvent());
+        //joinAllChatRoom(App.readUser().getId());
+        return mXMPPConnection.isAuthenticated();
+    }
 
 
-	/**
-	 * ********* start 新消息处理 *******************
-	 */
-	private void registerMessageListener() {
+    private void unRegisterAllListener() {
+        mXMPPConnection.removeConnectionListener(mConnectionListener);
+    }
 
-		//TTTalkExtension
-		StanzaListener chatListener = new TTTalkChatListener(mContentResolver);
-		StanzaFilter chatFilter = new StanzaTypeFilter(Message.class);
-		mXMPPConnection.addAsyncStanzaListener(chatListener, chatFilter);
+    private void registerAllListener() {
+        registerMessageListener();
+
+    }
+
+    private void registerConnectionListener() {
+        if (mConnectionListener != null)
+            mXMPPConnection.removeConnectionListener(mConnectionListener);
+
+        mConnectionListener = new ConnectionListener() {
+            public void connectionClosedOnError(Exception e) {
+                Log.e(TAG, "connectionClosedOnError:" + e.getMessage());
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosedOnError"));
+            }
+
+            @Override
+            public void connected(XMPPConnection connection) {
+                Log.e(TAG, "connected");
+            }
+
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                Log.e(TAG, "authenticated");
+            }
+
+            public void connectionClosed() {
+                Log.e(TAG, "connectionClosed");
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "connectionClosed"));
+            }
+
+            public void reconnectingIn(int seconds) {
+                Log.e(TAG, "reconnectingIn");
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectingIn"));
+            }
+
+            public void reconnectionFailed(Exception e) {
+                Log.e(TAG, "reconnectionFailed:" + e.getMessage());
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionFailed"));
+            }
+
+            public void reconnectionSuccessful() {
+                Log.e(TAG, "reconnectionSuccessful");
+                App.mBus.post(new ConnectionStatusChangedEvent(NetUtil.NETWORK_NONE, "reconnectionSuccessful"));
+            }
+        };
+
+        mXMPPConnection.addConnectionListener(mConnectionListener);
+    }
 
 
-	}
+    /**
+     * ********* start 新消息处理 *******************
+     */
+    private void registerMessageListener() {
+
+        //TTTalkExtension
+        StanzaListener chatListener = new TTTalkChatListener(mContentResolver);
+        StanzaFilter chatFilter = new StanzaTypeFilter(Message.class);
+        mXMPPConnection.addAsyncStanzaListener(chatListener, chatFilter);
 
 
-	/**
-	 * 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
-	 */
-	private void initServiceDiscovery() {
-		// register connection features
-		ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(mXMPPConnection);
+    }
 
-		sdm.addFeature("http://jabber.org/protocol/disco#info");
 
-		// reference PingManager, set ping flood protection to 10s
-		PingManager.getInstanceFor(mXMPPConnection).setPingInterval(10 * 1000);
+    /**
+     * 与服务器交互消息监听,发送消息需要回执，判断是否发送成功
+     */
+    private void initServiceDiscovery() {
+        // register connection features
+        ServiceDiscoveryManager sdm = ServiceDiscoveryManager.getInstanceFor(mXMPPConnection);
 
-		DeliveryReceiptManager dm = DeliveryReceiptManager.getInstanceFor(mXMPPConnection);
-		dm.autoAddDeliveryReceiptRequests();
-		dm.setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
-		dm.addReceiptReceivedListener(new ReceiptReceivedListener() {
-			@Override
-			public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
-				Log.e(TAG, String.format("onReceiptReceived:%s, %s, %s", fromJid, toJid, receiptId));
-				changeMessageDeliveryStatus(XMPPUtils.getJabberID(fromJid), XMPPUtils.getJabberID(toJid), receiptId, ChatProvider.DS_ACKED);
-			}
-		});
+        sdm.addFeature("http://jabber.org/protocol/disco#info");
 
-	}
+        // reference PingManager, set ping flood protection to 10s
+        PingManager.getInstanceFor(mXMPPConnection).setPingInterval(10 * 1000);
 
-	public void changeMessageDeliveryStatus(String fromJID, String toJID, String packetID, int new_status) {
-		ContentValues cv = new ContentValues();
-		cv.put(ChatTable.Columns.DELIVERY_STATUS, new_status);
-		mContentResolver.update(ChatProvider.CONTENT_URI, cv,
-				ChatTable.Columns.FROM_JID + " = ? AND " +
-						ChatTable.Columns.TO_JID + " = ? AND " +
-						ChatTable.Columns.PACKET_ID + " = ? ", new String[]{toJID, fromJID, packetID});
-	}
+        DeliveryReceiptManager dm = DeliveryReceiptManager.getInstanceFor(mXMPPConnection);
+        dm.autoAddDeliveryReceiptRequests();
+        dm.setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
+        dm.addReceiptReceivedListener(new ReceiptReceivedListener() {
+            @Override
+            public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
+                Log.e(TAG, String.format("onReceiptReceived:%s, %s, %s", fromJid, toJid, receiptId));
+                changeMessageDeliveryStatus(XMPPUtils.getJabberID(fromJid), XMPPUtils.getJabberID(toJid), receiptId, ChatProvider.DS_ACKED);
+            }
+        });
 
-	@Override
-	public boolean isAuthenticated() {
-		return mXMPPConnection != null && mXMPPConnection.isConnected() && mXMPPConnection
-				.isAuthenticated();
-	}
+    }
 
-	public void setStatusFromConfig() throws SmackException.NotConnectedException {
+    public void changeMessageDeliveryStatus(String fromJID, String toJID, String packetID, int new_status) {
+        ContentValues cv = new ContentValues();
+        cv.put(ChatTable.Columns.DELIVERY_STATUS, new_status);
+        mContentResolver.update(ChatProvider.CONTENT_URI, cv,
+                ChatTable.Columns.FROM_JID + " = ? AND " +
+                        ChatTable.Columns.TO_JID + " = ? AND " +
+                        ChatTable.Columns.PACKET_ID + " = ? ", new String[]{toJID, fromJID, packetID});
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return mXMPPConnection != null && mXMPPConnection.isConnected() && mXMPPConnection
+                .isAuthenticated();
+    }
+
+    public void setStatusFromConfig() throws SmackException.NotConnectedException {
 //		boolean messageCarbons = true;
-		String statusMode = PrefUtils.AVAILABLE;
-		String statusMessage = "online";
-		int priority = 0;
+        String statusMode = PrefUtils.AVAILABLE;
+        String statusMessage = "online";
+        int priority = 0;
 //		if (messageCarbons)
 //			CarbonManager.getInstanceFor(mXMPPConnection).sendCarbonsEnabled(
 //					true);
 
-		Presence presence = new Presence(Presence.Type.available);
-		Presence.Mode mode = Presence.Mode.valueOf(statusMode);
-		presence.setMode(mode);
-		presence.setStatus(statusMessage);
-		presence.setPriority(priority);
-		mXMPPConnection.sendStanza(presence);
-	}
+        Presence presence = new Presence(Presence.Type.available);
+        Presence.Mode mode = Presence.Mode.valueOf(statusMode);
+        presence.setMode(mode);
+        presence.setStatus(statusMessage);
+        presence.setPriority(priority);
+        mXMPPConnection.sendStanza(presence);
+    }
 
 
-	public String getUser() {
-		return mXMPPConnection.getUser();
-	}
+    public String getUser() {
+        return mXMPPConnection.getUser();
+    }
 
-	@Override
-	public boolean logout() {
-		Log.d(TAG, "unRegisterCallback()");
-		// remove callbacks _before_ tossing old connection
-		try {
-			unRegisterAllListener();
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage(), e);
-			// ignore it!
-			return false;
-		}
-
-
-		if (mXMPPConnection.isConnected()) {
-			// work around SMACK's #%&%# blocking disconnect()
-			new Thread() {
-				public void run() {
-					Log.d(TAG, "shutDown thread started");
-					mXMPPConnection.disconnect();
-					App.mBus.post(new OfflineEvent());
-					Log.d(TAG, "shutDown thread finished");
-				}
-			}.start();
-		}
-		return true;
-	}
-
-	@Override
-	public void sendMessage(String toJID, Chat chat) throws SmackException.NotConnectedException {
-		final Message newMessage = new Message(toJID, Message.Type.chat);
-
-		String content = chat.getContent();
-		newMessage.setBody(content);
-		newMessage.addExtension(new DeliveryReceiptRequest());
-
-		Log.e(TAG, newMessage.toString());
-
-		String fromJid = App.readUser().getJid();
-		chat.setFromJid(fromJid);
-		chat.setToJid(toJID);
-		chat.setPid(newMessage.getStanzaId());
-		chat.setCreated_date(System.currentTimeMillis());
-
-		if (isAuthenticated()) {
-			chat.setStatus(ChatProvider.DS_SENT_OR_READ);
-			mXMPPConnection.sendStanza(newMessage);
-		} else {
-			// send offline -> store to DB
-			chat.setStatus(ChatProvider.DS_NEW);
-		}
+    @Override
+    public boolean logout() {
+        Log.d(TAG, "unRegisterCallback()");
+        // remove callbacks _before_ tossing old connection
+        try {
+            unRegisterAllListener();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            // ignore it!
+            return false;
+        }
 
 
-		//from fullname, to fullname
-		User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJid));
-		User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
-		if (fromUser != null) {
-			chat.setFromFullname(fromUser.getFullname());
-		}
-		if (toUser != null) {
-			chat.setToFullname(toUser.getFullname());
-		}
+        if (mXMPPConnection.isConnected()) {
+            // work around SMACK's #%&%# blocking disconnect()
+            new Thread() {
+                public void run() {
+                    Log.d(TAG, "shutDown thread started");
+                    mXMPPConnection.disconnect();
+                    App.mBus.post(new OfflineEvent());
+                    Log.d(TAG, "shutDown thread finished");
+                }
+            }.start();
+        }
+        return true;
+    }
 
-		ChatProvider.insertChat(mContentResolver, chat);
-	}
+    @Override
+    public void sendMessage(String toJID, Chat chat) throws SmackException.NotConnectedException {
+        final Message newMessage = new Message(toJID, Message.Type.chat);
+
+        String content = chat.getContent();
+        newMessage.setBody(content);
+        newMessage.addExtension(new DeliveryReceiptRequest());
+
+        Log.e(TAG, newMessage.toString());
+
+        String fromJid = App.readUser().getJid();
+        chat.setFromJid(fromJid);
+        chat.setToJid(toJID);
+        chat.setPid(newMessage.getStanzaId());
+        chat.setCreated_date(System.currentTimeMillis());
+
+        if (isAuthenticated()) {
+            chat.setStatus(ChatProvider.DS_SENT_OR_READ);
+            mXMPPConnection.sendStanza(newMessage);
+        } else {
+            // send offline -> store to DB
+            chat.setStatus(ChatProvider.DS_NEW);
+        }
 
 
-	/**
-	 * ************** start 发送离线消息 **********************
-	 */
-	public void sendOfflineMessages() throws SmackException.NotConnectedException {
-		Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
-				SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
-		final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
-		final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.TO_JID);
-		final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CONTENT);
-		final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CREATED_DATE);
-		final int PACKETID_COL = cursor
-				.getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
-		ContentValues mark_sent = new ContentValues();
-		mark_sent.put(ChatTable.Columns.DELIVERY_STATUS,
-				ChatProvider.DS_SENT_OR_READ);
-		while (cursor.moveToNext()) {
-			int _id = cursor.getInt(_ID_COL);
-			String toJID = cursor.getString(JID_COL);
-			String message = cursor.getString(MSG_COL);
-			String stanzaId = cursor.getString(PACKETID_COL);
-			long ts = cursor.getLong(TS_COL);
-			Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
-			final Message newMessage = new Message(toJID, Message.Type.chat);
-			newMessage.setBody(message);
+        //from fullname, to fullname
+        User fromUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJid));
+        User toUser = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(toJID));
+        if (fromUser != null) {
+            chat.setFromFullname(fromUser.getFullname());
+        }
+        if (toUser != null) {
+            chat.setToFullname(toUser.getFullname());
+        }
+
+        ChatProvider.insertChat(mContentResolver, chat);
+    }
 
 
-			DelayInformation delay = new DelayInformation(new Date(ts));
-			newMessage.addExtension(delay);
-			newMessage.addExtension(new DeliveryReceiptRequest());
-			if ((stanzaId != null) && (stanzaId.length() > 0)) {
-				newMessage.setStanzaId(stanzaId);
-			} else {
-				stanzaId = newMessage.getStanzaId();
-				mark_sent.put(ChatTable.Columns.PACKET_ID, stanzaId);
-			}
-			Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
-					+ ChatProvider.QUERY_URI + "/" + _id);
-			mContentResolver.update(rowuri, mark_sent, null, null);
-			DeliveryReceiptRequest.addTo(newMessage);
-			mXMPPConnection.sendStanza(newMessage); // must be after marking
-			// delivered, otherwise it
-			// may override the
-			// SendFailListener
-		}
-		cursor.close();
-	}
+    /**
+     * ************** start 发送离线消息 **********************
+     */
+    public void sendOfflineMessages() throws SmackException.NotConnectedException {
+        Cursor cursor = mContentResolver.query(ChatProvider.CONTENT_URI,
+                SEND_OFFLINE_PROJECTION, SEND_OFFLINE_SELECTION, null, null);
+        final int _ID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.ID);
+        final int JID_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.TO_JID);
+        final int MSG_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CONTENT);
+        final int TS_COL = cursor.getColumnIndexOrThrow(ChatTable.Columns.CREATED_DATE);
+        final int PACKETID_COL = cursor
+                .getColumnIndexOrThrow(ChatTable.Columns.PACKET_ID);
+        ContentValues mark_sent = new ContentValues();
+        mark_sent.put(ChatTable.Columns.DELIVERY_STATUS,
+                ChatProvider.DS_SENT_OR_READ);
+        while (cursor.moveToNext()) {
+            int _id = cursor.getInt(_ID_COL);
+            String toJID = cursor.getString(JID_COL);
+            String message = cursor.getString(MSG_COL);
+            String stanzaId = cursor.getString(PACKETID_COL);
+            long ts = cursor.getLong(TS_COL);
+            Log.d(TAG, "sendOfflineMessages: " + toJID + " > " + message);
+            final Message newMessage = new Message(toJID, Message.Type.chat);
+            newMessage.setBody(message);
+
+
+            DelayInformation delay = new DelayInformation(new Date(ts));
+            newMessage.addExtension(delay);
+            newMessage.addExtension(new DeliveryReceiptRequest());
+            if ((stanzaId != null) && (stanzaId.length() > 0)) {
+                newMessage.setStanzaId(stanzaId);
+            } else {
+                stanzaId = newMessage.getStanzaId();
+                mark_sent.put(ChatTable.Columns.PACKET_ID, stanzaId);
+            }
+            Uri rowuri = Uri.parse("content://" + ChatProvider.AUTHORITY + "/"
+                    + ChatProvider.QUERY_URI + "/" + _id);
+            mContentResolver.update(rowuri, mark_sent, null, null);
+            DeliveryReceiptRequest.addTo(newMessage);
+            mXMPPConnection.sendStanza(newMessage); // must be after marking
+            // delivered, otherwise it
+            // may override the
+            // SendFailListener
+        }
+        cursor.close();
+    }
 
 }

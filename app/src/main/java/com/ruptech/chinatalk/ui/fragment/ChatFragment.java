@@ -29,120 +29,114 @@ import butterknife.InjectView;
 
 public class ChatFragment extends Fragment {
 
-	private class ChatObserver extends ContentObserver {
-		public ChatObserver() {
-			super(mainHandler);
-		}
+    static final String LOG_TAG = ChatFragment.class.getName();
+    @InjectView(R.id.chat_list)
+    ListView chatListView;
 
-		public void onChange(boolean selfChange) {
-			mainHandler.postDelayed(new Runnable() {
-				public void run() {
-					updateChat();
-				}
-			}, 100);
-		}
-	}
-
-	@InjectView(R.id.chat_list)
-	ListView chatListView;
-
-	@InjectView(R.id.chat_emptyview_text)
-	TextView chatEmptyView;
+    @InjectView(R.id.chat_emptyview_text)
+    TextView chatEmptyView;
 
 
-	private Handler mainHandler = new Handler();
+    private Handler mainHandler = new Handler();
 
-	private ContentObserver mChatObserver = new ChatObserver();
-	private ContentResolver mContentResolver;
-	private RecentChatAdapter mRecentChatAdapter;
+    private ContentObserver mChatObserver = new ChatObserver();
+    private ContentResolver mContentResolver;
+    private RecentChatAdapter mRecentChatAdapter;
 
-
-	static final String LOG_TAG = ChatFragment.class.getName();
-
-	public void updateChat() {
+    public void updateChat() {
         mRecentChatAdapter.requery();
-	}
+    }
+
+    private void startChatActivity(String userJid) {
+        Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
+        chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
+        startActivity(chatIntent);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.main_tab_chats, container, false);
+        ButterKnife.inject(this, view);
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.chat_actions, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mContentResolver.unregisterContentObserver(mChatObserver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mRecentChatAdapter.requery();
+        mContentResolver.registerContentObserver(ChatProvider.CONTENT_URI,
+                true, mChatObserver);
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
 
 
-	private void startChatActivity(String userJid) {
-		Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
-		chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
-		startActivity(chatIntent);
-	}
+        setupChatLayout();
+
+    }
+
+    private void setupChatLayout() {
+        mContentResolver = getActivity().getContentResolver();
+        mRecentChatAdapter = new RecentChatAdapter(getActivity());
+        chatListView.setAdapter(mRecentChatAdapter);
+
+        chatListView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int position, long id) {
+                Cursor clickCursor = mRecentChatAdapter.getCursor();
+                clickCursor.moveToPosition(position);
+                String from_Jid = clickCursor.getString(clickCursor
+                        .getColumnIndex(ChatTable.Columns.FROM_JID));
+                String to_Jid = clickCursor.getString(clickCursor
+                        .getColumnIndex(ChatTable.Columns.TO_JID));
+                String name = to_Jid;
+                if (to_Jid.startsWith(App.readUser().getUsername())) {
+                    name = from_Jid;
+                }
+
+                startChatActivity(name);
+            }
+        });
 
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.main_tab_chats, container, false);
-		ButterKnife.inject(this, view);
-		return view;
-	}
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.chat_actions, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
+    private class ChatObserver extends ContentObserver {
+        public ChatObserver() {
+            super(mainHandler);
+        }
 
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		mContentResolver.unregisterContentObserver(mChatObserver);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		mRecentChatAdapter.requery();
-		mContentResolver.registerContentObserver(ChatProvider.CONTENT_URI,
-				true, mChatObserver);
-
-	}
-
-
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-
-
-		setupChatLayout();
-
-	}
-
-
-	private void setupChatLayout() {
-		mContentResolver = getActivity().getContentResolver();
-		mRecentChatAdapter = new RecentChatAdapter(getActivity());
-		chatListView.setAdapter(mRecentChatAdapter);
-
-		chatListView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-			                        int position, long id) {
-				Cursor clickCursor = mRecentChatAdapter.getCursor();
-				clickCursor.moveToPosition(position);
-				String from_Jid = clickCursor.getString(clickCursor
-						.getColumnIndex(ChatTable.Columns.FROM_JID));
-				String to_Jid = clickCursor.getString(clickCursor
-						.getColumnIndex(ChatTable.Columns.TO_JID));
-				String name = to_Jid;
-				if (to_Jid.startsWith( App.readUser().getUsername())) {
-					name = from_Jid;
-				}
-
-				startChatActivity(name);
-			}
-		});
-
-
-	}
+        public void onChange(boolean selfChange) {
+            mainHandler.postDelayed(new Runnable() {
+                public void run() {
+                    updateChat();
+                }
+            }, 100);
+        }
+    }
 
 
 }

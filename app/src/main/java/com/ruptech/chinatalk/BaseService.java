@@ -10,7 +10,6 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
 import com.ruptech.chinatalk.event.NewChatEvent;
-import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
@@ -19,66 +18,75 @@ import com.ruptech.dlmu.im.R;
 
 public abstract class BaseService extends Service {
 
-	private static final String TAG = "BaseService";
-	protected WakeLock mWakeLock;
+    private static final String TAG = "BaseService";
+    protected WakeLock mWakeLock;
 
-	@Override
-	public void onCreate() {
-		Log.i(TAG, "called onCreate()");
-		super.onCreate();
-		mWakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE))
-				.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getString(R.string.app_name));
+    public static MyNotificationBuilder createNotificationBuilder(
+            Context context, String title, String content, Bitmap icon,
+            boolean isSound) {
 
-	}
+        MyNotificationBuilder mBuilder = new MyNotificationBuilder(context,
+                isSound, title, content, icon);
 
-	@Override
-	public void onDestroy() {
-		Log.i(TAG, "called onDestroy()");
-		super.onDestroy();
-	}
+        return mBuilder;
+    }
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "called onStartCommand()");
-		return START_STICKY;
-	}
+    @Override
+    public void onCreate() {
+        Log.i(TAG, "called onCreate()");
+        super.onCreate();
+        mWakeLock = ((PowerManager) getSystemService(Context.POWER_SERVICE))
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getString(R.string.app_name));
+
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "called onDestroy()");
+        super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "called onStartCommand()");
+        return START_STICKY;
+    }
+
+    private String getMessageTitle(String fromJid) {
+        String title;
+        String name = fromJid;
+        title = name;
+        return title;
+    }
+
+    public void displayMessageNotification(NewChatEvent event) {
+
+        String title;
+        String fromJid = event.fromJID;
+        String content = event.chatMessage;
 
 
-	private String getMessageTitle(String fromJid) {
-		String title;
-		String name = fromJid;
-		title = name;
-		return title;
-	}
+        if (Utils.isEmpty(content))
+            return;
 
-	public void displayMessageNotification(NewChatEvent event) {
+        title = getMessageTitle(fromJid);
 
-		String title;
-		String fromJid = event.fromJID;
-		String content = event.chatMessage;
+        int notiId = fromJid.hashCode();
 
+        Intent notificationIntent;
+        notificationIntent = new Intent(this, ChatActivity.class);
+        notificationIntent.putExtra(ChatActivity.EXTRA_JID, fromJid);
 
-		if (Utils.isEmpty(content))
-			return;
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                notiId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		title = getMessageTitle(fromJid);
+        MyNotificationBuilder mBuilder = createNotificationBuilder(this, title, content, null,
+                PrefUtils.getPrefTranslatedNoticeMessage());
+        mBuilder.setTicker(content);
+        mBuilder.setContentIntent(contentIntent);
 
-		int notiId = fromJid.hashCode();
-
-		Intent notificationIntent;
-		notificationIntent = new Intent(this, ChatActivity.class);
-		notificationIntent.putExtra(ChatActivity.EXTRA_JID, fromJid);
-
-		PendingIntent contentIntent = PendingIntent.getActivity(this,
-				notiId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-		MyNotificationBuilder mBuilder = createNotificationBuilder(this, title, content, null,
-				PrefUtils.getPrefTranslatedNoticeMessage());
-		mBuilder.setTicker(content);
-		mBuilder.setContentIntent(contentIntent);
-
-		App.notificationManager.cancel(notiId);
-		App.notificationManager.notify(notiId, mBuilder.build());
+        App.notificationManager.cancel(notiId);
+        App.notificationManager.notify(notiId, mBuilder.build());
 
 //        // 如果选择TTS播放，处理
 //        if (PrefUtils.getPrefTranslatedNoticeTts()) {
@@ -92,17 +100,7 @@ public abstract class BaseService extends Service {
 //            }
 //        }
 
-	}
-
-	public static MyNotificationBuilder createNotificationBuilder(
-			Context context, String title, String content, Bitmap icon,
-			boolean isSound) {
-
-		MyNotificationBuilder mBuilder = new MyNotificationBuilder(context,
-				isSound, title, content, icon);
-
-		return mBuilder;
-	}
+    }
 
 
 }

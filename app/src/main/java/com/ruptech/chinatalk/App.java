@@ -40,202 +40,190 @@ import java.util.Properties;
 
 public class App extends Application {
 
-	public static Bus mBus;
-	static public Properties properties;
+    public final static String TAG = Utils.CATEGORY + App.class.getSimpleName();
+    public static Bus mBus;
+    static public Properties properties;
+    public static AppVersion mApkVersionOfClient;
+    public static Context mContext;
+    public static ImageManager mImageManager;
+    public static NotificationManager notificationManager;
+    public static TaskManager taskManager = new TaskManager();
+    public static UserDAO userDAO;
+    public static int displayHeight;
+    public static int displayWidth;
+    public static PendingIntent versionCheckPendingIntent;
+    public static XMPPService mService;
+    private static HttpServer httpServer;
+    private static User user;
+    public static ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            XMPPService.XBinder binder = (XMPPService.XBinder) service;
+            mService = binder.getService();
+            if (!mService.isAuthenticated()) {
+                String account = App.readUser().getUsername();
+                String password = App.readUser().getPassword();
 
-	public static HttpServer getHttpServer() {
-		if (httpServer == null) {
-			httpServer = new HttpServer();
-		}
-		return httpServer;
-	}
+                mService.login(account, password);
+                // setStatusImage(false);
+                // mTitleProgressBar.setVisibility(View.VISIBLE);
+            }
+        }
 
-	public static boolean isAvailableShowMain() {
-		return App.readUser() != null;
-	}
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
 
+    };
 
-	public static User readUser() {
-		if (user == null)
-			user = PrefUtils.readUser();
-		return user;
-	}
+    public static HttpServer getHttpServer() {
+        if (httpServer == null) {
+            httpServer = new HttpServer();
+        }
+        return httpServer;
+    }
 
-	public static void removeUser() {
-		PrefUtils.writeUser(null);
-		App.user = null;
-	}
+    public static boolean isAvailableShowMain() {
+        return App.readUser() != null;
+    }
 
-	public static void writeUser(User user) {
-		if (user == null)
-			return;
-		PrefUtils.writeUser(user);
-		App.user = user;
-	}
+    public static User readUser() {
+        if (user == null)
+            user = PrefUtils.readUser();
+        return user;
+    }
 
-	private static HttpServer httpServer;
-	public static AppVersion mApkVersionOfClient;
-	public static Context mContext;
-	public static ImageManager mImageManager;
+    public static void removeUser() {
+        PrefUtils.writeUser(null);
+        App.user = null;
+    }
 
-	public static NotificationManager notificationManager;
+    public static void writeUser(User user) {
+        if (user == null)
+            return;
+        PrefUtils.writeUser(user);
+        App.user = user;
+    }
 
-	public static TaskManager taskManager = new TaskManager();
-	private static User user;
+    //Receiver 版本检查
+    public static void startVersionCheckReceiver(Context context) {
+        //version check
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
+        versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 60 * 60 * 1000, versionCheckPendingIntent);
+    }
 
-	public static UserDAO userDAO;
+    /**
+     * 解绑服务
+     *
+     * @param context
+     */
+    public static void unbindXMPPService(Context context) {
+        try {
+            context.unbindService(mServiceConnection);
+            Log.i(TAG, "unbindXMPPService");
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Service wasn't bound!", e);
+        }
+    }
 
-	public final static String TAG = Utils.CATEGORY + App.class.getSimpleName();
+    /**
+     * 绑定服务
+     *
+     * @param context
+     */
+    public static void bindXMPPService(Context context) {
+        Log.i(TAG, "bindXMPPService");
+        Intent serviceIntent = new Intent(App.mContext, XMPPService.class);
+        context.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+    }
 
-	public static int displayHeight;
+    private void getDisplaySize() {
+        WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
 
-	public static int displayWidth;
+        Point size = new Point();
+        display.getSize(size);
+        displayWidth = size.x;
+        displayHeight = size.y;
+    }
 
+    private void initImageLoader(Context context) {
+        File cacheDir = StorageUtils.getCacheDirectory(context);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                context)
+                .memoryCacheExtraOptions(1600, 1600)
+                        // default = device screen dimensions
+                .threadPoolSize(3)
+                        // default
+                .threadPriority(Thread.NORM_PRIORITY - 1)
+                        // default
+                .denyCacheImageMultipleSizesInMemory()
+                .memoryCache(new WeakMemoryCache())
+                        // 1 days in secs: 3*24*60*60 = 2592000
+                .diskCache(new LimitedAgeDiscCache(cacheDir, 6 * 60 * 60))
+                        // default
+                .diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
+                        // default
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                        // default
+                .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
 
-	private void getDisplaySize() {
-		WindowManager wm = (WindowManager) mContext
-				.getSystemService(Context.WINDOW_SERVICE);
-		Display display = wm.getDefaultDisplay();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (BuildConfig.DEBUG)
+            Log.e(TAG, "App.onCreate");
 
-		Point size = new Point();
-		display.getSize(size);
-		displayWidth = size.x;
-		displayHeight = size.y;
-	}
+        mBus = new Bus(ThreadEnforcer.ANY);
+        mBus.register(this);
 
-	private void initImageLoader(Context context) {
-		File cacheDir = StorageUtils.getCacheDirectory(context);
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				context)
-				.memoryCacheExtraOptions(1600, 1600)
-						// default = device screen dimensions
-				.threadPoolSize(3)
-						// default
-				.threadPriority(Thread.NORM_PRIORITY - 1)
-						// default
-				.denyCacheImageMultipleSizesInMemory()
-				.memoryCache(new WeakMemoryCache())
-						// 1 days in secs: 3*24*60*60 = 2592000
-				.diskCache(new LimitedAgeDiscCache(cacheDir, 6 * 60 * 60))
-						// default
-				.diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
-						// default
-				.tasksProcessingOrder(QueueProcessingType.LIFO)
-						// default
-				.defaultDisplayImageOptions(DisplayImageOptions.createSimple())
-				.build();
-		ImageLoader.getInstance().init(config);
-	}
+        AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
+        properties = assetsPropertyReader.getProperties("env.properties");
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		if (BuildConfig.DEBUG)
-			Log.e(TAG, "App.onCreate");
+        mContext = this.getApplicationContext();
 
-		mBus = new Bus(ThreadEnforcer.ANY);
-		mBus.register(this);
+        mApkVersionOfClient = Utils.getAppVersionOfClient(this);
 
-		AssetsPropertyReader assetsPropertyReader = new AssetsPropertyReader(this);
-		properties = assetsPropertyReader.getProperties("env.properties");
+        notificationManager = (NotificationManager) this
+                .getSystemService(Context.NOTIFICATION_SERVICE);
 
-		mContext = this.getApplicationContext();
+        userDAO = new UserDAO(getApplicationContext());
 
-		mApkVersionOfClient = Utils.getAppVersionOfClient(this);
-
-		notificationManager = (NotificationManager) this
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		userDAO = new UserDAO(getApplicationContext());
-
-		mImageManager = new ImageManager(App.mContext);
-		initImageLoader(getApplicationContext());
-
-
-		getDisplaySize();
-
-		startVersionCheckReceiver(this);
-	}
-
-	public static PendingIntent versionCheckPendingIntent;
-
-	//Receiver 版本检查
-	public static void startVersionCheckReceiver(Context context) {
-		//version check
-		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		Intent versionCheckIntent = new Intent(context, VersionCheckReceiver.class);
-		versionCheckPendingIntent = PendingIntent.getBroadcast(context, 0, versionCheckIntent, 0);
-		alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + 60 * 1000, 60 * 60 * 1000, versionCheckPendingIntent);
-	}
-
-	@Override
-	public void onLowMemory() {
-		super.onLowMemory();
-		ImageManager.imageLoader.clearMemoryCache();
-
-		if (BuildConfig.DEBUG)
-			Log.e(TAG, "onLowMemory");
-	}
-
-	@Override
-	public void onTerminate() {
-
-		if (BuildConfig.DEBUG)
-			Log.e(TAG, "onTerminate");
-		if (mBus != null) {
-			mBus.unregister(this);
-		}
-
-		super.onTerminate();
-	}
+        mImageManager = new ImageManager(App.mContext);
+        initImageLoader(getApplicationContext());
 
 
-	public static XMPPService mService;
-	public static ServiceConnection mServiceConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			XMPPService.XBinder binder = (XMPPService.XBinder) service;
-			mService = binder.getService();
-			if (!mService.isAuthenticated()) {
-				String account = App.readUser().getUsername();
-				String password = App.readUser().getPassword();
+        getDisplaySize();
 
-				mService.login(account, password);
-				// setStatusImage(false);
-				// mTitleProgressBar.setVisibility(View.VISIBLE);
-			}
-		}
+        startVersionCheckReceiver(this);
+    }
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mService = null;
-		}
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        ImageManager.imageLoader.clearMemoryCache();
 
-	};
+        if (BuildConfig.DEBUG)
+            Log.e(TAG, "onLowMemory");
+    }
 
-	/**
-	 * 解绑服务
-	 *
-	 * @param context
-	 */
-	public static void unbindXMPPService(Context context) {
-		try {
-			context.unbindService(mServiceConnection);
-			Log.i(TAG, "unbindXMPPService");
-		} catch (IllegalArgumentException e) {
-			Log.e(TAG, "Service wasn't bound!", e);
-		}
-	}
+    @Override
+    public void onTerminate() {
 
-	/**
-	 * 绑定服务
-	 *
-	 * @param context
-	 */
-	public static void bindXMPPService(Context context) {
-		Log.i(TAG, "bindXMPPService");
-		Intent serviceIntent = new Intent(App.mContext, XMPPService.class);
-		context.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
-	}
+        if (BuildConfig.DEBUG)
+            Log.e(TAG, "onTerminate");
+        if (mBus != null) {
+            mBus.unregister(this);
+        }
+
+        super.onTerminate();
+    }
 
 }

@@ -11,72 +11,71 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ruptech.dlmu.im.R;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class GenderSpinnerAdapter extends BaseAdapter {
 
-	static class ViewHolder {
-		@InjectView(R.id.item_spinner_gender_text)
-		TextView genderText;
-		@InjectView(R.id.item_spinner_gender_img)
-		ImageView genderImg;
+    static final String TAG = Utils.CATEGORY + GenderSpinnerAdapter.class.getSimpleName();
+    private static final int mResource = R.layout.item_spinner_gender; // xml布局文件
+    private final int[] genderArray;
+    private ViewHolder holder;
+    private LayoutInflater mInflater;
+    public GenderSpinnerAdapter(Context context, int[] genderArray) {
+        this.genderArray = genderArray;
+        if (context != null) {
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+    }
 
-		public ViewHolder(View view) {
-			ButterKnife.inject(this, view);
-		}
-	}
+    @Override
+    public int getCount() {
+        return genderArray.length;
+    }
 
-	static final String TAG = Utils.CATEGORY + GenderSpinnerAdapter.class.getSimpleName();
-	private static final int mResource = R.layout.item_spinner_gender; // xml布局文件
-	private final int[] genderArray;
-	private ViewHolder holder;
-	private LayoutInflater mInflater;
+    @Override
+    public Object getItem(int position) {
+        return genderArray[position];
+    }
 
-	public GenderSpinnerAdapter(Context context, int[] genderArray) {
-		this.genderArray = genderArray;
-		if (context != null) {
-			mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public int getCount() {
-		return genderArray.length;
-	}
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        View view;
 
-	@Override
-	public Object getItem(int position) {
-		return genderArray[position];
-	}
+        if (convertView == null) {
+            view = mInflater.inflate(mResource, null);
+            holder = new ViewHolder(view);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
+        }
+        if (position == 0) {
+            holder.genderText.setText(R.string.gender_male);
+            holder.genderImg.setImageResource(R.drawable.male);
+        } else {
+            holder.genderText.setText(R.string.gender_female);
+            holder.genderImg.setImageResource(R.drawable.female);
+        }
+        return view;
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    static class ViewHolder {
+        @InjectView(R.id.item_spinner_gender_text)
+        TextView genderText;
+        @InjectView(R.id.item_spinner_gender_img)
+        ImageView genderImg;
 
-	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
-		View view;
-
-		if (convertView == null) {
-			view = mInflater.inflate(mResource, null);
-			holder = new ViewHolder(view);
-			view.setTag(holder);
-		} else {
-			view = convertView;
-			holder = (ViewHolder) view.getTag();
-		}
-		if (position == 0) {
-			holder.genderText.setText(R.string.gender_male);
-			holder.genderImg.setImageResource(R.drawable.male);
-		} else {
-			holder.genderText.setText(R.string.gender_female);
-			holder.genderImg.setImageResource(R.drawable.female);
-		}
-		return view;
-	}
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
 }

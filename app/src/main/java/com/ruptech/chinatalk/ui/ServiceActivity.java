@@ -10,26 +10,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import com.ruptech.chinatalk.App;
-import com.ruptech.chinatalk.task.GenericTask;
-import com.ruptech.chinatalk.task.TaskAdapter;
-import com.ruptech.chinatalk.task.TaskResult;
-import com.ruptech.chinatalk.task.impl.RetrieveOrgListTask;
-import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -43,7 +30,10 @@ public class ServiceActivity extends ActionBarActivity implements
 
     static final String TAG = Utils.CATEGORY
             + ServiceActivity.class.getSimpleName();
-
+    @InjectView(R.id.service_webview)
+    WebView webview;
+    @InjectView(R.id.swype)
+    SwipeRefreshLayout swypeLayout;
     private String mUrl;
     private String mTitle;
 
@@ -70,13 +60,6 @@ public class ServiceActivity extends ActionBarActivity implements
         inflater.inflate(R.menu.org_service, mMenu);
         return true;
     }
-
-    @InjectView(R.id.service_webview)
-    WebView webview;
-
-    @InjectView(R.id.swype)
-    SwipeRefreshLayout swypeLayout;
-
 
     protected void displayTitle() {
         getSupportActionBar().setTitle(mTitle);
@@ -105,7 +88,7 @@ public class ServiceActivity extends ActionBarActivity implements
 
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        System.out.println("--------------"+mTitle);
+        System.out.println("--------------" + mTitle);
     }
 
 

@@ -12,85 +12,84 @@ import java.io.Serializable;
  */
 public class User extends Item implements Serializable {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1311784597606188334L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1311784597606188334L;
 
-	public String password;
-	public String username;
-	private String fullname;
-	private String deptid;
-	private String deptname;
+    public String password;
+    public String username;
+    private String fullname;
+    private String deptid;
+    private String deptname;
 
-	public User() {
-	}
+    public User() {
+    }
 
-	public User(JSONObject json) throws JSONException {
-		id = System.currentTimeMillis();
+    public User(JSONObject json) throws JSONException {
+        id = System.currentTimeMillis();
 
-		username = json.optString("userid");
-		password  = json.optString("passwd");
-		fullname = json.optString("xm");
-		deptid = json.optString("deptid");
-		deptname = json.optString("deptname");
-	}
+        username = json.optString("userid");
+        password = json.optString("passwd");
+        fullname = json.optString("xm");
+        deptid = json.optString("deptid");
+        deptname = json.optString("deptname");
+    }
 
-	public User(String username, String fullname) {
-		id = System.currentTimeMillis();
+    public User(String username, String fullname) {
+        id = System.currentTimeMillis();
 
-		this.username = username;
-		this.fullname = fullname;
-	}
+        this.username = username;
+        this.fullname = fullname;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public static String getUsernameFromJid(String jid) {
+        try {
+            int start = 0;
+            int end = jid.indexOf('@');
+            return jid.substring(start, end);
+        } catch (Exception e) {
+            return jid;
+        }
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public static boolean isOrg(String jid) {
+        return getUsernameFromJid(jid).length() == 6;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public static boolean isTeacher(String jid) {
+        return getUsernameFromJid(jid).length() == 8;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public static boolean isStudent(String jid) {
+        return getUsernameFromJid(jid).length() == 10;
+    }
 
-	public String getJid() {
-		return getUsername() + "@" + AppPreferences.IM_SERVER_RESOURCE;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getFullname() {
-		return fullname;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
-	}
+    public String getUsername() {
+        return username;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public static String getUsernameFromJid(String jid) {
-		try {
-			int start = 0;
-			int end = jid.indexOf('@');
-			return jid.substring(start, end);
-		} catch (Exception e) {
-			return jid;
-		}
-	}
+    public String getJid() {
+        return getUsername() + "@" + AppPreferences.IM_SERVER_RESOURCE;
+    }
 
-	public static boolean isOrg(String jid) {
-		return getUsernameFromJid(jid).length() == 6;
-	}
+    public String getFullname() {
+        return fullname;
+    }
 
-	public static boolean isTeacher(String jid) {
-		return getUsernameFromJid(jid).length() == 8;
-	}
-
-	public static boolean isStudent(String jid) {
-		return getUsernameFromJid(jid).length() == 10;
-	}
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
 }
