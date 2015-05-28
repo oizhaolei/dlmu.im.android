@@ -109,62 +109,6 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
         data = new ArrayList<>();
-        Map<String, String> m1 = new HashMap<>();
-        m1.put("JSH", "19971053");
-        m1.put("KCH", "13608400");
-        m1.put("KCM", "物流基础");
-        m1.put("SKXQ", "4");
-        m1.put("SKJC", "9");
-        m1.put("XQH", "03");
-        m1.put("XQM", "西校区");
-        m1.put("JXLH", "06");
-        m1.put("JXLM", "励志楼");
-        m1.put("JASH", "060303");
-        m1.put("JASM", "303（多媒体）");
-        m1.put("TITLE", "物流基础/周4/第9节/励志楼/303（多媒体）");
-        Map<String, String> m2 = new HashMap<>();
-        m2.put("JSH", "19971053");
-        m2.put("KCH", "23608400");
-        m2.put("KCM", "体育(4)");
-        m2.put("SKXQ", "1");
-        m2.put("SKJC", "5");
-        m2.put("XQH", "02");
-        m2.put("XQM", "东校区");
-        m2.put("JXLH", "17");
-        m2.put("JXLM", "体育馆");
-        m2.put("JASH", "170003");
-        m2.put("JASM", "体操馆");
-        m2.put("TITLE", "体育(4)/周1/第5节/体育馆/体操馆");
-        Map<String, String> m3 = new HashMap<>();
-        m3.put("JSH", "19971053");
-        m3.put("KCH", "23608400");
-        m3.put("KCM", "体育(4)");
-        m3.put("SKXQ", "1");
-        m3.put("SKJC", "7");
-        m3.put("XQH", "02");
-        m3.put("XQM", "东校区");
-        m3.put("JXLH", "17");
-        m3.put("JXLM", "体育馆");
-        m3.put("JASH", "170003");
-        m3.put("JASM", "体操馆");
-        m3.put("TITLE", "体育(4)/周1/第7节/体育馆/体操馆");
-        Map<String, String> m4 = new HashMap<>();
-        m4.put("JSH", "19971053");
-        m4.put("KCH", "23608401");
-        m4.put("KCM", "体育(4)");
-        m4.put("SKXQ", "3");
-        m4.put("SKJC", "7");
-        m4.put("XQH", "02");
-        m4.put("XQM", "东校区");
-        m4.put("JXLH", "17");
-        m4.put("JXLM", "体育馆");
-        m4.put("JASH", "170003");
-        m4.put("JASM", "体操馆");
-        m4.put("TITLE", "体育(2)/周3/第7节/体育馆/体操馆");
-        //data.add(m1);
-        //data.add(m2);
-        //data.add(m3);
-        //data.add(m4);
         DateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         ssDate = sdf.format(new Date());
 
@@ -282,7 +226,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
                             data.get(index).get("JXLM"),
                             data.get(index).get("JASH"),
                             data.get(index).get("JASM"),
-                            cardPhyId,//"251D0E85",
+                            cardPhyId,//cardPhyId,//"251D0E85",
                             App.readUser().getUsername(),
                             ssDate).get();
 
@@ -346,7 +290,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
                 m.put("JXLM", j.getString("jxlm"));
                 m.put("JASH", j.getString("jash"));
                 m.put("JASM", j.getString("jasm"));
-                m.put("TITLE", j.getString("kcm") + "/周" + j.getString("skxq") + "/第" + j.getString("skjc") + "节/" + j.getString("jasm") + "/" + j.getString("jasm"));
+                m.put("TITLE", j.getString("kcm") + "/周" + j.getString("skxq") + "/第" + j.getString("skjc") + "节/" + j.getString("jasm"));
                 data.add(m);
             }
             //checkin_log_textview.setText("成功读取课表");
@@ -459,8 +403,8 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             p.add(new BasicNameValuePair("jash", params[11]));
             p.add(new BasicNameValuePair("jasm", params[12]));
             p.add(new BasicNameValuePair("cardphyid", params[13]));
-            p.add(new BasicNameValuePair("cciterminal", params[14]));
-            p.add(new BasicNameValuePair("ssdate", params[15]));
+            p.add(new BasicNameValuePair("qdterminal", params[14]));
+            p.add(new BasicNameValuePair("qddate", params[15]));
             try {
                 // 发出HTTP request
                 httpRequest.setEntity(new UrlEncodedFormEntity(p, HTTP.UTF_8));
