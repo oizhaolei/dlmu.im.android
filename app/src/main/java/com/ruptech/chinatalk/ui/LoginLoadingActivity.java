@@ -19,8 +19,8 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
 public class LoginLoadingActivity extends Activity {
-    public static final String PREF_USERINFO_NAME = "pref_userinfo_name";
-    public static final String PREF_USERINFO_PASS = "pref_userinfo_pass";
+    public static final String EXTRA_USERINFO_NAME = "extra_userinfo_name";
+    public static final String EXTRA_USERINFO_PASS = "extra_userinfo_pass";
     protected static LoginLoadingActivity instance;
     private final TaskListener mLoginTaskListener = new TaskAdapter() {
 
@@ -99,10 +99,10 @@ public class LoginLoadingActivity extends Activity {
         if (extras == null) {
             return null;
         } else {
-            String username = extras.getString(PREF_USERINFO_NAME);
+            String username = extras.getString(EXTRA_USERINFO_NAME);
             if (username == null)
                 return null;
-            String password = extras.getString(PREF_USERINFO_PASS);
+            String password = extras.getString(EXTRA_USERINFO_PASS);
             String encrypt = Boolean.FALSE.toString();
             return new String[]{username, password, encrypt};
         }

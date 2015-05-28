@@ -59,6 +59,7 @@ public class PrefUtils {
     // 贴图翻译tips
     final public static String PREF_STORY_TRANSLATION_SHOW_TIPS_DIALOG = "pref_story_translation_show_tips_dialog";
     // 贴图默认是“朋友圈”，取不到数据时候切换到“精选”图片
+    final public static String PREF_ACCOUNT_PASSWORD = "PREF_ACCOUNT_PASSWORD";
     final public static String PREF_DEFAULT_FRIEND_CHANGE_TO_CHOSEN_MENU = "PREF_DEFAULT_FRIEND_CHANGE_TO_CHOSEN_MENU";
     final public static String PREF_NEW_USER_FANS_COUNT = "PREF_NEW_USER_FANS_COUNT";
     final public static String PREF_INIT_DELETED_HOT_PHOTOS = "PREF_INIT_DELETED_HOT_PHOTOS";
@@ -332,8 +333,8 @@ public class PrefUtils {
         return lastUpdatedate;
     }
 
-    public static String getUserChannelList() {
-        String str = getmPref().getString(PREF_USER_STORY_CHANNEL_LIST, "");
+    public static String getUserPassword() {
+        String str = getmPref().getString(PREF_ACCOUNT_PASSWORD, "");
         return str;
     }
 
@@ -501,6 +502,12 @@ public class PrefUtils {
         remove(PREF_USER_STORY_PHOTO_TAG);
     }
 
+    public static void savePrefUserPassword(String password) {
+        getmPref()
+                .edit()
+                .putString(PREF_ACCOUNT_PASSWORD,
+                        password).commit();
+    }
     public static void savePrefDefaultFriendChangeToChosenMenu(boolean isDefault) {
         getmPref()
                 .edit()
