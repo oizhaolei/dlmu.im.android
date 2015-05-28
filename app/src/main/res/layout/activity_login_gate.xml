@@ -6,67 +6,6 @@
     android:layout_height="fill_parent"
     android:background="@drawable/walkthrough_bg" >
 
-    <RelativeLayout
-        android:id="@+id/page_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/login_signup_layout" >
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:id="@+id/activity_login_gate_welcome_dot"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_horizontal" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:padding="5.0dip"
-                android:src="@drawable/login_welcome_dot" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:padding="5.0dip"
-                android:src="@drawable/login_welcome_dot" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:padding="5.0dip"
-                android:src="@drawable/login_welcome_dot" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:padding="5.0dip"
-                android:src="@drawable/login_welcome_dot" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:padding="5.0dip"
-                android:src="@drawable/login_welcome_dot" />
-        </LinearLayout>
-    </RelativeLayout>
-
     <LinearLayout
         android:id="@+id/login_signup_layout"
         android:layout_width="fill_parent"
