@@ -104,10 +104,10 @@ public class HttpServer extends HttpConnection {
      * @throws Exception
      */
 
-    public User login(String username, String password, boolean encrypt)
+    public User login(String userid, String password, boolean encrypt)
             throws Exception {
         Map<String, String> params = new HashMap<>();
-        params.put("username", username);
+        params.put("userid", userid);
         params.put("password", password);
         params.put("encrypt", String.valueOf(encrypt));
         params.put("serial", String.valueOf(android.os.Build.SERIAL));
@@ -143,10 +143,10 @@ public class HttpServer extends HttpConnection {
 
     }
 
-    public User retrieveUser(String username)
+    public User retrieveUser(String userid)
             throws Exception {
         Map<String, String> params = new HashMap<>();
-        params.put("username", username);
+        params.put("userid", userid);
 
         Response res = _get("user", params);
         JSONObject result = res.asJSONObject();

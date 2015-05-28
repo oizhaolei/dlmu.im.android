@@ -63,8 +63,6 @@ public class PrefUtils {
     final public static String PREF_DEFAULT_FRIEND_CHANGE_TO_CHOSEN_MENU = "PREF_DEFAULT_FRIEND_CHANGE_TO_CHOSEN_MENU";
     final public static String PREF_NEW_USER_FANS_COUNT = "PREF_NEW_USER_FANS_COUNT";
     final public static String PREF_INIT_DELETED_HOT_PHOTOS = "PREF_INIT_DELETED_HOT_PHOTOS";
-    public final static String SMACKDEBUG = "smackdebug";
-    public final static String REQUIRE_TLS = "require_tls";
     public final static String AVAILABLE = "available";
     private static final String TAG = PrefUtils.class.getSimpleName();
     private static SharedPreferences mPref;
