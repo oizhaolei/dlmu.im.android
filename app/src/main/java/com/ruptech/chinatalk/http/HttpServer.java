@@ -150,8 +150,12 @@ public class HttpServer extends HttpConnection {
 
         Response res = _get("user", params);
         JSONObject result = res.asJSONObject();
-
-        return new User(result);
+        String code = result.getString("code");
+        if ("99".equals(code)) {
+            JSONObject user = result.getJSONObject("user");
+            return new User(user);
+        }
+        throw new Exception("login error");
 
     }
 }

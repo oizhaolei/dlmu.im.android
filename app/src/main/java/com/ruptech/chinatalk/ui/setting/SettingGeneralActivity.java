@@ -42,14 +42,9 @@ public class SettingGeneralActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Utils.onBackPressed(this);
+            onBackPressed();
         }
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        Utils.onBackPressed(this);
     }
 
     @Override

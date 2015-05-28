@@ -594,10 +594,6 @@ public class Utils {
 
     }
 
-    public static void onBackPressed(Activity activity) {
-        activity.finish();
-    }
-
     private static double rad(double d) {
         return d * Math.PI / 180.0;
     }
