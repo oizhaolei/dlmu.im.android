@@ -92,7 +92,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview1"
-                android:src="@drawable/cn" />
+                android:src="@drawable/flag" />
 
             <TextView
                 android:id="@+id/item_leaderboard_header_user_level_textview1"
@@ -243,7 +243,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview2"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/item_leaderboard_header_user_level_textview2"
@@ -299,7 +299,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview3"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/item_leaderboard_header_user_level_textview3"
@@ -452,7 +452,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview4"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/item_leaderboard_header_user_level_textview4"
@@ -508,7 +508,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_toRightOf="@+id/item_leaderboard_header_user_gender_imageview5"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/item_leaderboard_header_user_level_textview5"

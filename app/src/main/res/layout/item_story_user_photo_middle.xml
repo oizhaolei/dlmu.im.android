@@ -68,7 +68,7 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_margin="4dp"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/item_user_story_content_textview"
@@ -100,7 +100,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_margin="4dp"
-                android:src="@drawable/kr" />
+                android:src="@drawable/flag" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

@@ -23,6 +23,6 @@
         android:layout_height="12dp"
         android:layout_alignBottom="@+id/item_hot_grid_image"
         android:layout_alignRight="@+id/item_hot_grid_image"
-        android:src="@drawable/cn" />
+        android:src="@drawable/flag" />
 
 </RelativeLayout>

@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="5dp"
         android:padding="5dp"
-        android:src="@drawable/kr" />
+        android:src="@drawable/flag" />
 
     <TextView
         android:id="@+id/language_text"

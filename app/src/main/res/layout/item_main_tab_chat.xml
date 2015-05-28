@@ -43,7 +43,7 @@
                 android:layout_alignBottom="@+id/item_main_tab_chat_friend_thumb_imageview"
                 android:layout_alignLeft="@+id/item_main_tab_chat_friend_thumb_imageview"
                 android:scaleType="centerCrop"
-                android:src="@drawable/cn" />
+                android:src="@drawable/flag" />
         </RelativeLayout>
 
         <ImageView

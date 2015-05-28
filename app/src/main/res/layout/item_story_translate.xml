@@ -93,7 +93,7 @@
                         android:layout_width="12dp"
                         android:layout_height="12dp"
                         android:layout_margin="4dp"
-                        android:src="@drawable/cn" />
+                        android:src="@drawable/flag" />
 
                     <TextView
                         android:id="@+id/item_story_translate_content_textview"

@@ -140,7 +140,7 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:layout_margin="4dp"
-                    android:src="@drawable/cn" />
+                    android:src="@drawable/flag" />
 
                 <TextView
                     android:id="@+id/user_story_comment_content_textview"
@@ -171,7 +171,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_margin="4dp"
-                android:src="@drawable/kr" />
+                android:src="@drawable/flag" />
 
             <TextView
                 android:id="@+id/user_story_comment_my_content_textview"

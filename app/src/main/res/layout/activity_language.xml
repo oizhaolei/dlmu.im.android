@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/activity_language_main_submenu_imageview"
-            android:src="@drawable/cn" />
+            android:src="@drawable/flag" />
 
         <ImageView
             android:id="@+id/activity_language_main_submenu_imageview"
@@ -81,7 +81,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/activity_language_additional2_submenu_imageview"
-            android:src="@drawable/cn" />
+            android:src="@drawable/flag" />
 
         <ImageView
             android:id="@+id/activity_language_additional2_submenu_imageview"
@@ -128,7 +128,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/activity_language_additional3_submenu_imageview"
-            android:src="@drawable/cn" />
+            android:src="@drawable/flag" />
 
         <ImageView
             android:id="@+id/activity_language_additional3_submenu_imageview"
@@ -175,7 +175,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/activity_language_additional4_submenu_imageview"
-            android:src="@drawable/cn" />
+            android:src="@drawable/flag" />
 
         <ImageView
             android:id="@+id/activity_language_additional4_submenu_imageview"
