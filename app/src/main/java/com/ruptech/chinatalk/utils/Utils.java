@@ -37,6 +37,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.SearchAutoComplete;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -62,6 +63,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -230,6 +232,33 @@ public class Utils {
         App.notificationManager.cancelAll();
 
         App.mBus.post(new LogoutEvent());
+    }
+
+
+    public static String genUrl(Map<String, String> params, String url) {
+        if (params.isEmpty()) return url;
+        String rtn = url + "?";
+        for (String key : params.keySet()) {
+            rtn = rtn + "&" + key + "=" + params.get(key);
+        }
+        return rtn;
+    }
+
+    public static Map<String, String> genParam(String[] params) {
+        if (params.length == 0) return null;
+        Map<String, String> rtn = new HashMap<String, String>();
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].equals("loginid"))
+                rtn.put(params[i], App.readUser().getUsername());
+            if (params[i].equals("passwd"))
+                rtn.put(params[i], new String(Base64.decode(PrefUtils.getUserPassword(), Base64.DEFAULT)));
+        }
+        //TODO 传递客户端版本；
+        rtn.put("version", "1");
+        if (rtn.get("loginid") == null)
+            rtn.put("loginid", App.readUser().getUsername());
+        rtn.put("sign", Utils.genSign(rtn, App.readUser().getUsername()));
+        return rtn;
     }
 
     public static String genSign(Map<String, String> params, String appkey) {

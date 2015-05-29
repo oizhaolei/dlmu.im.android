@@ -93,7 +93,9 @@ public class ServiceFragment extends Fragment {
             }
 
         };
+
         RetrieveServiceListTask.setListener(taskListener);
+
         RetrieveServiceListTask.execute();
     }
 
@@ -108,10 +110,9 @@ public class ServiceFragment extends Fragment {
                 String jid = item.get("fnid").toString();
                 String title = (String) item.get("title");
                 String url = (String) item.get("url");
-                String[] param = new String[]{};
-                //System.out.println(item.get("param"));
+                String[] params = new String[]{};
                 if (null != item.get("param")) {
-                    param = item.get("param").toString().split(";");
+                    params = item.get("param").toString().split(";");
                 }
                 Integer type = (Integer) item.get("typeid");
                 switch (type) {
@@ -132,30 +133,14 @@ public class ServiceFragment extends Fragment {
                                 }
                                 if (url.startsWith("MEETING")) {
                                     String mid = url.substring(url.indexOf("_") + 1);
-                                    //System.out.println("+++++" + url);
-                                    //System.out.println("+++++" + mid);
                                     startMeetingCheckInActivity(jid, title, mid);
                                 }
                             }
                         }
                         break;
                     case 1:
-                        if (param != null && param.length > 0) {
-                            for (int i = 0; i < param.length; i++) {
-                                if (param[i].equals("stuempno")) {
-                                    url = url.replace("{stuempno}", App.readUser().getUsername());
-                                }
-                                if (param[i].equals("passwd")) {
-                                    String passwd_equ= PrefUtils.getUserPassword();
-                                    //System.out.println(">>>passwd_equ>>>>>" + passwd_equ);
-                                    //PrefUtils.getUserPassword();
-                                    String passwd_plan= new String(Base64.decode(passwd_equ, Base64.DEFAULT));
-                                    //System.out.println(">>>>passwd_plan>>>>" + passwd_plan);
-                                    url = url.replace("{passwd}", passwd_plan);
-                                }
-                            }
-                        }
-                        //System.out.println(url);
+                        url = Utils.genUrl(Utils.genParam(params), url);
+                        System.out.println(url);
                         startServiceActivity(url, title);
                         break;
                     case 2:
