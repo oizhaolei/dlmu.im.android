@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ClassroomCheckInActivity;
 import com.ruptech.chinatalk.ui.MeetingCheckInActivity;
 import com.ruptech.chinatalk.ui.ServiceActivity;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -107,7 +109,7 @@ public class ServiceFragment extends Fragment {
                 String title = (String) item.get("title");
                 String url = (String) item.get("url");
                 String[] param = new String[]{};
-                System.out.println(item.get("param"));
+                //System.out.println(item.get("param"));
                 if (null != item.get("param")) {
                     param = item.get("param").toString().split(";");
                 }
@@ -130,8 +132,8 @@ public class ServiceFragment extends Fragment {
                                 }
                                 if (url.startsWith("MEETING")) {
                                     String mid = url.substring(url.indexOf("_") + 1);
-                                    System.out.println("+++++" + url);
-                                    System.out.println("+++++" + mid);
+                                    //System.out.println("+++++" + url);
+                                    //System.out.println("+++++" + mid);
                                     startMeetingCheckInActivity(jid, title, mid);
                                 }
                             }
@@ -143,9 +145,17 @@ public class ServiceFragment extends Fragment {
                                 if (param[i].equals("stuempno")) {
                                     url = url.replace("{stuempno}", App.readUser().getUsername());
                                 }
+                                if (param[i].equals("passwd")) {
+                                    String passwd_equ= PrefUtils.getUserPassword();
+                                    //System.out.println(">>>passwd_equ>>>>>" + passwd_equ);
+                                    //PrefUtils.getUserPassword();
+                                    String passwd_plan= new String(Base64.decode(passwd_equ, Base64.DEFAULT));
+                                    //System.out.println(">>>>passwd_plan>>>>" + passwd_plan);
+                                    url = url.replace("{passwd}", passwd_plan);
+                                }
                             }
                         }
-                        System.out.println(url);
+                        //System.out.println(url);
                         startServiceActivity(url, title);
                         break;
                     case 2:
