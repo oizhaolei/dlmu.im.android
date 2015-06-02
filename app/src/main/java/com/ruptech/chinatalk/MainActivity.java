@@ -246,6 +246,7 @@ public class MainActivity extends ActionBarActivity implements
         Intent orgIntent = new Intent(this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, true);
         startActivity(orgIntent);
     }
 
