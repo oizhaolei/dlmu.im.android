@@ -82,6 +82,10 @@ public class MainTabLayout extends LinearLayout implements OnClickListener {
                 && tabClickListener != null) {
             tabClickListener.onTabDoubleClick(v.getId());
         }
+        if (selectedView != null)
+            selectedView.setSelected(false);
+        v.setSelected(true);
+        selectedView = v;
 
         previousTabClickTime = System.currentTimeMillis();
     }

@@ -78,7 +78,7 @@ public class TTTalkChatListener implements StanzaListener {
         App.mBus.post(new NewChatEvent(fromJID, body));
     }
 
-    private void retrieveUser(final String jid) {
+    public static void retrieveUser(final String jid) {
         String username = User.getUsernameFromJid(jid);
         RetrieveUserTask retrieveUserTask = new RetrieveUserTask(username);
         TaskAdapter taskListener = new TaskAdapter() {

@@ -67,6 +67,8 @@ public class ChatProvider extends ContentProvider {
         values.put(ChatTable.Columns.DELIVERY_STATUS, chat.getStatus());
         values.put(ChatTable.Columns.CREATED_DATE, chat.getCreated_date());
         values.put(ChatTable.Columns.PACKET_ID, chat.getPid());
+        values.put(ChatTable.Columns.FROM_FULLNAME, chat.getFromFullname());
+        values.put(ChatTable.Columns.TO_FULLNAME, chat.getToFullname());
 
         contentResolver.insert(ChatProvider.CONTENT_URI, values);
     }
@@ -77,11 +79,11 @@ public class ChatProvider extends ContentProvider {
         //from jid
         ContentValues values = new ContentValues();
         values.put(ChatTable.Columns.FROM_FULLNAME, fullname);
-        db.update(TABLE_NAME, values, "from_jid=" + jid, null);
+        db.update(TABLE_NAME, values, "from_jid='" + jid + "'", null);
         //to_jid
         values = new ContentValues();
         values.put(ChatTable.Columns.TO_FULLNAME, fullname);
-        db.update(TABLE_NAME, values, "to_jid=" + jid, null);
+        db.update(TABLE_NAME, values, "to_jid='" + jid + "'", null);
     }
 
     @Override

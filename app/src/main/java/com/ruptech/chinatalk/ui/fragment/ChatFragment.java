@@ -47,9 +47,10 @@ public class ChatFragment extends Fragment {
         mRecentChatAdapter.requery();
     }
 
-    private void startChatActivity(String userJid) {
+    private void startChatActivity(String userJid, String userFullname) {
         Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
         chatIntent.putExtra(ChatActivity.EXTRA_JID, userJid);
+        chatIntent.putExtra(ChatActivity.EXTRA_TITLE, userFullname);
         startActivity(chatIntent);
     }
 
@@ -117,7 +118,15 @@ public class ChatFragment extends Fragment {
                     name = from_Jid;
                 }
 
-                startChatActivity(name);
+                String from_fullname = clickCursor.getString(clickCursor
+                        .getColumnIndex(ChatTable.Columns.FROM_FULLNAME));
+                String to_fullanem = clickCursor.getString(clickCursor
+                        .getColumnIndex(ChatTable.Columns.TO_FULLNAME));
+                String fullname = to_fullanem;
+                if (to_Jid.startsWith(App.readUser().getUsername())) {
+                    name = from_fullname;
+                }
+                startChatActivity(name, fullname);
             }
         });
 
