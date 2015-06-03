@@ -31,16 +31,19 @@ import butterknife.InjectView;
  */
 public class OrgActivity extends ActionBarActivity {
 
+    public static final String ADD_TYPE = "0";
     public static final String PARENT_ORG_JID = "PARENT_ORG_JID";
     public static final String PARENT_ORG_NAME = "PARENT_ORG_NAME";
     public static final String PARENT_ORG_STUDENT = "PARENT_ORG_STUDENT";
     static final String TAG = Utils.CATEGORY
             + OrgActivity.class.getSimpleName();
+
     @InjectView(R.id.activity_org_listview)
     ListView mOrgListView;
     private String mParentOrgJId;
     private String mTitle;
     private boolean mIsStudent;
+    private Integer mAddType = 0;
     private List<Map<String, Object>> itemList = new ArrayList<>();
 
     private void startChatActivity(String userJid, String fullname) {
@@ -88,14 +91,26 @@ public class OrgActivity extends ActionBarActivity {
         mParentOrgJId = getIntent().getExtras().getString(PARENT_ORG_JID);
         mTitle = getIntent().getExtras().getString(PARENT_ORG_NAME);
         mIsStudent = getIntent().getExtras().getBoolean(PARENT_ORG_STUDENT);
-
+        mAddType = getIntent().getExtras().getInt(ADD_TYPE);
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        switch (mAddType) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                retrieveTeacher(mParentOrgJId);
+                break;
+            case 4:
+                retrieveTeacher(mParentOrgJId);
+                break;
+        }
 
-        retrieveOrg(mParentOrgJId);
+
     }
 
-    private void retrieveOrg(String parentOrgJid) {
+    private void retrieveTeacher(String parentOrgJid) {
         RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid, mIsStudent);
         TaskAdapter taskListener = new TaskAdapter() {
             @Override

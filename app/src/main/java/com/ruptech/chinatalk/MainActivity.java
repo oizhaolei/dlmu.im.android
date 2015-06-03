@@ -242,18 +242,39 @@ public class MainActivity extends ActionBarActivity implements
         });
     }
 
-    public void doChatStudent(MenuItem item) {
+    public void doChatClass(MenuItem item) {
         Intent orgIntent = new Intent(this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+        orgIntent.putExtra(OrgActivity.ADD_TYPE, 1);
         startActivity(orgIntent);
     }
 
-    public void doChatTeacher(MenuItem item) {
+    public void doChatCourse(MenuItem item) {
 
         Intent orgIntent = new Intent(this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+        orgIntent.putExtra(OrgActivity.ADD_TYPE, 2);
+        startActivity(orgIntent);
+    }
+
+    public void doChatOrg(MenuItem item) {
+
+        Intent orgIntent = new Intent(this, OrgActivity.class);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+        orgIntent.putExtra(OrgActivity.ADD_TYPE, 3);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
+        startActivity(orgIntent);
+    }
+
+    public void doChatCollege(MenuItem item) {
+
+        Intent orgIntent = new Intent(this, OrgActivity.class);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "200000@" + AppPreferences.IM_SERVER_RESOURCE);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
+        orgIntent.putExtra(OrgActivity.ADD_TYPE, 4);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
         startActivity(orgIntent);
     }
