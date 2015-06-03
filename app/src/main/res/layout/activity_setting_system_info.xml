@@ -18,7 +18,7 @@
             android:orientation="vertical" >
 
             <RelativeLayout
-                android:id="@+id/activity_setting_general_rl"
+                android:id="@+id/activity_setting_view_not_receive_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -32,24 +32,48 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
-                    android:text="@string/new_message_come" />
+                    android:text="@string/not_receive_message" />
 
-                <ImageView
+                <ToggleButton
+                    android:id="@+id/activity_setting_view_not_receive_slipswitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:contentDescription="@string/empty"
-                    android:paddingRight="20dp"
-                    android:scaleType="matrix"
-                    android:src="@drawable/submenu" />
+                    android:layout_marginRight="20dp" />
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/activity_setting_view_blocklist_rl"
+                android:id="@+id/activity_setting_view_verification_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
+                android:background="@drawable/preference_item"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp" >
+
+                <TextView
+                    style="@style/importance_contents_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:text="@string/verification_message" />
+
+                <ToggleButton
+                    android:id="@+id/activity_setting_view_verification_slipswitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/activity_setting_view_blocklist_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/preference_item"
                 android:gravity="center_vertical"
                 android:paddingBottom="15dp"
@@ -74,7 +98,7 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/main_tab_setting_show_system_url_textview"
+                android:id="@+id/activity_setting_view_show_system_url_textview"
                 style="@style/unimportance_contents_text_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

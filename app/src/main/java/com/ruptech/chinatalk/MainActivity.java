@@ -222,24 +222,24 @@ public class MainActivity extends ActionBarActivity implements
 
     @Subscribe
     public void onlineChange(OnlineEvent event) {
-        mainHandler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(App.mContext,
-                        R.string.start_receiving_messages,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mainHandler.post(new Runnable() {
+//            public void run() {
+//                Toast.makeText(App.mContext,
+//                        R.string.start_receiving_messages,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Subscribe
     public void offlineChange(OfflineEvent event) {
-        mainHandler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(App.mContext,
-                        R.string.stop_receiving_messages,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mainHandler.post(new Runnable() {
+//            public void run() {
+//                Toast.makeText(App.mContext,
+//                        R.string.stop_receiving_messages,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     public void doChatStudent(MenuItem item) {

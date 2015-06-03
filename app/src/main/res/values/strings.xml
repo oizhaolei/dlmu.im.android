@@ -579,4 +579,7 @@
     <string name="dlmu_title">大连海事大学</string>
     <string name="student">Student</string>
     <string name="teacher">Teacher</string>
+
+    <string name="not_receive_message">Not receive message</string>
+    <string name="verification_message">Verification message</string>
 </resources>

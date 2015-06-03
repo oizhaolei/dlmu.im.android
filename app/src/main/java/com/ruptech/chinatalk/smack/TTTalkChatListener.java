@@ -1,6 +1,8 @@
 package com.ruptech.chinatalk.smack;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
@@ -12,8 +14,11 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
+import com.ruptech.chinatalk.widget.CustomDialog;
+import com.ruptech.dlmu.im.R;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
@@ -39,6 +44,31 @@ public class TTTalkChatListener implements StanzaListener {
         if (body == null) {
             return;
         }
+        //不接受任何消息
+//        if(PrefUtils.getPrefNotReceiveMessage()){
+//            return;
+//        }
+        //需要验证
+//        if(PrefUtils.getPrefVerificationMessage()){
+//            DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                }
+//            };
+//            DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                    return;
+//                }
+//            };
+//            new CustomDialog(App.mContext)
+//                    .setMessage("您有一条新消息:" + body)
+//                    .setPositiveButton("接收", positiveListener)
+//                    .setNegativeButton("屏蔽",
+//                            negativeListener).show();
+//        }
+
 
         String fromJID = XMPPUtils.getJabberID(msg.getFrom());
         String toJID = XMPPUtils.getJabberID(msg.getTo());

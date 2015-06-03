@@ -10,14 +10,6 @@
         android:paddingLeft="2dp"
         android:paddingRight="2dp" >
 
-        <TextView
-            style="@style/unimportance_contents_text_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="20dp"
-            android:text="@string/chat_translation_secretary_relation" />
-
         <RelativeLayout
             android:id="@+id/activity_setting_message_notification_layout"
             android:layout_width="match_parent"
@@ -46,82 +38,6 @@
                 android:layout_marginRight="10dp" />
         </RelativeLayout>
 
-        <TextView
-            style="@style/unimportance_contents_text_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="20dp"
-            android:text="@string/not_interrupt_setting" />
-
-        <RelativeLayout
-            android:id="@+id/activity_setting_not_interrupt_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp" >
-
-            <TextView
-                android:id="@+id/activity_setting_not_interrupt_switch_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:paddingLeft="20dp"
-                android:text="@string/not_interrupt_switch" />
-
-            <ToggleButton
-                android:id="@+id/activity_setting_not_interrupt_switch_slipswitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/activity_setting_not_interrupt_time_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@drawable/preference_item"
-            android:gravity="center_vertical"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp" >
-
-            <TextView
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:paddingLeft="20dp"
-                android:text="@string/not_interrupt_time" />
-            
-            <ImageView
-                android:id="@+id/sub_menu_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/empty"
-                android:scaleType="matrix"
-                android:src="@drawable/submenu" />
-            
-            <TextView
-                android:id="@+id/activity_setting_not_interrupt_time_textview"
-                style="@style/importance_contents_text_style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/sub_menu_imageview"
-                android:text="@string/not_interrupt_time" />
-
-        </RelativeLayout>
     </LinearLayout>
 
 </ScrollView>
