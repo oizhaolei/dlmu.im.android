@@ -239,9 +239,9 @@ public class Utils {
         if (params.isEmpty()) return url;
         String rtn = url + "?";
         for (String key : params.keySet()) {
-            rtn = rtn + "&" + key + "=" + params.get(key);
+            rtn = rtn + key + "=" + params.get(key) + "&";
         }
-        return rtn;
+        return rtn = rtn.substring(0, rtn.length() - 1);
     }
 
     public static Map<String, String> genParam(String[] params) {
@@ -252,6 +252,8 @@ public class Utils {
                 rtn.put(params[i], App.readUser().getUsername());
             if (params[i].equals("passwd"))
                 rtn.put(params[i], new String(Base64.decode(PrefUtils.getUserPassword(), Base64.DEFAULT)));
+            if (params[i].equals("zxjxjhh"))
+                rtn.put(params[i], "2014-2015-2-1");
         }
         //TODO 传递客户端版本；
         rtn.put("version", "1");

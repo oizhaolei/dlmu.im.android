@@ -140,7 +140,7 @@ public class ServiceFragment extends Fragment {
                         break;
                     case 1:
                         url = Utils.genUrl(Utils.genParam(params), url);
-                        System.out.println(url);
+                        System.out.println(">>>>>>"+url);
                         startServiceActivity(url, title);
                         break;
                     case 2:
