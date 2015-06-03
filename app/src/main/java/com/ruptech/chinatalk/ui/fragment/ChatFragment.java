@@ -124,7 +124,7 @@ public class ChatFragment extends Fragment {
                         .getColumnIndex(ChatTable.Columns.TO_FULLNAME));
                 String fullname = to_fullanem;
                 if (to_Jid.startsWith(App.readUser().getUsername())) {
-                    name = from_fullname;
+                    fullname = from_fullname;
                 }
                 startChatActivity(name, fullname);
             }

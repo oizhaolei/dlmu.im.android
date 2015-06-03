@@ -79,6 +79,7 @@ public class MyselfFragment extends Fragment {
         instance = this;
 
         mTelTextView.setText(App.readUser().getUsername());
+        mNameTextView.setText(App.readUser().getFullname());
         String portrait = AppVersion.getPortraitUrl(App.readUser().getUsername());
         Utils.setUserPicImage(mThumbImageview, portrait);
 
