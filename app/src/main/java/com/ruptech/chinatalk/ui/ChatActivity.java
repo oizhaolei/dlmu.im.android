@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk.ui;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -108,7 +109,7 @@ public class ChatActivity extends ActionBarActivity {
 
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TTTalkChatListener.retrieveUser(mToJid);
+        TTTalkChatListener.retrieveUser(mToJid, false);
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ChatActivity extends ActionBarActivity {
 
         Point screenSize = new Point();
         getWindowManager().getDefaultDisplay().getSize(screenSize);
-        cursorAdapter = new ChatAdapter(this, reQuery(), screenSize);
+        cursorAdapter = new ChatAdapter(this, reQuery(getContentResolver(), mToJid), screenSize);
         mMessageListView.setAdapter(cursorAdapter);
         mMessageListView.setSelection(cursorAdapter.getCount() - 1);
 
@@ -228,12 +229,12 @@ public class ChatActivity extends ActionBarActivity {
         }
     }
 
-    private Cursor reQuery() {
+    public static Cursor reQuery(ContentResolver mContentResolver, String mToJid) {
 
         String selection = "(" + ChatTable.Columns.FROM_JID + " = ? and " + ChatTable.Columns.TO_JID + " = ?) or " +
                 "(" + ChatTable.Columns.TO_JID + " = ? and " + ChatTable.Columns.FROM_JID + " = ?)";
 
-        return getContentResolver().query(ChatProvider.CONTENT_URI,
+        return mContentResolver.query(ChatProvider.CONTENT_URI,
                 CHAT_PROJECTION, selection, new String[]{App.readUser().getJid(), mToJid, App.readUser().getJid(), mToJid}, null);
 
     }
@@ -255,7 +256,7 @@ public class ChatActivity extends ActionBarActivity {
 
         public void onChange(boolean selfChange) {
             Log.d(TAG, "ContactObserver.onChange: " + selfChange);
-            updateAdapterCursor(reQuery());
+            updateAdapterCursor(reQuery(getContentResolver(), mToJid));
         }
     }
 

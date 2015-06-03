@@ -14,10 +14,6 @@ import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
 public class MyNotificationBuilder extends NotificationCompat.Builder {
-
-    private static final long MIN_SOUND_INTERVAL = 5000; // 5000ms
-    public static long lastSoundTime = 0;
-    private static PendingIntent pendingIntent;
     private final Context mContext;
     private RemoteViews contentView;
 
@@ -29,19 +25,12 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
         setVibrate(AppPreferences.NOTIFICATION_VIBRATE);
     }
 
-    public MyNotificationBuilder(Context context, boolean isSound,
-                                 String title, String content, Bitmap icon) {
+    public MyNotificationBuilder(Context context, String title, String content, Bitmap icon) {
         super(context);
         mContext = context;
         int defaults = Notification.DEFAULT_LIGHTS;
-
-        if (isSound && soundTimeDiff() > MIN_SOUND_INTERVAL) {
-            defaults |= Notification.DEFAULT_SOUND;
-            setVibrate(AppPreferences.NOTIFICATION_VIBRATE);
-        } else {
-            defaults &= ~Notification.DEFAULT_SOUND;
-            setVibrate(null);
-        }
+        defaults |= Notification.DEFAULT_SOUND;
+        setVibrate(AppPreferences.NOTIFICATION_VIBRATE);
         if (Utils.isEmpty(title)) {
             title = context.getString(R.string.app_name);
         }
@@ -153,10 +142,6 @@ public class MyNotificationBuilder extends NotificationCompat.Builder {
                 new java.util.Date(when));
         contentView.setTextViewText(R.id.time, time);
         return this;
-    }
-
-    private long soundTimeDiff() {
-        return (System.currentTimeMillis() - lastSoundTime);
     }
 
 }

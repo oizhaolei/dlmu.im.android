@@ -1,19 +1,21 @@
 package com.ruptech.chinatalk.ui.setting;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.event.LogoutEvent;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class SettingSystemInfoActivity extends ActionBarActivity {
@@ -21,8 +23,12 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
     private final String TAG = Utils.CATEGORY
             + SettingSystemInfoActivity.class.getSimpleName();
 
+    @InjectView(R.id.activity_setting_view_not_receive_slipswitch)
+    ToggleButton notReceiveSlipswitch;
 
-    private ProgressDialog progressDialog;
+    @InjectView(R.id.activity_setting_view_verification_slipswitch)
+    ToggleButton verificationSlipswitch;
+
 
     @Subscribe
     public void answerLogout(LogoutEvent event) {
@@ -33,13 +39,6 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    // 系统url
-    @OnClick(R.id.main_tab_setting_show_system_url_textview)
-    public void doShowSystemUrl(View v) {
-
-        //
     }
 
     @Override
@@ -63,16 +62,47 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
         return true;
     }
 
+    private void setupComponents() {
+        boolean pref_not_receive_message = PrefUtils
+                .getPrefNotReceiveMessage();
+        boolean pref_verification_message = PrefUtils
+                .getPrefVerificationMessage();
 
-    // 翻译设定
-    @OnClick(R.id.activity_setting_general_rl)
-    public void setting_general(View v) {
-        Intent intent = new Intent(this, SettingGeneralActivity.class);
+        notReceiveSlipswitch
+                .setChecked(pref_not_receive_message);
+        notReceiveSlipswitch
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        if (isChecked) {
+                            PrefUtils.savePrefNotReceiveMessage(true);
+                            verificationSlipswitch.setChecked(false);
+                        } else {
+                            PrefUtils.savePrefNotReceiveMessage(false);
+                        }
+                    }
+                });
+
+        verificationSlipswitch
+                .setChecked(pref_verification_message);
+        verificationSlipswitch
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        if (isChecked) {
+                            PrefUtils.savePrefVerificationeMessage(true);
+                            notReceiveSlipswitch.setChecked(false);
+                        } else {
+                            PrefUtils.savePrefVerificationeMessage(false);
+                        }
+                    }
+                });
+    }
+    @OnClick(R.id.activity_setting_view_blocklist_layout)
+    public void gotoBlockList() {
+        Intent intent = new Intent(this, BlockedUserListActivity.class);
         startActivity(intent);
     }
-
-
-    private void setupComponents() {
-    }
-
 }

@@ -570,4 +570,7 @@
     <string name="checkin_start">启动签到</string>
     <string name="nfc_nomodule">没有NFC模块</string>
     <string name="nfc_disabled">NFC模块未启用</string>
+
+    <string name="not_receive_message">不接收任何会话</string>
+    <string name="verification_message">会话需要验证</string>
 </resources>

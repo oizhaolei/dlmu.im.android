@@ -20,7 +20,7 @@ public class ChinaTalkDatabase {
     /**
      * Database Version
      */
-    public static final int DATABASE_VERSION = 69;
+    public static final int DATABASE_VERSION = 70;
     private static final String TAG = Utils.CATEGORY
             + ChinaTalkDatabase.class.getSimpleName();
 

@@ -222,12 +222,7 @@ public class Utils {
 
         App.userDAO.deleteAll();
         last_friend_updatedate = null;
-
-        PrefUtils.removePrefTTTLastSelectedLangs();
-        PrefUtils.removePrefRecommendedFriendsLastUpdate();
-        PrefUtils.removePrefShowAnnouncementDialogLastUpdateDate();
         PrefUtils.removePrefUser();
-        PrefUtils.removePrefPreferLang();
 
         App.notificationManager.cancelAll();
 

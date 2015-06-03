@@ -22,11 +22,9 @@ public abstract class BaseService extends Service {
     protected WakeLock mWakeLock;
 
     public static MyNotificationBuilder createNotificationBuilder(
-            Context context, String title, String content, Bitmap icon,
-            boolean isSound) {
+            Context context, String title, String content, Bitmap icon) {
 
-        MyNotificationBuilder mBuilder = new MyNotificationBuilder(context,
-                isSound, title, content, icon);
+        MyNotificationBuilder mBuilder = new MyNotificationBuilder(context, title, content, icon);
 
         return mBuilder;
     }
@@ -80,27 +78,11 @@ public abstract class BaseService extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this,
                 notiId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        MyNotificationBuilder mBuilder = createNotificationBuilder(this, title, content, null,
-                PrefUtils.getPrefTranslatedNoticeMessage());
+        MyNotificationBuilder mBuilder = createNotificationBuilder(this, title, content, null);
         mBuilder.setTicker(content);
         mBuilder.setContentIntent(contentIntent);
 
         App.notificationManager.cancel(notiId);
         App.notificationManager.notify(notiId, mBuilder.build());
-
-//        // 如果选择TTS播放，处理
-//        if (PrefUtils.getPrefTranslatedNoticeTts()) {
-//            // TTS
-//            if (!Utils.tts(context, message.getTo_lang(),
-//                    message.getFrom_lang(), content)) {
-//                Toast.makeText(
-//                        context,
-//                        context.getString(R.string.tts_no_supported_language),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        }
-
     }
-
-
 }

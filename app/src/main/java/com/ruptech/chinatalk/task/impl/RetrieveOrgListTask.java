@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class RetrieveOrgListTask extends GenericTask {
     private final String parentJid;
-    private final boolean isStudent;
+    private final String isStudent;
     private List<Map<String, Object>> orgList;
     private List<Map<String, Object>> memberList;
 
-    public RetrieveOrgListTask(String parentJid, boolean isStudent) {
+    public RetrieveOrgListTask(String parentJid, String isStudent) {
         this.parentJid = parentJid;
         this.isStudent = isStudent;
     }

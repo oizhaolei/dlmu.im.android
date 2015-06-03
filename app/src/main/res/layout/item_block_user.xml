@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff0f3f6" >
+
+    <ImageView
+        android:id="@+id/item_block_user_portrait"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:src="@drawable/default_portrait" />
+
+    <TextView
+        android:id="@+id/item_block_user_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="25.0dip"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="58.0dip"
+        android:layout_toRightOf="@id/item_block_user_portrait"
+        android:duplicateParentState="true"
+        android:ellipsize="end"
+        android:gravity="left|center"
+        android:includeFontPadding="false"
+        android:padding="0.0dip"
+        android:singleLine="true"
+        android:text="way"
+        android:textSize="15.0sp" />
+
+
+    <RelativeLayout
+        android:id="@+id/item_block_remove_layout"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+
+        <Button
+            android:id="@+id/item_block_remove_btn"
+            android:layout_width="85dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/background_button_orange"
+            android:focusable="false"
+            android:gravity="center"
+            android:text="解除屏蔽"
+            android:textColor="@color/white_text"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

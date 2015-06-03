@@ -41,7 +41,8 @@ public abstract class TableContent {
             create.append(Columns.CREATE_ID + " TEXT, ");
             create.append(Columns.CREATE_DATE + " date, ");
             create.append(Columns.UPDATE_ID + " TEXT, ");
-            create.append(Columns.UPDATE_DATE + " date ");
+            create.append(Columns.UPDATE_DATE + " date, ");
+            create.append(Columns.BLOCK + " TEXT ");
             create.append(");");
             if (BuildConfig.DEBUG)
                 Log.w(TAG, "sql:" + create.toString());
@@ -58,7 +59,7 @@ public abstract class TableContent {
         public String[] getIndexColumns() {
             return new String[]{Columns.ID, Columns.PASSWORD, Columns.USERNAME,
                     Columns.FULLNAME, Columns.GENDER, Columns.USER_MEMO, Columns.PIC_URL, Columns.TERMINAL_TYPE,
-                    Columns.CREATE_ID, Columns.CREATE_DATE, Columns.UPDATE_ID, Columns.UPDATE_DATE};
+                    Columns.CREATE_ID, Columns.CREATE_DATE, Columns.UPDATE_ID, Columns.UPDATE_DATE, Columns.BLOCK};
         }
 
         public String getName() {
@@ -76,6 +77,8 @@ public abstract class TableContent {
             user.password = cursor.getString(cursor
                     .getColumnIndex(Columns.PASSWORD));
             user.username = cursor.getString(cursor.getColumnIndex(Columns.USERNAME));
+            user.fullname = cursor.getString(cursor.getColumnIndex(Columns.FULLNAME));
+            user.block = cursor.getString(cursor.getColumnIndex(Columns.BLOCK));
             return user;
         }
 
@@ -87,7 +90,8 @@ public abstract class TableContent {
             v.put(Columns.ID, user.getId());
             v.put(Columns.USERNAME, user.username);
             v.put(Columns.PASSWORD, user.password);
-            v.put(Columns.FULLNAME, user.getFullname());
+            v.put(Columns.FULLNAME, user.fullname);
+            v.put(Columns.BLOCK, user.block);
             return v;
         }
 
@@ -104,6 +108,7 @@ public abstract class TableContent {
             public final String UPDATE_ID = "update_id";
             public final String UPDATE_DATE = "update_date";
             public final String TERMINAL_TYPE = "terminal_type";
+            public final String BLOCK = "block";
         }
     }
 

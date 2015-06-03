@@ -2,6 +2,7 @@ package com.ruptech.chinatalk;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,13 @@ import com.ruptech.chinatalk.event.LogoutEvent;
 import com.ruptech.chinatalk.event.NewChatEvent;
 import com.ruptech.chinatalk.event.OfflineEvent;
 import com.ruptech.chinatalk.event.OnlineEvent;
+import com.ruptech.chinatalk.event.VerificationEvent;
+import com.ruptech.chinatalk.model.Chat;
+import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.TTTalkChatListener;
+import com.ruptech.chinatalk.sqlite.ChatProvider;
+import com.ruptech.chinatalk.sqlite.TableContent;
+import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.LoginActivity;
 import com.ruptech.chinatalk.ui.LoginGateActivity;
 import com.ruptech.chinatalk.ui.LoginLoadingActivity;
@@ -26,6 +34,7 @@ import com.ruptech.chinatalk.ui.fragment.ChatFragment;
 import com.ruptech.chinatalk.ui.fragment.MyselfFragment;
 import com.ruptech.chinatalk.ui.fragment.ServiceFragment;
 import com.ruptech.chinatalk.utils.AppPreferences;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.widget.CustomDialog;
 import com.ruptech.dlmu.im.R;
@@ -221,41 +230,77 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Subscribe
-    public void onlineChange(OnlineEvent event) {
+    public void answerNewChatReceived(final VerificationEvent event) {
         mainHandler.post(new Runnable() {
             public void run() {
-                Toast.makeText(App.mContext,
-                        R.string.start_receiving_messages,
-                        Toast.LENGTH_SHORT).show();
+                DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //接收
+                        MediaPlayer.create(MainActivity.this, R.raw.office).start();
+                        NewChatEvent newChatEvent = new NewChatEvent(event.fromJID, event.chatMessage);
+                        App.mService.displayMessageNotification(newChatEvent);
+                    }
+                };
+                DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        //屏蔽
+                        User user = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(event.fromJID));
+                        if (user != null) {
+                            user.setBlock("true");
+                            App.userDAO.mergeUser(user);
+                        } else {
+                            TTTalkChatListener.retrieveUser(event.fromJID , true);
+                        }
+                        clearChatReceived(event.fromJID);
+                    }
+                };
+                new CustomDialog(MainActivity.this)
+                        .setMessage("您有一条新消息:" + event.chatMessage)
+                        .setPositiveButton("接收", positiveListener)
+                        .setNegativeButton("屏蔽",
+                                negativeListener).show();
             }
         });
     }
 
     @Subscribe
+    public void onlineChange(OnlineEvent event) {
+//        mainHandler.post(new Runnable() {
+//            public void run() {
+//                Toast.makeText(App.mContext,
+//                        R.string.start_receiving_messages,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+    }
+
+    @Subscribe
     public void offlineChange(OfflineEvent event) {
-        mainHandler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(App.mContext,
-                        R.string.stop_receiving_messages,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mainHandler.post(new Runnable() {
+//            public void run() {
+//                Toast.makeText(App.mContext,
+//                        R.string.stop_receiving_messages,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     public void doChatClass(MenuItem item) {
         Intent orgIntent = new Intent(this, OrgActivity.class);
-        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "");
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
-        orgIntent.putExtra(OrgActivity.ADD_TYPE, 1);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, "student_class");
         startActivity(orgIntent);
     }
 
     public void doChatCourse(MenuItem item) {
 
         Intent orgIntent = new Intent(this, OrgActivity.class);
-        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "");
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
-        orgIntent.putExtra(OrgActivity.ADD_TYPE, 2);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, "student_course");
         startActivity(orgIntent);
     }
 
@@ -264,7 +309,6 @@ public class MainActivity extends ActionBarActivity implements
         Intent orgIntent = new Intent(this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "100000@" + AppPreferences.IM_SERVER_RESOURCE);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
-        orgIntent.putExtra(OrgActivity.ADD_TYPE, 3);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
         startActivity(orgIntent);
     }
@@ -274,7 +318,6 @@ public class MainActivity extends ActionBarActivity implements
         Intent orgIntent = new Intent(this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, "200000@" + AppPreferences.IM_SERVER_RESOURCE);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, getString(R.string.dlmu_title));
-        orgIntent.putExtra(OrgActivity.ADD_TYPE, 4);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, false);
         startActivity(orgIntent);
     }
@@ -298,4 +341,8 @@ public class MainActivity extends ActionBarActivity implements
                 this.getString(R.string.tip_logout));
     }
 
+    public void clearChatReceived(String fromJid) {
+        String selection = TableContent.ChatTable.Columns.FROM_JID + " = ? or " + TableContent.ChatTable.Columns.TO_JID + " = ?";
+        getContentResolver().delete(ChatProvider.CONTENT_URI, selection, new String[]{fromJid, fromJid});
+    }
 }

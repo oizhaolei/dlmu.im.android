@@ -577,6 +577,11 @@
     <string name="email_not_verified">Email(not verified)</string>
     <string name="send_failure">Send failed</string>
     <string name="dlmu_title">大连海事大学</string>
+    <string name="student">Student</string>
+    <string name="teacher">Teacher</string>
+
+    <string name="not_receive_message">Not receive message</string>
+    <string name="verification_message">Verification message</string>
     <string name="add_frends_class">按班级找学生</string>
     <string name="add_frends_course">按课程找学生</string>
     <string name="add_friends_org">按部门找老师</string>

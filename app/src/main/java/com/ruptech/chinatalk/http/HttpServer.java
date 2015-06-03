@@ -122,11 +122,11 @@ public class HttpServer extends HttpConnection {
         throw new Exception("login error");
     }
 
-    public Map retrieveOrgList(String parentJid, boolean isStudent)
+    public Map retrieveOrgList(String parentJid, String isStudent)
             throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("jid", parentJid);
-        params.put("student", String.valueOf(isStudent));
+        params.put("student", isStudent);
 
         Response res = _get("org", params);
         JSONObject result = res.asJSONObject();
