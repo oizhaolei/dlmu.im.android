@@ -26,7 +26,8 @@ import butterknife.InjectView;
 public class RecentChatAdapter extends SimpleCursorAdapter {
     private static final String SELECT = ChatTable.Columns.CREATED_DATE
             + " in (select max(" + ChatTable.Columns.CREATED_DATE + ") from "
-            + ChatProvider.TABLE_NAME + " group by " + ChatTable.Columns.FROM_JID
+            + ChatProvider.TABLE_NAME + " where " + ChatTable.Columns.FROM_JID + " = '" + App.readUser().getJid() + "' or " + ChatTable.Columns.TO_JID + " = '" + App.readUser().getJid()
+            + "' group by CASE " + ChatTable.Columns.FROM_JID + " when '" + App.readUser().getJid() + "' THEN to_jid ELSE from_jid END"
             + " having count(*)>0)";// 查询合并重复jid字段的所有聊天对象
     private static final String[] PROJECTION = new String[]{
             ChatTable.Columns.ID,

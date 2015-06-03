@@ -88,15 +88,16 @@ public class ServiceActivity extends ActionBarActivity implements
 
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        System.out.println("--------------" + mTitle);
+        //System.out.println("--------------" + mTitle);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            this.onBackPressed();
-            return false;
+            finish();
+            //this.onBackPressed();
+            //return false;
         }
 
         return true;
@@ -136,6 +137,8 @@ public class ServiceActivity extends ActionBarActivity implements
         webview.getSettings().setBuiltInZoomControls(true);
         webview.getSettings().setDomStorageEnabled(true);// 解决加载出现空白
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setSaveFormData(false);
+        //System.out.println(webview.getSettings().getUserAgentString());
         webview.clearCache(true);
 
         Log.i(TAG, mUrl);

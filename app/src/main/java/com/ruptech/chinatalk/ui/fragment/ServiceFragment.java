@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.ui.ClassroomCheckInActivity;
 import com.ruptech.chinatalk.ui.MeetingCheckInActivity;
 import com.ruptech.chinatalk.ui.ServiceActivity;
+import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
 
@@ -91,7 +93,9 @@ public class ServiceFragment extends Fragment {
             }
 
         };
+
         RetrieveServiceListTask.setListener(taskListener);
+
         RetrieveServiceListTask.execute();
     }
 
@@ -106,10 +110,9 @@ public class ServiceFragment extends Fragment {
                 String jid = item.get("fnid").toString();
                 String title = (String) item.get("title");
                 String url = (String) item.get("url");
-                String[] param = new String[]{};
-                System.out.println(item.get("param"));
+                String[] params = new String[]{};
                 if (null != item.get("param")) {
-                    param = item.get("param").toString().split(";");
+                    params = item.get("param").toString().split(";");
                 }
                 Integer type = (Integer) item.get("typeid");
                 switch (type) {
@@ -130,21 +133,13 @@ public class ServiceFragment extends Fragment {
                                 }
                                 if (url.startsWith("MEETING")) {
                                     String mid = url.substring(url.indexOf("_") + 1);
-                                    System.out.println("+++++" + url);
-                                    System.out.println("+++++" + mid);
                                     startMeetingCheckInActivity(jid, title, mid);
                                 }
                             }
                         }
                         break;
                     case 1:
-                        if (param != null && param.length > 0) {
-                            for (int i = 0; i < param.length; i++) {
-                                if (param[i].equals("stuempno")) {
-                                    url = url.replace("{stuempno}", App.readUser().getUsername());
-                                }
-                            }
-                        }
+                        url = Utils.genUrl(Utils.genParam(params), url);
                         System.out.println(url);
                         startServiceActivity(url, title);
                         break;

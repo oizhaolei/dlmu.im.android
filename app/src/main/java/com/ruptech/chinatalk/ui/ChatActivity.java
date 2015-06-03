@@ -22,6 +22,7 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.adapter.ChatAdapter;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
+import com.ruptech.chinatalk.smack.TTTalkChatListener;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
 import com.ruptech.chinatalk.sqlite.TableContent.ChatTable;
 import com.ruptech.chinatalk.task.GenericTask;
@@ -107,6 +108,7 @@ public class ChatActivity extends ActionBarActivity {
 
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TTTalkChatListener.retrieveUser(mToJid);
     }
 
     @Override
