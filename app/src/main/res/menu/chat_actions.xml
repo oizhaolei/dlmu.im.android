@@ -8,17 +8,30 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/translator_action_giveup"
+                android:id="@+id/translator_action_class"
                 android:icon="@drawable/discover_addfriends"
                 app:showAsAction="ifRoom|collapseActionView"
-                android:onClick="doChatStudent"
-                android:title="@string/student"/>
+                android:onClick="doChatClass"
+                android:title="@string/add_frends_class"/>
             <item
-                android:id="@+id/translator_action_history"
+                android:id="@+id/translator_action_course"
+                android:icon="@drawable/discover_addfriends"
+                app:showAsAction="ifRoom|collapseActionView"
+                android:onClick="doChatCourse"
+                android:title="@string/add_frends_course"/>
+            <item
+                android:id="@+id/translator_action_org"
                 app:showAsAction="ifRoom|collapseActionView"
                 android:icon="@drawable/discover_addfriends"
-                android:onClick="doChatTeacher"
-                android:title="@string/teacher"/>
+                android:onClick="doChatOrg"
+                android:title="@string/add_friends_org"/>
+            <item
+                android:id="@+id/translator_action_college"
+                app:showAsAction="ifRoom|collapseActionView"
+                android:icon="@drawable/discover_addfriends"
+                android:onClick="doChatCollege"
+                android:title="@string/add_friends_college"/>
+
         </menu>
     </item>
 </menu>

@@ -559,8 +559,8 @@
     <string name="invite_message">%1$sInvite you to use the TTTalk. Were looking for overseas friends, chat, and other exotic experiences together. \n Please click on the link below to download。\n%2$s</string>
     <string name="channel_is_not_exist">channel is not exist。</string>
 
-    <string name="start_receiving_messages">You are online.</string>
-    <string name="stop_receiving_messages">You are offline.</string>
+    <string name="start_receiving_messages">后台服务连接成功</string>
+    <string name="stop_receiving_messages">后台服务连接失败</string>
     <string name="status_available">在线</string>
     <string name="status_away">离开</string>
     <string name="status_chat">Available</string>
@@ -582,4 +582,8 @@
 
     <string name="not_receive_message">Not receive message</string>
     <string name="verification_message">Verification message</string>
+    <string name="add_frends_class">按班级找学生</string>
+    <string name="add_frends_course">按课程找学生</string>
+    <string name="add_friends_org">按部门找老师</string>
+    <string name="add_friends_college">按学院找老师</string>
 </resources>

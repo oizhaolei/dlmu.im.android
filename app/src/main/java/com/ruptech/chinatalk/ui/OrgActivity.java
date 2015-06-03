@@ -36,11 +36,12 @@ public class OrgActivity extends ActionBarActivity {
     public static final String PARENT_ORG_STUDENT = "PARENT_ORG_STUDENT";
     static final String TAG = Utils.CATEGORY
             + OrgActivity.class.getSimpleName();
+
     @InjectView(R.id.activity_org_listview)
     ListView mOrgListView;
     private String mParentOrgJId;
     private String mTitle;
-    private boolean mIsStudent;
+    private String mIsStudent;
     private List<Map<String, Object>> itemList = new ArrayList<>();
 
     private void startChatActivity(String userJid, String fullname) {
@@ -87,15 +88,13 @@ public class OrgActivity extends ActionBarActivity {
 
         mParentOrgJId = getIntent().getExtras().getString(PARENT_ORG_JID);
         mTitle = getIntent().getExtras().getString(PARENT_ORG_NAME);
-        mIsStudent = getIntent().getExtras().getBoolean(PARENT_ORG_STUDENT);
-
+        mIsStudent = getIntent().getExtras().getString(PARENT_ORG_STUDENT);
         setupComponents();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        retrieveOrg(mParentOrgJId);
+        retrieveTeacher(mParentOrgJId);
     }
 
-    private void retrieveOrg(String parentOrgJid) {
+    private void retrieveTeacher(String parentOrgJid) {
         RetrieveOrgListTask retrieveOrgListTask = new RetrieveOrgListTask(parentOrgJid, mIsStudent);
         TaskAdapter taskListener = new TaskAdapter() {
             @Override
@@ -159,6 +158,7 @@ public class OrgActivity extends ActionBarActivity {
         Intent orgIntent = new Intent(OrgActivity.this, OrgActivity.class);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_JID, jid);
         orgIntent.putExtra(OrgActivity.PARENT_ORG_NAME, name);
+        orgIntent.putExtra(OrgActivity.PARENT_ORG_STUDENT, mIsStudent);
         startActivity(orgIntent);
     }
 
@@ -166,6 +166,4 @@ public class OrgActivity extends ActionBarActivity {
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
     }
-
-
 }
