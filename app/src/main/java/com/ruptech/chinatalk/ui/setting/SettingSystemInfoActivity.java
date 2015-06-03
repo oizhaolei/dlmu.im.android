@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk.ui.setting;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class SettingSystemInfoActivity extends ActionBarActivity {
 
@@ -98,5 +100,9 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
                     }
                 });
     }
-
+    @OnClick(R.id.activity_setting_view_blocklist_layout)
+    public void gotoBlockList() {
+        Intent intent = new Intent(this, BlockedUserListActivity.class);
+        startActivity(intent);
+    }
 }

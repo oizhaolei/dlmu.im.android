@@ -19,9 +19,10 @@ public class User extends Item implements Serializable {
 
     public String password;
     public String username;
-    private String fullname;
-    private String deptid;
-    private String deptname;
+    public String fullname;
+    public String deptid;
+    public String deptname;
+    public String block;
 
     public User() {
     }
@@ -91,5 +92,13 @@ public class User extends Item implements Serializable {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public String getBlock() {
+        return block;
+    }
+
+    public void setBlock(String block) {
+        this.block = block;
     }
 }

@@ -3,10 +3,12 @@ package com.ruptech.chinatalk.smack;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.event.NewChatEvent;
+import com.ruptech.chinatalk.event.VerificationEvent;
 import com.ruptech.chinatalk.model.Chat;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.ChatProvider;
@@ -14,6 +16,7 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveUserTask;
+import com.ruptech.chinatalk.ui.ChatActivity;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.chinatalk.utils.XMPPUtils;
@@ -44,38 +47,28 @@ public class TTTalkChatListener implements StanzaListener {
         if (body == null) {
             return;
         }
-        //不接受任何消息
-//        if(PrefUtils.getPrefNotReceiveMessage()){
-//            return;
-//        }
-        //需要验证
-//        if(PrefUtils.getPrefVerificationMessage()){
-//            DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//
-//                }
-//            };
-//            DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int whichButton) {
-//                    return;
-//                }
-//            };
-//            new CustomDialog(App.mContext)
-//                    .setMessage("您有一条新消息:" + body)
-//                    .setPositiveButton("接收", positiveListener)
-//                    .setNegativeButton("屏蔽",
-//                            negativeListener).show();
-//        }
-
-
         String fromJID = XMPPUtils.getJabberID(msg.getFrom());
         String toJID = XMPPUtils.getJabberID(msg.getTo());
 
         Log.e(TAG, msg.toString());
         if (fromJID.equals(toJID)) {
             return;
+        }
+        //不接受任何消息
+        if(PrefUtils.getPrefNotReceiveMessage()){
+            return;
+        }
+        //屏蔽
+        User user = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJID));
+        if(user != null && user.block.equals("true")){
+            return;
+        }
+        //需要验证
+        Cursor chatHistory = ChatActivity.reQuery(mContentResolver, fromJID);
+        if (PrefUtils.getPrefVerificationMessage() && (chatHistory == null || chatHistory.getCount() <= 0 )) {
+            App.mBus.post(new VerificationEvent(fromJID, body));
+        } else {
+            App.mBus.post(new NewChatEvent(fromJID, body));
         }
 
         long ts = System.currentTimeMillis();
@@ -99,16 +92,15 @@ public class TTTalkChatListener implements StanzaListener {
         }
 
         if (fromUser == null) {
-            retrieveUser(fromJID);
+            retrieveUser(fromJID, false);
         } else if (toUser == null) {
-            retrieveUser(toJID);
+            retrieveUser(toJID, false);
         }
 
         ChatProvider.insertChat(mContentResolver, chat);
-        App.mBus.post(new NewChatEvent(fromJID, body));
     }
 
-    public static void retrieveUser(final String jid) {
+    public static void retrieveUser(final String jid, final boolean block) {
         String username = User.getUsernameFromJid(jid);
         RetrieveUserTask retrieveUserTask = new RetrieveUserTask(username);
         TaskAdapter taskListener = new TaskAdapter() {
@@ -118,6 +110,9 @@ public class TTTalkChatListener implements StanzaListener {
                 RetrieveUserTask retrieveUserTask = (RetrieveUserTask) task;
                 if (result == TaskResult.OK) {
                     User user = retrieveUserTask.getUser();
+                    if(block){
+                        user.setBlock(String.valueOf(block));
+                    }
                     App.userDAO.mergeUser(user);
 
                     ChatProvider.updateChat(jid, user.getFullname());

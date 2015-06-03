@@ -137,6 +137,10 @@
             android:icon="@drawable/tt_logo2"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyle"/>
+        <activity
+            android:name="com.ruptech.chinatalk.ui.setting.BlockedUserListActivity"
+            android:icon="@drawable/tt_logo2"
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.ruptech.chinatalk.XMPPService"/>
 

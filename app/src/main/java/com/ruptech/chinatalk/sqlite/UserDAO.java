@@ -1,10 +1,12 @@
 package com.ruptech.chinatalk.sqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.SQLiteTemplate.RowMapper;
 import com.ruptech.chinatalk.utils.Utils;
@@ -278,5 +280,23 @@ public class UserDAO {
 
         return db.insert(UserTable.getName(), null,
                 UserTable.toContentValues(user));
+    }
+
+    public Cursor fetchBlockUsers() {
+        Cursor cursor = mSqlTemplate
+                .getDb(false)
+                .rawQuery(
+                        "select * from " + TableContent.UserTable.getName() + " where " + TableContent.UserTable.Columns.BLOCK + " = 'true'", null);
+
+        return cursor;
+    }
+
+    public void removeBlockUser(String userNane, String block) {
+        SQLiteDatabase mDb = mSqlTemplate.getDb(true);
+        String sql = "UPDATE " + UserTable.getName() + " SET " + UserTable.Columns.BLOCK + "='" + block + "' WHERE " + UserTable.Columns.USERNAME + "='" + userNane + "'" ;
+
+        if (BuildConfig.DEBUG)
+            Log.v(TAG, sql);
+        mDb.execSQL(sql);
     }
 }
