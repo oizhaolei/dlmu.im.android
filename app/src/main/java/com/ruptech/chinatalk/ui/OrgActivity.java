@@ -181,6 +181,4 @@ public class OrgActivity extends ActionBarActivity {
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
     }
-
-
 }
