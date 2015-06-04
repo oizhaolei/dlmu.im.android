@@ -140,7 +140,7 @@ public class Utils {
 
     public static void AlertDialog(Context mContext,
                                    OnClickListener mPositiveListener,
-                                   OnClickListener mNegativeListener, String mTitle, String mMessage) {
+                                   OnClickListener mNegativeListener, String mMessage) {
 
         new CustomDialog(mContext)
                 .setMessage(mMessage)

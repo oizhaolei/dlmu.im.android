@@ -1,5 +1,6 @@
 package com.ruptech.chinatalk;
 
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -246,14 +247,7 @@ public class MainActivity extends ActionBarActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //屏蔽
-                        User user = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(event.fromJID));
-                        if (user != null) {
-                            user.setBlock("true");
-                            App.userDAO.mergeUser(user);
-                        } else {
-                            TTTalkChatListener.retrieveUser(event.fromJID , true);
-                        }
-                        clearChatReceived(event.fromJID);
+                        blockUser(event.fromJID, getContentResolver());
                     }
                 };
                 new CustomDialog(MainActivity.this)
@@ -336,13 +330,18 @@ public class MainActivity extends ActionBarActivity implements
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         };
-        Utils.AlertDialog(this, positiveListener, negativeListener,
-                this.getString(R.string.logout),
-                this.getString(R.string.tip_logout));
+        Utils.AlertDialog(this, positiveListener, negativeListener, this.getString(R.string.tip_logout));
     }
 
-    public void clearChatReceived(String fromJid) {
+    public static void blockUser(String fromJid, ContentResolver mgetContentResolver){
+        User user = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJid));
+        if (user != null) {
+            user.setBlock("true");
+            App.userDAO.mergeUser(user);
+        } else {
+            TTTalkChatListener.retrieveUser(fromJid, true);
+        }
         String selection = TableContent.ChatTable.Columns.FROM_JID + " = ? or " + TableContent.ChatTable.Columns.TO_JID + " = ?";
-        getContentResolver().delete(ChatProvider.CONTENT_URI, selection, new String[]{fromJid, fromJid});
+        mgetContentResolver.delete(ChatProvider.CONTENT_URI, selection, new String[]{fromJid, fromJid});
     }
 }

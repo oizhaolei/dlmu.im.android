@@ -37,7 +37,7 @@
     <string name="are_you_sure_delete_message">你确定要删除这条内容吗？</string>
     <string name="auto_translation_msg">免费翻译</string>
     <string name="balance">我的钱包</string>
-    <string name="be_sure_to_block_friend">把好友加入黑名单，你将不再收到对方的消息，在朋友圈看不到对方的更新。要解除须重新关注好友。</string>
+    <string name="be_sure_to_block_friend">加入黑名单，你将不再收到对方的消息。</string>
     <string name="be_sure_to_delete_all_the_messages">您确定清空聊天记录？清空记录将不再显示。</string>
     <string name="be_sure_to_remove_friend">您确定取消关注该好友吗？</string>
     <string name="be_sure_to_report_friend">您确定举报好友吗？</string>
