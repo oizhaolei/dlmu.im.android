@@ -18,6 +18,7 @@ import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskResult;
 import com.ruptech.chinatalk.task.impl.RetrieveOrgListTask;
 import com.ruptech.chinatalk.utils.Utils;
+import com.ruptech.chinatalk.widget.OrgListArrayAdapter;
 import com.ruptech.dlmu.im.R;
 
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class OrgActivity extends ActionBarActivity {
 
     @InjectView(R.id.activity_org_listview)
     ListView mOrgListView;
+    OrgListArrayAdapter mOrgListArrayAdapter;
+
     private String mParentOrgJId;
     private String mTitle;
     private String mIsStudent;
@@ -54,9 +57,6 @@ public class OrgActivity extends ActionBarActivity {
         startActivity(chatIntent);
     }
 
-
-    //
-
     // doChat
     public void doChat(MenuItem item) {
         startChatActivity(mParentOrgJId, mTitle);
@@ -70,7 +70,6 @@ public class OrgActivity extends ActionBarActivity {
     }
 
     protected void displayTitle() {
-        //System.out.println("-----------"+mTitle);
         getSupportActionBar().setTitle(mTitle);
     }
 
@@ -105,24 +104,20 @@ public class OrgActivity extends ActionBarActivity {
 
                     List<Map<String, Object>> orgList = retrieveOrgListTask.getOrgList();
                     List<Map<String, Object>> memberList = retrieveOrgListTask.getMemberList();
-
-                    itemList.addAll(orgList);
-                    itemList.addAll(memberList);
-                    setAdapter();
-
+                    for(Map<String, Object> org : orgList){
+                        org.put("is_parent" , "true");
+                        itemList.add(org);
+                    }for(Map<String, Object> member : memberList){
+                        member.put("is_parent" , "false");
+                        itemList.add(member);
+                    }
+                    mOrgListArrayAdapter.addAll(itemList);
+                    mOrgListArrayAdapter.notifyDataSetChanged();
                 }
             }
-
         };
         retrieveOrgListTask.setListener(taskListener);
         retrieveOrgListTask.execute();
-    }
-
-    private void setAdapter() {
-        SimpleAdapter adapter = new SimpleAdapter(this, itemList, R.layout.item_org,
-                new String[]{"jid", "name"},
-                new int[]{R.id.item_org_jid, R.id.item_org_name});
-        mOrgListView.setAdapter(adapter);
     }
 
     @Override
@@ -136,6 +131,8 @@ public class OrgActivity extends ActionBarActivity {
 
     public void setupComponents() {
         displayTitle();
+        mOrgListArrayAdapter = new OrgListArrayAdapter(this);
+        mOrgListView.setAdapter(mOrgListArrayAdapter);
 
         mOrgListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -145,7 +142,8 @@ public class OrgActivity extends ActionBarActivity {
                 Map<String, Object> item = (Map<String, Object>) view.getAdapter().getItem(position);
                 String jid = (String) item.get("jid");
                 String name = (String) item.get("name");
-                if (User.isTeacher(jid) || User.isStudent(jid)) {
+                String is_parent = (String) item.get("is_parent");
+                if ("false".equals(is_parent)) {
                     startChatActivity(jid, name);
                 } else {
                     startOrgActivity(jid, name);
