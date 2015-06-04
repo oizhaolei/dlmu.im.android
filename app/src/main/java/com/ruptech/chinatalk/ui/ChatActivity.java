@@ -217,7 +217,7 @@ public class ChatActivity extends ActionBarActivity {
         chat.setToJid(mToJid);
         chat.setCreated_date(System.currentTimeMillis());
         sendMessageIfNotNull(chat);
-
+        System.out.print("-------------"+mToJid);
         if (User.isOrg(mToJid)) {
 
             String fromJid = App.readUser().getJid();

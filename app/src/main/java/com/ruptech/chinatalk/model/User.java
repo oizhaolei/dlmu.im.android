@@ -55,14 +55,17 @@ public class User extends Item implements Serializable {
     }
 
     public static boolean isOrg(String jid) {
-        return getUsernameFromJid(jid).length() == 6;
+        if (jid.startsWith("G")) return true;
+        return false;
     }
 
     public static boolean isTeacher(String jid) {
+        if (jid.startsWith("G")) return false;
         return getUsernameFromJid(jid).length() == 8;
     }
 
     public static boolean isStudent(String jid) {
+        if (jid.startsWith("G")) return false;
         return getUsernameFromJid(jid).length() == 10;
     }
 
