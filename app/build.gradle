@@ -9,7 +9,7 @@ android {
         targetSdkVersion 21
         testApplicationId 'com.ruptech.dlmu.im.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-        versionCode 2015051016
+        versionCode 2015060418
         versionName '2.5.8'
     }
     dexOptions {

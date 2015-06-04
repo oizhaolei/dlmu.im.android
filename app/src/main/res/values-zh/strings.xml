@@ -246,7 +246,7 @@
     <string name="prompt_input_your_old_password_error">旧密码不能为空</string>
     <string name="prompt_input_your_repeat_password_error">重复密码不能为空</string>
     <string name="prompt_input_your_repeat_password_error2">重复密码不正确</string>
-    <string name="prompt_password">请输入密码</string>
+    <string name="prompt_password">请输入统一门户密码</string>
     <string name="prompt_repassword">重复输入密码</string>
     <string name="prompt_signup2_error">验证码错误</string>
     <string name="prompt_signup2_send_verify_code_again">再次发送验证码</string>
@@ -366,8 +366,8 @@
     <string name="no_like_count">暂时还没有人喜欢..</string>
     <string name="system_free_recharge_inform">第一次注册登录，系统会免费赠送给您%sT币，请在“我的”中查看。</string>
     <string name="customer_services_qq">客服QQ</string>
-    <string name="please_input_email_or_telphone">请输入邮箱或者手机号</string>
-    <string name="please_right_input_email_or_telphone">请正确输入邮箱或者手机号</string>
+    <string name="please_input_email_or_telphone">请输入学工号</string>
+    <string name="please_right_input_email_or_telphone">请正确学工号</string>
     <string name="human_translation">人工翻译</string>
     <string name="normal_translation_with_count">在线人工翻译进行中，有[%s]位翻译者为您提供服务。 </string>
     <string name="no_space_left_on_device">手机空间不足，下载失败。</string>
@@ -433,7 +433,7 @@
     <string name="follow_no_data">暂无关注的人</string>
     <string name="popular_no_data">暂无贴图</string>
     <string name="no_translator">暂无翻译者</string>
-    <string name="copyright">TTTalk 2014 ©im.dlmu.edu.cn, All Rights Reserved</string>
+    <string name="copyright">易校©im.dlmu.edu.cn, All Rights Reserved</string>
 	<string name="filter_original">原图</string>
 	<string name="filter_white">美白</string>
 	<string name="filter_red">红色</string>

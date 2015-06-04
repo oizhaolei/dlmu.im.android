@@ -64,7 +64,8 @@ public class ChatActivity extends ActionBarActivity {
         public void onPostExecute(GenericTask task, TaskResult result) {
             if (result == TaskResult.OK) {
                 SendGroupTask sgt = (SendGroupTask) task;
-                Toast.makeText(ChatActivity.this, "Send to: " + sgt.getSendList(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ChatActivity.this, "Send to: " + sgt.getSendList(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, "成功", Toast.LENGTH_SHORT).show();
             }
         }
     };
