@@ -10,7 +10,7 @@ android {
         testApplicationId 'com.ruptech.dlmu.im.test'
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         versionCode 2015051016
-        versionName '2.5.8'
+        versionName '1.0'
     }
     dexOptions {
         jumboMode true

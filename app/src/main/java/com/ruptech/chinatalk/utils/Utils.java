@@ -1,9 +1,5 @@
 package com.ruptech.chinatalk.utils;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -24,8 +20,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
@@ -40,7 +34,6 @@ import android.text.Spanned;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,24 +57,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utils {
 
     public static final String CATEGORY = "chinatalk.";
     public final static String TAG = Utils.CATEGORY
             + Utils.class.getSimpleName();
-    private static final double EARTH_RADIUS = 6378137;
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    public static boolean systemGeocoderAvaiable = true;
     public static String last_friend_updatedate;
-    public static long lastTouchMillis;
+    private static double d;
 
     public static String abbrString(String message_content, int len) {
         String messageContent = "";
@@ -91,28 +79,6 @@ public class Utils {
             messageContent = message_content;
         }
         return messageContent;
-    }
-
-    public static String getTimeSetting(Context context, int start, int duration) {
-        String result = "";
-        if (duration == 0) {
-            result = context.getString(R.string.not_interrupt_no_setting);
-        } else if (duration == 24) {
-            result = context.getString(R.string.not_interrupt_all_day);
-        } else {
-            int end = start + duration;
-            String nextDay;
-            if (end < 24) {
-                nextDay = "";
-            } else {
-                end = end % 24;
-                nextDay = context
-                        .getString(R.string.not_interrupt_time_next_day);
-            }
-            result = context.getString(R.string.not_interrupt_time_result,
-                    start, nextDay, end);
-        }
-        return result;
     }
 
     public static int getCJKCharCount(String text) {
@@ -295,51 +261,6 @@ public class Utils {
         return verCode;
     }
 
-    public static AppVersion getAppVersionOfClient(Context context) {
-        AppVersion ver = new AppVersion();
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            ver.verCode = packageInfo.versionCode;
-            ver.verName = packageInfo.versionName;
-        } catch (NameNotFoundException e) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, e.getMessage(), e);
-        }
-
-        return ver;
-    }
-
-    public static String getCity(Context context, double latitude,
-                                 double longitude) {
-        String cityName = null;
-
-        if (isValidLocation(latitude, longitude)) {
-
-            if (systemGeocoderAvaiable) {
-                try {
-                    Geocoder geocoder;
-                    List<Address> addresses;
-                    geocoder = new Geocoder(context);
-                    addresses = geocoder
-                            .getFromLocation(latitude, longitude, 1);
-                    if (addresses.size() > 0) {
-                        String country = addresses.get(0).getCountryName();
-                        String city = addresses.get(0).getLocality();
-                        cityName = ((Utils.isEmpty(country) ? "" : country) + ' ' + (Utils
-                                .isEmpty(city) ? "" : city)).trim();
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-        } else {
-            cityName = null;
-        }
-
-        return cityName;
-    }
-
     public static int getExifOrientation(String filepath) {
         int degree = 0;
         ExifInterface exif = null;
@@ -423,20 +344,6 @@ public class Utils {
         return identifier;
     }
 
-    public static Locale getLocale(String langAbbr) {
-        String[] languages_abbr = App.mContext.getResources().getStringArray(
-                R.array.languages_abbr);
-        String[] languages_from_code = App.mContext.getResources()
-                .getStringArray(R.array.lang_code);
-        for (int i = 0; i < languages_from_code.length; i++) {
-            if (languages_from_code[i].equals(langAbbr)) {
-                Locale l = new Locale(languages_abbr[i]);
-                return l;
-            }
-        }
-        return null;
-    }
-
     // MD5 hases are used to generate filenames based off a URL.
     public static String getMd5(String str) {
         MessageDigest mDigest;
@@ -452,42 +359,8 @@ public class Utils {
 
     }
 
-    public static String[] getServerTransLang() {
-        String[] languages_from_code = App.mContext.getResources()
-                .getStringArray(R.array.lang_code);
-        return languages_from_code;
-    }
-
-    public static File getVoiceFolder(Context context) {
-        File folder = null;
-        folder = new File(FileHelper.getPublicPath(context), "Voice");
-        if (!folder.exists())
-            folder.mkdirs();
-        return folder;
-    }
-
     public static boolean isEmpty(String s) {
         return s == null || s.length() == 0 || s.equals("null");
-    }
-
-    /**
-     * method is used for checking valid email id format.
-     *
-     * @param email
-     * @return boolean true for valid false for invalid
-     */
-    public static boolean isMail(String email) {
-        boolean isValid = false;
-
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        CharSequence inputStr = email;
-
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-        if (matcher.matches()) {
-            isValid = true;
-        }
-        return isValid;
     }
 
     public static boolean isMobileNetworkAvailible(Context content) {
@@ -505,36 +378,6 @@ public class Utils {
         return false;
     }
 
-    // 暂时手机号10位或者11位
-    public static boolean isTelphone(String str) {
-        Pattern pattern = Pattern.compile("[0-9]{10,11}");
-        Matcher isTel = pattern.matcher(str);
-        if (!isTel.matches()) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isValidLocation(double latitude, double longitude) {
-        boolean isValidLocation = false;
-        if (((0 < latitude && 0 <= longitude) || (0 <= latitude && 0 < longitude))
-                && (latitude < AppPreferences.LATE6_IMPOSSIBLE / 1E6 - 1)
-                && (longitude < AppPreferences.LNGE6_IMPOSSIBLE / 1E6 - 1)) {
-            isValidLocation = true;
-        }
-        return isValidLocation;
-    }
-
-    public static boolean isValidLocation6(int late6, int lnge6) {
-        boolean isValidLocation6 = false;
-        if (((0 < late6 && 0 <= lnge6) || (0 <= late6 && 0 < lnge6))
-                && late6 < AppPreferences.LATE6_IMPOSSIBLE
-                && lnge6 < AppPreferences.LNGE6_IMPOSSIBLE) {
-            isValidLocation6 = true;
-        }
-        return isValidLocation6;
-    }
-
     public static boolean isWifiAvailible(Context content) {
         if (content == null) {
             return true;
@@ -549,79 +392,6 @@ public class Utils {
         if (wifi == State.CONNECTED || wifi == State.CONNECTING)
             return true;
         return false;
-    }
-
-    public static String joinList(List<String> list, char c) {
-        if (list == null) {
-            return "";
-        }
-
-        StringBuffer sb = new StringBuffer(list.size() * 10);
-        for (String s : list) {
-            sb.append(s).append(c);
-        }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        return sb.toString();
-    }
-
-    public static void likeAnimation(final ImageView aniView,
-                                     final boolean isLike) {
-
-        float scaleValue = 1.5f;
-        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(aniView, "scaleX", 1f,
-                scaleValue).setDuration(500);
-        scaleUpX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(aniView, "scaleY", 1f,
-                scaleValue).setDuration(500);
-        scaleUpY.setInterpolator(new AccelerateInterpolator());
-
-        AnimatorSet scaleUp = new AnimatorSet();
-        scaleUp.playTogether(scaleUpX, scaleUpY);
-        scaleUp.addListener(new AnimatorListener() {
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (isLike) {
-                    aniView.setImageResource(R.drawable.ic_action_social_like_unselected);
-                } else {
-                    aniView.setImageResource(R.drawable.ic_action_social_like_selected);
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
-        });
-
-        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(aniView, "scaleX",
-                scaleValue, 1f).setDuration(500);
-        scaleDownX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(aniView, "scaleY",
-                scaleValue, 1f).setDuration(500);
-        scaleDownY.setInterpolator(new AccelerateInterpolator());
-
-        AnimatorSet scaleDown = new AnimatorSet();
-        scaleUp.playTogether(scaleDownX, scaleDownY);
-
-        AnimatorSet likeAnimation = new AnimatorSet();
-        likeAnimation.playSequentially(scaleUp, scaleDown);
-        likeAnimation.start();
-
-    }
-
-    private static double rad(double d) {
-        return d * Math.PI / 180.0;
     }
 
     public static boolean saveFileFromServer(String imageURL, File file) {
@@ -663,17 +433,6 @@ public class Utils {
         iconView.setImageDrawable(states);
     }
 
-    public static void setSubTabImageResource(ImageView iconView, int resId) {
-        Bitmap selectImage = createMask(resId, R.color.orange_highlight);
-        Bitmap normalImage = createMask(resId, R.color.text_gray);
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_selected},
-                new BitmapDrawable(App.mContext.getResources(), selectImage));
-        states.addState(new int[]{},
-                new BitmapDrawable(App.mContext.getResources(), normalImage));
-        iconView.setImageDrawable(states);
-    }
-
     public static void setTextColor(TextView textview) {
         int normal_color = textview.getTextColors().getDefaultColor();
         int highlight_color = App.mContext.getResources().getColor(
@@ -699,26 +458,6 @@ public class Utils {
         }
     }
 
-    public static void showCustomActionbar(Activity activity, View customView) {
-        ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setCustomView(customView);
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setDisplayShowHomeEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(false);
-        }
-    }
-
-    public static ProgressDialog showDialog(Context context, String msg) {
-        ProgressDialog dialog = new ProgressDialog(context);
-        dialog.setMessage(msg);
-        dialog.setIndeterminate(false);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.show();
-        return dialog;
-    }
-
     public static void showNormalActionBar(Activity activity) {
         ActionBar actionBar = ((ActionBarActivity) activity).getSupportActionBar();
         if (actionBar != null) {
@@ -727,33 +466,6 @@ public class Utils {
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(false);
         }
-    }
-
-    public static boolean strIsNum(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 商业上的计算，除掉空格，和标点符号，的长度。
-     *
-     * @param text
-     * @return
-     */
-    public static int textLength(String text) {
-        text = text.replaceAll("[a-zA-Z]+", "A");
-        text = text.replaceAll("[0-9]+", "A");
-
-        String[] re = new String[]{" ", "　", ".", "?", "？"};
-        for (String r : re) {
-            text = text.replace(r, "");
-        }
-
-        return text.length();
     }
 
     public static void setUserPicImage(ImageView imageView, String url) {
@@ -770,23 +482,10 @@ public class Utils {
         }
     }
 
-    public static PackageInfo getPackageInfo(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo;
-        } catch (NameNotFoundException e) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, e.getMessage(), e);
-        }
-
-        return null;
-    }
-
     public static boolean isExistNewVersion() {
         AppVersion serverAppInfo = PrefUtils.readServerAppInfo();
         if (serverAppInfo != null
-                && serverAppInfo.verCode > Utils.getPackageInfo(App.mContext).versionCode) {
+                && serverAppInfo.verCode > BuildConfig.VERSION_CODE) {
             return true;
         }
         return false;
