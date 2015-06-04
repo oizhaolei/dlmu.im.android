@@ -60,7 +60,7 @@ public class TTTalkChatListener implements StanzaListener {
         }
         //屏蔽
         User user = App.userDAO.fetchUserByUsername(User.getUsernameFromJid(fromJID));
-        if(user != null && user.block.equals("true")){
+        if(user != null && "true".equals(user.block)){
             return;
         }
         //需要验证
