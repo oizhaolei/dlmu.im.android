@@ -43,7 +43,6 @@ public class App extends Application {
     public final static String TAG = Utils.CATEGORY + App.class.getSimpleName();
     public static Bus mBus;
     static public Properties properties;
-    public static AppVersion mApkVersionOfClient;
     public static Context mContext;
     public static ImageManager mImageManager;
     public static NotificationManager notificationManager;
@@ -188,8 +187,6 @@ public class App extends Application {
         properties = assetsPropertyReader.getProperties("env.properties");
 
         mContext = this.getApplicationContext();
-
-        mApkVersionOfClient = Utils.getAppVersionOfClient(this);
 
         notificationManager = (NotificationManager) this
                 .getSystemService(Context.NOTIFICATION_SERVICE);

@@ -537,19 +537,4 @@ public class Utils {
             return source;
         }
     }
-
-    public static AppVersion getAppVersionOfClient(Context context) {
-        AppVersion ver = new AppVersion();
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            ver.verCode = packageInfo.versionCode;
-            ver.verName = packageInfo.versionName;
-        } catch (NameNotFoundException e) {
-            if (BuildConfig.DEBUG)
-                Log.e(TAG, e.getMessage(), e);
-        }
-
-        return ver;
-    }
 }
