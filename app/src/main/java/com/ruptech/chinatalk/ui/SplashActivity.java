@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.widget.TextView;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.dlmu.im.BuildConfig;
 import com.ruptech.dlmu.im.R;
 
 import butterknife.ButterKnife;
@@ -81,7 +82,6 @@ public class SplashActivity extends Activity {
     }
 
     private void setupComponents() {
-        footerTextView.setText(getString(R.string.gate_footer_text,
-                App.mApkVersionOfClient.verName));
+        footerTextView.setText(getString(R.string.gate_footer_text, BuildConfig.VERSION_NAME));
     }
 }
