@@ -1,14 +1,19 @@
 package com.ruptech.chinatalk.ui.setting;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ToggleButton;
 
 import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.event.LogoutEvent;
+import com.ruptech.chinatalk.ui.ChatActivity;
+import com.ruptech.chinatalk.utils.AppPreferences;
 import com.ruptech.chinatalk.utils.PrefUtils;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.R;
@@ -104,5 +109,26 @@ public class SettingSystemInfoActivity extends ActionBarActivity {
     public void gotoBlockList() {
         Intent intent = new Intent(this, BlockedUserListActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.activity_setting_view_show_system_url_textview)
+    public void freeChat() {
+        final EditText idEditText = new EditText(this);
+
+
+        new AlertDialog.Builder(this)
+                .setView(idEditText)
+                .setPositiveButton("Moustachify", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String userId = idEditText.getText().toString();
+
+                        String jid = userId + "@" + AppPreferences.IM_SERVER_RESOURCE;
+                        Intent chatIntent = new Intent(SettingSystemInfoActivity.this, ChatActivity.class);
+                        chatIntent.putExtra(ChatActivity.EXTRA_JID, jid);
+                        chatIntent.putExtra(ChatActivity.EXTRA_TITLE, jid);
+                        startActivity(chatIntent);
+                    }
+                })
+                .show();
     }
 }

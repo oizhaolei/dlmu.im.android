@@ -6,11 +6,11 @@ import com.ruptech.chinatalk.task.GenericTask;
 import com.ruptech.chinatalk.task.TaskResult;
 
 public class RetrieveUserTask extends GenericTask {
-    private final String username;
+    private final String userid;
     private User user;
 
-    public RetrieveUserTask(String username) {
-        this.username = username;
+    public RetrieveUserTask(String userid) {
+        this.userid = userid;
     }
 
     public User getUser() {
@@ -19,7 +19,7 @@ public class RetrieveUserTask extends GenericTask {
 
     @Override
     protected TaskResult _doInBackground() throws Exception {
-        user = App.getHttpServer().retrieveUser(username);
+        user = App.getHttpServer().retrieveUser(userid);
 
 
         return TaskResult.OK;
@@ -27,6 +27,6 @@ public class RetrieveUserTask extends GenericTask {
 
     @Override
     public Object[] getMsgs() {
-        return new Object[]{username};
+        return new Object[]{userid};
     }
 }

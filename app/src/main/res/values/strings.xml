@@ -355,7 +355,7 @@
     <string name="user_not_exist">The user does not exist</string>
     <string name="user_setting_gender">Set Gender</string>
     <string name="userinfo">User data</string>
-    <string name="username">User Name</string>
+    <string name="userid">User Name</string>
     <string name="validate">Translation Verification</string>
     <string name="verify_processing">Being Verified&#8230;</string>
     <string name="version_check">Version Check</string>
