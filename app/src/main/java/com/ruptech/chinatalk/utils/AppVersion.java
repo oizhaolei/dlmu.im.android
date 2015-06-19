@@ -31,9 +31,9 @@ public class AppVersion implements Serializable {
     }
 
 
-    public static String getPortraitUrl(String no) {
+    public static String getPortraitUrl(String username) {
         return String.format("http://ecard.dlmu.edu.cn/ecard/photo/%s.jpg",
-                no);
+                username);
     }
 
     @Override

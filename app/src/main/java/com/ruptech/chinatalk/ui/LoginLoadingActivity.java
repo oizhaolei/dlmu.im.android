@@ -27,7 +27,6 @@ public class LoginLoadingActivity extends Activity {
         @Override
         public void onPostExecute(GenericTask task, TaskResult result) {
             if (result == TaskResult.OK) {
-                onLoginPrepare();
                 onLoginSuccess();
             } else {
                 onLoginFailure(task.getMsg());
@@ -140,9 +139,6 @@ public class LoginLoadingActivity extends Activity {
             gotoLoginGatingActivity();
         }
         this.finish();
-    }
-
-    private void onLoginPrepare() {
     }
 
     private void onLoginSuccess() {
