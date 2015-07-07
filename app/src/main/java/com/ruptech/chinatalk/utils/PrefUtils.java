@@ -11,14 +11,10 @@ import com.ruptech.chinatalk.App;
 import com.ruptech.chinatalk.model.Service;
 import com.ruptech.chinatalk.model.User;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Map;
 
 public class PrefUtils {
 
@@ -115,7 +111,7 @@ public class PrefUtils {
                 .commit();
     }
 
-    public static void writeObject(Object obj, String key) {
+    public static void writeObject(String key, Object obj) {
         if (obj == null) {
             remove(key);
         } else {
@@ -146,11 +142,11 @@ public class PrefUtils {
     }
 
     public static void writeServerAppInfo(AppVersion serverAppInfo) {
-        writeObject(serverAppInfo, PREF_SERVERAPP_INFO);
+        writeObject(PREF_SERVERAPP_INFO, serverAppInfo);
     }
 
     public static void writeUser(User user) {
-        writeObject(user, PREF_USERINFO);
+        writeObject(PREF_USERINFO, user);
     }
 
 

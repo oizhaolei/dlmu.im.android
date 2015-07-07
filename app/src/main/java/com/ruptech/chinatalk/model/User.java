@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * A data class representing Basic user information element
@@ -23,6 +24,7 @@ public class User extends Item implements Serializable {
     public String deptid;
     public String deptname;
     public String block;
+    private Map<String, Object> properties;
 
     public User() {
     }
@@ -55,8 +57,7 @@ public class User extends Item implements Serializable {
     }
 
     public static boolean isOrg(String jid) {
-        if (jid.startsWith("G")) return true;
-        return false;
+        return jid.startsWith("G");
     }
 
     public static boolean isTeacher(String jid) {
@@ -103,5 +104,13 @@ public class User extends Item implements Serializable {
 
     public void setBlock(String block) {
         this.block = block;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 }

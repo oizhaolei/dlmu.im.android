@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class HttpServer extends HttpConnection {
     private final String TAG = Utils.CATEGORY
@@ -117,7 +118,11 @@ public class HttpServer extends HttpConnection {
         String code = result.getString("code");
         if ("99".equals(code)) {
             JSONObject user = result.getJSONObject("user");
-            return new User(user);
+            User u = new User(user);
+            JSONObject props = result.getJSONObject("props");
+            Map<String, Object> properties = jsonToMap(props);
+            u.setProperties(properties);
+            return u;
         }
         throw new Exception("login error");
     }
@@ -158,9 +163,56 @@ public class HttpServer extends HttpConnection {
         String code = result.getString("code");
         if ("99".equals(code)) {
             JSONObject user = result.getJSONObject("user");
-            return new User(user);
+            User u = new User(user);
+            JSONObject props = result.getJSONObject("props");
+            Map<String, Object> properties = jsonToMap(props);
+            u.setProperties(properties);
+            return u;
         }
         throw new Exception("login error");
 
+    }
+
+    public Properties userProperties(String username)
+            throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("userid", username);
+
+        Response res = _get("userproperties", params);
+        JSONObject result = res.asJSONObject();
+
+        Properties props = new Properties();
+        Iterator<String> keys = result.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            String value = result.getString(key);
+
+            props.put(key, value);
+        }
+        return props;
+    }
+
+    //    public String userProperty(String username, String key)
+//            throws Exception {
+//        Map<String, String> params = new HashMap<>();
+//        params.put("userid", username);
+//        params.put("key", key);
+//
+//        Response res = _get("userproperties", params);
+//        String value = res.getBody();
+//
+//        return value;
+//    }
+    public boolean userProperty(String username, String key, String value)
+            throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("userid", username);
+        params.put("key", key);
+        params.put("value", value);
+
+        Response res = _get("userproperties", params);
+        value = res.getBody();
+
+        return "success".equals(value);
     }
 }

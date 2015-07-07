@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="LANGUAGE_ENVIRONMENT">ZH</string>
     <string name="about">关于TT译聊</string>
@@ -340,7 +340,7 @@
     <string name="user_not_exist">该用户不存在</string>
     <string name="user_setting_gender">设置性别</string>
     <string name="userinfo">用户资料</string>
-    <string name="username">用户ID</string>
+    <string name="userid">用户ID</string>
     <string name="validate">翻译校验</string>
     <string name="verify_processing">验证中&#8230;</string>
     <string name="version_check">版本检测</string>

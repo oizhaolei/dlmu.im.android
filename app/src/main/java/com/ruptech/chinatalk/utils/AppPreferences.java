@@ -54,4 +54,7 @@ public class AppPreferences {
     // Popular 刷新频率
     public static long POPULAR_CHECK_INTERVAL = 1000 * 60 * 60 * 2;// 每2小时检查更新一次
 
+    //user property keys
+    public static String USER_PROPERTY_KEY_PORTRAIT = "portrait";
+
 }
