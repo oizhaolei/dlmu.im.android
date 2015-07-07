@@ -231,7 +231,7 @@ public class Utils {
 
 
     public static String genUrl(Map<String, String> params, String url) {
-        if (params.isEmpty()) return url;
+        if (params == null || params.isEmpty()) return url;
         String rtn = url + "?";
         for (String key : params.keySet()) {
             rtn = rtn + key + "=" + params.get(key) + "&";

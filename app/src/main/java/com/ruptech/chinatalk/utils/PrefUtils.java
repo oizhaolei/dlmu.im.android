@@ -8,6 +8,7 @@ import android.util.Base64OutputStream;
 import android.util.Log;
 
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.model.Service;
 import com.ruptech.chinatalk.model.User;
 
 import org.json.JSONObject;
@@ -151,5 +152,6 @@ public class PrefUtils {
     public static void writeUser(User user) {
         writeObject(user, PREF_USERINFO);
     }
+
 
 }

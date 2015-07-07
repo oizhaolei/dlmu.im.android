@@ -6,6 +6,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.github.kevinsawicki.http.HttpRequest.UploadProgress;
 import com.ruptech.chinatalk.App;
+import com.ruptech.chinatalk.model.Service;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.Utils;
 import com.ruptech.dlmu.im.BuildConfig;
@@ -131,6 +132,30 @@ public abstract class HttpConnection {
                 value = toMap((JSONObject) value);
             }
             list.add(value);
+        }
+        return list;
+    }
+
+
+    public static List toServiceList(JSONArray array) throws JSONException {
+        List<Service> list = new ArrayList<Service>();
+        for (int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if (value instanceof JSONObject) {
+                Service s = new Service();
+                s.setChecked(((JSONObject) value).getInt("checked"));
+                s.setFixed(((JSONObject) value).getInt("fixed"));
+                s.setFnid(((JSONObject) value).getString("fnid"));
+                s.setIcon(((JSONObject) value).getString("icon"));
+                s.setParam(((JSONObject) value).getString("param"));
+                if (s.getChecked() == 1)
+                    s.setPos(((JSONObject) value).getInt("pos"));
+                else s.setPos(99);
+                s.setTitle(((JSONObject) value).getString("title"));
+                s.setTypeid(((JSONObject) value).getInt("typeid"));
+                s.setUrl(((JSONObject) value).getString("url"));
+                list.add(s);
+            }
         }
         return list;
     }

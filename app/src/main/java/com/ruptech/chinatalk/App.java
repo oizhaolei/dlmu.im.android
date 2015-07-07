@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.IBinder;
 import android.util.Log;
@@ -23,9 +24,14 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.ruptech.chinatalk.http.HttpServer;
+import com.ruptech.chinatalk.model.Service;
 import com.ruptech.chinatalk.model.User;
 import com.ruptech.chinatalk.sqlite.UserDAO;
+import com.ruptech.chinatalk.task.GenericTask;
+import com.ruptech.chinatalk.task.TaskAdapter;
 import com.ruptech.chinatalk.task.TaskManager;
+import com.ruptech.chinatalk.task.TaskResult;
+import com.ruptech.chinatalk.task.impl.RetrieveServiceListTask;
 import com.ruptech.chinatalk.utils.AppVersion;
 import com.ruptech.chinatalk.utils.AssetsPropertyReader;
 import com.ruptech.chinatalk.utils.ImageManager;
@@ -36,6 +42,9 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class App extends Application {
@@ -54,6 +63,7 @@ public class App extends Application {
     public static XMPPService mService;
     private static HttpServer httpServer;
     private static User user;
+    public static List<Service> service;
     public static ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -195,7 +205,6 @@ public class App extends Application {
 
         mImageManager = new ImageManager(App.mContext);
         initImageLoader(getApplicationContext());
-
 
         getDisplaySize();
 

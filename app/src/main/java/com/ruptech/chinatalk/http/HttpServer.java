@@ -134,12 +134,17 @@ public class HttpServer extends HttpConnection {
 
     }
 
-    public List retrieveServiceList()
+    public List retrieveServiceList(String userid,String ctrl)
             throws Exception {
-
-        Response res = _get("service", null);
+        Map<String, String> params = new HashMap<>();
+        params.put("userid", userid);
+        params.put("ctrl", ctrl);
+        Response res = _get("service", params);
         JSONObject result = res.asJSONObject();
-        return toList(result.getJSONArray("data"));
+        System.out.println("---------------");
+        System.out.println(result.toString());
+        System.out.println("---------------");
+        return toServiceList(result.getJSONArray("data"));
 
     }
 

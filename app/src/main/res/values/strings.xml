@@ -586,4 +586,8 @@
     <string name="add_frends_course">按课程找学生</string>
     <string name="add_friends_org">按部门找老师</string>
     <string name="add_friends_college">按学院找老师</string>
+
+    <string name="title_activity_service_setting">ServiceSettingActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

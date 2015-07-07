@@ -5,24 +5,12 @@
     android:layout_marginLeft="2dp"
     android:layout_marginRight="2dp">
 
-    <ListView
-        android:id="@+id/service_list"
+    <com.dongdxy.android.ui.dragreordergridview.DragReorderGridView
+        android:id="@+id/service_list_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:cacheColorHint="@android:color/transparent"
-        android:dividerHeight="1dp"
-        android:drawSelectorOnTop="true"
-        android:listSelector="@drawable/list_selector" >
-    </ListView>
-
-    <TextView
-        android:id="@+id/service_emptyview_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_data_found"
-        android:visibility="gone" />
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:numColumns="2" />
 
 </RelativeLayout>

@@ -129,7 +129,7 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //parent.getAdapter().getItem(position);
                 //System.out.println("============" + parent.getAdapter().getItem(position));
-                RadioButton rd = (RadioButton) view.findViewById(R.id.activity_checkin_classroom_listview_radio);
+                RadioButton rd = (RadioButton) view.findViewById(R.id.item_checkin_classroom_listview_radio);
                 if (rd.isChecked()) {
                     rd.setChecked(false);
                     index = -1;
@@ -368,28 +368,10 @@ public class ClassroomCheckInActivity extends ActionBarActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpRequest = new HttpPost(params[0]);
             List<NameValuePair> p = new ArrayList<NameValuePair>();
             String strResult = null;
-            /*
-            System.out.println("********0*******" + (String) params[0]);
-            System.out.println("********1*******" + (String) params[1]);
-            System.out.println("********2*******" + (String) params[2]);
-            System.out.println("********3*******" + (String) params[3]);
-            System.out.println("********4*******" + (String) params[4]);
-            System.out.println("********5*******" + (String) params[5]);
-            System.out.println("********6*******" + (String) params[6]);
-            System.out.println("********7*******" + (String) params[7]);
-            System.out.println("********8*******" + (String) params[8]);
-            System.out.println("********9*******" + (String) params[9]);
-            System.out.println("********10*******" + (String) params[10]);
-            System.out.println("********11*******" + (String) params[11]);
-            System.out.println("********12*******" + (String) params[12]);
-            System.out.println("********13*******" + (String) params[13]);
-            System.out.println("********14*******" + (String) params[14]);
-            System.out.println("********15*******" + (String) params[15]);
-            */
+
             p.add(new BasicNameValuePair("token", params[1]));
             p.add(new BasicNameValuePair("zxjxjhh", params[2]));
             p.add(new BasicNameValuePair("jsh", params[3]));

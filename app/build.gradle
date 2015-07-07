@@ -38,14 +38,15 @@ repositories { mavenCentral() }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('build/drag_reorder_gridview_lib.jar')
     compile 'org.igniterealtime.smack:smack-android:4.1.0'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.0'
     compile 'org.igniterealtime.smack:smack-tcp:4.1.0'
     compile 'org.igniterealtime.smack:smack-sasl-provided:4.1.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile 'it.sephiroth.android.library.imagezoom:library:1.0.4'
-    compile 'com.android.support:support-v4:22.0.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:support-v4:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.github.kevinsawicki:http-request:5.6'
     compile 'com.jakewharton:butterknife:6.0.0'
     compile 'com.squareup:otto:1.3.6'
